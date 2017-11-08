@@ -1,5 +1,5 @@
 {
-  "name": "stelin/swoft",
+  "name": "swoft/framework",
   "type": "library",
   "keywords": ["php", "swoole", "swoft"],
   "description": "microservice framework base on swoole",
@@ -15,7 +15,6 @@
     "classmap": [
     ],
     "psr-4": {
-      "App\\": "app/",
       "Swoft\\":"src/"
     },
     "files": [
