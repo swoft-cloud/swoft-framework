@@ -154,7 +154,7 @@ php bin/swoft stop
 
 # 更新日志
 
-[更新日志](changelog.md)
+[更新日志](https://github.com/swoft-cloud/swoft/blob/master/changelog.md)
 
 # 开发成员
 
