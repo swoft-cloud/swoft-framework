@@ -54,6 +54,10 @@ if (! function_exists('env')) {
             return substr($value, 1, -1);
         }
 
+        if (defined($value)) {
+            $value = constant($value);
+        }
+
         return $value;
     }
 }
