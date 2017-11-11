@@ -32,7 +32,7 @@ class BeforeRequestListener implements IApplicationListener
         // header获取日志ID和spanid请求跨度ID
         $logid = RequestContext::getRequest()->getHeader('logid', uniqid());
         $spanid = RequestContext::getRequest()->getHeader('spanid', 0);
-        $uri = RequestContext::getRequest()->getRequestUri();
+        $uri = RequestContext::getRequest()->getUri();
 
         $contextData = [
             'logid'       => $logid,
