@@ -98,18 +98,6 @@ abstract class Controller
     }
 
     /**
-     * 重定向
-     *
-     * @param string   $url
-     * @param null|int $status
-     * @return Response
-     */
-    protected function redirect($url, $status = null)
-    {
-        return App::getResponse()->redirect($url, $status);
-    }
-
-    /**
      * action前缀
      *
      * @return string

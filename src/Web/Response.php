@@ -28,25 +28,17 @@ class Response extends \Swoft\Base\Response
     protected $exception;
 
     /**
-     * 重定向
+     * Redirect to a URL
      *
      * @param string   $url
      * @param null|int $status
      * @return static
      */
-    public function redirect($url, $status = null)
+    public function redirect($url, $status = 302)
     {
-        $this->swooleResponse->header('Location', (string)$url);
-
-        if (null === $status) {
-            $status = 302;
-        }
-
-        if (null !== $status) {
-            $this->swooleResponse->status((int)$status);
-        }
-
-        return $this;
+        $response = $this;
+        $response = $response->withAddedHeader('Location', (string)$url)->withStatus($status);
+        return $response;
     }
 
     /**
