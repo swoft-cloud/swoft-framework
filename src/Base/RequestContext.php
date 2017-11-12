@@ -75,7 +75,7 @@ class RequestContext
     public static function setRequest(\Swoole\Http\Request $request)
     {
         $coroutineId = self::getcoroutineId();
-        self::$coroutineLocal[$coroutineId][self::COROUTINE_REQUEST] = new \Swoft\Web\Request($request);
+        self::$coroutineLocal[$coroutineId][self::COROUTINE_REQUEST] = \Swoft\Web\Request::loadFromSwooleRequest($request);
     }
 
     /**

@@ -24,5 +24,11 @@ interface IParser
      *
      * @return mixed
      */
-    public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null);
+    public function parser(
+        string $className,
+        $objectAnnotation = null,
+        string $propertyName = "",
+        string $methodName = "",
+        $propertyValue = null
+    );
 }

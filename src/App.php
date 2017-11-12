@@ -377,7 +377,7 @@ class App
     }
 
     /**
-     * debgu级别日志
+     * debug级别日志
      *
      * @param mixed $message 日志信息
      * @param array $context 附加信息
