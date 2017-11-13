@@ -39,8 +39,6 @@ abstract class Application
      */
     protected $useProvider = false;
 
-    public $count = 0;
-
     /**
      * 初始化
      */
@@ -104,6 +102,11 @@ abstract class Application
 
         $action = Router::convertNodeStr($action);
         $controller = ApplicationContext::getBean($className);
+        // Set Controller and Action infos to Request Context
+        RequestContext::setContextData([
+            'controllerClass' => $className,
+            'controllerAction' => $action,
+        ]);
 
         return [$controller, $action, $matches];
     }

@@ -33,16 +33,19 @@ class FilterChain implements IFilter
      * @param Response    $response     响应Response
      * @param FilterChain $filterChain  过滤连
      * @param int         $currentIndex 当前执行过滤器的index,默认数组一样0开始
-     *
      * @return bool 返回是否处理成功，成功执行逻辑，失败，filter里面实现逻辑数据显示
      */
-    public function doFilter(Request $request, Response $response, FilterChain $filterChain, int $currentIndex = 0)
-    {
+    public function doFilter(
+        Request $request,
+        Response $response,
+        FilterChain $filterChain,
+        int $currentIndex = 0
+    ) {
         if (empty($this->filters) || count($this->filters) < $currentIndex + 1) {
             return true;
         }
 
-        $uri = $request->getRequestUri();
+        $uri = $request->getUri()->getPath();
         $filterAry = $this->getCurrentFilter($uri, $currentIndex);
         if (empty($filterAry)) {
             return true;
@@ -65,7 +68,7 @@ class FilterChain implements IFilter
      */
     private function getCurrentFilter(string $uri, int $currentIndex)
     {
-        if (!isset($this->filters[$currentIndex])) {
+        if (! isset($this->filters[$currentIndex])) {
             return array();
         }
 

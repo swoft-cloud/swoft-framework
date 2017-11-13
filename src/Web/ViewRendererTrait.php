@@ -8,12 +8,13 @@
 
 namespace Swoft\Web;
 
+use Swoft\App;
 use Swoft\Base\RequestContext;
 
 /**
  * Trait ViewRendererTrait
- * @package Swoft\Web
  *
+ * @package   Swoft\Web
  * @uses      ViewRenderer helper
  * @version   2017年08月14日
  * @author    inhere <in.798@qq.com>
@@ -24,9 +25,13 @@ trait ViewRendererTrait
 {
     /**
      * getRenderer
+     *
      * @return ViewRenderer
      */
-    abstract public function getRenderer();
+    public function getRenderer()
+    {
+        return App::getBean('renderer');
+    }
 
     /**
      * @param string $view
@@ -42,40 +47,37 @@ trait ViewRendererTrait
      *********************************************************************************/
 
     /**
-     * @param string $view
-     * @param array $data
+     * @param string      $view
+     * @param array       $data
      * @param null|string $layout
+     * @return \Swoft\Web\Response
      */
     public function render(string $view, array $data = [], $layout = null)
     {
         $result = $this->getRenderer()->render($this->resolveView($view), $data, $layout);
-
-        $response = RequestContext::getResponse();
-        $response->setResponseContent($result);
+        return RequestContext::getResponse()->withContent($result);
     }
 
     /**
      * @param string $view
-     * @param array $data
+     * @param array  $data
+     * @return \Swoft\Web\Response
      */
     public function renderPartial($view, array $data = [])
     {
         $result = $this->getRenderer()->fetch($this->resolveView($view), $data);
-
-        $response = RequestContext::getResponse();
-        $response->setResponseContent($result);
+        return RequestContext::getResponse()->withContent($result);
     }
 
     /**
      * @param string $string
-     * @param array $data
+     * @param array  $data
+     * @return \Swoft\Web\Response
      */
     public function renderContent($string, array $data = [])
     {
         $result = $this->getRenderer()->renderContent($string, $data);
-
-        $response = RequestContext::getResponse();
-        $response->setResponseContent($result);
+        return RequestContext::getResponse()->withContent($result);
     }
 
 }

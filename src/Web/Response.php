@@ -2,6 +2,12 @@
 
 namespace Swoft\Web;
 
+use Swoft\Base\RequestContext;
+use Swoft\Bean\Collector;
+use Swoft\Contract\Arrayable;
+use Swoft\Helper\JsonHelper;
+use Swoft\Helper\StringHelper;
+
 /**
  * 响应response
  *
@@ -13,111 +19,180 @@ namespace Swoft\Web;
  */
 class Response extends \Swoft\Base\Response
 {
-    const FORMAT_HTML = 'html';
-    const FORMAT_JSON = 'json';
-    const FORMAT_XML = 'xml';
 
-    private $status = 200;
-    private $charset = "utf-8";
-    private $responseContent = "";
-    private $format = self::FORMAT_HTML;
+    use ViewRendererTrait;
 
     /**
-     * @var \Throwable 未知异常
+     * @var \Throwable|null
      */
-    private $exception = null;
-
+    protected $exception;
 
     /**
-     * 输出contentTypes集合
+     * Redirect to a URL
      *
-     * @var array
+     * @param string   $url
+     * @param null|int $status
+     * @return static
      */
-    private $contentTypes = [
-        self::FORMAT_XML => 'text/xml',
-        self::FORMAT_HTML => 'text/html',
-        self::FORMAT_JSON => 'application/json',
-    ];
-
-    /**
-     * 显示数据
-     */
-    public function send()
+    public function redirect($url, $status = 302)
     {
-        $this->formatContentType();
-        $this->response->status($this->status);
-        $this->response->end($this->responseContent);
+        $response = $this;
+        $response = $response->withAddedHeader('Location', (string)$url)->withStatus($status);
+        return $response;
     }
 
     /**
-     * 添加header
+     * return a View format response
      *
-     * @param string $name
-     * @param string $value
+     * @param array|Arrayable $data
+     * @return \Swoft\Web\Response
      */
-    public function addHeader(string $name, string $value)
+    public function view($data = []): Response
     {
-        $this->response->header($name, $value);
+        if ($data instanceof Arrayable) {
+            $data = $data->toArray();
+        }
+        $controllerClass = RequestContext::getContextDataByKey('controllerClass');
+        $template = Collector::$requestMapping[$controllerClass]['view']['template'] ?? null;
+        $layout = Collector::$requestMapping[$controllerClass]['view']['layout'] ?? null;
+        $response = $this->render($template, $data, $layout);
+        return $response;
     }
 
     /**
-     * 设置Http code
+     * return a Raw format response
      *
-     * @param int $status
+     * @param  string $data   The data
+     * @param  int    $status The HTTP status code.
+     * @return \Swoft\Web\Response when $data not jsonable
      */
-    public function setStatus(int $status)
+    public function raw(string $data = '', int $status = 200): Response
     {
-        $this->status = $status;
+        $response = $this;
+
+        // Headers
+        $response = $response->withoutHeader('Content-Type')->withAddedHeader('Content-Type', 'text/plain');
+        $this->getCharset() && $response = $response->withCharset($this->getCharset());
+
+        // Content
+        $data && $response = $response->withContent($data);
+
+        // Status code
+        $status && $response = $response->withStatus($status);
+
+        return $response;
     }
 
     /**
-     * 设置格式json/html/xml...
+     * return a Json format response
      *
-     * @param string $format
+     * @param  array|Arrayable $data            The data
+     * @param  int             $status          The HTTP status code.
+     * @param  int             $encodingOptions Json encoding options
+     * @return static when $data not jsonable
      */
-    public function setFormat(string $format)
+    public function json($data = [], int $status = 200, int $encodingOptions = 0): Response
     {
-        $this->format = $format;
+        $response = $this;
+
+        // Headers
+        $response = $response->withoutHeader('Content-Type')->withAddedHeader('Content-Type', 'application/json');
+        $this->getCharset() && $response = $response->withCharset($this->getCharset());
+
+        // Content
+        if ($data && ($this->isArrayable($data) || is_string($data))) {
+            is_string($data) && $data = ['data' => $data];
+            $content = JsonHelper::encode($data, $encodingOptions);
+            $response = $response->withContent($content);
+        } else {
+            $response = $response->withContent('{}');
+        }
+
+        // Status code
+        $status && $response = $response->withStatus($status);
+
+        return $response;
     }
 
     /**
-     * charset设置
+     * return an automatic detection format response
      *
-     * @param string $charset
+     * @param mixed $data
+     * @param int   $status
+     * @return static
      */
-    public function setCharset(string $charset)
+    public function auto($data = null, int $status = 200): Response
     {
-        $this->charset = $charset;
+        $accepts = RequestContext::getRequest()->getHeader('accept');
+        $currentAccept = current($accepts);
+        $controllerClass = RequestContext::getContextDataByKey('controllerClass');
+        $template = Collector::$requestMapping[$controllerClass]['view']['template'] ?? null;
+        $matchViewModel = $this->isMatchAccept($currentAccept, 'text/html') && $controllerClass && $this->isArrayable($data) && $template && ! $this->getException();
+        switch ($currentAccept) {
+            // View
+            case $matchViewModel === true:
+                $response = $this->view($data, $status);
+                break;
+            // Json
+            case $this->isMatchAccept($currentAccept, 'application/json'):
+            case $this->isArrayable($data):
+                ! $this->isArrayable($data) && $data = compact('data');
+                $response = $this->json($data, $status);
+                break;
+            // Raw
+            default:
+                $response = $this->raw((string)$data, $status);
+                break;
+        }
+        return $response;
     }
 
     /**
-     * 获取异常
-     *
-     * @return \Throwable 异常
+     * 处理 Response 并发送数据
      */
-    public function getException(): \Throwable
+    public function send(): void
     {
-        return $this->exception;
+        $response = $this;
+
+        /**
+         * Headers
+         */
+        // Write Headers to swoole response
+        foreach ($response->getHeaders() as $key => $value) {
+            $this->swooleResponse->header($key, implode(';', $value));
+        }
+
+        /**
+         * Cookies
+         */
+        // TODO: handle cookies
+
+        /**
+         * Status code
+         */
+        $this->swooleResponse->status($response->getStatusCode());
+
+        /**
+         * Body
+         */
+        $this->swooleResponse->end($response->getBody()->getContents());
     }
 
     /**
-     * 设置异常
+     * 设置Body内容，使用默认的Stream
      *
-     * @param \Throwable $exception 初始化异常
+     * @param string $content
+     * @return static
      */
-    public function setException(\Throwable $exception)
+    public function withContent($content): Response
     {
-        $this->exception = $exception;
-    }
+        if ($this->stream) {
+            return $this;
+        }
 
-    /**
-     * 设置返回内容
-     *
-     * @param string $responseContent
-     */
-    public function setResponseContent(string $responseContent)
-    {
-        $this->responseContent = $responseContent;
+        $new = clone $this;
+        $new->stream = new SwooleStream($content);
+        return $new;
     }
 
     /**
@@ -131,18 +206,180 @@ class Response extends \Swoft\Base\Response
      */
     public function addCookie($key, $value, $expire = 0, $path = '/', $domain = '')
     {
-        $this->response->cookie($key, $value, $expire, $path, $domain);
+        $this->swooleResponse->cookie($key, $value, $expire, $path, $domain);
     }
 
     /**
-     * 格式化contentType
+     * @return null|\Throwable
      */
-    private function formatContentType()
+    public function getException()
     {
-        // contentType
-        $contentType = $this->contentTypes[$this->format];
-        $contentType .= ";charset=".$this->charset;
-
-        $this->response->header('Content-Type', $contentType);
+        return $this->exception;
     }
+
+    /**
+     * @param \Throwable $exception
+     * @return $this
+     */
+    public function setException(\Throwable $exception)
+    {
+        $this->exception = $exception;
+        return $this;
+    }
+
+    /**
+     * @param mixed $value
+     * @return bool
+     */
+    private function isArrayable($value): bool
+    {
+        return is_array($value) || $value instanceof Arrayable;
+    }
+
+    /**
+     * @param string $accept
+     * @param string $keyword
+     * @return bool
+     */
+    private function isMatchAccept(string $accept, string $keyword): bool
+    {
+        return StringHelper::contains($accept, $keyword) === true;
+    }
+
+    /**
+     * Is response invalid?
+     *
+     * @return bool
+     *
+     * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+     *
+     * @final since version 3.2
+     */
+    public function isInvalid()
+    {
+        return $this->statusCode < 100 || $this->statusCode >= 600;
+    }
+
+    /**
+     * Is response informative?
+     *
+     * @return bool
+     *
+     * @final since version 3.3
+     */
+    public function isInformational()
+    {
+        return $this->statusCode >= 100 && $this->statusCode < 200;
+    }
+
+    /**
+     * Is response successful?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isSuccessful()
+    {
+        return $this->statusCode >= 200 && $this->statusCode < 300;
+    }
+
+    /**
+     * Is the response a redirect?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isRedirection()
+    {
+        return $this->statusCode >= 300 && $this->statusCode < 400;
+    }
+
+    /**
+     * Is there a client error?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isClientError()
+    {
+        return $this->statusCode >= 400 && $this->statusCode < 500;
+    }
+
+    /**
+     * Was there a server side error?
+     *
+     * @return bool
+     *
+     * @final since version 3.3
+     */
+    public function isServerError()
+    {
+        return $this->statusCode >= 500 && $this->statusCode < 600;
+    }
+
+    /**
+     * Is the response OK?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isOk()
+    {
+        return 200 === $this->statusCode;
+    }
+
+    /**
+     * Is the response forbidden?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isForbidden()
+    {
+        return 403 === $this->statusCode;
+    }
+
+    /**
+     * Is the response a not found error?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isNotFound()
+    {
+        return 404 === $this->statusCode;
+    }
+
+    /**
+     * Is the response a redirect of some form?
+     *
+     * @param string $location
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isRedirect($location = null)
+    {
+        return in_array($this->statusCode, array(201, 301, 302, 303, 307, 308)) && (null === $location ?: $location == $this->getHeaderLine('Location'));
+    }
+
+    /**
+     * Is the response empty?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isEmpty()
+    {
+        return in_array($this->statusCode, array(204, 304));
+    }
+
 }

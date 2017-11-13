@@ -20,38 +20,45 @@ use Swoft\Helper\ResponseHelper;
 class Application extends \Swoft\Base\Application
 {
     /**
-     * request请求处理
+     * handle request
      *
-     * @param \Swoole\Http\Request  $request
-     * @param \Swoole\Http\Response $response
-     *
+     * @param \Swoole\Http\Request  $request  Swoole request object
+     * @param \Swoole\Http\Response $response Swoole response object
      * @return bool
      */
     public function doRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        // chrome两次请求bug修复
+        // Fix Chrome ico request bug
+        // TODO: Add Middleware mechanisms and move "fix the Chrome ico request bug" to middleware
         if (isset($request->server['request_uri']) && $request->server['request_uri'] === '/favicon.ico') {
             $response->end('favicon.ico');
             return false;
         }
 
-        // 初始化request和response
+        // Initialize Request and Response and set to RequestContent
         RequestContext::setRequest($request);
         RequestContext::setResponse($response);
 
-
-        // 请求数测试
-        $this->count = $this->count + 1;
-
+        // Trigger 'Before Request' event
         App::trigger(Event::BEFORE_REQUEST);
 
         $swfRequest = RequestContext::getRequest();
-        // 解析URI和method
-        $uri = $swfRequest->getRequestUri();
+        // Get URI and Method from request
+        $uri = $swfRequest->getUri()->getPath();
         $method = $swfRequest->getMethod();
 
-        // 运行controller
-        $this->runController($uri, $method);
+        // Run action of Controller by URI and Method
+        $actionResponse = $this->runController($uri, $method);
+
+        // Invalid Response was provided
+        if (! $actionResponse instanceof \Swoft\Base\Response) {
+            return false;
+        }
+
+        // Handle Response
+        $actionResponse->send();
+
+        // Trigger 'After Request' event
         App::trigger(Event::AFTER_REQUEST);
     }
 
@@ -90,7 +97,7 @@ class Application extends \Swoft\Base\Application
      *
      * @param string $uri
      * @param string $method
-     *
+     * @return \Swoft\Web\Response
      * @throws \Exception
      */
     public function runController(string $uri, string $method = "get")
@@ -112,7 +119,7 @@ class Application extends \Swoft\Base\Application
         list($controller, $actionId, $params) = $this->createController($path, $info);
 
         /* run controller with Filters */
-        $this->runControllerWithFilters($controller, $actionId, $params);
+        return $this->runControllerWithFilters($controller, $actionId, $params);
     }
 
     /**
@@ -121,6 +128,7 @@ class Application extends \Swoft\Base\Application
      * @param Controller $controller 控制器
      * @param string     $actionId   actionID
      * @param array      $params     action参数
+     * @return \Swoft\Web\Response
      */
     private function runControllerWithFilters(Controller $controller, string $actionId, array $params)
     {
@@ -136,7 +144,8 @@ class Application extends \Swoft\Base\Application
 
         if ($result) {
             $response = $controller->run($actionId, $params);
-            $response->send();
+            return $response;
         }
     }
+
 }

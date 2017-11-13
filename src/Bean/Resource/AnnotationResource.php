@@ -24,7 +24,7 @@ class AnnotationResource extends AbstractResource
      */
     private $scanNamespaces
         = [
-            'Swoft' => BASE_PATH . "/src"
+            'Swoft' => BASE_PATH . "/vendor/swoft/framework/src"
         ];
 
     /**
