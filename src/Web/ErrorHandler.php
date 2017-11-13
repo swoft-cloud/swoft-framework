@@ -23,7 +23,7 @@ class ErrorHandler
      */
     public function register()
     {
-        ini_set('display_errors', true);
+        ini_set('display_errors', env('DISPLAY_ERRORS', false));
         set_exception_handler([$this, 'handlerException']);
         set_error_handler([$this, 'handlerError']);
         register_shutdown_function([$this, 'handlerFatalError']);

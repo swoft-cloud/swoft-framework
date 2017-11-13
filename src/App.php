@@ -56,18 +56,26 @@ class App
 
     /**
      * 是否初始化了crontab
+     *
+     * @var bool
      */
     public static $isInitCron = false;
+
+    /**
+     * 是否处于自动化测试流程中
+     *
+     * @var bool
+     */
+    public static $isInTest = false;
 
     /**
      * 别名库
      *
      * @var array
      */
-    private static $aliases
-        = [
-            '@Swoft' => __DIR__
-        ];
+    private static $aliases = [
+        '@Swoft' => __DIR__
+    ];
 
     /**
      * 获取mysqlBean对象
@@ -111,7 +119,6 @@ class App
      * 查询一个bean
      *
      * @param string $name 名称
-     *
      * @return mixed
      */
     public static function getBean(string $name)
@@ -291,7 +298,7 @@ class App
         }
 
         list($root) = explode('/', $path);
-        if (!isset(self::$aliases[$root])) {
+        if (! isset(self::$aliases[$root])) {
             throw new \InvalidArgumentException("设置的根别名不存在，alias=" . $root);
         }
 
@@ -305,7 +312,6 @@ class App
      * 获取别名路径
      *
      * @param string $alias
-     *
      * @return string
      */
     public static function getAlias(string $alias)
@@ -321,7 +327,7 @@ class App
         }
 
         list($root) = explode('/', $alias);
-        if (!isset(self::$aliases[$root])) {
+        if (! isset(self::$aliases[$root])) {
             throw new \InvalidArgumentException("设置的根别名不存在，alias=" . $root);
         }
 

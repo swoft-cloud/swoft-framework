@@ -246,4 +246,140 @@ class Response extends \Swoft\Base\Response
         return StringHelper::contains($accept, $keyword) === true;
     }
 
+    /**
+     * Is response invalid?
+     *
+     * @return bool
+     *
+     * @see http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
+     *
+     * @final since version 3.2
+     */
+    public function isInvalid()
+    {
+        return $this->statusCode < 100 || $this->statusCode >= 600;
+    }
+
+    /**
+     * Is response informative?
+     *
+     * @return bool
+     *
+     * @final since version 3.3
+     */
+    public function isInformational()
+    {
+        return $this->statusCode >= 100 && $this->statusCode < 200;
+    }
+
+    /**
+     * Is response successful?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isSuccessful()
+    {
+        return $this->statusCode >= 200 && $this->statusCode < 300;
+    }
+
+    /**
+     * Is the response a redirect?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isRedirection()
+    {
+        return $this->statusCode >= 300 && $this->statusCode < 400;
+    }
+
+    /**
+     * Is there a client error?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isClientError()
+    {
+        return $this->statusCode >= 400 && $this->statusCode < 500;
+    }
+
+    /**
+     * Was there a server side error?
+     *
+     * @return bool
+     *
+     * @final since version 3.3
+     */
+    public function isServerError()
+    {
+        return $this->statusCode >= 500 && $this->statusCode < 600;
+    }
+
+    /**
+     * Is the response OK?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isOk()
+    {
+        return 200 === $this->statusCode;
+    }
+
+    /**
+     * Is the response forbidden?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isForbidden()
+    {
+        return 403 === $this->statusCode;
+    }
+
+    /**
+     * Is the response a not found error?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isNotFound()
+    {
+        return 404 === $this->statusCode;
+    }
+
+    /**
+     * Is the response a redirect of some form?
+     *
+     * @param string $location
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isRedirect($location = null)
+    {
+        return in_array($this->statusCode, array(201, 301, 302, 303, 307, 308)) && (null === $location ?: $location == $this->getHeaderLine('Location'));
+    }
+
+    /**
+     * Is the response empty?
+     *
+     * @return bool
+     *
+     * @final since version 3.2
+     */
+    public function isEmpty()
+    {
+        return in_array($this->statusCode, array(204, 304));
+    }
+
 }
