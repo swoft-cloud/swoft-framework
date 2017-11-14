@@ -85,17 +85,17 @@ class Response implements ResponseInterface
     /**
      * @var string
      */
-    private $reasonPhrase = '';
+    protected $reasonPhrase = '';
 
     /**
      * @var int
      */
-    private $statusCode = 200;
+    protected $statusCode = 200;
 
     /**
      * @var string
      */
-    private $charset = 'utf-8';
+    protected $charset = 'utf-8';
 
     /**
      * swoole响应请求
