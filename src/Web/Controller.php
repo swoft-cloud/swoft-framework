@@ -3,7 +3,6 @@
 namespace Swoft\Web;
 
 use Swoft\Base\RequestContext;
-use Swoft\Web\ExceptionHandler\ExceptionHandlerManager;
 
 /**
  * Web Controller
@@ -37,31 +36,16 @@ abstract class Controller extends \Swoft\Base\Controller
      * Run action
      *
      * @param string $actionId action ID
-     * @param array  $params   action parameters
-     * @return Response
+     * @param array $params action parameters
+     * @return Response|array|string|\Swoft\Contract\Arrayable
      */
-    public function run(string $actionId, array $params = []): Response
+    public function run(string $actionId, array $params = [])
     {
         if (empty($actionId)) {
             $actionId = $this->defaultAction;
         }
-        try {
-            // Run the Action of the Controller
-            $response = $this->runAction($actionId, $params);
-        } catch (\Throwable $t) {
-            // Handle by ExceptionHandler
-            $response = ExceptionHandlerManager::handle($t);
-        } finally {
-            if (! $response instanceof Response) {
-                /**
-                 * If $response is not instance of Response,
-                 * usually return by Action of Controller,
-                 * then the auto() method will format the result
-                 * and return a suitable response
-                 */
-                $response = RequestContext::getResponse()->auto($response);
-            }
-        }
+        // Run the Action of the Controller
+        $response = $this->runAction($actionId, $params);
         return $response;
     }
 
