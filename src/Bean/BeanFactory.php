@@ -97,7 +97,7 @@ class BeanFactory implements BeanFactoryInterface
                 'class'            => FilterChain::class,
                 'filterUriPattern' => '${uriPattern}'
             ],
-            "lineFormate"        => [
+            "lineFormatter"        => [
                 'class'      => LineFormatter::class,
                 "format"     => '%datetime% [%level_name%] [%channel%] [logid:%logid%] [spanid:%spanid%] %messages%',
                 'dateFormat' => 'Y/m/d H:i:s'
