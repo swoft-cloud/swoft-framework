@@ -3,18 +3,18 @@
 namespace Swoft\Bean\Annotation;
 
 /**
- * 字符串验证器
+ * 字符串枚举类型验证
  *
  * @Annotation
  * @Target("METHOD")
  *
- * @uses      Str
+ * @uses      EnumString
  * @version   2017年11月13日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class Str
+class EnumString
 {
     /**
      * 字段名称
@@ -24,18 +24,11 @@ class Str
     private $name;
 
     /**
-     * 最小值
+     * 枚举值集合
      *
-     * @var int
+     * @var array
      */
-    private $min = PHP_INT_MIN;
-
-    /**
-     * 最小值
-     *
-     * @var int
-     */
-    private $max = PHP_INT_MAX;
+    private $values;
 
     /**
      * 默认值，如果是null，强制验证参数
@@ -45,7 +38,7 @@ class Str
     private $default = null;
 
     /**
-     * Integer constructor.
+     * EnumStr constructor.
      *
      * @param array $values
      */
@@ -54,11 +47,8 @@ class Str
         if (isset($values['name'])) {
             $this->name = $values['name'];
         }
-        if (isset($values['min'])) {
-            $this->min = $values['min'];
-        }
-        if (isset($values['max'])) {
-            $this->max = $values['max'];
+        if (isset($values['values'])) {
+            $this->values = $values['values'];
         }
         if (isset($values['default'])) {
             $this->default = $values['default'];
@@ -74,19 +64,11 @@ class Str
     }
 
     /**
-     * @return int
+     * @return array
      */
-    public function getMin(): int
+    public function getValues(): array
     {
-        return $this->min;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMax(): int
-    {
-        return $this->max;
+        return $this->values;
     }
 
     /**

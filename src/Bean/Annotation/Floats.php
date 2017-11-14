@@ -3,18 +3,18 @@
 namespace Swoft\Bean\Annotation;
 
 /**
- * float枚举类型验证
+ * 浮点数验证
  *
  * @Annotation
  * @Target("METHOD")
  *
- * @uses      EnumFlt
+ * @uses      Floats
  * @version   2017年11月13日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class EnumFlt
+class Floats
 {
     /**
      * 字段名称
@@ -24,11 +24,18 @@ class EnumFlt
     private $name;
 
     /**
-     * 枚举值集合
+     * 最小值
      *
-     * @var array
+     * @var float
      */
-    private $values;
+    private $min;
+
+    /**
+     * 最小值
+     *
+     * @var float
+     */
+    private $max;
 
     /**
      * 默认值，如果是null，强制验证参数
@@ -38,7 +45,7 @@ class EnumFlt
     private $default = null;
 
     /**
-     * EnumStr constructor.
+     * Integer constructor.
      *
      * @param array $values
      */
@@ -47,8 +54,11 @@ class EnumFlt
         if (isset($values['name'])) {
             $this->name = $values['name'];
         }
-        if (isset($values['values'])) {
-            $this->values = $values['values'];
+        if (isset($values['min'])) {
+            $this->min = $values['min'];
+        }
+        if (isset($values['max'])) {
+            $this->max = $values['max'];
         }
         if (isset($values['default'])) {
             $this->default = $values['default'];
@@ -64,11 +74,19 @@ class EnumFlt
     }
 
     /**
-     * @return array
+     * @return float
      */
-    public function getValues(): array
+    public function getMin(): float
     {
-        return $this->values;
+        return $this->min;
+    }
+
+    /**
+     * @return float
+     */
+    public function getMax(): float
+    {
+        return $this->max;
     }
 
     /**

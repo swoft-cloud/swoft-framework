@@ -30,7 +30,7 @@ interface RouterInterface
      */
     const SUPPORTED_METHODS = [
         'ANY',
-        'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'SEARCH', 'CONNECT', 'TRACE',
+        'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'SEARCH', 'CONNECT', 'TRACE', 'UPDATE', 'PATCH'
     ];
 
     /**

@@ -3,19 +3,20 @@
 namespace Swoft\Bean\Annotation;
 
 /**
- * 浮点数验证
+ * 字符串验证器
  *
  * @Annotation
  * @Target("METHOD")
  *
- * @uses      Flt
+ * @uses      Strings
  * @version   2017年11月13日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class Flt
+class Strings
 {
+
     /**
      * 字段名称
      *
@@ -26,21 +27,21 @@ class Flt
     /**
      * 最小值
      *
-     * @var float
+     * @var int
      */
-    private $min;
+    private $min = PHP_INT_MIN;
 
     /**
      * 最小值
      *
-     * @var float
+     * @var int
      */
-    private $max;
+    private $max = PHP_INT_MAX;
 
     /**
      * 默认值，如果是null，强制验证参数
      *
-     * @var null|float
+     * @var null|string
      */
     private $default = null;
 
@@ -74,23 +75,23 @@ class Flt
     }
 
     /**
-     * @return float
+     * @return int
      */
-    public function getMin(): float
+    public function getMin(): int
     {
         return $this->min;
     }
 
     /**
-     * @return float
+     * @return int
      */
-    public function getMax(): float
+    public function getMax(): int
     {
         return $this->max;
     }
 
     /**
-     * @return float|null
+     * @return null|string
      */
     public function getDefault()
     {

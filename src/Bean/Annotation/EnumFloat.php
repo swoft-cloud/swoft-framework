@@ -3,18 +3,18 @@
 namespace Swoft\Bean\Annotation;
 
 /**
- * 字符串枚举类型验证
+ * float枚举类型验证
  *
  * @Annotation
  * @Target("METHOD")
  *
- * @uses      EnumStr
+ * @uses      EnumFloat
  * @version   2017年11月13日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class EnumStr
+class EnumFloat
 {
     /**
      * 字段名称
@@ -33,7 +33,7 @@ class EnumStr
     /**
      * 默认值，如果是null，强制验证参数
      *
-     * @var null|string
+     * @var null|float
      */
     private $default = null;
 
@@ -72,7 +72,7 @@ class EnumStr
     }
 
     /**
-     * @return null|string
+     * @return float|null
      */
     public function getDefault()
     {
