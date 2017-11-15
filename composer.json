@@ -24,7 +24,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Swoft\\Test\\": "test/"
+      "Swoft\\Test\\": "test/TestCases"
     }
   },
   "repositories": {
@@ -36,5 +36,8 @@
   "require-dev": {
     "eaglewu/swoole-ide-helper": "dev-master",
     "phpunit/phpunit": "^5.7"
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit -c phpunit.xml"
   }
 }

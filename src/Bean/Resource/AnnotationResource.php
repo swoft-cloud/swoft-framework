@@ -22,10 +22,7 @@ class AnnotationResource extends AbstractResource
      *
      * @var array
      */
-    private $scanNamespaces
-        = [
-            'Swoft' => BASE_PATH . "/vendor/swoft/framework/src"
-        ];
+    private $scanNamespaces = [];
 
     /**
      * 已解析的bean定义
@@ -46,7 +43,7 @@ class AnnotationResource extends AbstractResource
     public function __construct(array $properties)
     {
         $this->properties = $properties;
-
+        $this->scanNamespaces['Swoft'] = dirname(__FILE__, 3);
     }
 
     /**
