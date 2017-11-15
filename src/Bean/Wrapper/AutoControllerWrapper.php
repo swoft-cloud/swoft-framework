@@ -5,6 +5,7 @@ namespace Swoft\Bean\Wrapper;
 use Swoft\Bean\Annotation\AutoController;
 use Swoft\Bean\Annotation\Inject;
 use Swoft\Bean\Annotation\RequestMapping;
+use Swoft\Bean\Annotation\View;
 
 /**
  * 路由注解封装器
@@ -44,7 +45,8 @@ class AutoControllerWrapper extends AbstractWrapper
      */
     protected $methodAnnotations
         = [
-            RequestMapping::class
+            RequestMapping::class,
+            View::class,
         ];
 
     /**

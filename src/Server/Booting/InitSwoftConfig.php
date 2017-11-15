@@ -37,9 +37,10 @@ class InitSwoftConfig implements Bootable
                 throw new \InvalidArgumentException("未配置setting启动参数，settings=" . json_encode($settings));
             }
 
-            if (isset($settings['setting']['log_file']) && StringHelper::contains($settings['setting']['log_file'], ['@'])) {
-                $logPath = $settings['setting']['log_file'];
-                $settings['setting']['log_file'] = App::getAlias($logPath);
+            foreach ($settings['setting'] as $key => &$value) {
+                if (is_string($value) && StringHelper::contains($value, ['@'])) {
+                    $value = App::getAlias($value);
+                }
             }
 
             $server->tcpSetting = $settings['tcp'];

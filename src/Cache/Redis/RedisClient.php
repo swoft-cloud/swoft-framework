@@ -68,9 +68,11 @@ class RedisClient
     public static function call(string $method, array $params)
     {
         $profileKey = self::getRedisProfile($method);
+
+        /** @var \Swoft\Pool\ConnectPool $connectPool */
         $connectPool = App::getBean(self::SERVICE_NAME);
 
-        /* @var $client RedisConnect */
+        /* @var RedisConnect $client */
         $client = $connectPool->getConnect();
         App::profileStart($profileKey);
         $result = $client->$method(...$params);
@@ -91,6 +93,7 @@ class RedisClient
     public static function deferCall(string $method, array $params)
     {
         $profileKey = self::getRedisProfile($method);
+        /** @var \Swoft\Pool\ConnectPool $connectPool */
         $connectPool = App::getBean(self::SERVICE_NAME);
 
         /* @var $client RedisConnect */

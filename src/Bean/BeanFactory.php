@@ -97,7 +97,7 @@ class BeanFactory implements BeanFactoryInterface
                 'class'            => FilterChain::class,
                 'filterUriPattern' => '${uriPattern}'
             ],
-            "lineFormate"        => [
+            "lineFormatter"        => [
                 'class'      => LineFormatter::class,
                 "format"     => '%datetime% [%level_name%] [%channel%] [logid:%logid%] [spanid:%spanid%] %messages%',
                 'dateFormat' => 'Y/m/d H:i:s'
@@ -120,12 +120,15 @@ class BeanFactory implements BeanFactoryInterface
 
     /**
      * Reload bean definitions
+     *
+     * @param array $definitions append definitions to config loader
      */
-    public static function reload()
+    public static function reload($definitions = [])
     {
         $config = new Config();
         $config->load(App::getAlias('@beans'), [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
-        $definitions = $config->toArray();
-        new self($definitions);
+        $configDefinitions = $config->toArray();
+        $mergedDdefinitions = ArrayHelper::merge($configDefinitions, $definitions);
+        new self($mergedDdefinitions);
     }
 }
