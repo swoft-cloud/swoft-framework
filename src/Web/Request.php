@@ -67,7 +67,7 @@ class Request extends Psr7Request implements ServerRequestInterface
         $uri = self::getUriFromGlobals($swooleRequest);
         $body = new SwooleStream($swooleRequest->rawContent());
         $protocol = isset($server['server_protocol']) ? str_replace('HTTP/', '', $server['server_protocol']) : '1.1';
-        $request = new self($method, $uri, $headers, $body, $protocol, $swooleRequest->server);
+        $request = new static($method, $uri, $headers, $body, $protocol, $swooleRequest->server);
         return $request->withCookieParams($swooleRequest->cookie ?? [])
                        ->withQueryParams($swooleRequest->get ?? [])
                        ->withParsedBody($swooleRequest->post ?? [])

@@ -17,6 +17,14 @@ use Swoft\Event\Event;
  */
 class InitApplicationContext
 {
+
+    /**
+     * Route file path
+     *
+     * @var string
+     */
+    public $routePath = BASE_PATH . '/app/routes.php';
+
     /**
      * 初始化
      */
@@ -54,6 +62,6 @@ class InitApplicationContext
      */
     private function autoloadRoutes()
     {
-        require_once BASE_PATH . '/app/routes.php';
+        require_once $this->routePath;
     }
 }
