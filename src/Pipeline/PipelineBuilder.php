@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Web\Pipeline;
+namespace Swoft\Pipeline;
 
 
 /**
@@ -21,7 +21,7 @@ class PipelineBuilder
     /**
      * Add an stage.
      *
-     * @param \Swoft\Web\Pipeline\ProcessorInterface $stage
+     * @param \Swoft\Pipeline\ProcessorInterface $stage
      * @return $this
      */
     public function add($stage)

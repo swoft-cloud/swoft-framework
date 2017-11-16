@@ -1,18 +1,18 @@
 <?php
 
-namespace Swoft\Test\Base\Pipeline;
+namespace Swoft\Test\Pipeline\Pipeline;
 
-use Swoft\Web\Pipeline\AbstractProcessor;
+use Swoft\Pipeline\AbstractProcessor;
 
 
 /**
- * @uses      ExceptionProcessor
+ * @uses      TestProcessor
  * @version   2017年11月15日
  * @author    huangzhhui <huangzhwork@gmail.com>
  * @copyright Copyright 2010-2017 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class ExceptionProcessor extends AbstractProcessor
+class TestProcessor extends AbstractProcessor
 {
 
     /**
@@ -21,6 +21,6 @@ class ExceptionProcessor extends AbstractProcessor
      */
     public function process($payload)
     {
-        throw new \RuntimeException();
+        return $payload + 1;
     }
 }

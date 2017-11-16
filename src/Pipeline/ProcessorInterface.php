@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Web\Pipeline;
+namespace Swoft\Pipeline;
 
 
 /**
