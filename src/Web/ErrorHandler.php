@@ -45,7 +45,7 @@ class ErrorHandler
      * @param string $code
      * @param string $message
      * @param string $file
-     * @param int    $line
+     * @param int $line
      */
     public function handlerError($code, $message, $file, $line)
     {
@@ -59,7 +59,7 @@ class ErrorHandler
     public function handlerFatalError()
     {
         $error = error_get_last();
-        if (!empty($error)) {
+        if (! empty($error)) {
             $exception = new \ErrorException($error['message'], $error['type'], $error['type'], $error['file'], $error['line']);
             $this->renderException($exception);
         }
@@ -69,7 +69,6 @@ class ErrorHandler
      * 显示错误
      *
      * @param \Throwable $exception
-     *
      * @throws \Throwable
      */
     public function renderException(\Throwable $exception)
@@ -91,7 +90,8 @@ class ErrorHandler
             $response->setException($exception);
 
             $errorAction = App::$app->getErrorAction();
-            App::$app->runController($errorAction);
+            $request = RequestContext::getRequest()->withMethod('GET')->getUri()->withPath($errorAction);
+            App::$app->dispatch($request);
         }
     }
 }

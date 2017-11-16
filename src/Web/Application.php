@@ -2,6 +2,7 @@
 
 namespace Swoft\Web;
 
+use Psr\Http\Message\ResponseInterface;
 use Swoft\App;
 use Swoft\Base\RequestContext;
 use Swoft\Event\Event;
@@ -9,6 +10,8 @@ use Swoft\Exception\Http\RouteNotFoundException;
 use Swoft\Filter\FilterChain;
 use Swoft\Helper\ResponseHelper;
 use Swoft\Web\ExceptionHandler\ExceptionHandlerManager;
+use Swoft\Web\Middlewares;
+use Swoft\Web\Middlewares\PowerByMiddlewre;
 
 /**
  * 应用主体
@@ -21,22 +24,27 @@ use Swoft\Web\ExceptionHandler\ExceptionHandlerManager;
  */
 class Application extends \Swoft\Base\Application
 {
+
+    /**
+     * Define the middlewares stack
+     *
+     * @var array
+     */
+    protected $middlewares
+        = [
+            Middlewares\FaviconIco::class,
+            Middlewares\PoweredBy::class,
+        ];
+
     /**
      * handle request
      *
-     * @param \Swoole\Http\Request  $request  Swoole request object
+     * @param \Swoole\Http\Request $request Swoole request object
      * @param \Swoole\Http\Response $response Swoole response object
-     * @return bool
+     * @return bool|\Swoft\Base\Response
      */
     public function doRequest(\Swoole\Http\Request $request, \Swoole\Http\Response $response)
     {
-        // Fix Chrome ico request bug
-        // TODO: Add Middleware mechanisms and move "fix the Chrome ico request bug" to middleware
-        if (isset($request->server['request_uri']) && $request->server['request_uri'] === '/favicon.ico') {
-            $response->end('favicon.ico');
-            return false;
-        }
-
         try {
             // Initialize Request and Response and set to RequestContent
             RequestContext::setRequest($request);
@@ -45,20 +53,15 @@ class Application extends \Swoft\Base\Application
             // Trigger 'Before Request' event
             App::trigger(Event::BEFORE_REQUEST);
 
-            $swfRequest = RequestContext::getRequest();
-            // Get URI and Method from request
-            $uri = $swfRequest->getUri()->getPath();
-            $method = $swfRequest->getMethod();
+            $actionResponse = $this->dispatch(RequestContext::getRequest());
 
-            // Run action of Controller by URI and Method
-            $actionResponse = $this->runController($uri, $method);
         } catch (\Throwable $t) {
             // Handle by ExceptionHandler
             $actionResponse = ExceptionHandlerManager::handle($t);
         } finally {
             if (! $actionResponse instanceof Response) {
                 /**
-                 * If $response is not instance of Response,
+                 * If $response is not an instance of Response,
                  * usually return by Action of Controller,
                  * then the auto() method will format the result
                  * and return a suitable response
@@ -71,15 +74,17 @@ class Application extends \Swoft\Base\Application
             // Trigger 'After Request' event
             App::trigger(Event::AFTER_REQUEST);
         }
+        //
+        return $actionResponse;
     }
 
     /**
      * rpc内部服务
      *
      * @param \Swoole\Server $server
-     * @param int            $fd
-     * @param int            $from_id
-     * @param string         $data
+     * @param int $fd
+     * @param int $from_id
+     * @param string $data
      */
     public function doReceive(\Swoole\Server $server, int $fd, int $from_id, string $data)
     {
@@ -137,8 +142,8 @@ class Application extends \Swoft\Base\Application
      * run controller with Filters
      *
      * @param Controller $controller 控制器
-     * @param string     $actionId   actionID
-     * @param array      $params     action参数
+     * @param string $actionId actionID
+     * @param array $params action参数
      * @return \Swoft\Web\Response
      */
     private function runControllerWithFilters(Controller $controller, string $actionId, array $params)
@@ -157,6 +162,47 @@ class Application extends \Swoft\Base\Application
             $response = $controller->run($actionId, $params);
             return $response;
         }
+    }
+
+    /**
+     * @param Request $request
+     * @return array
+     */
+    protected function route(Request $request): array
+    {
+        /* @var Router $router */
+        $router = App::getBean('router');
+
+        $uri = $request->getUri()->getPath();
+        $method = $request->getMethod();
+
+        App::profileStart("router.match");
+
+        $route = $router->match($uri, $method);
+
+        RequestContext::setContextDataByKey('route', $route);
+        App::profileEnd("router.match");
+        return $route;
+    }
+
+    /**
+     * @param Request $request
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    public function dispatch(Request $request): ResponseInterface
+    {
+        list($path, $info) = $this->route($request);
+
+        // TODO: Add by @Middleware()
+        $userMiddlewares = [];
+
+        $middlewares = array_merge($this->middlewares, $userMiddlewares);
+
+        // Dispatch request through middlewares and terminators,
+        // if throw an exception in process will stop the
+        $dispatcher = new Dispatcher($middlewares);
+        $actionResponse = $dispatcher->dispatch($request);
+        return $actionResponse;
     }
 
 }
