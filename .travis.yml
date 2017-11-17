@@ -5,6 +5,7 @@ php:
   - 7.1
 
 before_script:
+  - chmod 0777 ./install_dependencies.sh
   - ./install_dependencies.sh
   - composer install --dev
 
