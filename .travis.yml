@@ -2,11 +2,12 @@ sudo: required
 
 language: php
 
-services:
-  - docker
+php:
+  - 7.0
+  - 7.1
 
 before_script:
-  - docker build -t swoft/framework .
-  - docker run swoft/framework /bin/sh -c "cd /var/www/swoft; /var/www/swoft/vendor/bin/phpunit -c /var/www/swoft/phpunit.xml"
+  - ./install_dependencies.sh
+  - composer install --dev
 
 script: composer test
