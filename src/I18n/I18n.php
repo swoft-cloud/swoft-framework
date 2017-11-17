@@ -39,6 +39,9 @@ class I18n
     public function init()
     {
         $sourcePath = App::getAlias($this->sourceLanguage);
+        if (! is_readable($sourcePath)) {
+            return;
+        }
         $iterator = new \RecursiveDirectoryIterator($sourcePath);
         $files = new \RecursiveIteratorIterator($iterator);
         foreach ($files as $file) {

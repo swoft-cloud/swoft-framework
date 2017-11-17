@@ -35,7 +35,7 @@ class HttpExceptionHandler extends AbstractHandler
     {
         $exception = $this->getException();
         $this->setStatusCode($exception->getCode());
-        $exception->getMessage() && $this->setMessage($exception);
+        $exception->getMessage() && $this->setMessage($exception->getMessage());
         return $this;
     }
 }

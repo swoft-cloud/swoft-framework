@@ -5,8 +5,10 @@ namespace Swoft\Web;
 use Swoft\App;
 use Swoft\Base\RequestContext;
 use Swoft\Event\Event;
+use Swoft\Exception\Http\RouteNotFoundException;
 use Swoft\Filter\FilterChain;
 use Swoft\Helper\ResponseHelper;
+use Swoft\Web\ExceptionHandler\ExceptionHandlerManager;
 
 /**
  * 应用主体
@@ -35,31 +37,40 @@ class Application extends \Swoft\Base\Application
             return false;
         }
 
-        // Initialize Request and Response and set to RequestContent
-        RequestContext::setRequest($request);
-        RequestContext::setResponse($response);
+        try {
+            // Initialize Request and Response and set to RequestContent
+            RequestContext::setRequest($request);
+            RequestContext::setResponse($response);
 
-        // Trigger 'Before Request' event
-        App::trigger(Event::BEFORE_REQUEST);
+            // Trigger 'Before Request' event
+            App::trigger(Event::BEFORE_REQUEST);
 
-        $swfRequest = RequestContext::getRequest();
-        // Get URI and Method from request
-        $uri = $swfRequest->getUri()->getPath();
-        $method = $swfRequest->getMethod();
+            $swfRequest = RequestContext::getRequest();
+            // Get URI and Method from request
+            $uri = $swfRequest->getUri()->getPath();
+            $method = $swfRequest->getMethod();
 
-        // Run action of Controller by URI and Method
-        $actionResponse = $this->runController($uri, $method);
+            // Run action of Controller by URI and Method
+            $actionResponse = $this->runController($uri, $method);
+        } catch (\Throwable $t) {
+            // Handle by ExceptionHandler
+            $actionResponse = ExceptionHandlerManager::handle($t);
+        } finally {
+            if (! $actionResponse instanceof Response) {
+                /**
+                 * If $response is not instance of Response,
+                 * usually return by Action of Controller,
+                 * then the auto() method will format the result
+                 * and return a suitable response
+                 */
+                $actionResponse = RequestContext::getResponse()->auto($actionResponse);
+            }
+            // Handle Response
+            $actionResponse->send();
 
-        // Invalid Response was provided
-        if (! $actionResponse instanceof \Swoft\Base\Response) {
-            return false;
+            // Trigger 'After Request' event
+            App::trigger(Event::AFTER_REQUEST);
         }
-
-        // Handle Response
-        $actionResponse->send();
-
-        // Trigger 'After Request' event
-        App::trigger(Event::AFTER_REQUEST);
     }
 
     /**
@@ -112,7 +123,7 @@ class Application extends \Swoft\Base\Application
 
         // 路由未定义处理
         if ($info == null) {
-            throw new \RuntimeException("路由不存在，uri=" . $uri . " method=" . $method);
+            throw new RouteNotFoundException("Route not found");
         }
 
         /* @var Controller $controller */
