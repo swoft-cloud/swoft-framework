@@ -5,7 +5,7 @@ php:
   - 7.1
 
 before_script:
-  - wget https://github.com/redis/hiredis/archive/v0.13.3.tar.gz -O hiredis.tar.gz && mkdir -p hiredis && tar -xf hiredis.tar.gz -C hiredis --strip-components=1 & rm hiredis.tar.gz && cd hiredis && make -j$(nproc) && make install && ldconfig
+  - wget https://github.com/redis/hiredis/archive/v0.13.3.tar.gz -O hiredis.tar.gz && mkdir -p hiredis && tar -xf hiredis.tar.gz -C hiredis --strip-components=1 && cd hiredis && make -j$(nproc) && make install && ldconfig
   - chmod 0777 ./install_dependencies.sh
   - ./install_dependencies.sh
   - composer install --dev
