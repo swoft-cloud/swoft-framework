@@ -62,7 +62,7 @@ class Process
         AbstractServer $server,
         string $processName,
         string $processClassName
-    ): ?SwooleProcess
+    )
     {
         // 不存在
         if (! class_exists($processClassName)) {
