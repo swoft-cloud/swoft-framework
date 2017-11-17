@@ -150,7 +150,7 @@ class Response extends \Swoft\Base\Response
     /**
      * 处理 Response 并发送数据
      */
-    public function send(): void
+    public function send()
     {
         $response = $this;
 
