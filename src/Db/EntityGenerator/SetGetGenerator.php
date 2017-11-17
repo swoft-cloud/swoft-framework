@@ -2,6 +2,8 @@
 
 namespace Swoft\Db\EntityGenerator;
 
+use Swoft\App;
+
 /**
  * Stub操作类 
  *
@@ -15,7 +17,7 @@ namespace Swoft\Db\EntityGenerator;
 class SetGetGenerator
 {
     /**
-     * @var $folder 模板目录
+     * @var string $folder 模板目录
      */
     public $folder = 'stub';
     
@@ -86,7 +88,7 @@ class SetGetGenerator
 
         $this->parseFields($fields);
 
-        var_dump(str_replace([
+        $entityFile = str_replace([
             '{{uses}}',
             '{{extends}}',
             '{{entity}}',
@@ -106,8 +108,9 @@ class SetGetGenerator
             $this->propertyStub,
             $this->setterStub,
             $this->getterStub
-        ], $entityStub));
-        exit;
+        ], $entityStub);
+
+        file_put_contents(App::getAlias('@entityPath')."/{$entityClass}.php", $entityFile);
     }
 
     /**
@@ -140,18 +143,39 @@ class SetGetGenerator
         $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
         $required = $primaryKey ? false : ($fieldInfo['nullable'] === 'NO' ? true : false);
         $default = !empty($fieldInfo['default']) ? $fieldInfo['default'] : false;
-        // TODO 后期调整优化
-        $type = $fieldInfo['type'] == 'int' ? 'TYPES::INT' : 'TYPES::STRING';
-        $this->propertyStub .= str_replace([
+        $dbType = isset(Maps::DB_MAPPING[$fieldInfo['type']]) ? Maps::DB_MAPPING[$fieldInfo['type']] : '' ;
+        $phpType = isset(Maps::PHP_MAPPING[$fieldInfo['type']]) ? Maps::PHP_MAPPING[$fieldInfo['type']] : 'mixed' ;
+        $length = $fieldInfo['length'];
+        $columnType = $fieldInfo['column_type'];
+        $comment = $fieldInfo['column_comment'];
+        $isEnum = strpos($columnType, 'enum') === false ? false : true;
+        if ($isEnum) {
+           preg_match_all("/enum\((.*?)\)/", $columnType, $matches); 
+           $enumParam = $matches[1][0];
+           $enumParam = str_replace('\'', '"', $enumParam);
+        }
+
+        $formatComment = "     * @var {$phpType} \${$property} {$comment}\n";
+        if (!empty($comment)) {
+            $formatComment = "     * @var {$phpType} \${$property}\n";
+        }
+
+        $this->propertyStub .= PHP_EOL . str_replace([
+            "{{comment}}\n",
             "{{@Id}}\n",
             '{{property}}',
             '{{type}}',
+            '{{length}}',
+            "{{@Enum}}\n",
             "{{@Required}}\n",
             '{{hasDefault}}'
         ], [
+            $formatComment,
             $primaryKey ? "     * @Id()\n" : '',
             $property,
-            $type,
+            !empty($dbType) ? $dbType : (is_int($default) ? '"int"' : '"string"'),
+            $length !== null ? ", length={$length}" : '',
+            $isEnum ? "     * @Enum(value={{$enumParam}})\n" : '',
             $required ? "     * @Required()\n" : '',
             $default !== false ? " = {$default};" : ($required ? ' = \'\';' : ';')
         ], $propertyStub);
@@ -167,17 +191,19 @@ class SetGetGenerator
     private function parseSetter(string $setterStub, array $fieldInfo)
     {
         $function = 'set' . ucfirst($fieldInfo['name']);
+        $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
         $attribute = $fieldInfo['name'];
-        // TODO 后期调整优化
-        $type = $fieldInfo['type'] == 'int' ? 'int' : 'string';
-        $this->setterStub .= str_replace([
+        $type = isset(Maps::PHP_MAPPING[$fieldInfo['type']]) ? Maps::PHP_MAPPING[$fieldInfo['type']] : 'mixed' ;
+        $this->setterStub .= PHP_EOL . str_replace([
             '{{function}}',
             '{{attribute}}',
-            '{{type}}'
+            '{{type}}',
+            '{{hasReturnType}}'
         ], [
             $function,
             $attribute,
-            $type
+            $type !== 'mixed' ? "{$type} " : '',
+            $primaryKey ? '' : ': self'
         ], $setterStub);
     }
 
@@ -192,16 +218,18 @@ class SetGetGenerator
     {
         $function = 'get' . ucfirst($fieldInfo['name']);
         $attribute = $fieldInfo['name'];
-        // TODO 后期调整优化
-        $returnType = $fieldInfo['type'] == 'int' ? 'int' : 'string';
-        $this->getterStub .= str_replace([
+        $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
+        $returnType = isset(Maps::PHP_MAPPING[$fieldInfo['type']]) ? Maps::PHP_MAPPING[$fieldInfo['type']] : 'mixed' ;
+        $this->getterStub .= PHP_EOL . str_replace([
             '{{function}}',
             '{{attribute}}',
-            '{{returnType}}'
+            '{{coReturnType}}',
+            '{{returnType}}',
         ], [
             $function,
             $attribute,
-            $returnType
+            $returnType,
+            $returnType !== 'mixed' && !$primaryKey ? ": {$returnType}" : '',
         ], $getterStub);
     }
 
