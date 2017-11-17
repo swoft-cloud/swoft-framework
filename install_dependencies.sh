@@ -1,3 +1,4 @@
+#!/bin/sh
 cd .
 wget https://github.com/redis/hiredis/archive/v0.13.3.tar.gz -O hiredis.tar.gz
 mkdir -p hiredis
