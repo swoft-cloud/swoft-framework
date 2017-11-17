@@ -9,9 +9,6 @@ before_script:
 
   - wget https://github.com/swoole/swoole-src/archive/v2.0.10-beta.tar.gz -O swoole.tar.gz && mkdir -p swoole && tar -xf swoole.tar.gz -C swoole --strip-components=1 && cd swoole && sudo phpize && sudo ./configure --enable-async-redis --enable-mysqlnd --enable-coroutine && sudo make -j$(nproc) && sudo make install
   - echo "extension = swoole.so" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-
-  - chmod 0777 ./install_dependencies.sh
-  - ./install_dependencies.sh
   - composer install --dev
 
 script: composer test
