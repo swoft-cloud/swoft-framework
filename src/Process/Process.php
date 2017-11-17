@@ -62,8 +62,7 @@ class Process
         AbstractServer $server,
         string $processName,
         string $processClassName
-    )
-    {
+    ) {
         // 不存在
         if (! class_exists($processClassName)) {
             throw new \InvalidArgumentException('自定义进程不存在，className=' . $processClassName);
