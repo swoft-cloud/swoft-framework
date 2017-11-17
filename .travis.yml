@@ -1,11 +1,12 @@
+sudo: required
+
 language: php
 
-php:
-  - 7.0
-  - 7.1
+services:
+  - docker
 
 before_script:
-  - pecl install swoole
-  - composer install --dev --prefer-source
+  - docker build -t swoft/framework .
+  - docker run swoft/framework /bin/sh -c "cd /var/www/swoft; composer test"
 
 script: composer test
