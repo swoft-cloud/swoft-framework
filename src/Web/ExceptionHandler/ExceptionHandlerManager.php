@@ -71,7 +71,7 @@ class ExceptionHandlerManager
     /**
      * Init $queue property, and add the default handlers to queue
      */
-    protected static function initQueue(): void
+    protected static function initQueue()
     {
         if (! self::$queue instanceof \SplPriorityQueue) {
             self::$queue = new \SplPriorityQueue();
