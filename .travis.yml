@@ -7,6 +7,6 @@ services:
 
 before_script:
   - docker build -t swoft/framework .
-  - docker run swoft/framework /bin/sh -c "cd /var/www/swoft; composer test"
+  - docker run swoft/framework /bin/sh -c "cd /var/www/swoft; /var/www/swoft/vendor/bin/phpunit -c /var/www/swoft/phpunit.xml"
 
 script: composer test
