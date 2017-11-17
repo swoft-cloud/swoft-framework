@@ -1,13 +1,4 @@
 #!/bin/sh
-cd .
-wget https://github.com/redis/hiredis/archive/v0.13.3.tar.gz -O hiredis.tar.gz
-mkdir -p hiredis
-tar -xf hiredis.tar.gz -C hiredis --strip-components=1 & rm hiredis.tar.gz
-cd hiredis
-make -j$(nproc)
-make install
-ldconfig
-rm -r hiredis
 
 cd .
 wget https://github.com/swoole/swoole-src/archive/v2.0.10-beta.tar.gz -O swoole.tar.gz \
