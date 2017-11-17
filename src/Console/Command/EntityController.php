@@ -22,9 +22,14 @@ class EntityController extends ConsoleCommand
 {
 
     /**
-     * 实体实例
+     * @var GeneratorEntity $generatorEntity 实体实例
      */
     private $generatorEntity;
+
+    /**
+     * @var string $filePath 实体文件路径
+     */
+    private $filePath = '@app/Models/Entity';
 
     /**
      * 初始化
@@ -37,10 +42,11 @@ class EntityController extends ConsoleCommand
         parent::__construct($input, $output);
         
         // 初始化相关内容
-       BeanFactory::reload();
-       $pool = App::getBean('dbSlave');
-       $syncDbConnect = $pool->createConnect();
-       $this->generatorEntity = new GeneratorEntity($syncDbConnect);
+        BeanFactory::reload();
+        App::setAlias('@entityPath', $this->filePath);
+        $pool = App::getBean('dbSlave');
+        $syncDbConnect = $pool->createConnect();
+        $this->generatorEntity = new GeneratorEntity($syncDbConnect);
     }
 
     /**
@@ -77,12 +83,12 @@ class EntityController extends ConsoleCommand
     /**
      * 解析需要扫描的数据库
      *
-     * @param &$database 需要扫描的数据库
+     * @param string &$database 需要扫描的数据库
      */
-    private function parseDatabaseCommand(&$database)
+    private function parseDatabaseCommand(string &$database)
     {
         if ($this->input->hasSOpt('d') || $this->input->hasLOpt('database')) {
-        $database = $this->input->hasSOpt('d') ? $this->input->getShortOpt('d') : $this->input->getLongOpt('database');
+            $database = $this->input->hasSOpt('d') ? $this->input->getShortOpt('d') : $this->input->getLongOpt('database');
         }
     }
 
@@ -94,8 +100,8 @@ class EntityController extends ConsoleCommand
     private function parseEnableTablesCommand(&$tablesenabled)
     {
         if ($this->input->hasSOpt('i') || $this->input->hasLOpt('include')) {
-        $tablesenabled = $this->input->hasSOpt('i') ? $this->input->getShortOpt('i') : $this->input->getLongOpt('include');
-        $tablesenabled = !empty($tablesenabled) ? explode(',', $tablesenabled) : [];
+            $tablesenabled = $this->input->hasSOpt('i') ? $this->input->getShortOpt('i') : $this->input->getLongOpt('include');
+            $tablesenabled = !empty($tablesenabled) ? explode(',', $tablesenabled) : [];
         }
 
         // 参数优先级大于选项
@@ -112,8 +118,8 @@ class EntityController extends ConsoleCommand
     private function parseDisableTablesCommand(&$tablesdisabled)
     {
         if ($this->input->hasSOpt('e') || $this->input->hasLOpt('exclude')) {
-        $tablesdisabled = $this->input->hasSOpt('e') ? $this->input->getShortOpt('e') : $this->input->getLongOpt('exclude');
-        $tablesdisabled = !empty($tablesdisabled) ? explode(',', $tablesdisabled) : [];
+            $tablesdisabled = $this->input->hasSOpt('e') ? $this->input->getShortOpt('e') : $this->input->getLongOpt('exclude');
+            $tablesdisabled = !empty($tablesdisabled) ? explode(',', $tablesdisabled) : [];
         }
     }
 }

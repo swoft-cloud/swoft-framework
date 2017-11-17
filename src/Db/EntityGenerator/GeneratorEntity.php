@@ -106,7 +106,7 @@ class GeneratorEntity extends AbstractGeneratorEntity implements IGeneratorEntit
         $where[] = "TABLE_SCHEMA = '{$this->db}'";
         $where = !empty($where) ? ' WHERE ' . implode(' AND ', $where) : null; 
 
-        $querySql = "SELECT `COLUMN_NAME` as `name`,`DATA_TYPE` as `type`,`CHARACTER_MAXIMUM_LENGTH` as `length`,`COLUMN_DEFAULT` as `default` ,`COLUMN_KEY` as `key`,`IS_NULLABLE` as `nullable` FROM {$schemaTable} {$where}";
+        $querySql = "SELECT `COLUMN_NAME` as `name`,`DATA_TYPE` as `type`,`CHARACTER_MAXIMUM_LENGTH` as `length`,`COLUMN_DEFAULT` as `default` ,`COLUMN_KEY` as `key`,`IS_NULLABLE` as `nullable`,`COLUMN_TYPE` as `column_type`,`COLUMN_COMMENT` as `column_comment` FROM {$schemaTable} {$where}";
         $this->dbHandler->prepare($querySql);
         $columns = $this->dbHandler->execute([]);
 

@@ -19,4 +19,13 @@ interface IGeneratorEntity
      * @return array
      */
     public function getSchemaTables();
+
+    /**
+     * 获取当前表的所有字段信息
+     *
+     * @param string $table 表名
+     *
+     * @return array
+     */
+    public function getTableColumns(string $table);
 }
