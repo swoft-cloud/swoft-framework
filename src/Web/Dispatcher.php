@@ -5,6 +5,7 @@ namespace Swoft\Web;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoft\Bean\Annotation\Bean;
+use Swoft\Bean\Annotation\Inject;
 use Swoft\Web\Middlewares\ControllerMiddleware;
 use Swoft\Web\Middlewares\MiddlewareCollection;
 use Swoft\Web\Middlewares\RequestHandler;
@@ -21,53 +22,21 @@ class Dispatcher
 {
 
     /**
-     * @var array
-     */
-    protected $middlewares = [];
-
-    /**
      * @var string
      */
     protected $defaultHandler = ControllerMiddleware::class;
 
     /**
-     * Dispatcher constructor.
-     *
-     * @param array $middlewares
-     */
-    public function __construct(array $middlewares = [])
-    {
-        $this->middlewares = $middlewares;
-    }
-
-    /**
      * Dispatch the request
      *
      * @param ServerRequestInterface $request
-     * @return \Psr\Http\Message\ResponseInterface
+     * @param array $middlewares
+     * @return ResponseInterface
      */
-    public function dispatch(ServerRequestInterface $request): ResponseInterface
+    public function dispatch(ServerRequestInterface $request, $middlewares = []): ResponseInterface
     {
-        $response = (new RequestHandler($this->middlewares, $this->getDefaultHandler()))->handle($request);
+        $response = (new RequestHandler($middlewares, $this->defaultHandler))->handle($request);
         return $response;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDefaultHandler(): string
-    {
-        return $this->defaultHandler;
-    }
-
-    /**
-     * @param string $defaultHandler
-     * @return Dispatcher
-     */
-    public function setDefaultHandler(string $defaultHandler)
-    {
-        $this->defaultHandler = $defaultHandler;
-        return $this;
     }
 
 }

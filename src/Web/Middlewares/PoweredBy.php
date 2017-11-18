@@ -33,13 +33,4 @@ class PoweredBy implements MiddlewareInterface
         return $response->withAddedHeader('X-Powered-By', 'Swoft');
     }
 
-    /**
-     * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Psr\Http\Message\ResponseInterface $response
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public function terminate(ServerRequestInterface $request, ResponseInterface $response): ResponseInterface
-    {
-        return $response->withAddedHeader('X-Powered-By', 'Swoft');
-    }
 }

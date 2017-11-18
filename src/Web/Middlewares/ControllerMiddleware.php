@@ -133,12 +133,11 @@ class ControllerMiddleware implements MiddlewareInterface
         $action = '';
         $className = $segments[0];
 
-        // Already assign action
         if (isset($segments[1])) {
+            // Already assign action
             $action = $segments[1];
-
-            // use dynamic action
         } elseif (isset($matches[0])) {
+            // use dynamic action
             $action = array_shift($matches);
         }
 

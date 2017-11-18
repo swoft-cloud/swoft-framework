@@ -200,8 +200,9 @@ class Application extends \Swoft\Base\Application
 
         // Dispatch request through middlewares and terminators,
         // if throw an exception in process will stop the
-        $dispatcher = new Dispatcher($middlewares);
-        $actionResponse = $dispatcher->dispatch($request);
+        /** @var Dispatcher $dispatcher */
+        $dispatcher = App::getBean(Dispatcher::class);
+        $actionResponse = $dispatcher->dispatch($request, $middlewares);
         return $actionResponse;
     }
 
