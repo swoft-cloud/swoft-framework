@@ -35,7 +35,6 @@ class Application extends \Swoft\Base\Application
         = [
             Middlewares\FaviconIco::class,
             Middlewares\PoweredBy::class,
-            Middlewares\FiltersMiddleware::class,
         ];
 
     /**
@@ -61,7 +60,7 @@ class Application extends \Swoft\Base\Application
             // Handle by ExceptionHandler
             $actionResponse = ExceptionHandlerManager::handle($t);
         } finally {
-            if (! $actionResponse instanceof Response) {
+            if (!$actionResponse instanceof Response) {
                 /**
                  * If $response is not an instance of Response,
                  * usually return by Action of Controller,
