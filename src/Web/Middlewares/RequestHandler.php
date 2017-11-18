@@ -30,7 +30,7 @@ class RequestHandler implements RequestHandlerInterface
      * @param array $middleware
      * @param string $default
      */
-    public function __construct(array $middleware, $default)
+    public function __construct(array $middleware, string $default)
     {
         $this->middlewares = $middleware;
         $this->default = $default;

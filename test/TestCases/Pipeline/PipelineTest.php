@@ -25,11 +25,11 @@ class PipelineTest extends AbstractTestCase
     {
         // 一般流程测试
         $pipeline = new Pipeline();
-        $result = $pipeline->add(TestProcessor::class)->add([TestProcessor::class, 'process'])->add(function ($payload
+        $result = $pipeline->add(TestProcessor::class)->add(function ($payload
         ) {
             return $payload + 1;
         })->process(1);
-        $this->assertEquals(4, $result);
+        $this->assertEquals(3, $result);
 
         // add 方法隔离测试
         $result = $pipeline->add(TestProcessor::class)->process(1);
@@ -38,15 +38,14 @@ class PipelineTest extends AbstractTestCase
         // 批量设置 Processors 测试
         $pipeline = new Pipeline([
             TestProcessor::class,
-            [TestProcessor::class, 'process'],
             function ($payload) {
                 return $payload + 1;
             },
         ]);
         $result = $pipeline->process(1);
-        $this->assertEquals(4, $result);
+        $this->assertEquals(3, $result);
         $result = $pipeline->add(TestProcessor::class)->process(1);
-        $this->assertEquals(5, $result);
+        $this->assertEquals(4, $result);
     }
 
     /**

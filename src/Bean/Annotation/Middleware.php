@@ -3,11 +3,12 @@
 namespace Swoft\Bean\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
+use Swoft\Helper\StringHelper;
 
 
 /**
  * @Annotation
- * @Target({"METHOD"})
+ * @Target({"ALL"})
  * @uses      Middleware
  * @version   2017年11月16日
  * @author    huangzhhui <huangzhwork@gmail.com>
@@ -30,11 +31,20 @@ class Middleware
     public function __construct(array $values)
     {
         if (isset($values['value'])) {
-            $this->class = $values['value'];
+            $this->class = $this->ltrimClass($values['value']);
         }
         if (isset($values['class'])) {
-            $this->class = $values['class'];
+            $this->class = $this->ltrimClass($values['class']);
         }
+    }
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    protected function ltrimClass(string $value)
+    {
+        return StringHelper::startsWith($value, '\\') ? substr($value, 1) : $value;
     }
 
     /**

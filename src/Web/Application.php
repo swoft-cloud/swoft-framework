@@ -5,6 +5,7 @@ namespace Swoft\Web;
 use Psr\Http\Message\ResponseInterface;
 use Swoft\App;
 use Swoft\Base\RequestContext;
+use Swoft\Bean\Collector;
 use Swoft\Event\Event;
 use Swoft\Exception\Http\RouteNotFoundException;
 use Swoft\Filter\FilterChain;
@@ -193,12 +194,29 @@ class Application extends \Swoft\Base\Application
     {
         list($path, $info) = $this->route($request);
 
-        // TODO: Add by @Middleware()
         $userMiddlewares = [];
 
-        $middlewares = array_merge($this->middlewares, $userMiddlewares);
+        if (isset($info['handler'])) {
+            // Extract action info from router handler
+            $exploded = explode('@', $info['handler']);
+            $controllerClass = $exploded[0] ?? '';
+            $action = isset($exploded[1]) ? 'action' . ucfirst($exploded[1]) : '';
+            $collectedMiddlewares = Collector::$requestMapping[$controllerClass]['middlewares'];
+            // Get group middleware from Collector
+            if ($controllerClass) {
+                $collect = $collectedMiddlewares['group'] ?? [];
+                $collect && $userMiddlewares = array_merge($userMiddlewares, $collect);
+            }
+            // Get the specified action middleware from Collector
+            if ($action) {
+                $collect = $collectedMiddlewares['actions'][$action];
+                $collect && $userMiddlewares = array_merge($userMiddlewares, $collect ?? []);
+            }
+        }
 
-        // Dispatch request through middlewares and terminators,
+        $middlewares = array_merge($this->middlewares, (array)$userMiddlewares);
+
+        // Dispatch request through middlewares,
         // if throw an exception in process will stop the
         /** @var Dispatcher $dispatcher */
         $dispatcher = App::getBean(Dispatcher::class);
