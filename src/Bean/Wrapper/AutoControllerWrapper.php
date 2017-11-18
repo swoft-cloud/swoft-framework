@@ -4,6 +4,8 @@ namespace Swoft\Bean\Wrapper;
 
 use Swoft\Bean\Annotation\AutoController;
 use Swoft\Bean\Annotation\Inject;
+use Swoft\Bean\Annotation\Middleware;
+use Swoft\Bean\Annotation\Middlewares;
 use Swoft\Bean\Annotation\RequestMapping;
 use Swoft\Bean\Annotation\View;
 
@@ -25,7 +27,9 @@ class AutoControllerWrapper extends AbstractWrapper
      */
     protected $classAnnotations
         = [
-            AutoController::class
+            AutoController::class,
+            Middlewares::class,
+            Middleware::class,
         ];
 
     /**
@@ -47,6 +51,8 @@ class AutoControllerWrapper extends AbstractWrapper
         = [
             RequestMapping::class,
             View::class,
+            Middlewares::class,
+            Middleware::class,
         ];
 
     /**
@@ -82,6 +88,6 @@ class AutoControllerWrapper extends AbstractWrapper
      */
     public function isParseMethodAnnotations(array $annotations)
     {
-        return isset($annotations[RequestMapping::class]);
+        return true;
     }
 }
