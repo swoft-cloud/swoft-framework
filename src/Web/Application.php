@@ -35,6 +35,7 @@ class Application extends \Swoft\Base\Application
         = [
             Middlewares\FaviconIco::class,
             Middlewares\PoweredBy::class,
+            Middlewares\FiltersMiddleware::class,
         ];
 
     /**

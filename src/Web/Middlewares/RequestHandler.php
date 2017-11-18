@@ -32,7 +32,7 @@ class RequestHandler implements RequestHandlerInterface
      */
     public function __construct(array $middleware, string $default)
     {
-        $this->middlewares = $middleware;
+        $this->middlewares = array_unique($middleware);
         $this->default = $default;
     }
 
@@ -66,5 +66,19 @@ class RequestHandler implements RequestHandlerInterface
         $clone = clone $this;
         $clone->offset++;
         return $clone;
+    }
+
+    /**
+     * Insert middlewares to the next position
+     *
+     * @param array $middlewares
+     * @return $this
+     */
+    public function insertMiddlewares(array $middlewares)
+    {
+        list($before, $after) = array_chunk($this->middlewares, $this->offset);
+        $middlewares = array_merge((array)$before, $middlewares, (array)$after);
+        $this->middlewares = $middlewares;
+        return $this;
     }
 }
