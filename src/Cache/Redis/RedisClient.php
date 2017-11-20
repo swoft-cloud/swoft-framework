@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Redis\Cache;
+namespace Swoft\Cache\Redis;
 
 use Swoft\App;
 use Swoft\Cache\CacheResult;

@@ -2,6 +2,7 @@
 
 namespace Swoft\Bean\Wrapper;
 
+use App\Models\Dao\RefInterface;
 use Swoft\Bean\Annotation\Scope;
 use Swoft\Bean\ObjectDefinition;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
@@ -71,10 +72,10 @@ abstract class AbstractWrapper implements IWrapper
         $reflectionClass = new \ReflectionClass($className);
 
         // 解析类级别的注解
-        list($beanName, $scope) = $this->parseClassAnnotations($className, $annotations['class']);
+        $beanDefinition = $this->parseClassAnnotations($className, $annotations['class']);
 
         // 没配置注入bean注解
-        if (empty($beanName)) {
+        if (empty($beanDefinition) && !$reflectionClass->isInterface()) {
             // 解析属性
             $properties = $reflectionClass->getProperties();
 
@@ -89,19 +90,27 @@ abstract class AbstractWrapper implements IWrapper
 
             return null;
         }
+
+
+        // parser bean annotation
+        list($beanName, $scope, $ref) = $beanDefinition;
+
         // 初始化对象
         $objectDefinition = new ObjectDefinition();
         $objectDefinition->setName($beanName);
         $objectDefinition->setClassName($className);
         $objectDefinition->setScope($scope);
+        $objectDefinition->setRef($ref);
 
-        // 解析属性
-        $properties = $reflectionClass->getProperties();
+        if(!$reflectionClass->isInterface()){
+            // 解析属性
+            $properties = $reflectionClass->getProperties();
 
-        // 解析属性
-        $propertyAnnotations = $annotations['property']??[];
-        $propertyInjections = $this->parseProperties($propertyAnnotations, $properties, $className);
-        $objectDefinition->setPropertyInjections($propertyInjections);
+            // 解析属性
+            $propertyAnnotations = $annotations['property']??[];
+            $propertyInjections = $this->parseProperties($propertyAnnotations, $properties, $className);
+            $objectDefinition->setPropertyInjections($propertyInjections);
+        }
 
         // 解析方法
         $publicMethods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
@@ -272,10 +281,8 @@ abstract class AbstractWrapper implements IWrapper
      */
     public function parseClassAnnotations(string $className, array $annotations)
     {
-        $beanName = '';
-        $scope = Scope::SINGLETON;
         if (!$this->isParseClassAnnotations($annotations)) {
-            return [$beanName, $scope];
+            return null;
         }
 
         foreach ($annotations as $annotation) {
@@ -293,9 +300,11 @@ abstract class AbstractWrapper implements IWrapper
             if ($annotationData == null) {
                 continue;
             }
-            list($beanName, $scope) = $annotationData;
+
+            return $annotationData;
         }
-        return [$beanName, $scope];
+
+        return null;
     }
 
     /**

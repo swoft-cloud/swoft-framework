@@ -36,6 +36,6 @@ class ServiceParser extends AbstractParser
         $serverName = $objectAnnotation->getName();
         Collector::$serviceMapping[$className]['name'] = $serverName;
 
-        return [$beanName, $scope];
+        return [$beanName, $scope, ""];
     }
 }

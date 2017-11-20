@@ -2,8 +2,10 @@
 
 namespace Swoft\Bean\Resource;
 
+use App\Models\Dao\RefInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use function foo\func;
 use Swoft\Bean\Wrapper\IWrapper;
 
 /**
@@ -79,7 +81,7 @@ class AnnotationResource extends AbstractResource
      */
     public function parseBeanAnnotations(string $className)
     {
-        if (!class_exists($className)) {
+        if (!class_exists($className) && !interface_exists($className)) {
             return null;
         }
 
@@ -224,10 +226,16 @@ class AnnotationResource extends AbstractResource
     {
         $phpClass = [];
         foreach ($this->scanNamespaces as $namespace => $dir) {
-            AnnotationRegistry::registerLoader('class_exists');
+            AnnotationRegistry::registerLoader(function ($class){
+                if(class_exists($class) || interface_exists($class)){
+                    return true;
+                }
+                return false;
+            });
             $scanClass = $this->scanPhpFile($dir, $namespace);
             $phpClass = array_merge($phpClass, $scanClass);
         }
-        return $phpClass;
+
+        return array_unique($phpClass);
     }
 }

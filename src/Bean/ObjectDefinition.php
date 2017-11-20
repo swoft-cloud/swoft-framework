@@ -36,6 +36,13 @@ class ObjectDefinition
     private $scope = Scope::SINGLETON;
 
     /**
+     * referenced bean, default is null
+     *
+     * @var string
+     */
+    private $ref;
+
+    /**
      * Constructor parameter injection.
      *
      * @var MethodInjection
@@ -102,6 +109,27 @@ class ObjectDefinition
     public function getScope(): int
     {
         return $this->scope;
+    }
+
+
+    /**
+     * get referenced bean
+     *
+     * @return string
+     */
+    public function getRef()
+    {
+        return $this->ref;
+    }
+
+    /**
+     * set referenced bean
+     *
+     * @param string $ref
+     */
+    public function setRef(string $ref)
+    {
+        $this->ref = $ref;
     }
 
     /**
