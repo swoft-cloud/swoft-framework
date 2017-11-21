@@ -23,10 +23,11 @@ class FingersCrossedProcessor extends AbstractProcessor
     {
         foreach ($this->stages as $stage) {
             if (is_string($stage) && class_exists($stage)) {
-                $payload = (new $stage($this->stages))->process($payload);
+                $payload = $this->createInstanceByString($stage)->process($payload);
             } elseif ($stage instanceof \Closure) {
                 $payload = $stage($payload);
             } elseif (is_array($stage) && is_callable($stage)) {
+                is_string($stage[0]) && $stage[0] = $this->createInstanceByString($stage[0]);
                 $payload = Coroutine::call_user_func_array($stage, [$payload]);
             } elseif (is_callable($stage)) {
                 $payload = Coroutine::call_user_func($stage, $payload);
@@ -35,5 +36,14 @@ class FingersCrossedProcessor extends AbstractProcessor
             }
         }
         return $payload;
+    }
+
+    /**
+     * @param string $class
+     * @return object
+     */
+    private function createInstanceByString(string $class)
+    {
+        return new $class($this->stages);
     }
 }
