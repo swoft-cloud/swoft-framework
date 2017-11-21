@@ -72,11 +72,13 @@ class RequestHandler implements RequestHandlerInterface
      * Insert middlewares to the next position
      *
      * @param array $middlewares
+     * @param null $offset
      * @return $this
      */
-    public function insertMiddlewares(array $middlewares)
+    public function insertMiddlewares(array $middlewares, $offset = null)
     {
-        list($before, $after) = array_chunk($this->middlewares, $this->offset);
+        is_null($offset) && $offset = $this->offset;
+        list($before, $after) = array_chunk($this->middlewares, $offset);
         $middlewares = array_merge((array)$before, $middlewares, (array)$after);
         $this->middlewares = $middlewares;
         return $this;
