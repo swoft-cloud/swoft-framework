@@ -24,6 +24,8 @@ class FingersCrossedProcessor extends AbstractProcessor
                 $payload = (new $stage($this->stages))->process($payload);
             } elseif ($stage instanceof \Closure) {
                 $payload = $stage($payload);
+            } elseif (is_array($stage) && is_callable($stage)) {
+                $payload = call_user_func_array($stage, [$payload]);
             } elseif (is_callable($stage)) {
                 $payload = call_user_func($stage, $payload);
             } elseif (is_object($stage) && $stage instanceof ProcessorInterface) {
