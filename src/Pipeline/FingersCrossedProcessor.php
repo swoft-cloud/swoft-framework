@@ -29,8 +29,6 @@ class FingersCrossedProcessor extends AbstractProcessor
             } elseif (is_array($stage) && is_callable($stage)) {
                 is_string($stage[0]) && $stage[0] = $this->createInstanceByString($stage[0]);
                 $payload = Coroutine::call_user_func_array($stage, [$payload]);
-            } elseif (is_callable($stage)) {
-                $payload = Coroutine::call_user_func($stage, $payload);
             } elseif (is_object($stage) && $stage instanceof ProcessorInterface) {
                 $payload = $stage->process($payload);
             }
