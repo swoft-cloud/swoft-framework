@@ -99,8 +99,6 @@ class Console implements IConsole
         $this->registerNamespace();
         $this->input = new Input();
         $this->output = new Output();
-        $this->errorHandler = new ErrorHandler();
-        $this->errorHandler->register();
     }
 
     /**
@@ -124,7 +122,8 @@ class Console implements IConsole
         try {
             $this->dispather($cmd);
         } catch (\Throwable $e) {
-            $this->output->writeln(sprintf('<error>%s</error>', $e->getMessage()), true, true);
+            $this->output->writeln(sprintf('<error>%s</error>', $e->getMessage()), true, false);
+            $this->output->writeln(sprintf('<error>%s</error>', $e->getTraceAsString()), true, true);
         }
     }
 
