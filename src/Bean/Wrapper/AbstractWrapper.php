@@ -285,26 +285,25 @@ abstract class AbstractWrapper implements IWrapper
             return null;
         }
 
+        $beanData = null;
         foreach ($annotations as $annotation) {
             $annotationClass = get_class($annotation);
             if (!in_array($annotationClass, $this->classAnnotations)) {
                 continue;
             }
 
-            // 解析器
+            // annotation parser
             $annotationParser = $this->getAnnotationParser($annotation);
             if ($annotationParser == null) {
                 continue;
             }
             $annotationData = $annotationParser->parser($className, $annotation);
-            if ($annotationData == null) {
-                continue;
+            if($annotationData != null){
+                $beanData = $annotationData;
             }
-
-            return $annotationData;
         }
 
-        return null;
+        return $beanData;
     }
 
     /**
