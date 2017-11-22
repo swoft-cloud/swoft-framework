@@ -5,7 +5,7 @@ namespace Swoft\Test\Base;
 use Swoft\Test\AbstractTestCase;
 use Swoft\Test\Base\Pipeline\ExceptionProcessor;
 use Swoft\Test\Base\Pipeline\TestProcessor;
-use Swoft\Web\Pipeline\Pipeline;
+use Swoft\Pipeline\Pipeline;
 
 
 /**
