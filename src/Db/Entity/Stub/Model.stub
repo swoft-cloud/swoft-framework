@@ -1,0 +1,21 @@
+<?php
+
+namespace App\Models\Entity;
+
+{{uses}}
+/**
+ * {{entityName}}
+ *
+ * @Entity()
+ * @Table(name="{{entity}}")
+ * @uses      {{entityClass}}
+ * @version   {{entityDate}}
+ * @author    swoft <https://github.com/swoft-cloud/swoft>
+ * @copyright Copyright 2010-2016 Swoft software
+ * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ */
+class {{entityClass}} extends {{extends}}
+{{{property}}
+ {{setter}}
+ {{getter}}
+}
