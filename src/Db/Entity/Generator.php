@@ -1,19 +1,19 @@
 <?php
 
-namespace Swoft\Db\EntityGenerator;
+namespace Swoft\Db\Entity;
 
 use Swoft\Db\EntityManager;
 
 /**
  * 生成实体操作类
  *
- * @uses      GeneratorEntity 
+ * @uses      Generator
  * @version   2017年11月06日
  * @author    caiwh <471113744@qq.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class GeneratorEntity extends AbstractGeneratorEntity implements IGeneratorEntity
+class Generator extends AbstractGenerator implements IGenerator
 {
     /**
      * @var string $db 数据库
@@ -21,14 +21,14 @@ class GeneratorEntity extends AbstractGeneratorEntity implements IGeneratorEntit
     private $db = null;
 
     /**
-     * @var array $tablesenabled 操作的表
+     * @var array $tablesEnabled 操作的表
      */
-    private $tablesenabled = [];
+    private $tablesEnabled = [];
 
     /**
-     * @var array $tablesenabled 不操作的表
+     * @var array $tablesDisabled 不操作的表
      */
-    private $tablesdisabled = [];
+    private $tablesDisabled = [];
 
     /**
      * @var array $tables 实体表
@@ -47,13 +47,15 @@ class GeneratorEntity extends AbstractGeneratorEntity implements IGeneratorEntit
 
     /**
      * 开始执行生成实体
+     *
+     * @param Schema $schema schema对象
      */
-    public function execute()
+    public function execute(Schema $schema)
     {
         $tables =  $this->getSchemaTables();
         foreach ($tables as $table) {
             $columns = $this->getTableColumns($table['name']);
-            $this->parseProperty($table['name'], $table['comment'], $columns);
+            $this->parseProperty($table['name'], $table['comment'], $columns, $schema);
         }
     }
 
@@ -70,17 +72,17 @@ class GeneratorEntity extends AbstractGeneratorEntity implements IGeneratorEntit
         $schemaTable = self::SCHEMA_TABLES;
         $where[] = "TABLE_TYPE = 'BASE TABLE'";
         $where[] = "TABLE_SCHEMA = '{$this->db}'";
-        if (!empty($this->tablesenabled)) {
-            $tablesenabled = array_map(function($item){
+        if (!empty($this->tablesEnabled)) {
+            $tablesEnabled = array_map(function($item){
                 return "'{$item}'";
-            }, $this->tablesenabled);
-            $where[] = 'TABLE_NAME IN (' . implode(',', $tablesenabled) . ')';
+            }, $this->tablesEnabled);
+            $where[] = 'TABLE_NAME IN (' . implode(',', $tablesEnabled) . ')';
         }
-        if (!empty($this->tablesdisabled)) {
-            $tablesdisabled = array_map(function($item){
+        if (!empty($this->tablesDisabled)) {
+            $tablesDisabled = array_map(function($item){
                 return "'{$item}'";
-            }, $this->tablesdisabled);
-            $where[] = 'TABLE_NAME NOT IN (' . implode(',', $tablesdisabled) . ')';
+            }, $this->tablesDisabled);
+            $where[] = 'TABLE_NAME NOT IN (' . implode(',', $tablesDisabled) . ')';
         }
         $where = !empty($where) ? ' WHERE ' . implode(' AND ', $where) : null; 
 
@@ -106,7 +108,7 @@ class GeneratorEntity extends AbstractGeneratorEntity implements IGeneratorEntit
         $where[] = "TABLE_SCHEMA = '{$this->db}'";
         $where = !empty($where) ? ' WHERE ' . implode(' AND ', $where) : null; 
 
-        $querySql = "SELECT `COLUMN_NAME` as `name`,`DATA_TYPE` as `type`,`CHARACTER_MAXIMUM_LENGTH` as `length`,`COLUMN_DEFAULT` as `default` ,`COLUMN_KEY` as `key`,`IS_NULLABLE` as `nullable` FROM {$schemaTable} {$where}";
+        $querySql = "SELECT `COLUMN_NAME` as `name`,`DATA_TYPE` as `type`,`CHARACTER_MAXIMUM_LENGTH` as `length`,`COLUMN_DEFAULT` as `default` ,`COLUMN_KEY` as `key`,`IS_NULLABLE` as `nullable`,`COLUMN_TYPE` as `column_type`,`COLUMN_COMMENT` as `column_comment` FROM {$schemaTable} {$where}";
         $this->dbHandler->prepare($querySql);
         $columns = $this->dbHandler->execute([]);
 
@@ -144,9 +146,9 @@ class GeneratorEntity extends AbstractGeneratorEntity implements IGeneratorEntit
      *
      * @return $this;
      */
-    public function setTablesenabled(array $value): self
+    public function settablesEnabled(array $value): self
     {
-        $this->tablesenabled = $value;
+        $this->tablesEnabled = $value;
 
         return $this;
     }
@@ -156,21 +158,21 @@ class GeneratorEntity extends AbstractGeneratorEntity implements IGeneratorEntit
      *
      * @return array
      */
-    public function getTablesenabled(): array
+    public function gettablesEnabled(): array
     {
-        return $this->tablesenabled;
+        return $this->tablesEnabled;
     }
 
     /**
      * 设置不需要扫描的表
      *
-     * @param array 不需要扫描的表
+     * @param array $value 不需要扫描的表
      *
      * @return $this;
      */
-    public function setTablesdisabled(array $value): self
+    public function settablesDisabled(array $value): self
     {
-        $this->tablesdisabled = $value;
+        $this->tablesDisabled = $value;
 
         return $this;
     }
@@ -180,9 +182,9 @@ class GeneratorEntity extends AbstractGeneratorEntity implements IGeneratorEntit
      *
      * @retrun array
      */
-    public function getTablesdisabled(): array
+    public function gettablesDisabled(): array
     {
-        return $this->tablesdisabled;
+        return $this->tablesDisabled;
     }
 
     /**

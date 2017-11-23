@@ -3,11 +3,12 @@
 namespace Swoft\Console\Command;
 
 use Swoft\Console\ConsoleCommand;
-use Swoft\Db\EntityGenerator\GeneratorEntity;
+use \Swoft\Db\Entity\Generator;
 use Swoft\Console\Input\Input;
 use Swoft\Console\Output\Output;
 use Swoft\Bean\BeanFactory;
 use Swoft\App;
+use Swoft\Db\Entity\Mysql\Schema;
 
 /**
  * the group command list of database entity
@@ -20,11 +21,25 @@ use Swoft\App;
  */
 class EntityController extends ConsoleCommand
 {
+    /**
+     * @var array $drivers 数据库驱动列表
+     */
+    private $drivers = ['Mysql'];
 
     /**
-     * 实体实例
+     * @var \Swoft\Db\Entity\Schema $schema schema对象
+     */
+    private $schema;
+
+    /**
+     * @var Generator $generatorEntity 实体实例
      */
     private $generatorEntity;
+
+    /**
+     * @var string $filePath 实体文件路径
+     */
+    private $filePath = '@app/Models/Entity';
 
     /**
      * 初始化
@@ -35,85 +50,115 @@ class EntityController extends ConsoleCommand
     public function __construct(Input $input, Output $output)
     {
         parent::__construct($input, $output);
-        
-        // 初始化相关内容
-       BeanFactory::reload();
-       $pool = App::getBean('dbSlave');
-       $syncDbConnect = $pool->createConnect();
-       $this->generatorEntity = new GeneratorEntity($syncDbConnect);
     }
 
     /**
-     * auto create entity by table structure
+     * Auto create entity by table structure
      *
      * @usage
-     * entity:{command} [arguments] [options]
+     * entity:create -d[|--database] <database>
+     * entity:create -d[|--database] <database> [table]
+     * entity:create -d[|--database] <database> -i[|--include] <table>
+     * entity:create -d[|--database] <database> -i[|--include] <table1,table2>
+     * entity:create -d[|--database] <database> -i[|--include] <table1,table2> -e[|--exclude] <table3>
+     * entity:create -d[|--database] <database> -i[|--include] <table1,table2> -e[|--exclude] <table3,table4>
      *
      * @options
-     * --ignore
+     * -d         数据库
+     * --database 数据库
+     * -i         指定特定的数据表，多表之间用逗号分隔
+     * -include   指定特定的数据表，多表之间用逗号分隔
+     * -e         排除指定的数据表，多表之间用逗号分隔
+     * -exclude   排除指定的数据表，多表之间用逗号分隔
      *
      * @example
-     * php bin/swoft entity:create
+     * php bin/swoft entity:create -d test
+     * php bin/swoft entity:create -d test user
+     * php bin/swoft entity:create -d test -i user
+     * php bin/swoft entity:create -d test user -i user2 <=> php bin/swoft entity:create -d test user 参数优先级高于选项
      */
     public function createCommand()
     {
-        $database = null;
-        $tablesenabled = $tablesdisabled = [];
+        $this->init();
+
+        $database = '';
+        $tablesEnabled = $tablesDisabled = [];
 
         $this->parseDatabaseCommand($database);
-        $this->parseEnableTablesCommand($tablesenabled);
-        $this->parseDisableTablesCommand($tablesdisabled);
+        $this->parseEnableTablesCommand($tablesEnabled);
+        $this->parseDisableTablesCommand($tablesDisabled);
 
         if (empty($database)) {
             $this->output->writeln('databases doesn\'t not empty!');
         } else {
             $this->generatorEntity->db = $database;
-            $this->generatorEntity->tablesenabled = $tablesenabled;
-            $this->generatorEntity->tablesdisabled = $tablesdisabled;
-            $this->generatorEntity->execute();
+            $this->generatorEntity->tablesEnabled = $tablesEnabled;
+            $this->generatorEntity->tablesDisabled = $tablesDisabled;
+            $this->generatorEntity->execute($this->schema);
         }
+    }
+
+    /**
+     * 初始化方法
+     */
+    private function init()
+    {
+        // 初始化相关内容
+        BeanFactory::reload();
+        App::setAlias('@entityPath', $this->filePath);
+        $pool = App::getBean('dbSlave');
+        $driver = $pool->getDriver();
+        if (in_array($driver, $this->drivers)) {
+           $schema = new Schema();
+           $schema->setDriver($driver);
+           $this->schema = $schema;
+        } else {
+            throw new \RuntimeException('There is no corresponding driver matching schema');
+        }
+        $syncDbConnect = $pool->createConnect();
+        $this->generatorEntity = new Generator($syncDbConnect);
     }
 
     /**
      * 解析需要扫描的数据库
      *
-     * @param &$database 需要扫描的数据库
+     * @param string &$database 需要扫描的数据库
      */
-    private function parseDatabaseCommand(&$database)
+    private function parseDatabaseCommand(string &$database)
     {
         if ($this->input->hasSOpt('d') || $this->input->hasLOpt('database')) {
-        $database = $this->input->hasSOpt('d') ? $this->input->getShortOpt('d') : $this->input->getLongOpt('database');
+            $database = $this->input->hasSOpt('d') ? $this->input->getShortOpt('d') : $this->input->getLongOpt('database');
         }
     }
 
     /**
      * 解析需要扫描的table
      *
-     * @param array &$tablesenabled 需要扫描的表
+     * @param array &$tablesEnabled 需要扫描的表
      */
-    private function parseEnableTablesCommand(&$tablesenabled)
+    private function parseEnableTablesCommand(&$tablesEnabled)
     {
         if ($this->input->hasSOpt('i') || $this->input->hasLOpt('include')) {
-        $tablesenabled = $this->input->hasSOpt('i') ? $this->input->getShortOpt('i') : $this->input->getLongOpt('include');
-        $tablesenabled = !empty($tablesenabled) ? explode(',', $tablesenabled) : [];
+            $tablesEnabled = $this->input->hasSOpt('i') ? $this->input->getShortOpt('i') : $this->input->getLongOpt('include');
+            $tablesEnabled = !empty($tablesEnabled) ? explode(',', $tablesEnabled) : [];
         }
 
         // 参数优先级大于选项
         if (!empty($this->input->getArg(0))) {
-            $tablesenabled = [$this->input->getArg(0)];
+            $tablesEnabled = [$this->input->getArg(0)];
         }
     }
 
     /**
      * 解析不需要扫描的table
      *
-     * @param array &$tablesdisabled 不需要扫描的表
+     * @param array &$tablesDisabled 不需要扫描的表
      */
-    private function parseDisableTablesCommand(&$tablesdisabled)
+    private function parseDisableTablesCommand(&$tablesDisabled)
     {
         if ($this->input->hasSOpt('e') || $this->input->hasLOpt('exclude')) {
-        $tablesdisabled = $this->input->hasSOpt('e') ? $this->input->getShortOpt('e') : $this->input->getLongOpt('exclude');
-        $tablesdisabled = !empty($tablesdisabled) ? explode(',', $tablesdisabled) : [];
+            $tablesDisabled = $this->input->hasSOpt('e') ? $this->input->getShortOpt('e') : $this->input->getLongOpt('exclude');
+            $tablesDisabled = !empty($tablesDisabled) ? explode(',', $tablesDisabled) : [];
         }
     }
 }
