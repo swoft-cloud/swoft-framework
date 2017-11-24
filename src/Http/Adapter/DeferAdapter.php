@@ -1,0 +1,38 @@
+<?php
+
+namespace Swoft\Http\Adapter;
+
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
+
+
+/**
+ * @uses      DeferAdapter
+ * @version   2017-11-22
+ * @author    huangzhhui <huangzhwork@gmail.com>
+ * @copyright Copyright 2010-2017 Swoft software
+ * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ */
+class DeferAdapter implements AdapterInterface
+{
+
+    /**
+     * @param RequestInterface $request
+     * @param array $options
+     * @return ResponseInterface
+     */
+    public function request(RequestInterface $request, array $options = [])
+    {
+        echo '<pre>';var_dump(1);echo '</pre>';exit();
+    }
+
+    /**
+     * @param RequestInterface $request
+     * @param array $options
+     * @return ResponseInterface
+     */
+    public function requestDefer(RequestInterface $request, array $options = [])
+    {
+
+    }
+}
