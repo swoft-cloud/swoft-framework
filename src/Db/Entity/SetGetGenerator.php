@@ -1,6 +1,8 @@
 <?php
 
-namespace Swoft\Db\EntityGenerator;
+namespace Swoft\Db\Entity;
+
+use Swoft\App;
 
 /**
  * Stub操作类 
@@ -15,9 +17,14 @@ namespace Swoft\Db\EntityGenerator;
 class SetGetGenerator
 {
     /**
-     * @var $folder 模板目录
+     * @var Schema $schema schema对象
      */
-    public $folder = 'stub';
+    private $schema;
+
+    /**
+     * @var string $folder 模板目录
+     */
+    public $folder = 'Stub';
     
     /**
      * @var string $modelStub ModelStub
@@ -63,14 +70,17 @@ class SetGetGenerator
      * @__invoke
      * @override
      *
+     * @param Schema $schema      schema对象
      * @param array  $uses        需要use的类
      * @param string $entity      实体
-     * @param        $entityName  实体中文名
+     * @param mixed  $entityName  实体中文名
      * @param string $entityClass 实体类
      * @param string $entityDate  实体生成日期
      * @param array  $fields      字段
      */
-    public function __invoke(array $uses, 
+    public function __invoke(
+        Schema $schema,
+        array $uses,
         string $extends,
         string $entity,
         $entityName,
@@ -78,6 +88,7 @@ class SetGetGenerator
         string $entityDate,
         array $fields)
     {
+        $this->schema = $schema;
         $entityStub = $this->generateModel();
         $usesContent = '';
         foreach ($uses as $useClass) {
@@ -86,7 +97,7 @@ class SetGetGenerator
 
         $this->parseFields($fields);
 
-        var_dump(str_replace([
+        $entityFile = str_replace([
             '{{uses}}',
             '{{extends}}',
             '{{entity}}',
@@ -106,8 +117,9 @@ class SetGetGenerator
             $this->propertyStub,
             $this->setterStub,
             $this->getterStub
-        ], $entityStub));
-        exit;
+        ], $entityStub);
+
+        file_put_contents(App::getAlias('@entityPath')."/{$entityClass}.php", $entityFile);
     }
 
     /**
@@ -140,18 +152,39 @@ class SetGetGenerator
         $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
         $required = $primaryKey ? false : ($fieldInfo['nullable'] === 'NO' ? true : false);
         $default = !empty($fieldInfo['default']) ? $fieldInfo['default'] : false;
-        // TODO 后期调整优化
-        $type = $fieldInfo['type'] == 'int' ? 'TYPES::INT' : 'TYPES::STRING';
-        $this->propertyStub .= str_replace([
+        $dbType = isset($this->schema->dbSchema[$fieldInfo['type']]) ? $this->schema->dbSchema[$fieldInfo['type']] : '' ;
+        $phpType = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed' ;
+        $length = $fieldInfo['length'];
+        $columnType = $fieldInfo['column_type'];
+        $comment = $fieldInfo['column_comment'];
+        $isEnum = strpos($columnType, 'enum') === false ? false : true;
+        if ($isEnum) {
+           preg_match_all("/enum\((.*?)\)/", $columnType, $matches); 
+           $enumParam = $matches[1][0];
+           $enumParam = str_replace('\'', '"', $enumParam);
+        }
+
+        $formatComment = "     * @var {$phpType} \${$property} {$comment}\n";
+        if (!empty($comment)) {
+            $formatComment = "     * @var {$phpType} \${$property}\n";
+        }
+
+        $this->propertyStub .= PHP_EOL . str_replace([
+            "{{comment}}\n",
             "{{@Id}}\n",
             '{{property}}',
             '{{type}}',
+            '{{length}}',
+            "{{@Enum}}\n",
             "{{@Required}}\n",
             '{{hasDefault}}'
         ], [
+            $formatComment,
             $primaryKey ? "     * @Id()\n" : '',
             $property,
-            $type,
+            !empty($dbType) ? $dbType : (is_int($default) ? '"int"' : '"string"'),
+            $length !== null ? ", length={$length}" : '',
+            $isEnum ? "     * @Enum(value={{$enumParam}})\n" : '',
             $required ? "     * @Required()\n" : '',
             $default !== false ? " = {$default};" : ($required ? ' = \'\';' : ';')
         ], $propertyStub);
@@ -167,17 +200,19 @@ class SetGetGenerator
     private function parseSetter(string $setterStub, array $fieldInfo)
     {
         $function = 'set' . ucfirst($fieldInfo['name']);
+        $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
         $attribute = $fieldInfo['name'];
-        // TODO 后期调整优化
-        $type = $fieldInfo['type'] == 'int' ? 'int' : 'string';
-        $this->setterStub .= str_replace([
+        $type = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed' ;
+        $this->setterStub .= PHP_EOL . str_replace([
             '{{function}}',
             '{{attribute}}',
-            '{{type}}'
+            '{{type}}',
+            '{{hasReturnType}}'
         ], [
             $function,
             $attribute,
-            $type
+            $type !== 'mixed' ? "{$type} " : '',
+            $primaryKey ? '' : ': self'
         ], $setterStub);
     }
 
@@ -192,16 +227,18 @@ class SetGetGenerator
     {
         $function = 'get' . ucfirst($fieldInfo['name']);
         $attribute = $fieldInfo['name'];
-        // TODO 后期调整优化
-        $returnType = $fieldInfo['type'] == 'int' ? 'int' : 'string';
-        $this->getterStub .= str_replace([
+        $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
+        $returnType = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed' ;
+        $this->getterStub .= PHP_EOL . str_replace([
             '{{function}}',
             '{{attribute}}',
-            '{{returnType}}'
+            '{{coReturnType}}',
+            '{{returnType}}',
         ], [
             $function,
             $attribute,
-            $returnType
+            $returnType,
+            $returnType !== 'mixed' && !$primaryKey ? ": {$returnType}" : '',
         ], $getterStub);
     }
 
@@ -228,7 +265,7 @@ class SetGetGenerator
     /**
      * 创建Getter模板
      *
-     * @return srting
+     * @return string
      */
     private function generateGetter(): string
     {
@@ -238,7 +275,7 @@ class SetGetGenerator
     /**
      * 创建Property模板
      *
-     * @return srting
+     * @return string
      */
     private function generateProperty(): string
     {

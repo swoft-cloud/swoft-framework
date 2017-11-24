@@ -1,10 +1,9 @@
-
     /**
      * {{function}}
      *
-     * @return {{returnType}}
+     * @return {{coReturnType}}
      */
-    public function {{function}}(): {{returnType}}
+    public function {{function}}(){{returnType}}
     {
         return $this->{{attribute}};
     }
