@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Db\EntityGenerator;
+namespace Swoft\Db\Entity;
 
 use Swoft\App;
 
@@ -17,9 +17,14 @@ use Swoft\App;
 class SetGetGenerator
 {
     /**
+     * @var Schema $schema schema对象
+     */
+    private $schema;
+
+    /**
      * @var string $folder 模板目录
      */
-    public $folder = 'stub';
+    public $folder = 'Stub';
     
     /**
      * @var string $modelStub ModelStub
@@ -65,14 +70,17 @@ class SetGetGenerator
      * @__invoke
      * @override
      *
+     * @param Schema $schema      schema对象
      * @param array  $uses        需要use的类
      * @param string $entity      实体
-     * @param        $entityName  实体中文名
+     * @param mixed  $entityName  实体中文名
      * @param string $entityClass 实体类
      * @param string $entityDate  实体生成日期
      * @param array  $fields      字段
      */
-    public function __invoke(array $uses, 
+    public function __invoke(
+        Schema $schema,
+        array $uses,
         string $extends,
         string $entity,
         $entityName,
@@ -80,6 +88,7 @@ class SetGetGenerator
         string $entityDate,
         array $fields)
     {
+        $this->schema = $schema;
         $entityStub = $this->generateModel();
         $usesContent = '';
         foreach ($uses as $useClass) {
@@ -143,8 +152,8 @@ class SetGetGenerator
         $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
         $required = $primaryKey ? false : ($fieldInfo['nullable'] === 'NO' ? true : false);
         $default = !empty($fieldInfo['default']) ? $fieldInfo['default'] : false;
-        $dbType = isset(Maps::DB_MAPPING[$fieldInfo['type']]) ? Maps::DB_MAPPING[$fieldInfo['type']] : '' ;
-        $phpType = isset(Maps::PHP_MAPPING[$fieldInfo['type']]) ? Maps::PHP_MAPPING[$fieldInfo['type']] : 'mixed' ;
+        $dbType = isset($this->schema->dbSchema[$fieldInfo['type']]) ? $this->schema->dbSchema[$fieldInfo['type']] : '' ;
+        $phpType = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed' ;
         $length = $fieldInfo['length'];
         $columnType = $fieldInfo['column_type'];
         $comment = $fieldInfo['column_comment'];
@@ -193,7 +202,7 @@ class SetGetGenerator
         $function = 'set' . ucfirst($fieldInfo['name']);
         $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
         $attribute = $fieldInfo['name'];
-        $type = isset(Maps::PHP_MAPPING[$fieldInfo['type']]) ? Maps::PHP_MAPPING[$fieldInfo['type']] : 'mixed' ;
+        $type = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed' ;
         $this->setterStub .= PHP_EOL . str_replace([
             '{{function}}',
             '{{attribute}}',
@@ -219,7 +228,7 @@ class SetGetGenerator
         $function = 'get' . ucfirst($fieldInfo['name']);
         $attribute = $fieldInfo['name'];
         $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
-        $returnType = isset(Maps::PHP_MAPPING[$fieldInfo['type']]) ? Maps::PHP_MAPPING[$fieldInfo['type']] : 'mixed' ;
+        $returnType = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed' ;
         $this->getterStub .= PHP_EOL . str_replace([
             '{{function}}',
             '{{attribute}}',
@@ -256,7 +265,7 @@ class SetGetGenerator
     /**
      * 创建Getter模板
      *
-     * @return srting
+     * @return string
      */
     private function generateGetter(): string
     {
@@ -266,7 +275,7 @@ class SetGetGenerator
     /**
      * 创建Property模板
      *
-     * @return srting
+     * @return string
      */
     private function generateProperty(): string
     {

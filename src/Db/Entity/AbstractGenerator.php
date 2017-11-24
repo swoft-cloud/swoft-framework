@@ -1,17 +1,17 @@
 <?php
 
-namespace Swoft\Db\EntityGenerator;
+namespace Swoft\Db\Entity;
 
 /**
  * 抽象生成实体操作类
  *
- * @uses      AbstractGeneratorEntity
+ * @uses      AbstractGenerator
  * @version   2017年11月06日
  * @author    caiwh <471113744@qq.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class AbstractGeneratorEntity
+abstract class AbstractGenerator
 {
     /**
      * @var array $uses 模板use
@@ -68,7 +68,7 @@ abstract class AbstractGeneratorEntity
     protected $getter = null;
 
     /**
-     * @var $dbHandler 数据库连接句柄
+     * @var mixed $dbHandler 数据库连接句柄
      */
     protected $dbHandler = null;
 
@@ -80,10 +80,11 @@ abstract class AbstractGeneratorEntity
     /**
      * 解析属性
      * @param string $entity     实体
-     * @param        $entityName 实体注释名称
+     * @param mixed  $entityName 实体注释名称
      * @param array  $fields     字段
+     * @param Schema $schema     schema对象
      */
-    protected function parseProperty(string $entity, $entityName , array $fields)
+    protected function parseProperty(string $entity, $entityName , array $fields, Schema $schema)
     {
         $this->entity = $entity;
         $this->entityName = $entityName;
@@ -92,6 +93,7 @@ abstract class AbstractGeneratorEntity
         $this->fields = $fields;
 
         $param = [
+            $schema,
             $this->uses,
             $this->extends,
             $this->entity,
