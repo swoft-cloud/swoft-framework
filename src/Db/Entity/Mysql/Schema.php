@@ -1,23 +1,23 @@
 <?php
 
-namespace Swoft\Db\EntityGenerator;
+namespace Swoft\Db\Entity\Mysql;
 
 /**
- * 数据库字段映射关系
+ * MYSQL数据库字段映射关系
  *
- * @uses      Maps
+ * @uses      Schema
  * @version   2017年11月14日
  * @author    caiwh <471113744@qq.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 
-class Maps
+class Schema extends \Swoft\Db\Entity\Schema
 {
     /**
-     * @const array entity映射关系
+     * @var array entity映射关系
      */
-    const DB_MAPPING = [
+    public $dbSchema = [
         'int'      => 'Types::INT',
         'char'     => 'Types::STRING',
         'varchar'  => 'Types::STRING',
@@ -31,18 +31,18 @@ class Maps
     ];
 
     /**
-     * @const array php映射关系
+     * @var array php映射关系
      */
-    const PHP_MAPPING = [
-        'int'      => 'int',
-        'char'     => 'string',
-        'varchar'  => 'string',
-        'text'     => 'string',
-        'datetime' => 'string',
-        'float'    => 'float',
-        'number'   => 'int',
-        'decimal'  => 'int',
-        'bool'     => 'bool',
-        'tinyint'  => 'bool',
+    public $phpSchema = [
+        'int'      => self::TYPE_INT,
+        'char'     => self::TYPE_STRING,
+        'varchar'  => self::TYPE_STRING,
+        'text'     => self::TYPE_STRING,
+        'datetime' => self::TYPE_STRING,
+        'float'    => self::TYPE_FLOAT,
+        'number'   => self::TYPE_INT,
+        'decimal'  => self::TYPE_INT,
+        'bool'     => self::TYPE_BOOL,
+        'tinyint'  => self::TYPE_BOOL
     ];
 }
