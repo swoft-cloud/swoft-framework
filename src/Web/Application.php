@@ -110,62 +110,6 @@ class Application extends \Swoft\Base\Application
     }
 
     /**
-     * 运行控制器
-     *
-     * @param string $uri
-     * @param string $method
-     * @return \Swoft\Web\Response
-     * @throws \Exception
-     */
-    public function runController(string $uri, string $method = "get")
-    {
-        /* @var Router $router */
-        $router = App::getBean('router');
-
-        // 路由解析
-        App::profileStart("router.match");
-        list($path, $info) = $router->match($uri, $method);
-        App::profileEnd("router.match");
-
-        // 路由未定义处理
-        if ($info == null) {
-            throw new RouteNotFoundException("Route not found");
-        }
-
-        /* @var Controller $controller */
-        list($controller, $actionId, $params) = $this->createController($path, $info);
-
-        /* run controller with Filters */
-        return $this->runControllerWithFilters($controller, $actionId, $params);
-    }
-
-    /**
-     * run controller with Filters
-     *
-     * @param Controller $controller 控制器
-     * @param string $actionId actionID
-     * @param array $params action参数
-     * @return \Swoft\Web\Response
-     */
-    private function runControllerWithFilters(Controller $controller, string $actionId, array $params)
-    {
-        $request = App::getRequest();
-        $response = App::getResponse();
-
-        /* @var FilterChain $filter */
-        $filter = App::getBean('filter');
-
-        App::profileStart("Filter");
-        $result = $filter->doFilter($request, $response, $filter);
-        App::profileEnd("Filter");
-
-        if ($result) {
-            $response = $controller->run($actionId, $params);
-            return $response;
-        }
-    }
-
-    /**
      * @param Request $request
      * @return array
      */
