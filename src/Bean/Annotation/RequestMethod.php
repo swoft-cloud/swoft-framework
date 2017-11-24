@@ -22,4 +22,24 @@ class RequestMethod
      * post方法
      */
     const POST = "post";
+
+    /**
+     * update方法
+     */
+    const UPDATE = "update";
+
+    /**
+     * put方法
+     */
+    const PUT = "put";
+
+    /**
+     * delete方法
+     */
+    const DELETE = "delete";
+
+    /**
+     * patch方法
+     */
+    const PATCH = "patch";
 }

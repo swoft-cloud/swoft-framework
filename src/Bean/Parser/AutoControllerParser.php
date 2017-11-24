@@ -36,6 +36,6 @@ class AutoControllerParser extends AbstractParser
 
         // 路由收集
         Collector::$requestMapping[$className]['prefix'] = $prefix;
-        return [$beanName, $scope];
+        return [$beanName, $scope, ""];
     }
 }

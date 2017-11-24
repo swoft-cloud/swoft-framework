@@ -31,6 +31,13 @@ class Bean
     private $scope = Scope::SINGLETON;
 
     /**
+     * referenced bean, default is null
+     *
+     * @var string
+     */
+    private $ref = "";
+
+    /**
      * Bean constructor.
      *
      * @param array $values
@@ -45,6 +52,9 @@ class Bean
         }
         if (isset($values['scope'])) {
             $this->scope = $values['scope'];
+        }
+        if (isset($values['ref'])) {
+            $this->ref = $values['ref'];
         }
     }
 
@@ -66,5 +76,15 @@ class Bean
     public function getScope()
     {
         return $this->scope;
+    }
+
+    /**
+     * return name of referenced bean
+     *
+     * @return string
+     */
+    public function getRef(): string
+    {
+        return $this->ref;
     }
 }

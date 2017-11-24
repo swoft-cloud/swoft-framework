@@ -5,6 +5,7 @@ namespace Swoft\Bean\Wrapper;
 use Swoft\Bean\Annotation\Inject;
 use Swoft\Bean\Annotation\Mapping;
 use Swoft\Bean\Annotation\Service;
+use Swoft\Bean\Annotation\Value;
 
 /**
  * service封装器
@@ -34,7 +35,8 @@ class ServiceWrapper extends AbstractWrapper
      */
     protected $propertyAnnotations
         = [
-            Inject::class
+            Inject::class,
+            Value::class,
         ];
 
     /**
@@ -68,7 +70,7 @@ class ServiceWrapper extends AbstractWrapper
      */
     public function isParsePropertyAnnotations(array $annotations)
     {
-        return isset($annotations[Inject::class]);
+        return isset($annotations[Inject::class]) || isset($annotations[Value::class]);
     }
 
     /**

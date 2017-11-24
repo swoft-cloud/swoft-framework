@@ -1,11 +1,11 @@
 <?php
 
-namespace Swoft\Test\Base;
+namespace Swoft\Test\Pipeline;
 
 use Swoft\Test\AbstractTestCase;
-use Swoft\Test\Base\Pipeline\ExceptionProcessor;
-use Swoft\Test\Base\Pipeline\TestProcessor;
-use Swoft\Web\Pipeline\Pipeline;
+use Swoft\Test\Pipeline\Pipeline\ExceptionProcessor;
+use Swoft\Test\Pipeline\Pipeline\TestProcessor;
+use Swoft\Pipeline\Pipeline;
 
 
 /**

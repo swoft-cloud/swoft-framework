@@ -4,7 +4,7 @@ namespace Swoft\I18n;
 
 use Swoft\App;
 use Swoft\Bean\Annotation\Bean;
-use Swoft\Bean\Annotation\Inject;
+use Swoft\Bean\Annotation\Value;
 
 /**
  * 国际化
@@ -21,7 +21,7 @@ class I18n
     /**
      * 源语言
      *
-     * @Inject("${config.I18n.sourceLanguage}")
+     * @Value("${config.I18n.sourceLanguage}")
      * @var string
      */
     public $sourceLanguage = "";

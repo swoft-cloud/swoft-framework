@@ -5,6 +5,7 @@ namespace Swoft\Bean\Wrapper;
 use Swoft\Bean\Annotation\Inject;
 use Swoft\Bean\Annotation\Scheduled;
 use Swoft\Bean\Annotation\Task;
+use Swoft\Bean\Annotation\Value;
 
 /**
  * 任务注解封装器
@@ -34,7 +35,8 @@ class TaskWrapper extends AbstractWrapper
      */
     protected $propertyAnnotations
         = [
-            Inject::class
+            Inject::class,
+            Value::class,
         ];
 
     /**
@@ -68,7 +70,7 @@ class TaskWrapper extends AbstractWrapper
      */
     public function isParsePropertyAnnotations(array $annotations)
     {
-        return isset($annotations[Inject::class]);
+        return isset($annotations[Inject::class]) || isset($annotations[Value::class]);
     }
 
     /**
