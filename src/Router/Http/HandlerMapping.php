@@ -198,6 +198,13 @@ class HandlerMapping implements HandlerMappingInterface
     public $actionPrefix = 'action';
 
     /**
+     * default action
+     *
+     * @var string
+     */
+    public $defaultAction = 'index';
+
+    /**
      * object creator.
      *
      * @param array $config

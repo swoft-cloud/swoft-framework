@@ -6,7 +6,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Swoft\App;
 use Swoft\Base\RequestContext;
 use Swoft\Bean\Annotation\Bean;
-use Swoft\Exception\Exception;
 use Swoft\Exception\Http\RouteNotFoundException;
 use Swoft\Exception\RuntimeException;
 use Swoft\Helper\PhpHelper;
@@ -26,9 +25,6 @@ use Swoft\Web\Response;
  */
 class HandlerAdapter implements HandlerAdapterInterface
 {
-    private $defaultAction = 'index';
-    private $defaultPrefix = 'action';
-
     /**
      * exexute handler with controller and action
      *
@@ -50,20 +46,17 @@ class HandlerAdapter implements HandlerAdapterInterface
             throw new RouteNotFoundException("Route not found");
         }
 
-        // http handler
+        // handler info
         list($handler, $params) = $this->createHandler($path, $info);
-
         if (is_array($handler)) {
-            list($controller, $actionId) = $handler;
-            $actionId = empty($actionId) ? $this->defaultAction : $actionId;
-            if (!method_exists($controller, $actionId)) {
-                $actionId = $this->defaultPrefix . ucfirst($actionId);
-            }
+            $handler = $this->defaultHandler($handler);
         }
 
+        // execute handler
         $params   = $this->bindParams($request, $handler, $info);
         $response = PhpHelper::call($handler, $params);
 
+        // response
         if (!$response instanceof Response) {
             $response = RequestContext::getResponse()->auto($response);
         }
@@ -117,6 +110,26 @@ class HandlerAdapter implements HandlerAdapterInterface
         ]);
 
         return [$handler, $matches];
+    }
+
+    /**
+     * default handler
+     *
+     * @param array $handler handler info
+     *
+     * @return array
+     */
+    private function defaultHandler(array $handler)
+    {
+        list($controller, $actionId) = $handler;
+        $httpRouter = App::getHttpRouter();
+
+        $actionId = empty($actionId) ? $httpRouter->defaultAction : $actionId;
+        if (!method_exists($controller, $actionId)) {
+            $actionId = $httpRouter->actionPrefix . ucfirst($actionId);
+        }
+
+        return [$controller, $actionId];
     }
 
     /**
