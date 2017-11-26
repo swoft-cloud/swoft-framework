@@ -2,7 +2,7 @@
 
 namespace Swoft\Bean\Wrapper;
 
-use Swoft\Bean\Annotation\AutoController;
+use Swoft\Bean\Annotation\Controller;
 use Swoft\Bean\Annotation\Inject;
 use Swoft\Bean\Annotation\Middleware;
 use Swoft\Bean\Annotation\Middlewares;
@@ -13,13 +13,13 @@ use Swoft\Bean\Annotation\View;
 /**
  * 路由注解封装器
  *
- * @uses      AutoControllerWrapper
+ * @uses      ControllerWrapper
  * @version   2017年09月04日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class AutoControllerWrapper extends AbstractWrapper
+class ControllerWrapper extends AbstractWrapper
 {
     /**
      * 类注解
@@ -28,7 +28,7 @@ class AutoControllerWrapper extends AbstractWrapper
      */
     protected $classAnnotations
         = [
-            AutoController::class,
+            Controller::class,
             Middlewares::class,
             Middleware::class,
         ];
@@ -66,7 +66,7 @@ class AutoControllerWrapper extends AbstractWrapper
      */
     public function isParseClassAnnotations(array $annotations)
     {
-        return isset($annotations[AutoController::class]);
+        return isset($annotations[Controller::class]);
     }
 
     /**
