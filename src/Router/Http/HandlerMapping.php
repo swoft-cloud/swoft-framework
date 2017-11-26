@@ -2,13 +2,11 @@
 
 namespace Swoft\Router\Http;
 
-use Swoft\Bean\Annotation\Bean;
 use Swoft\Router\HandlerMappingInterface;
 
 /**
  * handler mapping of http
  *
- * @Bean("httpRouter")
  * @uses      HandlerMapping
  * @version   2017年07月14日
  * @author    inhere <in.798@qq.com>

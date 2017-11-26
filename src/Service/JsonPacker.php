@@ -8,7 +8,7 @@ use Swoft\Bean\Annotation\Bean;
 /**
  * json格式解压包
  *
- * @Bean("packer")
+ * @Bean("jsonPacker")
  * @uses      JsonPacker
  * @version   2017年07月14日
  * @author    stelin <phpcrazy@126.com>

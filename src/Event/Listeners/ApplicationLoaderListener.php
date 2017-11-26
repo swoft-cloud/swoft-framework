@@ -23,13 +23,15 @@ class ApplicationLoaderListener implements IApplicationListener
 {
     public function onApplicationEvent(ApplicationEvent $event = null, ...$params)
     {
-        // 路由自动注册
         /* @var \Swoft\Router\Http\HandlerMapping $httpRouter */
         $httpRouter = App::getBean('httpRouter');
+        /* @var \Swoft\Router\Service\HandlerMapping $serviceRouter */
+        $serviceRouter = App::getBean('serviceRouter');
+
         $requestMapping = Collector::$requestMapping;
         $serviceMapping = Collector::$serviceMapping;
         $httpRouter->registerRoutes($requestMapping);
-//        $httpRouter->registerServices($serviceMapping);
+        $serviceRouter->register($serviceMapping);
 
         App::setProperties();
     }

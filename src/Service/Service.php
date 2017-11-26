@@ -60,7 +60,10 @@ class Service
 
         /* @var $client AbstractServiceConnect */
         $client = $connectPool->getConnect();
-        $packer = App::getPacker();
+        /* @var \Swoft\Service\DispatcherService $dispatcherService */
+        $dispatcherService = App::getBean('dispatcherService');
+        $packer            = $dispatcherService->getPacker();
+
         $data = $packer->formatData($func, $params);
         $packData = $packer->pack($data);
         $result = $criuitBreaker->call([$client, 'send'], [$packData], $fallback);

@@ -107,7 +107,7 @@ class RpcServer extends AbstractServer
      */
     public function onReceive(Server $server, int $fd, int $fromId, string $data)
     {
-        App::getApplication()->doReceive($server, $fd, $fromId, $data);
+        App::getDispatcherService()->doDispatcher($server, $fd, $fromId, $data);
     }
 
     /**
