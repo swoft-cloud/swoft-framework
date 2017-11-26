@@ -6,7 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoft\Base\RequestContext;
 use Swoft\Web\Middlewares\MiddlewareInterface;
-use Swoft\Web\Middlewares\PowerByMiddlewre;
+use Swoft\Web\Middlewares\PoweredByMiddleware;
 
 
 /**
@@ -25,7 +25,7 @@ class Middleware
      * @var array
      */
     protected $middlewares = [
-        PowerByMiddlewre::class,
+        PoweredByMiddleware::class
     ];
 
     public function handle(ServerRequestInterface $request, ResponseInterface $response)
@@ -37,7 +37,5 @@ class Middleware
                 $response = $middleware->process($request, $handler);
             }
         }
-
     }
-
 }

@@ -1,12 +1,22 @@
 <?php
 
-namespace Swoft\Web\Middlewares;
+namespace Swoft\Base;
 
 use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Swoft\Middleware\MiddlewareInterface;
 use Swoft\App;
 
+/**
+ * request handler
+ *
+ * @uses      RequestHandler
+ * @version   2017年11月14日
+ * @author    huangzhhui <huangzhwork@gmail.com>
+ * @copyright Copyright 2010-2016 swoft software
+ * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ */
 class RequestHandler implements RequestHandlerInterface
 {
     /**
@@ -44,7 +54,7 @@ class RequestHandler implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (empty($this->middlewares[$this->offset])) {
+        if (empty($this->middlewares[$this->offset]) && !empty($this->default)) {
             $handler = App::getBean($this->default);
         } else {
             $handler = $this->middlewares[$this->offset];

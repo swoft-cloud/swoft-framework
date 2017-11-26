@@ -1,8 +1,10 @@
 <?php
 
-namespace Swoft\Web\ExceptionHandler;
+namespace Swoft\Exception\Handler;
 
 /**
+ * exception handler manager
+ *
  * @uses      ExceptionHandlerManager
  * @version   2017-11-11
  * @author    huangzhhui <huangzhwork@gmail.com>

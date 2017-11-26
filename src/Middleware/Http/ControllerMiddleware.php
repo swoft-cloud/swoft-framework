@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Web\Middlewares;
+namespace Swoft\Middleware\Http;
 
 use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -10,6 +10,7 @@ use Swoft\Base\ApplicationContext;
 use Swoft\Base\RequestContext;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Exception\Http\RouteNotFoundException;
+use Swoft\Middleware\MiddlewareInterface;
 use Swoft\Testing\Web\Response;
 use Swoft\Web\Controller;
 use Swoft\Web\Router;

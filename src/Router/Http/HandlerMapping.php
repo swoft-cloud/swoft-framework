@@ -1,14 +1,15 @@
 <?php
 
-namespace Swoft\Web;
+namespace Swoft\Router\Http;
 
-use Swoft\App;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Annotation\Bean;
+use Swoft\Router\HandlerMappingInterface;
 
 /**
- * 路由组件
+ * handler mapping of http
  *
- * @uses      Router
+ * @Bean("httpRouter")
+ * @uses      HandlerMapping
  * @version   2017年07月14日
  * @author    inhere <in.798@qq.com>
  * @copyright Copyright 2010-2016 Swoft software
@@ -24,7 +25,7 @@ use Swoft\Bean\Collector;
  * @method trace(string $route, mixed $handler, array $opts = [])
  * @method any(string $route, mixed $handler, array $opts = [])
  */
-class Router implements RouterInterface
+class HandlerMapping implements HandlerMappingInterface
 {
     /** @var int 已注册的路由数 */
     private $routeCounter = 0;
@@ -40,7 +41,7 @@ class Router implements RouterInterface
             'any' => '[^/]+',   // match any except '/'
             'num' => '[0-9]+',  // match a number
             'act' => '[a-zA-Z][\w-]+', // match a action name
-            'all' => '.*'
+            'all' => '.*',
         ];
 
     /** @var string */
@@ -190,18 +191,11 @@ class Router implements RouterInterface
     public $controllerSuffix = '';
 
     /**
-     * service后缀
+     * action prefix
      *
      * @var string
      */
-    private $serviceSuffix = 'Service';
-
-    /**
-     * service路由
-     *
-     * @var array
-     */
-    private $serviceRoutes = [];
+    public $actionPrefix = 'action';
 
     /**
      * object creator.
@@ -259,7 +253,7 @@ class Router implements RouterInterface
      * @param string $method
      * @param array  $args
      *
-     * @return Router
+     * @return \Swoft\Router\Http\HandlerMapping
      * @throws \LogicException
      * @throws \InvalidArgumentException
      */
@@ -281,11 +275,11 @@ class Router implements RouterInterface
      */
     public function group($prefix, \Closure $callback, array $opts = [])
     {
-        $prefix = '/' . trim($prefix, '/');
-        $previousGroupPrefix = $this->currentGroupPrefix;
+        $prefix                   = '/' . trim($prefix, '/');
+        $previousGroupPrefix      = $this->currentGroupPrefix;
         $this->currentGroupPrefix = $previousGroupPrefix . $prefix;
 
-        $previousGroupOption = $this->currentGroupOption;
+        $previousGroupOption      = $this->currentGroupOption;
         $this->currentGroupOption = $opts;
 
         $callback($this);
@@ -329,7 +323,7 @@ class Router implements RouterInterface
 
         // string - register route and callback
 
-        $method = strtoupper($method);
+        $method    = strtoupper($method);
         $hasPrefix = (bool)$this->currentGroupPrefix;
 
         // validate arguments
@@ -379,7 +373,7 @@ class Router implements RouterInterface
 
         // route string is regular
         if ($first) {
-            $twoLevelKey = $first{1} ?? self::DEFAULT_TWO_LEVEL_KEY;
+            $twoLevelKey                                    = $first{1} ?? self::DEFAULT_TWO_LEVEL_KEY;
             $this->regularRoutes[$first{0}][$twoLevelKey][] = $conf;
         } else {
             $this->vagueRoutes[] = $conf;
@@ -424,14 +418,14 @@ class Router implements RouterInterface
     public static function parseRoute($route, array $tokens, array $conf)
     {
         $first = null;
-        $tmp = $route;
+        $tmp   = $route;
 
         // 解析可选参数位
         // '/hello[/{name}]'      match: /hello/tom   /hello
         // '/my[/{name}[/{age}]]' match: /my/tom/78  /my/tom
         if (false !== strpos($route, ']')) {
             $withoutClosingOptionals = rtrim($route, ']');
-            $optionalNum = strlen($route) - strlen($withoutClosingOptionals);
+            $optionalNum             = strlen($route) - strlen($withoutClosingOptionals);
 
             if ($optionalNum !== substr_count($withoutClosingOptionals, '[')) {
                 throw new \LogicException('Optional segments can only occur at the end of a route');
@@ -452,8 +446,8 @@ class Router implements RouterInterface
                 $regex = $tokens[$name] ?? self::DEFAULT_REGEX;
 
                 // 将匹配结果命名 (?P<arg1>[^/]+)
-                // $replacePairs[$key] = '(?P<' . $name . '>' . $pattern . ')';
-                $replacePairs[$key] = '(' . $regex . ')';
+                 $replacePairs[$key] = '(?P<' . $name . '>' . $regex . ')';
+//                $replacePairs[$key] = '(' . $regex . ')';
             }
 
             $route = strtr($route, $replacePairs);
@@ -465,7 +459,7 @@ class Router implements RouterInterface
         // first node is a normal string
         if (preg_match('#^/([\w-]+)#', $tmp, $ms)) {
             $first = $ms[1];
-            $conf = [
+            $conf  = [
                     'first' => '/' . $first,
                     'regex' => '#^' . $route . '$#',
                 ] + $conf;
@@ -487,7 +481,7 @@ class Router implements RouterInterface
     {
         if ($tmpTokens) {
             foreach ($tmpTokens as $name => $pattern) {
-                $key = trim($name, '{}');
+                $key          = trim($name, '{}');
                 $tokens[$key] = $pattern;
             }
         }
@@ -499,10 +493,21 @@ class Router implements RouterInterface
     /// route match
     //////////////////////////////////////////////////////////////////////
 
-    public function getHandler($path, $method)
+    /**
+     * get handler
+     *
+     * @param array ...$params
+     *
+     * @return \Swoft\Router\HandlerInterface
+     */
+    public function getHandler(...$params)
     {
-
+        list($path, $method) = $params;
+        $router = $this->match($path, $method);
+//        list($path, $info) = $router;
+        return $router;
     }
+
     /**
      * 找到给定请求uri路径的匹配路由信息
      *
@@ -523,7 +528,7 @@ class Router implements RouterInterface
         }
 
         // clear '//', '///' => '/'
-        $path = rawurldecode(preg_replace('#\/\/+#', '/', $path));
+        $path   = rawurldecode(preg_replace('#\/\/+#', '/', $path));
         $method = strtoupper($method);
         $number = (int)$this->tmpCacheNumber;
 
@@ -619,7 +624,7 @@ class Router implements RouterInterface
                 [
                     'path'    => $path,
                     'handler' => $handler,
-                ]
+                ],
             ];
         }
 
@@ -644,7 +649,7 @@ class Router implements RouterInterface
 
         // one node. eg: 'home'
         if (!strpos($tmp, '/')) {
-            $tmp = self::convertNodeStr($tmp);
+            $tmp   = self::convertNodeStr($tmp);
             $class = "$cnp\\" . ucfirst($tmp) . $sfx;
 
             return class_exists($class) ? $class : false;
@@ -676,7 +681,7 @@ class Router implements RouterInterface
         }
 
         // last node is an controller class name
-        $n2 = array_pop($ary);
+        $n2    = array_pop($ary);
         $class = sprintf('%s\\%s\\%s', $cnp, implode('\\', $ary), ucfirst($n2) . $sfx);
 
         if (class_exists($class)) {
@@ -684,7 +689,7 @@ class Router implements RouterInterface
         }
 
         // last second is an controller class name, last node is a action name,
-        $n1 = array_pop($ary);
+        $n1    = array_pop($ary);
         $class = sprintf('%s\\%s\\%s', $cnp, implode('\\', $ary), ucfirst($n1) . $sfx);
 
         return class_exists($class) ? "$class@$n2" : false;
@@ -710,7 +715,7 @@ class Router implements RouterInterface
      */
     public function addToken($name, $pattern)
     {
-        $name = trim($name, '{} ');
+        $name                      = trim($name, '{} ');
         self::$globalTokens[$name] = $pattern;
     }
 
@@ -830,67 +835,9 @@ class Router implements RouterInterface
             // 控制器prefix
             $controllerPrefix = $mapping['prefix'];
             $controllerPrefix = $this->getControllerPrefix($controllerPrefix, $className);
-            $routes = $mapping['routes'];
-
-            /* @var Controller $controller */
-            $controller = App::getBean($className);
-            $actionPrefix = $controller->getActionPrefix();
-
+            $routes           = $mapping['routes'];
             // 注册控制器对应的一组路由
-            $this->registerRoute($className, $routes, $controllerPrefix, $actionPrefix);
-        }
-    }
-
-    /**
-     * 自动注册service路由
-     *
-     * @param array $serviceMapping
-     */
-    public function registerServices(array $serviceMapping)
-    {
-        foreach ($serviceMapping as $className => $mapping) {
-            $prefix = $mapping['name'];
-            $routes = $mapping['routes'];
-            $prefix = $this->getPrefix($this->serviceSuffix, $prefix, $className);
-
-            $this->registerService($className, $routes, $prefix);
-        }
-    }
-
-    /**
-     * 匹配路由
-     *
-     * @param $func
-     *
-     * @return mixed
-     */
-    public function serviceMatch($func)
-    {
-        if(!isset($func)){
-            throw new \InvalidArgumentException('service调用的函数不存在，func=' . $func);
-        }
-
-        return $this->serviceRoutes[$func];
-    }
-
-    /**
-     * 注册一个路由
-     *
-     * @param string $className
-     * @param array  $routes
-     * @param string $prefix
-     */
-    private function registerService(string $className, array $routes, string $prefix)
-    {
-        foreach ($routes as $route) {
-            $mappedName = $route['mappedName'];
-            $methodName = $route['methodName'];
-            if (empty($mappedName)) {
-                $mappedName = $methodName;
-            }
-
-            $serviceKey = "$prefix::$mappedName";
-            $this->serviceRoutes[$serviceKey] = [$className, $methodName];
+            $this->registerRoute($className, $routes, $controllerPrefix);
         }
     }
 
@@ -900,9 +847,8 @@ class Router implements RouterInterface
      * @param string $className        类名
      * @param array  $routes           控制器对应的路由组
      * @param string $controllerPrefix 控制器prefix
-     * @param string $actionPrefix     action prefix
      */
-    private function registerRoute(string $className, array $routes, string $controllerPrefix, string $actionPrefix)
+    private function registerRoute(string $className, array $routes, string $controllerPrefix)
     {
         // 循环注册路由
         foreach ($routes as $route) {
@@ -910,19 +856,19 @@ class Router implements RouterInterface
                 continue;
             }
             $mapRoute = $route['route'];
-            $method = $route['method'];
-            $action = $route['action'];
+            $method   = $route['method'];
+            $action   = $route['action'];
 
             // 解析注入action名称
-            $actionMethod = $this->getActionMethod($actionPrefix, $action);
-            $mapRoute = empty($mapRoute) ? $actionMethod : $mapRoute;
+            $actionMethod = $this->getActionMethod($this->actionPrefix, $action);
+            $mapRoute     = empty($mapRoute) ? $actionMethod : $mapRoute;
 
             // '/'开头的路由是一个单独的路由，未使用'/'需要和控制器组拼成一个路由
-            $uri = strpos($mapRoute, '/') === 0 ? $mapRoute : $controllerPrefix . '/' . $mapRoute;
-            $handler = $className . '@' . $actionMethod;
+            $uri     = strpos($mapRoute, '/') === 0 ? $mapRoute : $controllerPrefix . '/' . $mapRoute;
+            $handler = $className . '@' . $action;
 
             // 注入路由规则
-            $this->map($method, $uri, $handler);
+            $this->map($method, $uri, $handler, []);
         }
     }
 
@@ -938,6 +884,7 @@ class Router implements RouterInterface
     {
         $action = str_replace($actionPrefix, '', $action);
         $action = lcfirst($action);
+
         return $action;
     }
 
@@ -957,38 +904,11 @@ class Router implements RouterInterface
         }
 
         // 注解注入为空，解析控制器prefix
-        $reg = '/^.*\\\(\w+)Controller$/';
+        $reg    = '/^.*\\\(\w+)Controller$/';
         $prefix = '';
 
         if ($result = preg_match($reg, $className, $match)) {
             $prefix = '/' . lcfirst($match[1]);
-        }
-
-        return $prefix;
-    }
-
-    /**
-     * 获取类前缀
-     *
-     * @param string $suffix
-     * @param string $prefix
-     * @param string $className
-     *
-     * @return string
-     */
-    private function getPrefix(string $suffix, string $prefix, string $className)
-    {
-        // 注解注入不为空，直接返回prefix
-        if (!empty($prefix)) {
-            return $prefix;
-        }
-
-        // 注解注入为空，解析控制器prefix
-        $reg = '/^.*\\\(\w+)' . $suffix . '$/';
-        $prefix = '';
-
-        if ($result = preg_match($reg, $className, $match)) {
-            $prefix = ucfirst($match[1]);
         }
 
         return $prefix;

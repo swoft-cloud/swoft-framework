@@ -8,7 +8,6 @@ use Swoft\Bean\Collector;
 use Swoft\Event\ApplicationEvent;
 use Swoft\Event\Event;
 use Swoft\Event\IApplicationListener;
-use Swoft\Web\Router;
 
 /**
  * 应用加载事件
@@ -25,12 +24,12 @@ class ApplicationLoaderListener implements IApplicationListener
     public function onApplicationEvent(ApplicationEvent $event = null, ...$params)
     {
         // 路由自动注册
-        /* @var Router $router */
-        $router = App::getBean('router');
+        /* @var \Swoft\Router\Http\HandlerMapping $httpRouter */
+        $httpRouter = App::getBean('httpRouter');
         $requestMapping = Collector::$requestMapping;
         $serviceMapping = Collector::$serviceMapping;
-        $router->registerRoutes($requestMapping);
-        $router->registerServices($serviceMapping);
+        $httpRouter->registerRoutes($requestMapping);
+//        $httpRouter->registerServices($serviceMapping);
 
         App::setProperties();
     }

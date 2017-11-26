@@ -38,7 +38,7 @@ class Pipeline
      *
      * @param callable[] $stages
      * @param ProcessorInterface $processor
-     * @throws InvalidArgumentException
+     * @throws \InvalidArgumentException
      */
     public function __construct(array $stages = [], ProcessorInterface $processor = null)
     {

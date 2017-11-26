@@ -106,6 +106,16 @@ class App
     }
 
     /**
+     * request router
+     *
+     * @return \Swoft\Router\Http\HandlerMapping
+     */
+    public static function getHttpRouter()
+    {
+        return App::getBean('httpRouter');
+    }
+
+    /**
      * consul对象
      *
      * @return ConsulProvider
@@ -132,6 +142,14 @@ class App
     public static function getApplication()
     {
         return ApplicationContext::getBean('application');
+    }
+
+    /**
+     * @return \Swoft\Web\DispatcherServer
+     */
+    public static function getDispatcherServer()
+    {
+        return ApplicationContext::getBean('dispatcherServer');
     }
 
     /**

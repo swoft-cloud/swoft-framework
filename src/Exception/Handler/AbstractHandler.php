@@ -1,11 +1,13 @@
 <?php
 
-namespace Swoft\Web\ExceptionHandler;
+namespace Swoft\Exception\Handler;
 
 use Swoft\Base\RequestContext;
 use Swoft\Web\Response;
 
 /**
+ * abstract error handler
+ *
  * @uses      AbstractHandler
  * @version   2017-11-10
  * @author    huangzhhui <huangzhwork@gmail.com>

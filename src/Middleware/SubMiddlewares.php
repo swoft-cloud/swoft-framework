@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Web\Middlewares;
+namespace Swoft\Middleware;
 
 use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
@@ -10,13 +10,13 @@ use Swoft\Bean\Annotation\Bean;
 
 /**
  * @Bean()
- * @uses      GroupTestMiddleware
- * @version   2017年11月16日
+ * @uses      SubMiddlewares
+ * @version   2017年11月18日
  * @author    huangzhhui <huangzhwork@gmail.com>
  * @copyright Copyright 2010-2017 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class GroupTestMiddleware implements MiddlewareInterface
+class SubMiddlewares implements MiddlewareInterface
 {
 
     /**
@@ -29,7 +29,11 @@ class GroupTestMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $response = $handler->handle($request);
-        return $response->withAddedHeader('Middleware-Group-Test', 'success');
+        if ($handler instanceof RequestHandler) {
+            $handler->insertMiddlewares([
+                SubMiddleware::class,
+            ]);
+        }
+        return $handler->handle($request);
     }
 }

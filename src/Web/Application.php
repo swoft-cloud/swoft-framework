@@ -10,9 +10,8 @@ use Swoft\Event\Event;
 use Swoft\Exception\Http\RouteNotFoundException;
 use Swoft\Filter\FilterChain;
 use Swoft\Helper\ResponseHelper;
-use Swoft\Web\ExceptionHandler\ExceptionHandlerManager;
+use Swoft\Exception\Handler\ExceptionHandlerManager;
 use Swoft\Web\Middlewares;
-use Swoft\Web\Middlewares\PowerByMiddlewre;
 
 /**
  * 应用主体
@@ -33,8 +32,8 @@ class Application extends \Swoft\Base\Application
      */
     protected $middlewares
         = [
-            Middlewares\FaviconIco::class,
-            Middlewares\PoweredBy::class,
+            Middlewares\FaviconIcoMiddleware::class,
+            Middlewares\PoweredByMiddleware::class,
         ];
 
     /**

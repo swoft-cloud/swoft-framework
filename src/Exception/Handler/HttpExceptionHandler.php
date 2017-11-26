@@ -1,12 +1,13 @@
 <?php
 
-namespace Swoft\Web\ExceptionHandler;
+namespace Swoft\Exception\Handler;
 
 use Swoft\Exception\Http\HttpException;
 use Swoft\Exception\Http\Unauthorized;
-use Swoft\Web\Response;
 
 /**
+ * http exception handler
+ *
  * @uses      HttpExceptionHandler
  * @version   2017-11-11
  * @author    huangzhhui <huangzhwork@gmail.com>

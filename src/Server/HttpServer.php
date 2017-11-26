@@ -3,6 +3,8 @@
 namespace Swoft\Server;
 
 use Swoft\App;
+use Swoft\Base\RequestContext;
+use Swoft\Exception\Handler\ExceptionHandlerManager;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Http\Server;
@@ -63,6 +65,6 @@ class HttpServer extends RpcServer
      */
     public function onRequest(Request $request, Response $response)
     {
-        App::getApplication()->doRequest($request, $response);
+        App::getDispatcherServer()->doDispatcher($request, $response);
     }
 }

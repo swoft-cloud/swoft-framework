@@ -1,17 +1,17 @@
 <?php
 
-namespace Swoft\Web\ExceptionHandler;
-
-use Swoft\Web\Response;
+namespace Swoft\Exception\Handler;
 
 /**
- * @uses      SystemErrorHandler
+ * runtime exception handler
+ *
+ * @uses      RuntimeExceptionHandler
  * @version   2017-11-10
  * @author    huangzhhui <huangzhwork@gmail.com>
  * @copyright Copyright 2010-2017 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class SystemErrorHandler extends AbstractHandler
+class RuntimeExceptionHandler extends AbstractHandler
 {
 
     /**
@@ -19,7 +19,7 @@ class SystemErrorHandler extends AbstractHandler
      */
     public function isHandle(): bool
     {
-        return true;
+        return $this->getException() instanceof \RuntimeException;
     }
 
     /**
@@ -27,6 +27,7 @@ class SystemErrorHandler extends AbstractHandler
      */
     public function handle()
     {
-        return $this->setStatusCode(500);
+        $code = $this->getException()->getCode() ? : 500;
+        return $this->setStatusCode($code);
     }
 }
