@@ -15,5 +15,13 @@ use Psr\Http\Message\ServerRequestInterface;
  */
 interface HandlerAdapterInterface
 {
+    /**
+     * execute handler
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param array                                    $handler
+     *
+     * @return \Swoft\Base\Response
+     */
     public function doHandler(ServerRequestInterface $request, array $handler);
 }

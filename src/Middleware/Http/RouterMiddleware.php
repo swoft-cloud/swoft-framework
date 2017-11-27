@@ -36,10 +36,11 @@ class RouterMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        $path = $request->getUri()->getPath();
-        $method = $request->getMethod();
+        $path        = $request->getUri()->getPath();
+        $method      = $request->getMethod();
         $httpHandler = App::getHttpRouter()->getHandler($path, $method);
-        $request = $request->withAttribute(self::ATTRIBUTE, $httpHandler);
+        $request     = $request->withAttribute(self::ATTRIBUTE, $httpHandler);
+
         return $handler->handle($request);
     }
 }

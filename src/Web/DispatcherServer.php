@@ -37,9 +37,18 @@ class DispatcherServer implements DispatcherInterface
         ];
 
     /**
+     * handler adapter
+     *
+     * @var string
+     */
+    private $handlerAdapter = HandlerAdapterMiddleware::class;
+
+    /**
      * do dispatcher
      *
      * @param array ...$params
+     *
+     * @return bool|\Swoft\Web\Response
      */
     public function doDispatcher(...$params)
     {
@@ -56,15 +65,17 @@ class DispatcherServer implements DispatcherInterface
             // request middlewares
             $middlewares    = $this->requestMiddlewares();
             $request        = RequestContext::getRequest();
-            $requestHandler = new RequestHandler($middlewares, HandlerAdapterMiddleware::class);
+            $requestHandler = new RequestHandler($middlewares, $this->handlerAdapter);
             $response       = $requestHandler->handle($request);
         } catch (\Throwable $throwable) {
-            var_dump($throwable->getMessage(), $throwable->getFile(), $throwable->getLine(), $throwable->getCode());
+//            var_dump($throwable->getMessage(), $throwable->getFile(), $throwable->getLine(), $throwable->getCode());
             // Handle by ExceptionHandler
             $response = ExceptionHandlerManager::handle($throwable);
         } finally {
             $this->afterDispatcher($response);
         }
+
+        return $response;
     }
 
     public function requestMiddlewares()
@@ -84,7 +95,7 @@ class DispatcherServer implements DispatcherInterface
         return [
             FaviconIcoMiddleware::class,
             PoweredByMiddleware::class,
-            RouterMiddleware::class
+            RouterMiddleware::class,
         ];
     }
 

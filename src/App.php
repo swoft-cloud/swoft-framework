@@ -211,7 +211,7 @@ class App
     }
 
     /**
-     * 内部服务数据解包、打包
+     * the packer of rpc service
      *
      * @return IPack
      */
@@ -219,7 +219,6 @@ class App
     {
         /* @var \Swoft\Service\DispatcherService $dispatcherService */
         $dispatcherService = App::getBean('dispatcherService');
-
         return $dispatcherService->getPacker();
     }
 

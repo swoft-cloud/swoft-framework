@@ -21,12 +21,22 @@ use Swoft\Middleware\MiddlewareInterface;
  */
 class HandlerAdapterMiddleware implements MiddlewareInterface
 {
+    /**
+     * execute service with handler
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface     $request
+     * @param \Interop\Http\Server\RequestHandlerInterface $handler
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $serviceHandler = $request->getAttribute(RouterMiddleware::ATTRIBUTE);
-        /* @var \Swoft\Router\Http\HandlerAdapter $handlerAdapter*/
+
+        /* @var \Swoft\Router\Http\HandlerAdapter $handlerAdapter */
         $handlerAdapter = App::getBean('serviceHandlerAdapter');
-        $response = $handlerAdapter->doHandler($request, $serviceHandler);
+        $response       = $handlerAdapter->doHandler($request, $serviceHandler);
+
         return $response;
     }
 }

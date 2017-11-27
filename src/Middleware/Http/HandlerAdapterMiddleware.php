@@ -32,9 +32,11 @@ class HandlerAdapterMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $httpHandler = $request->getAttribute(RouterMiddleware::ATTRIBUTE);
-        /* @var \Swoft\Router\Http\HandlerAdapter $handlerAdapter*/
+
+        /* @var \Swoft\Router\Http\HandlerAdapter $handlerAdapter */
         $handlerAdapter = App::getBean('httpHandlerAdapter');
-        $response = $handlerAdapter->doHandler($request, $httpHandler);
+        $response       = $handlerAdapter->doHandler($request, $httpHandler);
+
         return $response;
     }
 }

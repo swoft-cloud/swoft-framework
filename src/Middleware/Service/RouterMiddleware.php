@@ -26,17 +26,26 @@ class RouterMiddleware implements MiddlewareInterface
      */
     const ATTRIBUTE = "serviceHandler";
 
+    /**
+     * get handler from router
+     *
+     * @param \Psr\Http\Message\ServerRequestInterface     $request
+     * @param \Interop\Http\Server\RequestHandlerInterface $handler
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         // service data
         $data = $request->getAttribute(PackerMiddleware::ATTRIBUTE_DATA);
 
-        /* @var \Swoft\Router\Service\HandlerMapping $serviceRouter*/
-        $serviceRouter = App::getBean('serviceRouter');
+        /* @var \Swoft\Router\Service\HandlerMapping $serviceRouter */
+        $serviceRouter  = App::getBean('serviceRouter');
         $serviceHandler = $serviceRouter->getHandler($data);
 
         // deliver service data
         $request = $request->withAttribute(self::ATTRIBUTE, $serviceHandler);
+
         return $handler->handle($request);
     }
 }

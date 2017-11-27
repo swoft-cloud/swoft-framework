@@ -65,15 +65,12 @@ class HandlerAdapter implements HandlerAdapterInterface
     }
 
     /**
-     * 创建控制器
+     * create handler
      *
-     * @param string $path url路径
-     * @param array  $info url参数
+     * @param string $path url path
+     * @param array  $info path info
      *
      * @return array
-     * <pre>
-     *  [$controller, $action, $matches]
-     * </pre>
      * @throws \InvalidArgumentException
      */
     public function createHandler(string $path, array $info)
@@ -97,8 +94,16 @@ class HandlerAdapter implements HandlerAdapterInterface
             throw new \InvalidArgumentException('Invalid route handler for URI: ' . $path);
         }
 
-        $className  = $segments[0];
-        $action     = $segments[1];
+        $action = '';
+        $className = $segments[0];
+        if (isset($segments[1])) {
+            // Already assign action
+            $action = $segments[1];
+        } elseif (isset($matches[0])) {
+            // use dynamic action
+            $action = array_shift($matches);
+        }
+
         $action     = HandlerMapping::convertNodeStr($action);
         $controller = App::getBean($className);
         $handler    = [$controller, $action];

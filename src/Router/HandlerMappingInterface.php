@@ -13,30 +13,12 @@ namespace Swoft\Router;
  */
 interface HandlerMappingInterface
 {
-    const ANY_METHOD = 'ANY';
-
-    // match result status
-    const STS_FOUND = 1;
-    const STS_NOT_FOUND = 2;
-    const STS_METHOD_NOT_ALLOWED = 3;
-
-    const DEFAULT_REGEX = '[^/]+';
-    const DEFAULT_TWO_LEVEL_KEY = '_NO_';
-
-    /**
-     * supported Methods
-     * @var array
-     */
-    const SUPPORTED_METHODS = [
-        'ANY',
-        'GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'HEAD', 'SEARCH', 'CONNECT', 'TRACE', 'UPDATE', 'PATCH'
-    ];
-
     /**
      * the handler of controller
      *
      * @param array ...$params
-     * @return \Swoft\Router\HandlerInterface;
+     *
+     * @return array
      */
     public function getHandler(...$params);
 }

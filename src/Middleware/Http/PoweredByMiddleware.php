@@ -10,6 +10,8 @@ use Swoft\Middleware\MiddlewareInterface;
 
 
 /**
+ * add powere by
+ *
  * @Bean()
  * @uses      PoweredByMiddleware
  * @version   2017年11月16日
@@ -24,8 +26,9 @@ class PoweredByMiddleware implements MiddlewareInterface
      * Process an incoming server request and return a response, optionally delegating
      * response creation to a handler.
      *
-     * @param \Psr\Http\Message\ServerRequestInterface $request
+     * @param \Psr\Http\Message\ServerRequestInterface     $request
      * @param \Interop\Http\Server\RequestHandlerInterface $handler
+     *
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface

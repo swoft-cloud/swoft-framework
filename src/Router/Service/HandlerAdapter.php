@@ -23,6 +23,9 @@ use Swoft\Router\HandlerAdapterInterface;
  */
 class HandlerAdapter implements HandlerAdapterInterface
 {
+    /**
+     * the result of service handler
+     */
     const ATTRIBUTE = 'serviceResult';
 
     /**

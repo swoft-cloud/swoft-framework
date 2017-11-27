@@ -25,6 +25,38 @@ use Swoft\Router\HandlerMappingInterface;
  */
 class HandlerMapping implements HandlerMappingInterface
 {
+    const ANY_METHOD = 'ANY';
+
+    // match result status
+    const STS_FOUND = 1;
+    const STS_NOT_FOUND = 2;
+    const STS_METHOD_NOT_ALLOWED = 3;
+
+    const DEFAULT_REGEX = '[^/]+';
+    const DEFAULT_TWO_LEVEL_KEY = '_NO_';
+
+    /**
+     * supported Methods
+     *
+     * @var array
+     */
+    const SUPPORTED_METHODS
+        = [
+            'ANY',
+            'GET',
+            'POST',
+            'PUT',
+            'DELETE',
+            'OPTIONS',
+            'HEAD',
+            'SEARCH',
+            'CONNECT',
+            'TRACE',
+            'UPDATE',
+            'PATCH',
+        ];
+
+
     /** @var int 已注册的路由数 */
     private $routeCounter = 0;
 
@@ -451,8 +483,8 @@ class HandlerMapping implements HandlerMappingInterface
                 $regex = $tokens[$name] ?? self::DEFAULT_REGEX;
 
                 // 将匹配结果命名 (?P<arg1>[^/]+)
-                 $replacePairs[$key] = '(?P<' . $name . '>' . $regex . ')';
-//                $replacePairs[$key] = '(' . $regex . ')';
+                $replacePairs[$key] = '(?P<' . $name . '>' . $regex . ')';
+                //                $replacePairs[$key] = '(' . $regex . ')';
             }
 
             $route = strtr($route, $replacePairs);
@@ -499,17 +531,18 @@ class HandlerMapping implements HandlerMappingInterface
     //////////////////////////////////////////////////////////////////////
 
     /**
-     * get handler
+     * get handler from router
      *
      * @param array ...$params
      *
-     * @return \Swoft\Router\HandlerInterface
+     * @return array
      */
     public function getHandler(...$params)
     {
         list($path, $method) = $params;
         $router = $this->match($path, $method);
-//        list($path, $info) = $router;
+
+        //        list($path, $info) = $router;
         return $router;
     }
 

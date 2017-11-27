@@ -58,6 +58,8 @@ class PackerMiddleware implements MiddlewareInterface
         $packer            = $dispatcherService->getPacker();
         $data              = $request->getAttribute(self::ATTRIBUTE_DATA);
         $data              = $packer->unpack($data);
+
+        // init data and trigger event
         App::trigger(Event::BEFORE_RECEIVE, null, $data);
         $request = $request->withAttribute(self::ATTRIBUTE_DATA, $data);
 

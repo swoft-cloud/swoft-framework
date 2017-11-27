@@ -30,11 +30,18 @@ class HandlerMapping implements HandlerMappingInterface
      */
     private $routes = [];
 
-
+    /**
+     * get handler from router
+     *
+     * @param array ...$params
+     *
+     * @return array
+     */
     public function getHandler(...$params)
     {
         list($data) = $params;
         $func = $data['func']?? '';
+
         return $this->match($func);
     }
 
@@ -55,7 +62,7 @@ class HandlerMapping implements HandlerMappingInterface
     }
 
     /**
-     * 匹配路由
+     * match route
      *
      * @param $func
      *
@@ -64,14 +71,14 @@ class HandlerMapping implements HandlerMappingInterface
     public function match($func)
     {
         if (!isset($this->routes[$func])) {
-            throw new \InvalidArgumentException('service调用的函数不存在，func=' . $func);
+            throw new \InvalidArgumentException('the func of service is not exist，func=' . $func);
         }
 
         return $this->routes[$func];
     }
 
     /**
-     * 注册一个路由
+     * register one route
      *
      * @param string $className
      * @param array  $routes
@@ -92,7 +99,7 @@ class HandlerMapping implements HandlerMappingInterface
     }
 
     /**
-     * 获取类前缀
+     * get service from class name
      *
      * @param string $suffix
      * @param string $prefix
@@ -102,12 +109,12 @@ class HandlerMapping implements HandlerMappingInterface
      */
     private function getPrefix(string $suffix, string $prefix, string $className)
     {
-        // 注解注入不为空，直接返回prefix
+        // the  prefix of annotation is exist
         if (!empty($prefix)) {
             return $prefix;
         }
 
-        // 注解注入为空，解析控制器prefix
+        // the prefix of annotation is empty
         $reg    = '/^.*\\\(\w+)' . $suffix . '$/';
         $prefix = '';
 
