@@ -32,12 +32,12 @@ interface DispatcherInterface
      *
      * @return array
      */
-    public function firstMiddlewares();
+    public function firstMiddleware();
 
     /**
      * the lasted middlewares of request
      *
      * @return array
      */
-    public function lastMiddlewares();
+    public function lastMiddleware();
 }

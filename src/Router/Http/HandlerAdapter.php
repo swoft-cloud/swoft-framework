@@ -94,7 +94,7 @@ class HandlerAdapter implements HandlerAdapterInterface
             throw new \InvalidArgumentException('Invalid route handler for URI: ' . $path);
         }
 
-        $action = '';
+        $action    = '';
         $className = $segments[0];
         if (isset($segments[1])) {
             // Already assign action
@@ -163,8 +163,21 @@ class HandlerAdapter implements HandlerAdapterInterface
 
         // binding params
         foreach ($reflectParams as $key => $reflectParam) {
-            $type = $reflectParam->getType()->__toString();
-            $name = $reflectParam->getName();
+            $reflectType = $reflectParam->getType();
+            $name        = $reflectParam->getName();
+
+            // undefined type of the param
+            if ($reflectType == null) {
+                if (isset($matches[$name])) {
+                    $bindParams[$key] = $matches[$name];
+                } else {
+                    $bindParams[$key] = null;
+                }
+                continue;
+            }
+
+            // defined type of the param
+            $type = $reflectType->__toString();
             if ($type == Request::class) {
                 $bindParams[$key] = $request;
             } elseif ($type == Response::class) {
@@ -172,7 +185,7 @@ class HandlerAdapter implements HandlerAdapterInterface
             } elseif (isset($matches[$name])) {
                 $bindParams[$key] = $this->parserParamType($type, $matches[$name]);
             } else {
-                throw new RuntimeException("$method has not the argument of $name");
+                $bindParams[$key] = $this->getDefaultValue($type);
             }
         }
 
@@ -204,6 +217,37 @@ class HandlerAdapter implements HandlerAdapterInterface
                 break;
             case 'double':
                 $value = (double)$value;
+                break;
+        }
+
+        return $value;
+    }
+
+    /**
+     * the deafult value of param
+     *
+     * @param string $type the type of param
+     *
+     * @return bool|float|int|string
+     */
+    private function getDefaultValue(string $type)
+    {
+        $value = null;
+        switch ($type) {
+            case 'int':
+                $value = 0;
+                break;
+            case 'string':
+                $value = "";
+                break;
+            case 'bool':
+                $value = false;
+                break;
+            case 'float':
+                $value = 0;
+                break;
+            case 'double':
+                $value = 0;
                 break;
         }
 

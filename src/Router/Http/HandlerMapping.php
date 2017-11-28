@@ -218,7 +218,7 @@ class HandlerMapping implements HandlerMappingInterface
     public $controllerNamespace = '';
 
     /** @var string 控制器后缀, 当开启自动匹配路由时有效. eg: 'Controller' */
-    public $controllerSuffix = '';
+    public $controllerSuffix = 'Controller';
 
     /**
      * action prefix
@@ -920,7 +920,8 @@ class HandlerMapping implements HandlerMappingInterface
      */
     private function getActionMethod(string $actionPrefix, string $action)
     {
-        $action = str_replace($actionPrefix, '', $action);
+        $prefixes = [$actionPrefix, ucfirst($actionPrefix)];
+        $action = str_replace($prefixes, ['', ''], $action);
         $action = lcfirst($action);
 
         return $action;
@@ -942,7 +943,7 @@ class HandlerMapping implements HandlerMappingInterface
         }
 
         // 注解注入为空，解析控制器prefix
-        $reg    = '/^.*\\\(\w+)Controller$/';
+        $reg    = '/^.*\\\(\w+)' . $this->controllerSuffix . '$/';
         $prefix = '';
 
         if ($result = preg_match($reg, $className, $match)) {

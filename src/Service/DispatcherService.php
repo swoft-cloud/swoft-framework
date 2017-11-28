@@ -90,7 +90,7 @@ class DispatcherService implements DispatcherInterface
      */
     public function requestMiddlewares()
     {
-        return array_merge($this->firstMiddlewares(), $this->middlewares, $this->lastMiddlewares());
+        return array_merge($this->firstMiddleware(), $this->middlewares, $this->lastMiddleware());
     }
 
     /**
@@ -98,7 +98,7 @@ class DispatcherService implements DispatcherInterface
      *
      * @return array
      */
-    public function firstMiddlewares()
+    public function firstMiddleware()
     {
         return [
             PackerMiddleware::class,
@@ -111,7 +111,7 @@ class DispatcherService implements DispatcherInterface
      *
      * @return array
      */
-    public function lastMiddlewares()
+    public function lastMiddleware()
     {
         return [];
     }

@@ -93,10 +93,6 @@ class BeanFactory implements BeanFactoryInterface
             ],
             'application'        => ['class' => Application::class],
             'roundRobinBalancer' => ['class' => RoundRobinBalancer::class],
-            'filter'             => [
-                'class'            => FilterChain::class,
-                'filterUriPattern' => '${uriPattern}'
-            ],
             "lineFormatter"        => [
                 'class'      => LineFormatter::class,
                 "format"     => '%datetime% [%level_name%] [%channel%] [logid:%logid%] [spanid:%spanid%] %messages%',

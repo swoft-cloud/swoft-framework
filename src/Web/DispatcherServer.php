@@ -6,9 +6,9 @@ use Swoft\App;
 use Swoft\Base\DispatcherInterface;
 use Swoft\Base\RequestContext;
 use Swoft\Base\RequestHandler;
-use Swoft\Bean\Annotation\Bean;
 use Swoft\Event\Event;
 use Swoft\Exception\Handler\ExceptionHandlerManager;
+use Swoft\Middleware\Http\ActionMiddleware;
 use Swoft\Middleware\Http\FaviconIcoMiddleware;
 use Swoft\Middleware\Http\HandlerAdapterMiddleware;
 use Swoft\Middleware\Http\PoweredByMiddleware;
@@ -17,7 +17,6 @@ use Swoft\Middleware\Http\RouterMiddleware;
 /**
  * the dispatcher of http server
  *
- * @Bean("dispatcherServer")
  * @uses      DispatcherServer
  * @version   2017年11月24日
  * @author    stelin <phpcrazy@126.com>
@@ -68,7 +67,7 @@ class DispatcherServer implements DispatcherInterface
             $requestHandler = new RequestHandler($middlewares, $this->handlerAdapter);
             $response       = $requestHandler->handle($request);
         } catch (\Throwable $throwable) {
-//            var_dump($throwable->getMessage(), $throwable->getFile(), $throwable->getLine(), $throwable->getCode());
+            var_dump($throwable->getMessage(), $throwable->getFile(), $throwable->getLine(), $throwable->getCode());
             // Handle by ExceptionHandler
             $response = ExceptionHandlerManager::handle($throwable);
         } finally {
@@ -80,9 +79,7 @@ class DispatcherServer implements DispatcherInterface
 
     public function requestMiddlewares()
     {
-        $annotationMiddelwares = [];
-
-        return array_merge($this->firstMiddlewares(), $this->middlewares, $annotationMiddelwares, $this->lastMiddlewares());
+        return array_merge($this->firstMiddleware(), $this->middlewares, $this->lastMiddleware());
     }
 
     /**
@@ -90,7 +87,7 @@ class DispatcherServer implements DispatcherInterface
      *
      * @return array
      */
-    public function firstMiddlewares()
+    public function firstMiddleware()
     {
         return [
             FaviconIcoMiddleware::class,
@@ -104,10 +101,10 @@ class DispatcherServer implements DispatcherInterface
      *
      * @return array
      */
-    public function lastMiddlewares()
+    public function lastMiddleware()
     {
         return [
-
+            ActionMiddleware::class
         ];
     }
 
