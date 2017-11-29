@@ -2,7 +2,7 @@
 
 namespace Swoft\Console\Command;
 
-use Swoft\Console\ConsoleCommand;
+use Swoft\Console\ConsoleController;
 use \Swoft\Db\Entity\Generator;
 use Swoft\Console\Input\Input;
 use Swoft\Console\Output\Output;
@@ -19,7 +19,7 @@ use Swoft\Db\Entity\Mysql\Schema;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class EntityController extends ConsoleCommand
+class EntityController extends ConsoleController
 {
     /**
      * @var array $drivers 数据库驱动列表
@@ -64,18 +64,15 @@ class EntityController extends ConsoleCommand
      * entity:create -d[|--database] <database> -i[|--include] <table1,table2> -e[|--exclude] <table3,table4>
      *
      * @options
-     * -d         数据库
-     * --database 数据库
-     * -i         指定特定的数据表，多表之间用逗号分隔
-     * -include   指定特定的数据表，多表之间用逗号分隔
-     * -e         排除指定的数据表，多表之间用逗号分隔
-     * -exclude   排除指定的数据表，多表之间用逗号分隔
+     * -d  数据库
+     * --database  数据库
+     * -i  指定特定的数据表，多表之间用逗号分隔
+     * --include  指定特定的数据表，多表之间用逗号分隔
+     * -e  排除指定的数据表，多表之间用逗号分隔
+     * --exclude  排除指定的数据表，多表之间用逗号分隔
      *
      * @example
      * php bin/swoft entity:create -d test
-     * php bin/swoft entity:create -d test user
-     * php bin/swoft entity:create -d test -i user
-     * php bin/swoft entity:create -d test user -i user2 <=> php bin/swoft entity:create -d test user 参数优先级高于选项
      */
     public function createCommand()
     {
@@ -103,8 +100,6 @@ class EntityController extends ConsoleCommand
      */
     private function init()
     {
-        // 初始化相关内容
-        BeanFactory::reload();
         App::setAlias('@entityPath', $this->filePath);
         $pool = App::getBean('dbSlave');
         $driver = $pool->getDriver();
