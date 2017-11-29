@@ -17,10 +17,4 @@ return [
         'class'     => \Swoft\Web\ViewRenderer::class,
         'viewsPath' => "@resources/views/",
     ],
-    'middleware' => [
-        'class' => \Swoft\Web\Middleware::class,
-        'middlewares' => [
-
-        ],
-    ],
 ];

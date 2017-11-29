@@ -3,6 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Collector;
+use Swoft\Bean\Annotation\Middleware;
 
 
 /**
@@ -18,11 +19,12 @@ class MiddlewareParser extends AbstractParser
     /**
      * Parse middleware annotation
      *
-     * @param string $className
-     * @param object $objectAnnotation
-     * @param string $propertyName
-     * @param string $methodName
+     * @param string      $className
+     * @param Middleware  $objectAnnotation
+     * @param string      $propertyName
+     * @param string      $methodName
      * @param string|null $propertyValue
+     *
      * @return mixed
      */
     public function parser(
@@ -32,11 +34,17 @@ class MiddlewareParser extends AbstractParser
         string $methodName = "",
         $propertyValue = null
     ) {
-        /** @var \Swoft\Bean\Annotation\Middleware $objectAnnotation */
+        $middlewares = [
+            $objectAnnotation->getClass()
+        ];
+
         if ($methodName) {
-            Collector::$requestMapping[$className]['middlewares']['actions'][$methodName][] = $objectAnnotation->getClass();
+            $scanMiddlewares = Collector::$requestMapping[$className]['middlewares']['actions'][$methodName]??[];
+            Collector::$requestMapping[$className]['middlewares']['actions'][$methodName] = array_merge($middlewares, $scanMiddlewares);
         } else {
-            Collector::$requestMapping[$className]['middlewares']['group'][] = $objectAnnotation->getClass();
+            $scanMiddlewares = Collector::$requestMapping[$className]['middlewares']['group']??[];
+            Collector::$requestMapping[$className]['middlewares']['group'] = array_merge($middlewares, $scanMiddlewares);
         }
+        return null;
     }
 }

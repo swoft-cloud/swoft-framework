@@ -8,7 +8,7 @@ use Swoft\Base\RequestContext;
 use Swoft\Base\RequestHandler;
 use Swoft\Event\Event;
 use Swoft\Exception\Handler\ExceptionHandlerManager;
-use Swoft\Middleware\Http\ActionMiddleware;
+use Swoft\Middleware\Http\UserMiddleware;
 use Swoft\Middleware\Http\FaviconIcoMiddleware;
 use Swoft\Middleware\Http\HandlerAdapterMiddleware;
 use Swoft\Middleware\Http\PoweredByMiddleware;
@@ -104,7 +104,7 @@ class DispatcherServer implements DispatcherInterface
     public function lastMiddleware()
     {
         return [
-            ActionMiddleware::class
+            UserMiddleware::class
         ];
     }
 
