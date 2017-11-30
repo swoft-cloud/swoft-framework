@@ -51,7 +51,7 @@ abstract class Application
      * 创建控制器
      *
      * @param string $path url路径
-     * @param array  $info url参数
+     * @param array $info url参数
      *
      * @return array
      * <pre>
@@ -102,12 +102,14 @@ abstract class Application
 
         $action = Router::convertNodeStr($action);
         $controller = ApplicationContext::getBean($className);
+        if (! $controller instanceof Controller) {
+            throw new \InvalidArgumentException('Invalid controller');
+        }
         // Set Controller and Action infos to Request Context
         RequestContext::setContextData([
             'controllerClass' => $className,
-            'controllerAction' => $action,
+            'controllerAction' => $controller->getMethodName($action),
         ]);
-
         return [$controller, $action, $matches];
     }
 
@@ -120,8 +122,8 @@ abstract class Application
      */
     public function runService(array $data)
     {
-        $func = $data['func']?? '';
-        $params = $data['params']?? [];
+        $func = $data['func'] ?? '';
+        $params = $data['params'] ?? [];
 
         /* @var Router $router */
         $router = App::getBean('router');

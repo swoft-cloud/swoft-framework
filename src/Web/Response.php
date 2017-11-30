@@ -53,8 +53,9 @@ class Response extends \Swoft\Base\Response
             $data = $data->toArray();
         }
         $controllerClass = RequestContext::getContextDataByKey('controllerClass');
-        $template = Collector::$requestMapping[$controllerClass]['view']['template'] ?? null;
-        $layout = Collector::$requestMapping[$controllerClass]['view']['layout'] ?? null;
+        $controllerAction = RequestContext::getContextDataByKey('controllerAction');
+        $template = Collector::$requestMapping[$controllerClass]['view'][$controllerAction]['template'] ?? null;
+        $layout = Collector::$requestMapping[$controllerClass]['view'][$controllerAction]['layout'] ?? null;
         $response = $this->render($template, $data, $layout);
         return $response;
     }
@@ -126,7 +127,8 @@ class Response extends \Swoft\Base\Response
         $accepts = RequestContext::getRequest()->getHeader('accept');
         $currentAccept = current($accepts);
         $controllerClass = RequestContext::getContextDataByKey('controllerClass');
-        $template = Collector::$requestMapping[$controllerClass]['view']['template'] ?? null;
+        $controllerAction = RequestContext::getContextDataByKey('controllerAction');
+        $template = Collector::$requestMapping[$controllerClass]['view'][$controllerAction]['template'] ?? null;
         $matchViewModel = $this->isMatchAccept($currentAccept, 'text/html') && $controllerClass && $this->isArrayable($data) && $template && ! $this->getException();
         switch ($currentAccept) {
             // View
