@@ -21,7 +21,7 @@ class RequestMapping
      *
      * @var string
      */
-    private $route = "";
+    private $route = '';
 
     /**
      * 路由支持的HTTP方法集合
@@ -29,6 +29,19 @@ class RequestMapping
      * @var array
      */
     private $method = [RequestMethod::GET, RequestMethod::POST];
+
+
+    /**
+     * {"id"="\d+"}
+     * @var array
+     */
+    private $params = [];
+
+    /**
+     * {"id"=12}
+     * @var array
+     */
+    private $defaults = [];
 
     /**
      * RequestMapping constructor.
@@ -40,13 +53,22 @@ class RequestMapping
         if (isset($values['value'])) {
             $this->route = $values['value'];
         }
+
         if (isset($values['route'])) {
             $this->route = $values['route'];
         }
 
         if (isset($values['method'])) {
             $method = $values['method'];
-            $this->method = !is_array($method) ? [$method] : $method;
+            $this->method = (array)$method;
+        }
+
+        if (isset($values['params'])) {
+            $this->params = $values['params'];
+        }
+
+        if (isset($values['defaults'])) {
+            $this->defaults = $values['defaults'];
         }
     }
 
@@ -68,5 +90,37 @@ class RequestMapping
     public function getMethod()
     {
         return $this->method;
+    }
+
+    /**
+     * @return array
+     */
+    public function getParams(): array
+    {
+        return $this->params;
+    }
+
+    /**
+     * @param array $params
+     */
+    public function setParams(array $params)
+    {
+        $this->params = $params;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaults(): array
+    {
+        return $this->defaults;
+    }
+
+    /**
+     * @param array $defaults
+     */
+    public function setDefaults(array $defaults)
+    {
+        $this->defaults = $defaults;
     }
 }

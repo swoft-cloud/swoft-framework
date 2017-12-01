@@ -6,6 +6,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Swoft\App;
 use Swoft\Base\RequestContext;
 use Swoft\Bean\Annotation\Bean;
+use Swoft\Exception\Http\MethodNotAllowedException;
 use Swoft\Exception\Http\RouteNotFoundException;
 use Swoft\Exception\RuntimeException;
 use Swoft\Helper\PhpHelper;
@@ -26,34 +27,44 @@ use Swoft\Web\Response;
 class HandlerAdapter implements HandlerAdapterInterface
 {
     /**
-     * exexute handler with controller and action
-     *
+     * execute handler with controller and action
      * @param ServerRequestInterface $request request object
-     * @param array                  $handler handler info
-     *
+     * @param array $routeInfo handler info
      * @return \Swoft\Web\Response
+     * @throws \Swoft\Exception\Http\MethodNotAllowedException
+     * @throws \Swoft\Exception\Http\RouteNotFoundException
      */
-    public function doHandler(ServerRequestInterface $request, array $handler)
+    public function doHandler(ServerRequestInterface $request, array $routeInfo)
     {
         /**
+         * @var int $status
          * @var string $path
-         * @var array  $handler
+         * @var array  $info
          */
-        list($path, $info) = $handler;
+        list($status, $path, $info) = $routeInfo;
 
         // not founded route
-        if ($info == null) {
-            throw new RouteNotFoundException("Route not found");
+        if ($status === HandlerMapping::NOT_FOUND) {
+            throw new RouteNotFoundException('Route not found for ' . $path);
+        }
+
+        // method not allowed
+        if ($status === HandlerMapping::METHOD_NOT_ALLOWED) {
+            throw new MethodNotAllowedException(sprintf(
+                "Method '%s' not allowed for access %s, Allow: %s",
+                $request->getMethod(), $path, implode(',', $routeInfo[2])
+            ));
         }
 
         // handler info
-        list($handler, $params) = $this->createHandler($path, $info);
-        if (is_array($handler)) {
+        list($handler, $matches) = $this->createHandler($path, $info);
+
+        if (\is_array($handler)) {
             $handler = $this->defaultHandler($handler);
         }
 
         // execute handler
-        $params   = $this->bindParams($request, $handler, $info);
+        $params   = $this->bindParams($request, $handler, $matches);
         $response = PhpHelper::call($handler, $params);
 
         // response
@@ -79,14 +90,14 @@ class HandlerAdapter implements HandlerAdapterInterface
         $matches = $info['matches'] ?? [];
 
         // is a \Closure or a callable object
-        if (is_object($handler)) {
+        if (\is_object($handler)) {
             return [$handler, $matches];
         }
 
         // is array ['controller', 'action']
-        if (is_array($handler)) {
+        if (\is_array($handler)) {
             $segments = $handler;
-        } elseif (is_string($handler)) {
+        } elseif (\is_string($handler)) {
             // e.g `Controllers\Home@index` Or only `Controllers\Home`
             $segments = explode('@', trim($handler));
         } else {
@@ -108,7 +119,7 @@ class HandlerAdapter implements HandlerAdapterInterface
         $controller = App::getBean($className);
         $handler    = [$controller, $action];
 
-        // Set Controller and Action infos to Request Context
+        // Set Controller and Action info to Request Context
         RequestContext::setContextData([
             'controllerClass'  => $className,
             'controllerAction' => $action,
@@ -142,13 +153,13 @@ class HandlerAdapter implements HandlerAdapterInterface
      *
      * @param ServerRequestInterface $request request object
      * @param mixed                  $handler handler
-     * @param array                  $info    route info
+     * @param array                  $matches route params info
      *
      * @return array
      */
-    private function bindParams(ServerRequestInterface $request, $handler, array $info)
+    private function bindParams(ServerRequestInterface $request, $handler, array $matches)
     {
-        if (is_array($handler)) {
+        if (\is_array($handler)) {
             list($controller, $method) = $handler;
             $reflectMethod = new \ReflectionMethod($controller, $method);
             $reflectParams = $reflectMethod->getParameters();
@@ -158,7 +169,7 @@ class HandlerAdapter implements HandlerAdapterInterface
         }
 
         $bindParams = [];
-        $matches    = $info['matches'] ?? [];
+        // $matches    = $info['matches'] ?? [];
         $response   = RequestContext::getResponse();
 
         // binding params
@@ -167,7 +178,7 @@ class HandlerAdapter implements HandlerAdapterInterface
             $name        = $reflectParam->getName();
 
             // undefined type of the param
-            if ($reflectType == null) {
+            if ($reflectType === null) {
                 if (isset($matches[$name])) {
                     $bindParams[$key] = $matches[$name];
                 } else {
@@ -177,10 +188,10 @@ class HandlerAdapter implements HandlerAdapterInterface
             }
 
             // defined type of the param
-            $type = $reflectType->__toString();
-            if ($type == Request::class) {
+            $type = $reflectType->getName();
+            if ($type === Request::class) {
                 $bindParams[$key] = $request;
-            } elseif ($type == Response::class) {
+            } elseif ($type === Response::class) {
                 $bindParams[$key] = $response;
             } elseif (isset($matches[$name])) {
                 $bindParams[$key] = $this->parserParamType($type, $matches[$name]);

@@ -33,7 +33,7 @@ class UserMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $httpHandler = $request->getAttribute(RouterMiddleware::ATTRIBUTE);
-        list(, $info) = $httpHandler;
+        $info = $httpHandler[2];
 
         $actionMiddlewares = [];
         if (isset($info['handler']) && is_string($info['handler'])) {
