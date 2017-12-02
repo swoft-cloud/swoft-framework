@@ -367,7 +367,11 @@ class HandlerMapping extends AbstractRouter implements HandlerMappingInterface
 
         // find in route caches.
         if ($this->routeCaches && isset($this->routeCaches[$path])) {
-            return self::findInStaticRoutes($this->routeCaches[$path], $path, $method);
+            $data = self::findInStaticRoutes($this->routeCaches[$path], $path, $method);
+
+            if ($data[0] === self::FOUND) {
+                return $data;
+            }
         }
 
         // is a static route path
