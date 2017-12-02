@@ -54,6 +54,13 @@ class Request extends Psr7Request implements ServerRequestInterface
     private $uploadedFiles = [];
 
     /**
+     * the body of parser
+     *
+     * @var mixed
+     */
+    private $bodyParams;
+
+    /**
      * Load a swoole request, and transfer to a swoft request object
      *
      * @param \Swoole\Http\Request $swooleRequest
@@ -331,6 +338,16 @@ class Request extends Psr7Request implements ServerRequestInterface
     }
 
     /**
+     * return parser result of body
+     *
+     * @return mixed
+     */
+    public function getBodyParams()
+    {
+        return $this->bodyParams;
+    }
+
+    /**
      * Return an instance with the specified body parameters.
      * These MAY be injected during instantiation.
      * If the request Content-Type is either application/x-www-form-urlencoded
@@ -359,6 +376,21 @@ class Request extends Psr7Request implements ServerRequestInterface
         $clone->parsedBody = $data;
         return $clone;
     }
+
+    /**
+     * init body params from parser result
+     *
+     * @param mixed $data
+     *
+     * @return static
+     */
+    public function withBodyParams($data)
+    {
+        $clone = clone $this;
+        $clone->bodyParams = $data;
+        return $clone;
+    }
+
 
     /**
      * Retrieve attributes derived from the request.
