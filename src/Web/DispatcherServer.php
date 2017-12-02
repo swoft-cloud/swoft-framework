@@ -8,6 +8,7 @@ use Swoft\Base\RequestContext;
 use Swoft\Base\RequestHandler;
 use Swoft\Event\Event;
 use Swoft\Exception\Handler\ExceptionHandlerManager;
+use Swoft\Middleware\Http\ParserMiddleware;
 use Swoft\Middleware\Http\UserMiddleware;
 use Swoft\Middleware\Http\FaviconIcoMiddleware;
 use Swoft\Middleware\Http\HandlerAdapterMiddleware;
@@ -94,6 +95,7 @@ class DispatcherServer implements DispatcherInterface
         return [
             FaviconIcoMiddleware::class,
             PoweredByMiddleware::class,
+            ParserMiddleware::class,
             RouterMiddleware::class,
         ];
     }

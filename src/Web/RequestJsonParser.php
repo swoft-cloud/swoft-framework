@@ -30,8 +30,7 @@ class RequestJsonParser implements RequestParserInterface
         if ($request instanceof Request) {
             $bodyStream  = $request->getBody();
             $bodyContent = $bodyStream->getContents();
-            $bodyParams  = JsonHelper::decode($bodyContent);
-
+            $bodyParams  = JsonHelper::decode($bodyContent, true);
             return $request->withBodyParams($bodyParams);
         }
 
