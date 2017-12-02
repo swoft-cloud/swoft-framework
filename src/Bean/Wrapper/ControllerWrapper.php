@@ -7,6 +7,7 @@ use Swoft\Bean\Annotation\Inject;
 use Swoft\Bean\Annotation\Middleware;
 use Swoft\Bean\Annotation\Middlewares;
 use Swoft\Bean\Annotation\RequestMapping;
+use Swoft\Bean\Annotation\Strings;
 use Swoft\Bean\Annotation\Value;
 use Swoft\Bean\Annotation\View;
 
@@ -55,6 +56,7 @@ class ControllerWrapper extends AbstractWrapper
             View::class,
             Middlewares::class,
             Middleware::class,
+            Strings::class,
         ];
 
     /**

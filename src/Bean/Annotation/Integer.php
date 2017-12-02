@@ -17,6 +17,11 @@ namespace Swoft\Bean\Annotation;
 class Integer
 {
     /**
+     * @var string
+     */
+    private $from = ValidatorFrom::QUERY;
+
+    /**
      * 字段名称
      *
      * @var string
@@ -51,6 +56,9 @@ class Integer
      */
     public function __construct(array $values)
     {
+        if (isset($values['from'])) {
+            $this->from = $values['from'];
+        }
         if (isset($values['name'])) {
             $this->name = $values['name'];
         }
@@ -95,5 +103,13 @@ class Integer
     public function getDefault()
     {
         return $this->default;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFrom(): string
+    {
+        return $this->from;
     }
 }
