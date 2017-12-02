@@ -139,6 +139,23 @@ abstract class AbstractRouter
     }
 
     /**
+     * @param string $path
+     * @param bool $ignoreLastSep
+     * @return string
+     */
+    protected static function formatUriPath($path, $ignoreLastSep)
+    {
+      // clear '//', '///' => '/'
+      $path = rawurldecode(preg_replace('#\/\/+#', '/', $path));
+
+      // setting 'ignoreLastSep'
+      if ($path !== '/' && $ignoreLastSep) {
+        $path = rtrim($path, '/');
+      }
+
+      return $path;
+    }
+    /**
      * @param array $matches
      * @param array $conf
      * @return array
