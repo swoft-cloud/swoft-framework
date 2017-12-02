@@ -23,56 +23,11 @@ use Swoft\Router\HandlerMappingInterface;
  * @method trace(string $route, mixed $handler, array $opts = [])
  * @method any(string $route, mixed $handler, array $opts = [])
  */
-class HandlerMapping implements HandlerMappingInterface
+class HandlerMapping extends AbstractRouter implements HandlerMappingInterface
 {
-    const ANY_METHOD = 'ANY';
-
-    // match result status
-    const STS_FOUND = 1;
-    const STS_NOT_FOUND = 2;
-    const STS_METHOD_NOT_ALLOWED = 3;
-
-    const DEFAULT_REGEX = '[^/]+';
-    const DEFAULT_TWO_LEVEL_KEY = '_NO_';
-
-    /**
-     * supported Methods
-     *
-     * @var array
-     */
-    const SUPPORTED_METHODS
-        = [
-            'ANY',
-            'GET',
-            'POST',
-            'PUT',
-            'DELETE',
-            'OPTIONS',
-            'HEAD',
-            'SEARCH',
-            'CONNECT',
-            'TRACE',
-            'UPDATE',
-            'PATCH',
-        ];
-
-
-    /** @var int 已注册的路由数 */
+    /** @var int */
     private $routeCounter = 0;
-
-    /**
-     * 内置的一些匹配参数
-     * $router->get('/user/{num}', 'handler');
-     *
-     * @var array
-     */
-    private static $globalTokens
-        = [
-            'any' => '[^/]+',   // match any except '/'
-            'num' => '[0-9]+',  // match a number
-            'act' => '[a-zA-Z][\w-]+', // match a action name
-            'all' => '.*',
-        ];
+    private $cacheCounter = 0;
 
     /** @var string */
     private $currentGroupPrefix;
@@ -86,17 +41,19 @@ class HandlerMapping implements HandlerMappingInterface
     /**
      * static Routes - no dynamic argument match
      * 整个路由 path 都是静态字符串 e.g. '/user/login'
-     *
-     * @var array
+     * @var array[]
      * [
      *     '/user/login' => [
-     *         'GET' => [
+     *         // METHODS => [...] // 这里 key 和 value里的 'methods' 是一样的。仅是为了防止重复添加
+     *         'GET,POST' => [
      *              'handler' => 'handler',
-     *              'option' => null,
+     *              'methods' => 'GET,POST',
+     *              'option' => [...],
      *          ],
-     *         'POST' => [
+     *          'PUT' => [
      *              'handler' => 'handler',
-     *              'option' => null,
+     *              'methods' => 'PUT',
+     *              'option' => [...],
      *          ],
      *          ...
      *      ]
@@ -105,49 +62,41 @@ class HandlerMapping implements HandlerMappingInterface
     private $staticRoutes = [];
 
     /**
-     * regular Routes - have dynamic arguments, but the first node is normal.
-     * 第一节是个静态字符串，称之为有规律的动态路由。按第一节的信息进行存储
+     * regular Routes - have dynamic arguments, but the first node is normal string.
+     * 第一节是个静态字符串，称之为有规律的动态路由。按第一节的信息进行分组存储
      * e.g '/hello[/{name}]' '/user/{id}'
-     *
      * @var array[]
      * [
-     *     // 先用第一个字符作为 key，进行分组
+     *     // 使用完整的第一节作为key进行分组
      *     'a' => [
-     *          // 第一节只有一个字符, 使用关键字'_NO_'为 key 进行分组
-     *         '_NO_' => [
-     *              [
-     *                  'first' => '/a',
-     *                  'regex' => '/a/(\w+)',
-     *                  'method' => 'GET',
-     *                  'handler' => 'handler',
-     *                  'option' => null,
-     *              ]
-     *          ],
-     *          // 第一节有多个字符, 使用第二个字符 为 key 进行分组
-     *         'd' => [
-     *              [
-     *                  'first' => '/add',
-     *                  'regex' => '/add/(\w+)',
-     *                  'method' => 'GET',
-     *                  'handler' => 'handler',
-     *                  'option' => null,
-     *              ],
-     *              ... ...
+     *          [
+     *              'start' => '/a/',
+     *              'regex' => '/a/(\w+)',
+     *              'methods' => 'GET,POST',
+     *              'handler' => 'handler',
+     *              'option' => [...],
      *          ],
      *          ... ...
      *      ],
-     *     'b' => [
-     *        'l' => [
-     *              [
-     *                  'first' => '/blog',
-     *                  'regex' => '/blog/(\w+)',
-     *                  'method' => 'GET',
-     *                  'handler' => 'handler',
-     *                  'option' => null,
-     *              ],
-     *              ... ...
+     *     'add' => [
+     *          [
+     *              'start' => '/add/',
+     *              'regex' => '/add/(\w+)',
+     *              'methods' => 'GET',
+     *              'handler' => 'handler',
+     *              'option' => [...],
      *          ],
      *          ... ...
+     *      ],
+     *     'blog' => [
+     *        [
+     *              'start' => '/blog/post-',
+     *              'regex' => '/blog/post-(\w+)',
+     *              'methods' => 'GET',
+     *              'handler' => 'handler',
+     *              'option' => [...],
+     *        ],
+     *        ... ...
      *     ],
      * ]
      */
@@ -156,15 +105,23 @@ class HandlerMapping implements HandlerMappingInterface
     /**
      * vague Routes - have dynamic arguments,but the first node is exists regex.
      * 第一节就包含了正则匹配，称之为无规律/模糊的动态路由
-     * e.g '/{some}/{some2}'
-     *
+     * e.g '/{name}/profile' '/{some}/{some2}'
      * @var array
      * [
      *     [
-     *         'regex' => '/(\w+)/some',
-     *         'method' => 'GET',
+     *         // 必定包含的字符串
+     *         'include' => '/profile',
+     *         'regex' => '/(\w+)/profile',
+     *         'methods' => 'GET',
      *         'handler' => 'handler',
-     *         'option' => null,
+     *         'option' => [...],
+     *     ],
+     *     [
+     *         'include' => null,
+     *         'regex' => '/(\w+)/(\w+)',
+     *         'methods' => 'GET,POST',
+     *         'handler' => 'handler',
+     *         'option' => [...],
      *     ],
      *      ... ...
      * ]
@@ -172,28 +129,15 @@ class HandlerMapping implements HandlerMappingInterface
     private $vagueRoutes = [];
 
     /**
-     * 最近的路由缓存数组(最大数量由 {@see $tmpCacheNumber}控制)
-     *
-     * @var array
-     * [
-     *     'path' => [
-     *         'GET' => [
-     *              'handler' => 'handler',
-     *              'option' => null,
-     *          ],
-     *         'POST' => [
-     *              'handler' => 'handler',
-     *              'option' => null,
-     *          ],
-     *         ... ...
-     *     ]
-     * ]
+     * There are last route caches
+     * @see $staticRoutes
+     * @var array[]
      */
     private $routeCaches = [];
 
-    //////////////////////////////////////////////////////////////////////
-    /// router config
-    //////////////////////////////////////////////////////////////////////
+    /*******************************************************************************
+     * route config
+     ******************************************************************************/
 
     /** @var bool 是否忽略最后的URl斜线 '/'. */
     public $ignoreLastSep = false;
@@ -236,9 +180,7 @@ class HandlerMapping implements HandlerMappingInterface
 
     /**
      * object creator.
-     *
      * @param array $config
-     *
      * @return self
      * @throws \LogicException
      */
@@ -249,9 +191,7 @@ class HandlerMapping implements HandlerMappingInterface
 
     /**
      * object constructor.
-     *
      * @param array $config
-     *
      * @throws \LogicException
      */
     public function __construct(array $config = [])
@@ -264,7 +204,6 @@ class HandlerMapping implements HandlerMappingInterface
 
     /**
      * @param array $config
-     *
      * @throws \LogicException
      */
     public function setConfig(array $config)
@@ -280,23 +219,21 @@ class HandlerMapping implements HandlerMappingInterface
         }
     }
 
-    //////////////////////////////////////////////////////////////////////
-    /// route collection
-    //////////////////////////////////////////////////////////////////////
+    /*******************************************************************************
+     * route collection
+     ******************************************************************************/
 
     /**
      * Defines a route callback and method
-     *
      * @param string $method
-     * @param array  $args
-     *
-     * @return \Swoft\Router\Http\HandlerMapping
+     * @param array $args
+     * @return $this
      * @throws \LogicException
      * @throws \InvalidArgumentException
      */
     public function __call($method, array $args)
     {
-        if (count($args) < 2) {
+        if (\count($args) < 2) {
             throw new \InvalidArgumentException("The method [$method] parameters is missing.");
         }
 
@@ -304,19 +241,19 @@ class HandlerMapping implements HandlerMappingInterface
     }
 
     /**
-     * 添加路由组
-     *
-     * @param string   $prefix
+     * Create a route group with a common prefix.
+     * All routes created in the passed callback will have the given group prefix prepended.
+     * @ref package 'nikic/fast-route'
+     * @param string $prefix
      * @param \Closure $callback
-     * @param array    $opts
+     * @param array $opts
      */
     public function group($prefix, \Closure $callback, array $opts = [])
     {
-        $prefix                   = '/' . trim($prefix, '/');
-        $previousGroupPrefix      = $this->currentGroupPrefix;
-        $this->currentGroupPrefix = $previousGroupPrefix . $prefix;
+        $previousGroupPrefix = $this->currentGroupPrefix;
+        $this->currentGroupPrefix = $previousGroupPrefix . '/' . trim($prefix, '/');
 
-        $previousGroupOption      = $this->currentGroupOption;
+        $previousGroupOption = $this->currentGroupOption;
         $this->currentGroupOption = $opts;
 
         $callback($this);
@@ -326,45 +263,32 @@ class HandlerMapping implements HandlerMappingInterface
     }
 
     /**
-     * @param string|array    $method  匹配请求方法
-     *                                 e.g
-     *                                 string: 'get'
-     *                                 array: ['get','post']
-     * @param string          $route   路由PATH. eg: '/user/login'
-     * @param callable|string $handler 路由处理器
-     * @param array           $opts    选项数据
-     *                                 [
-     *                                 'tokens' => [ 'id' => '[0-9]+', ],
-     *                                 'domains'  => [ 'a-domain.com', '*.b-domain.com'],
-     *                                 'schema' => 'https',
-     *                                 ]
-     *
+     * @param string|array $methods The match request method(s).
+     * e.g
+     *  string: 'get'
+     *  array: ['get','post']
+     * @param string $route The route path string. is allow empty string. eg: '/user/login'
+     * @param callable|string $handler
+     * @param array $opts some option data
+     * [
+     *     'params' => [ 'id' => '[0-9]+', ],
+     *     'defaults' => [ 'id' => 10, ],
+     *     'domains'  => [ 'a-domain.com', '*.b-domain.com'],
+     *     'schemas' => ['https'],
+     * ]
      * @return static
      * @throws \LogicException
      * @throws \InvalidArgumentException
      */
-    public function map($method, $route, $handler, array $opts = [])
+    public function map($methods, $route, $handler, array $opts = [])
     {
         if (!$this->initialized) {
             $this->initialized = true;
         }
 
-        // array
-        if (is_array($method)) {
-            foreach ((array)$method as $m) {
-                $this->map($m, $route, $handler, $opts);
-            }
-
-            return $this;
-        }
-
-        // string - register route and callback
-
-        $method    = strtoupper($method);
         $hasPrefix = (bool)$this->currentGroupPrefix;
-
-        // validate arguments
-        static::validateArguments($method, $handler);
+        // validate and format arguments
+        $methods = static::validateArguments($methods, $handler);
 
         if ($route = trim($route)) {
             // always add '/' prefix.
@@ -382,36 +306,31 @@ class HandlerMapping implements HandlerMappingInterface
 
         $this->routeCounter++;
         $opts = array_replace([
-            'tokens'  => null,
-            'domains' => null,
-            'schema'  => null, // ['http','https'],
-            // route Event. custom design ...
-            // 'enter' => null,
-            // 'leave' => null,
+            'params' => null,
+            // 'domains' => null,
         ], $this->currentGroupOption, $opts);
-
         $conf = [
-            'method'  => $method,
+            'methods' => $methods,
             'handler' => $handler,
-            'option'  => $opts,
+            'option' => $opts,
         ];
 
-        // no dynamic param tokens
-        if (strpos($route, '{') === false) {
-            $this->staticRoutes[$route][$method] = $conf;
+        // no dynamic param params
+        if (self::isNoDynamicParam($route)) {
+            $this->staticRoutes[$route][$methods] = $conf;
 
             return $this;
         }
 
-        // have dynamic param tokens
+        // have dynamic param params
 
-        // replace token name To pattern regex
-        list($first, $conf) = static::parseRoute($route, static::getAvailableTokens(self::$globalTokens, $opts['tokens']), $conf);
+        // replace param name To pattern regex
+        $params = static::getAvailableParams(self::$globalParams, $opts['params']);
+        list($first, $conf) = static::parseParamRoute($route, $params, $conf);
 
-        // route string is regular
+        // route string have regular
         if ($first) {
-            $twoLevelKey                                    = $first{1} ?? self::DEFAULT_TWO_LEVEL_KEY;
-            $this->regularRoutes[$first{0}][$twoLevelKey][] = $conf;
+            $this->regularRoutes[$first][] = $conf;
         } else {
             $this->vagueRoutes[] = $conf;
         }
@@ -419,116 +338,89 @@ class HandlerMapping implements HandlerMappingInterface
         return $this;
     }
 
-    /**
-     * @param $method
-     * @param $handler
-     *
-     * @throws \InvalidArgumentException
-     */
-    public static function validateArguments($method, $handler)
-    {
-        $supStr = implode('|', self::SUPPORTED_METHODS);
-
-        if (false === strpos('|' . $supStr . '|', '|' . $method . '|')) {
-            throw new \InvalidArgumentException("The method [$method] is not supported, Allow: $supStr");
-        }
-
-        if (!$handler || (!is_string($handler) && !is_object($handler))) {
-            throw new \InvalidArgumentException('The route handler is not empty and type only allow: string,object');
-        }
-
-        if (is_object($handler) && !is_callable($handler)) {
-            throw new \InvalidArgumentException('The route object handler must be is callable');
-        }
-    }
+    /*******************************************************************************
+     * route match
+     ******************************************************************************/
 
     /**
-     * 解析路由PATH
-     *
-     * @param string $route
-     * @param array  $tokens
-     * @param array  $conf
-     *
-     * @return array
-     * @throws \LogicException
-     */
-    public static function parseRoute($route, array $tokens, array $conf)
-    {
-        $first = null;
-        $tmp   = $route;
-
-        // 解析可选参数位
-        // '/hello[/{name}]'      match: /hello/tom   /hello
-        // '/my[/{name}[/{age}]]' match: /my/tom/78  /my/tom
-        if (false !== strpos($route, ']')) {
-            $withoutClosingOptionals = rtrim($route, ']');
-            $optionalNum             = strlen($route) - strlen($withoutClosingOptionals);
-
-            if ($optionalNum !== substr_count($withoutClosingOptionals, '[')) {
-                throw new \LogicException('Optional segments can only occur at the end of a route');
-            }
-
-            // '/hello[/{name}]' -> '/hello(?:/{name})?'
-            $route = str_replace(['[', ']'], ['(?:', ')?'], $route);
-        }
-
-        // 解析参数，替换为对应的 正则
-        if (preg_match_all('#\{([a-zA-Z_][a-zA-Z0-9_-]*)\}#', $route, $m)) {
-            /** @var array[] $m */
-            $replacePairs = [];
-
-            foreach ($m[1] as $name) {
-                $key = '{' . $name . '}';
-                // 匹配定义的 token  , 未匹配到的使用默认 self::DEFAULT_REGEX
-                $regex = $tokens[$name] ?? self::DEFAULT_REGEX;
-
-                // 将匹配结果命名 (?P<arg1>[^/]+)
-                $replacePairs[$key] = '(?P<' . $name . '>' . $regex . ')';
-                //                $replacePairs[$key] = '(' . $regex . ')';
-            }
-
-            $route = strtr($route, $replacePairs);
-        }
-
-        // 分析路由字符串是否是有规律的
-
-        // e.g '/hello[/{name}]' first: 'hello', '/user/{id}' first: 'user', '/a/{post}' first: 'a'
-        // first node is a normal string
-        if (preg_match('#^/([\w-]+)#', $tmp, $ms)) {
-            $first = $ms[1];
-            $conf  = [
-                    'first' => '/' . $first,
-                    'regex' => '#^' . $route . '$#',
-                ] + $conf;
-            // first node contain regex param '/{some}/{some2}'
-        } else {
-            $conf['regex'] = '#^' . $route . '$#';
-        }
-
-        return [$first, $conf];
-    }
-
-    /**
-     * @param array $tokens
-     * @param array $tmpTokens
-     *
+     * find the matched route info for the given request uri path
+     * @param string $method
+     * @param string $path
      * @return array
      */
-    public static function getAvailableTokens(array $tokens, $tmpTokens)
+    public function match($path, $method = self::GET)
     {
-        if ($tmpTokens) {
-            foreach ($tmpTokens as $name => $pattern) {
-                $key          = trim($name, '{}');
-                $tokens[$key] = $pattern;
+        // if enable 'matchAll'
+        if ($matchAll = $this->matchAll) {
+            if (\is_string($matchAll) && $matchAll{0} === '/') {
+                $path = $matchAll;
+            } elseif (\is_callable($matchAll)) {
+                return [self::FOUND, $path, [
+                    'handler' => $matchAll,
+                    'option' => [],
+                ]];
             }
         }
 
-        return $tokens;
-    }
+        // clear '//', '///' => '/'
+        $path = rawurldecode(preg_replace('#\/\/+#', '/', $path));
+        $method = strtoupper($method);
 
-    //////////////////////////////////////////////////////////////////////
-    /// route match
-    //////////////////////////////////////////////////////////////////////
+        // setting 'ignoreLastSep'
+        if ($path !== '/' && $this->ignoreLastSep) {
+            $path = rtrim($path, '/');
+        }
+
+        // find in route caches.
+        if ($this->routeCaches && isset($this->routeCaches[$path])) {
+            return self::findInStaticRoutes($this->routeCaches[$path], $path, $method);
+        }
+
+        // is a static route path
+        if ($this->staticRoutes && isset($this->staticRoutes[$path])) {
+            return self::findInStaticRoutes($this->staticRoutes[$path], $path, $method);
+        }
+
+        $first = self::getFirstFromPath($path);
+
+        // is a regular dynamic route(the first node is 1th level index key).
+        if (isset($this->regularRoutes[$first])) {
+            foreach ($this->regularRoutes[$first] as $conf) {
+                if (0 === strpos($path, $conf['start']) && preg_match($conf['regex'], $path, $matches)) {
+                    $conf['matches'] = $matches;
+
+                    return $this->checkMatched($path, $method, $conf);
+                }
+            }
+        }
+
+        // is a irregular dynamic route
+        foreach ($this->vagueRoutes as $conf) {
+            if ($conf['include'] && false === strpos($path, $conf['include'])) {
+                continue;
+            }
+
+            if (preg_match($conf['regex'], $path, $matches)) {
+                $conf['matches'] = $matches;
+
+                return $this->checkMatched($path, $method, $conf);
+            }
+        }
+
+        // handle Auto Route
+        if (
+            $this->autoRoute &&
+            ($handler = self::matchAutoRoute($path, $this->controllerNamespace, $this->controllerSuffix))
+        ) {
+            return [self::FOUND, $path, [
+                'handler' => $handler,
+                'option' => [],
+            ]];
+        }
+
+        // oo ... not found
+        return [self::NOT_FOUND, $path, null];
+    }
 
     /**
      * get handler from router
@@ -540,221 +432,47 @@ class HandlerMapping implements HandlerMappingInterface
     public function getHandler(...$params)
     {
         list($path, $method) = $params;
-        $router = $this->match($path, $method);
+        // list($path, $info) = $router;
 
-        //        list($path, $info) = $router;
-        return $router;
+        return $this->match($path, $method);
     }
 
-    /**
-     * 找到给定请求uri路径的匹配路由信息
-     *
-     * @param string $method
-     * @param string $path
-     *
-     * @return mixed
-     */
-    public function match($path, $method)
-    {
-        // if enable 'matchAll'
-        if ($matchAll = $this->matchAll) {
-            if (is_string($matchAll) && $matchAll{0} === '/') {
-                $path = $matchAll;
-            } elseif (is_callable($matchAll)) {
-                return [$path, $matchAll];
-            }
-        }
-
-        // clear '//', '///' => '/'
-        $path   = rawurldecode(preg_replace('#\/\/+#', '/', $path));
-        $method = strtoupper($method);
-        $number = (int)$this->tmpCacheNumber;
-
-        // setting 'ignoreLastSep'
-        if ($path !== '/' && $this->ignoreLastSep) {
-            $path = rtrim($path, '/');
-        }
-
-        // find in route caches.
-        if ($this->routeCaches && isset($this->routeCaches[$path])) {
-            if (isset($this->routeCaches[$path][$method])) {
-                return [$path, $this->routeCaches[$path][$method]];
-            }
-
-            if (isset($this->routeCaches[$path][self::ANY_METHOD])) {
-                return [$path, $this->routeCaches[$path][self::ANY_METHOD]];
-            }
-        }
-
-        // is a static route path
-        if ($this->staticRoutes && isset($this->staticRoutes[$path])) {
-            if (isset($this->staticRoutes[$path][$method])) {
-                return [$path, $this->staticRoutes[$path][$method]];
-            }
-
-            if (isset($this->staticRoutes[$path][self::ANY_METHOD])) {
-                return [$path, $this->staticRoutes[$path][self::ANY_METHOD]];
-            }
-        }
-
-        $tmp = trim($path, '/'); // clear first '/'
-
-        // is a regular dynamic route(the first char is 1th level index key).
-        if ($this->regularRoutes && isset($this->regularRoutes[$tmp{0}])) {
-            $twoLevelArr = $this->regularRoutes[$tmp{0}];
-            $twoLevelKey = $tmp{1} ?? self::DEFAULT_TWO_LEVEL_KEY;
-
-            // not found
-            if (!isset($twoLevelArr[$twoLevelKey])) {
-                return false;
-            }
-
-            foreach ((array)$twoLevelArr[$twoLevelKey] as $conf) {
-                if (0 === strpos($path, $conf['first']) && preg_match($conf['regex'], $path, $matches)) {
-                    // method not allowed
-                    if ($method !== $conf['method'] && self::ANY_METHOD !== $conf['method']) {
-                        return false;
-                    }
-
-                    $conf['matches'] = $matches;
-
-                    // Cache latest $number routes.
-                    if ($number > 0) {
-                        if (count($this->routeCaches) === $number) {
-                            array_shift($this->routeCaches);
-                        }
-
-                        $this->routeCaches[$path][$conf['method']] = $conf;
-                    }
-
-                    return [$path, $conf];
-                }
-            }
-        }
-
-        // is a irregular dynamic route
-        foreach ($this->vagueRoutes as $conf) {
-            if (preg_match($conf['regex'], $path, $matches)) {
-                // method not allowed
-                if ($method !== $conf['method'] && self::ANY_METHOD !== $conf['method']) {
-                    return false;
-                }
-
-                $conf['matches'] = $matches;
-
-                // Cache last $number routes.
-                if ($number > 0) {
-                    if (count($this->routeCaches) === $number) {
-                        array_shift($this->routeCaches);
-                    }
-
-                    $this->routeCaches[$path][$conf['method']] = $conf;
-                }
-
-                return [$path, $conf];
-            }
-        }
-
-        // handle Auto Route
-        if ($this->autoRoute && ($handler = self::matchAutoRoute($path, $this->controllerNamespace, $this->controllerSuffix))) {
-            return [
-                $path,
-                [
-                    'path'    => $path,
-                    'handler' => $handler,
-                ],
-            ];
-        }
-
-        // oo ... not found
-        return false;
-    }
+    /*******************************************************************************
+     * helper methods
+     ******************************************************************************/
 
     /**
-     * 自动路由的匹配处理。(当配置了 `'autoRoute' => true`)
-     *
-     * @param string $path                The route path
-     * @param string $controllerNamespace controller namespace. eg: 'App\\Controllers'
-     * @param string $controllerSuffix    controller suffix. eg: 'AutoController'
-     *
-     * @return bool|callable
+     * checkMatched
+     * @param  string $path
+     * @param  string $method
+     * @param  array  $conf
+     * @return array
      */
-    public static function matchAutoRoute($path, $controllerNamespace, $controllerSuffix)
+    protected function checkMatched($path, $method, array $conf)
     {
-        $cnp = $controllerNamespace;
-        $sfx = $controllerSuffix;
-        $tmp = trim($path, '/- ');
+        $methods = $conf['methods'];
+        $cacheNumber = (int)$this->tmpCacheNumber;
 
-        // one node. eg: 'home'
-        if (!strpos($tmp, '/')) {
-            $tmp   = self::convertNodeStr($tmp);
-            $class = "$cnp\\" . ucfirst($tmp) . $sfx;
-
-            return class_exists($class) ? $class : false;
+        // method not allowed
+        if (false === strpos($methods . ',', $method . ',')) {
+            return [self::METHOD_NOT_ALLOWED, $path, explode(',', $methods)];
         }
 
-        $ary = array_map([self::class, 'convertNodeStr'], explode('/', $tmp));
-        $cnt = count($ary);
+        $conf['matches'] = self::filterMatches($conf['matches'], $conf);
 
-        // two nodes. eg: 'home/test' 'admin/user'
-        if ($cnt === 2) {
-            list($n1, $n2) = $ary;
-
-            // last node is an controller class name. eg: 'admin/user'
-            $class = "$cnp\\$n1\\" . ucfirst($n2) . $sfx;
-
-            if (class_exists($class)) {
-                return $class;
+        // cache last $cacheNumber routes.
+        if ($cacheNumber > 0) {
+            if ($this->cacheCounter === $cacheNumber) {
+                array_shift($this->routeCaches);
             }
 
-            // first node is an controller class name, second node is a action name,
-            $class = "$cnp\\" . ucfirst($n1) . $sfx;
-
-            return class_exists($class) ? "$class@$n2" : false;
+            if (!isset($this->routeCaches[$path][$methods])) {
+                $this->cacheCounter++;
+                $this->routeCaches[$path][$methods] = $conf;
+            }
         }
 
-        // max allow 5 nodes
-        if ($cnt > 5) {
-            return false;
-        }
-
-        // last node is an controller class name
-        $n2    = array_pop($ary);
-        $class = sprintf('%s\\%s\\%s', $cnp, implode('\\', $ary), ucfirst($n2) . $sfx);
-
-        if (class_exists($class)) {
-            return $class;
-        }
-
-        // last second is an controller class name, last node is a action name,
-        $n1    = array_pop($ary);
-        $class = sprintf('%s\\%s\\%s', $cnp, implode('\\', $ary), ucfirst($n1) . $sfx);
-
-        return class_exists($class) ? "$class@$n2" : false;
-    }
-
-    //////////////////////////////////////////////////////////////////////
-    /// helper methods
-    //////////////////////////////////////////////////////////////////////
-
-    /**
-     * @param array $tokens
-     */
-    public function addTokens(array $tokens)
-    {
-        foreach ($tokens as $name => $pattern) {
-            $this->addToken($name, $pattern);
-        }
-    }
-
-    /**
-     * @param $name
-     * @param $pattern
-     */
-    public function addToken($name, $pattern)
-    {
-        $name                      = trim($name, '{} ');
-        self::$globalTokens[$name] = $pattern;
+        return [self::FOUND, $path, $conf];
     }
 
     /**
@@ -763,27 +481,6 @@ class HandlerMapping implements HandlerMappingInterface
     public function count()
     {
         return $this->routeCounter;
-    }
-
-    /**
-     * convert 'first-second' to 'firstSecond'
-     *
-     * @param $str
-     *
-     * @return mixed|string
-     */
-    public static function convertNodeStr($str)
-    {
-        $str = trim($str, '-');
-
-        // convert 'first-second' to 'firstSecond'
-        if (strpos($str, '-')) {
-            $str = preg_replace_callback('/-+([a-z])/', function ($c) {
-                return strtoupper($c[1]);
-            }, trim($str, '- '));
-        }
-
-        return $str;
     }
 
     /**
@@ -840,22 +537,6 @@ class HandlerMapping implements HandlerMappingInterface
     public function getRouteCaches()
     {
         return $this->routeCaches;
-    }
-
-    /**
-     * @return array
-     */
-    public function getGlobalTokens()
-    {
-        return self::$globalTokens;
-    }
-
-    /**
-     * @return array
-     */
-    public static function getSupportedMethods()
-    {
-        return self::SUPPORTED_METHODS;
     }
 
     /**
@@ -921,7 +602,7 @@ class HandlerMapping implements HandlerMappingInterface
     private function getActionMethod(string $actionPrefix, string $action)
     {
         $prefixes = [$actionPrefix, ucfirst($actionPrefix)];
-        $action = str_replace($prefixes, ['', ''], $action);
+        $action = str_replace($prefixes, '', $action);
         $action = lcfirst($action);
 
         return $action;

@@ -16,30 +16,25 @@ class RequestMethod
     /**
      * get方法
      */
-    const GET = "get";
+    const GET = 'get';
 
     /**
      * post方法
      */
-    const POST = "post";
-
-    /**
-     * update方法
-     */
-    const UPDATE = "update";
+    const POST = 'post';
 
     /**
      * put方法
      */
-    const PUT = "put";
+    const PUT = 'put';
 
     /**
      * delete方法
      */
-    const DELETE = "delete";
+    const DELETE = 'delete';
 
     /**
      * patch方法
      */
-    const PATCH = "patch";
+    const PATCH = 'patch';
 }
