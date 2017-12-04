@@ -38,7 +38,7 @@ class ValidatorHelper
         }
 
         if ($max !== null && $value > $max) {
-            return self::defaultValue($default, "$value is too big (maximum is $min)", $throws);
+            return self::defaultValue($default, "$value is too big (maximum is $max)", $throws);
         }
 
         return $value;
@@ -55,7 +55,7 @@ class ValidatorHelper
         }
 
         if ($max !== null && $value > $max) {
-            return self::defaultValue($default, "$value is too big (maximum is $min)", $throws);
+            return self::defaultValue($default, "$value is too big (maximum is $max)", $throws);
         }
 
         return $value;
@@ -81,7 +81,7 @@ class ValidatorHelper
         }
 
         if ($max !== null && $value > $max) {
-            return self::defaultValue($default, "$value is too big (maximum is $min)", $throws);
+            return self::defaultValue($default, "$value is too big (maximum is $max)", $throws);
         }
 
         return $value;
@@ -99,7 +99,7 @@ class ValidatorHelper
         }
 
         if ($max !== null && $length > $max) {
-            return self::defaultValue($default, "$value is too big (maximum is $min)", $throws);
+            return self::defaultValue($default, "$value is too big (maximum is $max)", $throws);
         }
 
         return $value;

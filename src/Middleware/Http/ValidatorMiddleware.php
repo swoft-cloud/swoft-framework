@@ -9,7 +9,7 @@ use Swoft\App;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Collector;
 use Swoft\Middleware\MiddlewareInterface;
-use Swoft\Validator\Validator;
+use Swoft\Validator\HttpValidator;
 
 /**
  * validator of request
@@ -39,11 +39,12 @@ class ValidatorMiddleware implements MiddlewareInterface
             $exploded     = explode('@', $info['handler']);
             $className    = $exploded[0] ?? '';
             $validatorKey = isset($exploded[1]) ? $exploded[1] : '';
+            $matches      = $info['matches']??[];
 
-            /* @var Validator $validator*/
-            $validator = App::getBean(Validator::class);
+            /* @var HttpValidator $validator */
+            $validator  = App::getBean(HttpValidator::class);
             $validators = Collector::$validator[$className][$validatorKey]['validator'];
-            $validator->validate($validators, $request);
+            $validator->validate($validators, $request, $matches);
         }
 
         return $handler->handle($request);

@@ -23,6 +23,7 @@ class ExceptionHandlerManager
         SystemErrorHandler::class => 1,
         RuntimeExceptionHandler::class => 2,
         HttpExceptionHandler::class => 3,
+        ValidatorExceptionHandler::class => 4,
     ];
 
     /**

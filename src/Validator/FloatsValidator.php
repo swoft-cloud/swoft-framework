@@ -6,16 +6,16 @@ use Swoft\Bean\Annotation\Bean;
 use Swoft\Helper\ValidatorHelper;
 
 /**
- * string validator
+ * float
  *
  * @Bean()
- * @uses      StringsValidator
- * @version   2017年12月02日
+ * @uses      FloatsValidator
+ * @version   2017年12月04日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class StringsValidator implements ValidatorInterface
+class FloatsValidator implements ValidatorInterface
 {
     /**
      * @param mixed $value
@@ -27,6 +27,6 @@ class StringsValidator implements ValidatorInterface
     {
         list($min, $max, $default) = $params;
 
-        return ValidatorHelper::validateString($value, $min, $max, $default);
+        return ValidatorHelper::validateFloat($value, $min, $max, $default);
     }
 }

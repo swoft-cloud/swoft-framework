@@ -2,28 +2,27 @@
 
 namespace Swoft\Bean\Parser;
 
-use Swoft\Bean\Annotation\Strings;
 use Swoft\Bean\Annotation\ValidatorFrom;
 use Swoft\Bean\Collector;
-use Swoft\Validator\StringsValidator;
+use Swoft\Validator\NumberValidator;
 
 /**
- * the parser of strings
+ * number parser
  *
- * @uses      StringsParser
- * @version   2017年12月02日
+ * @uses      NumberParser
+ * @version   2017年12月04日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class StringsParser extends AbstractParser
+class NumberParser extends AbstractParser
 {
     /**
-     * @param string      $className
-     * @param Strings     $objectAnnotation
-     * @param string      $propertyName
-     * @param string      $methodName
-     * @param string|null $propertyValue
+     * @param string                        $className
+     * @param \Swoft\Bean\Annotation\Number $objectAnnotation
+     * @param string                        $propertyName
+     * @param string                        $methodName
+     * @param string|null                   $propertyValue
      *
      * @return null
      */
@@ -44,7 +43,7 @@ class StringsParser extends AbstractParser
         $from   = isset(Collector::$serviceMapping[$className]) ? ValidatorFrom::SERVICE : $from;
 
         Collector::$validator[$className][$methodName]['validator'][$from][$name] = [
-            'validator' => StringsValidator::class,
+            'validator' => NumberValidator::class,
             'params'    => $params,
         ];
 

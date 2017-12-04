@@ -6,16 +6,16 @@ use Swoft\Bean\Annotation\Bean;
 use Swoft\Helper\ValidatorHelper;
 
 /**
- * string validator
+ * enum string validator
  *
  * @Bean()
- * @uses      StringsValidator
- * @version   2017年12月02日
+ * @uses      EnumStringValidator
+ * @version   2017年12月04日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class StringsValidator implements ValidatorInterface
+class EnumStringValidator implements ValidatorInterface
 {
     /**
      * @param mixed $value
@@ -25,8 +25,8 @@ class StringsValidator implements ValidatorInterface
      */
     public function validate($value, ...$params)
     {
-        list($min, $max, $default) = $params;
+        list($value, $validValues, $default) = $params;
 
-        return ValidatorHelper::validateString($value, $min, $max, $default);
+        return ValidatorHelper::validateEnumString($value, $validValues, $default);
     }
 }

@@ -2,25 +2,25 @@
 
 namespace Swoft\Bean\Parser;
 
-use Swoft\Bean\Annotation\Strings;
+use Swoft\Bean\Annotation\EnumNumber;
 use Swoft\Bean\Annotation\ValidatorFrom;
 use Swoft\Bean\Collector;
-use Swoft\Validator\StringsValidator;
+use Swoft\Validator\EnumNumberValidator;
 
 /**
- * the parser of strings
+ * enum number parser
  *
- * @uses      StringsParser
- * @version   2017年12月02日
+ * @uses      EnumNumberParser
+ * @version   2017年12月04日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class StringsParser extends AbstractParser
+class EnumNumberParser extends AbstractParser
 {
     /**
      * @param string      $className
-     * @param Strings     $objectAnnotation
+     * @param EnumNumber  $objectAnnotation
      * @param string      $propertyName
      * @param string      $methodName
      * @param string|null $propertyValue
@@ -36,15 +36,14 @@ class StringsParser extends AbstractParser
     ) {
         $from    = $objectAnnotation->getFrom();
         $name    = $objectAnnotation->getName();
-        $min     = $objectAnnotation->getMin();
-        $max     = $objectAnnotation->getMax();
+        $values  = $objectAnnotation->getValues();
         $default = $objectAnnotation->getDefault();
 
-        $params = [$min, $max, $default];
+        $params = [$values, $default];
         $from   = isset(Collector::$serviceMapping[$className]) ? ValidatorFrom::SERVICE : $from;
 
         Collector::$validator[$className][$methodName]['validator'][$from][$name] = [
-            'validator' => StringsValidator::class,
+            'validator' => EnumNumberValidator::class,
             'params'    => $params,
         ];
 
