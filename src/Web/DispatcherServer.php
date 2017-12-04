@@ -14,6 +14,7 @@ use Swoft\Middleware\Http\FaviconIcoMiddleware;
 use Swoft\Middleware\Http\HandlerAdapterMiddleware;
 use Swoft\Middleware\Http\PoweredByMiddleware;
 use Swoft\Middleware\Http\RouterMiddleware;
+use Swoft\Middleware\Http\ValidatorMiddleware;
 
 /**
  * the dispatcher of http server
@@ -108,7 +109,8 @@ class DispatcherServer implements DispatcherInterface
     public function lastMiddleware()
     {
         return [
-            UserMiddleware::class
+            UserMiddleware::class,
+//            ValidatorMiddleware::class,
         ];
     }
 

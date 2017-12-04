@@ -188,7 +188,8 @@ class HandlerAdapter implements HandlerAdapterInterface
             }
 
             // defined type of the param
-            $type = $reflectType->getName();
+//            $type = $reflectType->getName();
+            $type = $reflectType->__toString();
             if ($type === Request::class) {
                 $bindParams[$key] = $request;
             } elseif ($type === Response::class) {
