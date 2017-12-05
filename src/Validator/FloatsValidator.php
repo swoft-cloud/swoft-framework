@@ -25,8 +25,8 @@ class FloatsValidator implements ValidatorInterface
      */
     public function validate($value, ...$params)
     {
-        list($min, $max, $default) = $params;
+        list($min, $max) = $params;
 
-        return ValidatorHelper::validateFloat($value, $min, $max, $default);
+        return ValidatorHelper::validateFloat($value, $min, $max);
     }
 }

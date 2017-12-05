@@ -25,8 +25,8 @@ class EnumIntegerValidator implements ValidatorInterface
      */
     public function validate($value, ...$params)
     {
-        list($value, $validValues, $default) = $params;
+        list($value, $validValues) = $params;
 
-        return ValidatorHelper::validateEnumInteger($value, $validValues, $default);
+        return ValidatorHelper::validateEnumInteger($value, $validValues);
     }
 }

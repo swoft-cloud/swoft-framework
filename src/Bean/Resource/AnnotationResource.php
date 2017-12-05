@@ -2,6 +2,7 @@
 
 namespace Swoft\Bean\Resource;
 
+use App\Controllers\ValidatorController;
 use App\Models\Dao\RefInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
@@ -127,7 +128,7 @@ class AnnotationResource extends AbstractResource
             $methodAnnotations = $reader->getMethodAnnotations($method);
 
             foreach ($methodAnnotations as $methodAnnotation) {
-                $this->annotations[$className]['method'][$methodName][get_class($methodAnnotation)] = $methodAnnotation;
+                $this->annotations[$className]['method'][$methodName][get_class($methodAnnotation)][] = $methodAnnotation;
             }
         }
     }

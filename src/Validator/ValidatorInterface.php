@@ -2,8 +2,6 @@
 
 namespace Swoft\Validator;
 
-use Swoft\Bean\Annotation\Bean;
-
 /**
  * validator interface
  *

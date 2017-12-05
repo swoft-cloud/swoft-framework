@@ -19,7 +19,7 @@ class EnumFloat
     /**
      * @var string
      */
-    private $from = ValidatorFrom::QUERY;
+    private $from = ValidatorFrom::POST;
 
     /**
      * 字段名称

@@ -86,6 +86,7 @@ abstract class AbstractWrapper implements IWrapper
             // 解析方法
             $publicMethods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC);
             $methodAnnotations = $annotations['method'] ??[];
+
             $this->parseMethods($methodAnnotations, $className, $publicMethods);
 
             return null;
@@ -200,19 +201,21 @@ abstract class AbstractWrapper implements IWrapper
         }
 
         // 循环方法注解解析
-        foreach ($methodAnnotations[$methodName] as $methodAnnotation) {
-            $annotationClass = get_class($methodAnnotation);
-            if (!in_array($annotationClass, $this->methodAnnotations)) {
-                continue;
-            }
+        foreach ($methodAnnotations[$methodName] as $methodAnnotationAry) {
+            foreach ($methodAnnotationAry as $methodAnnotation){
+                $annotationClass = get_class($methodAnnotation);
+                if (!in_array($annotationClass, $this->methodAnnotations)) {
+                    continue;
+                }
 
-            // 解析器解析
-            $annotationParser = $this->getAnnotationParser($methodAnnotation);
-            if ($annotationParser == null) {
-                $this->parseMethodWithoutAnnotation($className, $methodName);
-                continue;
+                // 解析器解析
+                $annotationParser = $this->getAnnotationParser($methodAnnotation);
+                if ($annotationParser == null) {
+                    $this->parseMethodWithoutAnnotation($className, $methodName);
+                    continue;
+                }
+                $annotationParser->parser($className, $methodAnnotation, "", $methodName);
             }
-            $annotationParser->parser($className, $methodAnnotation, "", $methodName);
         }
     }
 

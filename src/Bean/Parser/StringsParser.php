@@ -42,7 +42,6 @@ class StringsParser extends AbstractParser
 
         $params = [$min, $max, $default];
         $from   = isset(Collector::$serviceMapping[$className]) ? ValidatorFrom::SERVICE : $from;
-
         Collector::$validator[$className][$methodName]['validator'][$from][$name] = [
             'validator' => StringsValidator::class,
             'params'    => $params,

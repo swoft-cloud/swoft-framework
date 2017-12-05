@@ -25,8 +25,8 @@ class EnumFloatValidator implements ValidatorInterface
      */
     public function validate($value, ...$params)
     {
-        list($value, $validValues, $default) = $params;
+        list($value, $validValues) = $params;
 
-        return ValidatorHelper::validateEnumFloat($value, $validValues, $default);
+        return ValidatorHelper::validateEnumFloat($value, $validValues);
     }
 }

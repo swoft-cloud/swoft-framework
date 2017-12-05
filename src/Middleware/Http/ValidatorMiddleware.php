@@ -44,7 +44,7 @@ class ValidatorMiddleware implements MiddlewareInterface
             /* @var HttpValidator $validator */
             $validator  = App::getBean(HttpValidator::class);
             $validators = Collector::$validator[$className][$validatorKey]['validator'];
-            $validator->validate($validators, $request, $matches);
+            $request = $validator->validate($validators, $request, $matches);
         }
 
         return $handler->handle($request);

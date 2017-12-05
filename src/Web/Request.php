@@ -262,6 +262,22 @@ class Request extends Psr7Request implements ServerRequestInterface
     }
 
     /**
+     * add param
+     *
+     * @param string $name  the name of param
+     * @param mixed  $value the value of param
+     *
+     * @return static
+     */
+    public function addQueryParam(string $name, $value)
+    {
+        $clone = clone $this;
+        $clone->queryParams[$name] = $value;
+
+        return $clone;
+    }
+
+    /**
      * Return an instance with the specified query string arguments.
      * These values SHOULD remain immutable over the course of the incoming
      * request. They MAY be injected during instantiation, such as from PHP's
@@ -335,6 +351,25 @@ class Request extends Psr7Request implements ServerRequestInterface
     public function getParsedBody()
     {
         return $this->parsedBody;
+    }
+
+    /**
+     * add parser body
+     *
+     * @param string $name  the name of param
+     * @param mixed  $value the value of param
+     *
+     * @return static
+     */
+    public function addParserBody(string $name, $value)
+    {
+        if(is_array($this->parsedBody)){
+            $clone = clone $this;
+            $clone->parsedBody[$name] = $value;
+
+            return $clone;
+        }
+        return $this;
     }
 
     /**

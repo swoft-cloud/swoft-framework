@@ -71,7 +71,7 @@ class DispatcherServer implements DispatcherInterface
             $requestHandler = new RequestHandler($middlewares, $this->handlerAdapter);
             $response       = $requestHandler->handle($request);
         } catch (\Throwable $throwable) {
-//            var_dump($throwable->getMessage(), $throwable->getFile(), $throwable->getLine(), $throwable->getCode());
+            var_dump($throwable->getMessage(), $throwable->getFile(), $throwable->getLine(), $throwable->getCode());
             // Handle by ExceptionHandler
             $response = ExceptionHandlerManager::handle($throwable);
         } finally {
