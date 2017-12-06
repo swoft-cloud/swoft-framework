@@ -27,6 +27,6 @@ class NumberValidator
     {
         list($min, $max) = $params;
 
-        return ValidatorHelper::validateFloat($value, $min, $max);
+        return ValidatorHelper::validateNumber($value, $min, $max);
     }
 }

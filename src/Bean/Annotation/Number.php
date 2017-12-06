@@ -45,7 +45,7 @@ class Number
     /**
      * 默认值，如果是null，强制验证参数
      *
-     * @var null|int
+     * @var int
      */
     private $default = null;
 
@@ -98,7 +98,7 @@ class Number
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     public function getDefault()
     {

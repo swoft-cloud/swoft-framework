@@ -39,7 +39,6 @@ abstract class AbstractValidator implements ValidatorInterface
         /* @var \Swoft\Validator\ValidatorInterface $validator */
         $params = $info['params'];
         array_unshift($params, $value);
-
         $validator = App::getBean($validatorBeanName);
         $validator->validate(...$params);
     }

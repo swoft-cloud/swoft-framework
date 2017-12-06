@@ -15,8 +15,25 @@ use Swoft\Exception\ValidatorException;
  */
 class ValidatorHelper
 {
+    /**
+     * number pattern
+     *
+     * @var string
+     */
     private static $numberPattern = '/^\s*[+]?\d+\s*$/';
+
+    /**
+     * integer pattern
+     *
+     * @var string
+     */
     private static $integerPattern = '/^\s*[+-]?\d+\s*$/';
+
+    /**
+     * float pattern
+     *
+     * @var string
+     */
     private static $floatPattern = '/^(-?\d+)(\.\d+)+$/';
 
     /**
@@ -33,26 +50,10 @@ class ValidatorHelper
     public static function validateInteger($value, $min = null, $max = null, bool $throws = true)
     {
         if (!preg_match(self::$integerPattern, "$value")) {
-            return self::validateError("$value is not int", $throws);
+            return self::validateError("$value is not integer", $throws);
         }
 
-        if ($min !== null && $value < $min) {
-            return self::validateError("$value is too small (minimum is $min)", $throws);
-        }
-
-        if ($max !== null && $value > $max) {
-            return self::validateError("$value is too big (maximum is $max)", $throws);
-        }
-
-        return $value;
-    }
-
-    public static function validateNumber($value, $min = null, $max = null, bool $throws = true)
-    {
-        if (!is_int($value) || $value < 0) {
-            return self::validateError("$value is not number", $throws);
-        }
-
+        $value = (int)$value;
         if ($min !== null && $value < $min) {
             return self::validateError("$value is too small (minimum is $min)", $throws);
         }
@@ -65,20 +66,23 @@ class ValidatorHelper
     }
 
     /**
-     * @param mixed      $value
-     * @param float|null $min
-     * @param float|null $max
-     * @param float|null $default
-     * @param bool       $throws
+     * the validator of number
      *
-     * @return bool|float
+     * @param mixed    $value
+     * @param int|null $min
+     * @param int|null $max
+     * @param bool     $throws
+     *
+     * @throws ValidatorException;
+     * @return mixed
      */
-    public static function validateFloat($value, float $min = null, float $max = null, float $default = null, bool $throws = true)
+    public static function validateNumber($value, $min = null, $max = null, bool $throws = true)
     {
-        if (!is_float($value)) {
-            return self::validateError("$value is not float", $throws);
+        if (!preg_match(self::$numberPattern, "$value")) {
+            return self::validateError("$value is not number", $throws);
         }
 
+        $value = (int)$value;
         if ($min !== null && $value < $min) {
             return self::validateError("$value is too small (minimum is $min)", $throws);
         }
@@ -90,7 +94,47 @@ class ValidatorHelper
         return $value;
     }
 
-    public static function validateString($value, int $min = null, int $max = null, string $default = null, bool $throws = true)
+    /**
+     * the validator of float
+     *
+     * @param mixed      $value
+     * @param float|null $min
+     * @param float|null $max
+     * @param bool       $throws
+     *
+     * @throws ValidatorException;
+     * @return mixed
+     */
+    public static function validateFloat($value, float $min = null, float $max = null, bool $throws = true)
+    {
+        if (!preg_match(self::$floatPattern, "$value")) {
+            return self::validateError("$value is not float", $throws);
+        }
+
+        $value = (float)$value;
+        if ($min !== null && $value < $min) {
+            return self::validateError("$value is too small (minimum is $min)", $throws);
+        }
+
+        if ($max !== null && $value > $max) {
+            return self::validateError("$value is too big (maximum is $max)", $throws);
+        }
+
+        return $value;
+    }
+
+    /**
+     * the validator of string
+     *
+     * @param mixed    $value
+     * @param int|null $min
+     * @param int|null $max
+     * @param bool     $throws
+     *
+     * @throws ValidatorException;
+     * @return mixed
+     */
+    public static function validateString($value, int $min = null, int $max = null, bool $throws = true)
     {
         if (!is_string($value)) {
             return self::validateError("$value is not string", $throws);
@@ -109,9 +153,17 @@ class ValidatorHelper
 
     }
 
-    public static function validateEnumString($value, array $validValues, string $default = null, bool $throws = true)
+    /**
+     * the validator of enum
+     *
+     * @param mixed $value
+     * @param array $validValues
+     * @param bool  $throws
+     *
+     * @return bool
+     */
+    public static function validateEnum($value, array $validValues, bool $throws = true)
     {
-        $value = self::validateString($value, null, null, $throws);
         if (!in_array($value, $validValues)) {
             return self::validateError("$value is not valid enum!", $throws);
         }
@@ -119,36 +171,15 @@ class ValidatorHelper
         return $value;
     }
 
-    public static function validateEnumInteger($value, array $validValues, bool $throws = true)
-    {
-        $value = self::validateInteger($value, null, null, $throws);
-        if (!in_array($value, $validValues)) {
-            return self::validateError("$value is not valid enum!", $throws);
-        }
-
-        return $value;
-    }
-
-    public static function validateEnumFloat($value, array $validValues, float $default = null, bool $throws = true)
-    {
-        $value = self::validateInteger($value, null, null, $throws);
-        if (!in_array($value, $validValues)) {
-            return self::validateError("$value is not valid enum!", $throws);
-        }
-
-        return $value;
-    }
-
-    public static function validateEnumNumber($value, array $validValues, bool $throws = true)
-    {
-        $value = self::validateNumber($value, null, null, $throws);
-        if (!in_array($value, $validValues)) {
-            return self::validateError("$value is not valid enum!", $throws);
-        }
-
-        return $value;
-    }
-
+    /**
+     * do error
+     *
+     * @param string $message
+     * @param bool   $throws
+     *
+     * @return bool
+     * @throws \Swoft\Exception\ValidatorException
+     */
     private function validateError(string $message, bool $throws)
     {
         if ($throws) {

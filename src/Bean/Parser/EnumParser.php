@@ -3,7 +3,9 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Enum;
+use Swoft\Bean\Annotation\ValidatorFrom;
 use Swoft\Bean\Collector;
+use Swoft\Validator\EnumValidator;
 
 /**
  * Enum注解解析器
@@ -30,15 +32,19 @@ class EnumParser extends AbstractParser
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
-        $annotationClass = get_class($objectAnnotation);
-        $validator = basename(str_replace("\\", "/", $annotationClass));
+        $from    = $objectAnnotation->getFrom();
+        $name    = $objectAnnotation->getName();
+        $values  = $objectAnnotation->getValues();
+        $default = $objectAnnotation->getDefault();
 
-        // 表映射收集
-        $validatorAry = [
-            'name' => $validator,
-            'value' => [$objectAnnotation->getValue()]
+        $params = [$values, $default];
+        $from   = isset(Collector::$serviceMapping[$className]) ? ValidatorFrom::SERVICE : $from;
+
+        Collector::$validator[$className][$methodName]['validator'][$from][$name] = [
+            'validator' => EnumValidator::class,
+            'params'    => $params,
         ];
-        Collector::$entities[$className]['field'][$propertyName]['validates'][] = $validatorAry;
+
         return null;
     }
 }

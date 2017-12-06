@@ -27,6 +27,6 @@ class IntegerValidator
     {
         list($min, $max) = $params;
 
-        return ValidatorHelper::validateInteger((int)$value, $min, $max);
+        return ValidatorHelper::validateInteger($value, $min, $max);
     }
 }

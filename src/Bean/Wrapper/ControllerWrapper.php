@@ -3,6 +3,7 @@
 namespace Swoft\Bean\Wrapper;
 
 use Swoft\Bean\Annotation\Controller;
+use Swoft\Bean\Annotation\Enum;
 use Swoft\Bean\Annotation\EnumFloat;
 use Swoft\Bean\Annotation\EnumInteger;
 use Swoft\Bean\Annotation\EnumNumber;
@@ -67,10 +68,7 @@ class ControllerWrapper extends AbstractWrapper
             Floats::class,
             Number::class,
             Integer::class,
-            EnumString::class,
-            EnumNumber::class,
-            EnumInteger::class,
-            EnumFloat::class,
+            Enum::class
         ];
 
     /**
