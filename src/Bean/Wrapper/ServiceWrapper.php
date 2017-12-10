@@ -7,6 +7,8 @@ use Swoft\Bean\Annotation\Floats;
 use Swoft\Bean\Annotation\Inject;
 use Swoft\Bean\Annotation\Integer;
 use Swoft\Bean\Annotation\Mapping;
+use Swoft\Bean\Annotation\Middleware;
+use Swoft\Bean\Annotation\Middlewares;
 use Swoft\Bean\Annotation\Number;
 use Swoft\Bean\Annotation\Service;
 use Swoft\Bean\Annotation\Strings;
@@ -30,7 +32,9 @@ class ServiceWrapper extends AbstractWrapper
      */
     protected $classAnnotations
         = [
-            Service::class
+            Service::class,
+            Middleware::class,
+            Middlewares::class,
         ];
 
     /**
@@ -51,6 +55,8 @@ class ServiceWrapper extends AbstractWrapper
      */
     protected $methodAnnotations
         = [
+            Middleware::class,
+            Middlewares::class,
             Mapping::class,
             Strings::class,
             Floats::class,

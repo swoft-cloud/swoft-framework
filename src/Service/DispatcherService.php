@@ -10,6 +10,7 @@ use Swoft\Helper\ResponseHelper;
 use Swoft\Middleware\Service\HandlerAdapterMiddleware;
 use Swoft\Middleware\Service\PackerMiddleware;
 use Swoft\Middleware\Service\RouterMiddleware;
+use Swoft\Middleware\Service\UserMiddleware;
 use Swoft\Middleware\Service\ValidatorMiddleware;
 use Swoft\Router\Service\HandlerAdapter;
 use Swoft\Web\Request;
@@ -108,7 +109,8 @@ class DispatcherService implements DispatcherInterface
     public function lastMiddleware()
     {
         return [
-            ValidatorMiddleware::class
+            ValidatorMiddleware::class,
+            UserMiddleware::class,
         ];
     }
 

@@ -47,7 +47,7 @@ class Service
      *
      * @return mixed
      */
-    public static function call(string $serviceName, string $func, array $params, callable $fallback = null)
+    public static function call(string $serviceName, string $func, array $params = [], callable $fallback = null)
     {
 
         $profileKey = "$serviceName->" . $func;
