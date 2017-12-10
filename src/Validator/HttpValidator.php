@@ -2,10 +2,9 @@
 
 namespace Swoft\Validator;
 
-use Swoft\App;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\ValidatorFrom;
-use Swoft\Bean\BeanFactory;
+use Swoft\Web\Request;
 
 /**
  * validator of swoft
@@ -30,8 +29,8 @@ class HttpValidator extends AbstractValidator
     public function validate($validators, ...$params)
     {
         /**
-         * @var \Swoft\Web\Request $request
-         * @var array              $matches
+         * @var Request $request
+         * @var array   $matches
          */
         list($request, $matches) = $params;
 
@@ -47,9 +46,16 @@ class HttpValidator extends AbstractValidator
     }
 
     /**
-     * @param \Swoft\Web\Request $request
+     * validate
+     *
+     * @param Request $request
+     * @param array   $matches
+     * @param string  $type
+     * @param array   $validatorAry
+     *
+     * @return mixed
      */
-    private function validateField($request, $matches, $type, $validatorAry)
+    private function validateField($request, array $matches, string $type, array $validatorAry)
     {
         $get  = $request->getQueryParams();
         $post = $request->getParsedBody();

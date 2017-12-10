@@ -30,8 +30,14 @@ class BeforeRequestListener implements IApplicationListener
     public function onApplicationEvent(ApplicationEvent $event = null, ...$params)
     {
         // header获取日志ID和spanid请求跨度ID
-        $logid = RequestContext::getRequest()->getHeader('logid', uniqid());
-        $spanid = RequestContext::getRequest()->getHeader('spanid', 0);
+        $logid = RequestContext::getRequest()->getHeaderLine('logid');
+        $spanid = RequestContext::getRequest()->getHeaderLine('spanid');
+        if(empty($logid)){
+            $logid = uniqid();
+        }
+        if(empty($spanid)){
+            $spanid = 0;
+        }
         $uri = RequestContext::getRequest()->getUri();
 
         $contextData = [
@@ -40,6 +46,7 @@ class BeforeRequestListener implements IApplicationListener
             'uri'         => $uri,
             'requestTime' => microtime(true),
         ];
+
         RequestContext::setContextData($contextData);
     }
 }

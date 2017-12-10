@@ -53,11 +53,9 @@ class PackerMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        /* @var \Swoft\Service\DispatcherService $dispatcherService */
-        $dispatcherService = App::getBean('dispatcherService');
-        $packer            = $dispatcherService->getPacker();
-        $data              = $request->getAttribute(self::ATTRIBUTE_DATA);
-        $data              = $packer->unpack($data);
+        $packer = App::getPacker();
+        $data   = $request->getAttribute(self::ATTRIBUTE_DATA);
+        $data   = $packer->unpack($data);
 
         // init data and trigger event
         App::trigger(Event::BEFORE_RECEIVE, null, $data);

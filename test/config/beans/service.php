@@ -4,7 +4,8 @@ return [
         'class' => \Swoft\Service\DispatcherService::class
     ],
     'serviceRouter' => [
-        'class' => \Swoft\Router\Service\HandlerMapping::class
+        'class' => \Swoft\Router\Service\HandlerMapping::class,
+        'suffix' => 'Service', // service文件后缀
     ],
     'consulProvider' => [
         'class'   => \Swoft\Service\ConsulProvider::class,

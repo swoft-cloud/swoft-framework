@@ -2,9 +2,14 @@
 
 namespace Swoft\Bean\Wrapper;
 
+use Swoft\Bean\Annotation\Enum;
+use Swoft\Bean\Annotation\Floats;
 use Swoft\Bean\Annotation\Inject;
+use Swoft\Bean\Annotation\Integer;
 use Swoft\Bean\Annotation\Mapping;
+use Swoft\Bean\Annotation\Number;
 use Swoft\Bean\Annotation\Service;
+use Swoft\Bean\Annotation\Strings;
 use Swoft\Bean\Annotation\Value;
 
 /**
@@ -46,7 +51,12 @@ class ServiceWrapper extends AbstractWrapper
      */
     protected $methodAnnotations
         = [
-            Mapping::class
+            Mapping::class,
+            Strings::class,
+            Floats::class,
+            Number::class,
+            Integer::class,
+            Enum::class
         ];
 
     /**
