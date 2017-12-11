@@ -508,7 +508,7 @@ class EventManager implements EventManagerInterface
                     $cb($event);
                 } elseif ($method && method_exists($listener, $method)) {
                     $listener->$method($event);
-                } elseif ($listener instanceof HandlerInterface) {
+                } elseif ($listener instanceof EventHandlerInterface) {
                     $listener->handle($event);
                 } elseif (method_exists($listener, '__invoke')) {
                     $listener($event);

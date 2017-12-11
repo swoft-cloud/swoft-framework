@@ -259,7 +259,10 @@ class App
      */
     public static function trigger($event, $target = null, ...$params)
     {
-        return ApplicationContext::getBean('eventManager')->trigger($event, $target, $params);
+        /** @var \Swoft\Event\EventManager $em */
+        $em = ApplicationContext::getBean('eventManager');
+
+        return $em->trigger($event, $target, $params);
     }
 
     /**

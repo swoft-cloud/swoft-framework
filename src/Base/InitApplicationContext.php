@@ -45,6 +45,7 @@ class InitApplicationContext
     {
         // 监听器注册
         $listeners = Collector::$listeners;
+
         ApplicationContext::registerListeners($listeners);
     }
 

@@ -33,6 +33,7 @@ class ApplicationLoaderListener implements EventHandlerInterface
 
         $requestMapping = Collector::$requestMapping;
         $serviceMapping = Collector::$serviceMapping;
+
         $httpRouter->registerRoutes($requestMapping);
         $serviceRouter->register($serviceMapping);
 
