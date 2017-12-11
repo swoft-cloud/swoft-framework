@@ -5,7 +5,7 @@ namespace Swoft\Service;
 use Swoft\App;
 use Swoft\Base\DispatcherInterface;
 use Swoft\Base\RequestHandler;
-use Swoft\Event\Event;
+use Swoft\Event\AppEvent;
 use Swoft\Helper\ResponseHelper;
 use Swoft\Middleware\Service\HandlerAdapterMiddleware;
 use Swoft\Middleware\Service\PackerMiddleware;
@@ -73,7 +73,7 @@ class DispatcherService implements DispatcherInterface
             $data    = ResponseHelper::formatData("", $message, $t->getCode());
             $data    = App::getPacker()->pack($data);
         } finally {
-            App::trigger(Event::AFTER_REQUEST);
+            App::trigger(AppEvent::AFTER_REQUEST);
             $server->send($fd, $data);
         }
     }

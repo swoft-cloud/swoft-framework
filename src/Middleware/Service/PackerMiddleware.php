@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoft\App;
 use Swoft\Bean\Annotation\Bean;
-use Swoft\Event\Event;
+use Swoft\Event\AppEvent;
 use Swoft\Middleware\MiddlewareInterface;
 use Swoft\Router\Service\HandlerAdapter;
 
@@ -58,7 +58,7 @@ class PackerMiddleware implements MiddlewareInterface
         $data   = $packer->unpack($data);
 
         // init data and trigger event
-        App::trigger(Event::BEFORE_RECEIVE, null, $data);
+        App::trigger(AppEvent::BEFORE_RECEIVE, null, $data);
         $request = $request->withAttribute(self::ATTRIBUTE_DATA, $data);
 
         /* @var \Swoft\Base\Response $response */
