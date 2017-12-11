@@ -9,10 +9,10 @@
 namespace Swoft\Event;
 
 /**
- * Interface ListenerInterface
+ * Interface EventHandlerInterface - 独立的事件监听器接口
  * @package Swoft\Event
  */
-interface HandlerInterface
+interface EventHandlerInterface
 {
     /**
      * @param EventInterface $event

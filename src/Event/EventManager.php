@@ -156,7 +156,7 @@ class EventManager implements EventManagerInterface
     /**
      * Attaches a listener to an event
      * @param string $event the event to attach too
-     * @param callable|HandlerInterface|mixed $callback a callable listener function
+     * @param callable|EventHandlerInterface|mixed $callback a callable listener function
      * @param int $priority the priority at which the $callback executed
      * @return bool true on success false on failure
      * @throws \InvalidArgumentException
