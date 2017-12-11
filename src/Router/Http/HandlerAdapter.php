@@ -8,7 +8,6 @@ use Swoft\Base\RequestContext;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Exception\Http\MethodNotAllowedException;
 use Swoft\Exception\Http\RouteNotFoundException;
-use Swoft\Exception\RuntimeException;
 use Swoft\Helper\PhpHelper;
 use Swoft\Router\HandlerAdapterInterface;
 use Swoft\Web\Request;
