@@ -8,22 +8,10 @@
 namespace Swoft\Testing\Web;
 
 use PHPUnit\Framework\Assert as PHPUnit;
-use Swoft\Helper\ArrayHelper;
 use Swoft\Helper\StringHelper;
 
 class Response extends \Swoft\Web\Response
 {
-
-    /**
-     * Is response successful?
-     *
-     * @return bool
-     * @final since version 3.2
-     */
-    public function isSuccessful()
-    {
-        return $this->getStatusCode() >= 200 && $this->getStatusCode() < 300;
-    }
 
     /**
      * Assert that the response has a successful status code.

@@ -3,6 +3,7 @@
 namespace Swoft\Base;
 
 use Swoft\App;
+use Swoft\Helper\ArrayHelper;
 use Swoft\Testing\SwooleResponse as TestingSwooleResponse;
 use Swoft\Testing\SwooleRequest as TestingSwooleRequest;
 
@@ -20,7 +21,7 @@ class RequestContext
     /**
      * 请求数据共享区
      */
-    const COROUTINE_DATA = "Data";
+    const COROUTINE_DATA = "data";
 
     /**
      * 当前请求request
@@ -50,12 +51,11 @@ class RequestContext
     /**
      * 请求response
      *
-     * @param int $cid 协程ID
      * @return \Swoft\Web\Response
      */
-    public static function getResponse($cid = null)
+    public static function getResponse()
     {
-        return self::getCoroutineContext(self::COROUTINE_RESPONSE, $cid);
+        return self::getCoroutineContext(self::COROUTINE_RESPONSE);
     }
 
     /**
@@ -106,8 +106,12 @@ class RequestContext
      */
     public static function setContextData(array $contextData = [])
     {
-        $coroutineId = self::getcoroutineId();
-        self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA] = $contextData;
+        $existContext = [];
+        $coroutineId  = self::getcoroutineId();
+        if (isset(self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA])) {
+            $existContext = self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA];
+        }
+        self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA] = ArrayHelper::merge($contextData, $existContext);
     }
 
     /**
@@ -179,12 +183,11 @@ class RequestContext
      * 获取协程上下文
      *
      * @param string   $name 协程KEY
-     * @param int|null $cid  协程ID
      * @return mixed|null
      */
-    private static function getCoroutineContext(string $name, $cid = null)
+    private static function getCoroutineContext(string $name)
     {
-        $coroutineId = ($cid === null ? self::getcoroutineId() : $cid);
+        $coroutineId = self::getcoroutineId();
         if (! isset(self::$coroutineLocal[$coroutineId])) {
             return null;
         }

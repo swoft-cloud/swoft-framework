@@ -3,7 +3,7 @@
 namespace Swoft\Exception;
 
 /**
- * 数据库字段验证异常
+ * the exception of validator
  *
  * @uses      ValidatorException
  * @version   2017年09月12日

@@ -30,8 +30,7 @@ class InjectParser extends AbstractParser
     {
         $injectValue = $objectAnnotation->getName();
         if (!empty($injectValue)) {
-            list($injectProperty, $isRef) = $this->annotationResource->getTransferProperty($injectValue);
-            return [$injectProperty, $isRef];
+            return [$injectValue, true];
         }
 
         // phpdoc解析

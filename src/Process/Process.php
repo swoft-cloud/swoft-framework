@@ -5,7 +5,7 @@ namespace Swoft\Process;
 use Swoft\App;
 use Swoft\Base\InitApplicationContext;
 use Swoft\Bean\BeanFactory;
-use Swoft\Event\Event;
+use Swoft\Event\AppEvent;
 use Swoft\Helper\PhpHelper;
 use Swoft\Server\AbstractServer;
 use Swoole\Process as SwooleProcess;
@@ -91,9 +91,9 @@ class Process
             $initApplicationContext = new InitApplicationContext();
             $initApplicationContext->init();
 
-            App::trigger(Event::BEFORE_PROCESS, null, $processName, $process, null);
+            App::trigger(AppEvent::BEFORE_PROCESS, null, $processName, $process, null);
             PhpHelper::call([$processClass, 'run'], [$process]);
-            App::trigger(Event::AFTER_PROCESS);
+            App::trigger(AppEvent::AFTER_PROCESS);
         }, $iout, $pipe);
 
         return $process;

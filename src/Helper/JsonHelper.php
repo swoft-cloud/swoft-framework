@@ -5,6 +5,8 @@ namespace Swoft\Helper;
 use Swoft\Contract\Arrayable;
 
 /**
+ * the tool of json
+ *
  * @uses      JsonHelper
  * @version   2017-11-06
  * @author    huangzhhui <huangzhwork@gmail.com>

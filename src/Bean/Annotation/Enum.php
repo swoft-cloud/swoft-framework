@@ -6,7 +6,7 @@ namespace Swoft\Bean\Annotation;
  * 枚举类型注解
  *
  * @Annotation
- * @Target({"PROPERTY"})
+ * @Target("METHOD")
  *
  * @uses      Enum
  * @version   2017年09月04日
@@ -17,34 +17,81 @@ namespace Swoft\Bean\Annotation;
 class Enum
 {
     /**
+     * @var string
+     */
+    private $from = ValidatorFrom::POST;
+
+    /**
+     * 字段名称
+     *
+     * @var string
+     */
+    private $name;
+
+    /**
      * 枚举值集合
      *
      * @var array
      */
-    private $value = [];
+    private $values;
 
     /**
-     * Enum constructor.
+     * 默认值
+     *
+     * @var mixed
+     */
+    private $default = null;
+
+    /**
+     * EnumStr constructor.
      *
      * @param array $values
      */
     public function __construct(array $values)
     {
-        if (isset($values['value'])) {
-            $this->value = $values['value'];
+        if (isset($values['from'])) {
+            $this->from = $values['from'];
         }
-        if (isset($values['value'])) {
-            $this->value = $values['value'];
+        if (isset($values['name'])) {
+            $this->name = $values['name'];
+        }
+        if (isset($values['values'])) {
+            $this->values = $values['values'];
+        }
+        if (isset($values['default'])) {
+            $this->default = $values['default'];
         }
     }
 
     /**
-     * 枚举值
-     *
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
      * @return array
      */
-    public function getValue(): array
+    public function getValues(): array
     {
-        return $this->value;
+        return $this->values;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDefault()
+    {
+        return $this->default;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFrom(): string
+    {
+        return $this->from;
     }
 }

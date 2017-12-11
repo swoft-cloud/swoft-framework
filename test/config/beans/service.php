@@ -1,5 +1,12 @@
 <?php
 return [
+    'dispatcherService' =>[
+        'class' => \Swoft\Service\DispatcherService::class
+    ],
+    'serviceRouter' => [
+        'class' => \Swoft\Router\Service\HandlerMapping::class,
+        'suffix' => 'Service', // service文件后缀
+    ],
     'consulProvider' => [
         'class'   => \Swoft\Service\ConsulProvider::class,
         'address' => '127.0.0.1:80'

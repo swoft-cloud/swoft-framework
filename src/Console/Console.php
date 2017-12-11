@@ -7,7 +7,6 @@ use Swoft\Console\Input\Input;
 use Swoft\Console\Output\Output;
 use Swoft\Console\Style\Style;
 use Swoft\Helper\PhpHelper;
-use Swoft\Web\ErrorHandler;
 
 /**
  * 命令行
@@ -73,13 +72,6 @@ class Console implements IConsole
     private $scanCmds = [];
 
     /**
-     * 错误处理器
-     *
-     * @var ErrorHandler
-     */
-    private $errorHandler;
-
-    /**
      * 每个命令唯一ID
      *
      * @var int
@@ -99,8 +91,6 @@ class Console implements IConsole
         $this->registerNamespace();
         $this->input = new Input();
         $this->output = new Output();
-        $this->errorHandler = new ErrorHandler();
-        $this->errorHandler->register();
     }
 
     /**

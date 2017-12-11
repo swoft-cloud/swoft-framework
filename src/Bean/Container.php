@@ -169,6 +169,10 @@ class Container
         $propertyInjects = $objectDefinition->getPropertyInjections();
         $constructorInject = $objectDefinition->getConstructorInjection();
 
+        if(!empty($objectDefinition->getRef())){
+            $refBeanName = $objectDefinition->getRef();
+            return $this->get($refBeanName);
+        }
         // 构造函数
         $constructorParameters = [];
         if ($constructorInject != null) {
