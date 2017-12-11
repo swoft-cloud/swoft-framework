@@ -187,8 +187,11 @@ class HandlerAdapter implements HandlerAdapterInterface
                 continue;
             }
 
-            // defined type of the param
-            $type = $reflectType->getName();
+            /**
+             * defined type of the param
+             * @notice \ReflectType::getName() is not supported in PHP 7.0, that is why use __toString()
+             */
+            $type = $reflectType->__toString();
             if ($type === Request::class) {
                 $bindParams[$key] = $request;
             } elseif ($type === Response::class) {

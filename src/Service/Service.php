@@ -47,7 +47,7 @@ class Service
      *
      * @return mixed
      */
-    public static function call(string $serviceName, string $func, array $params, callable $fallback = null)
+    public static function call(string $serviceName, string $func, array $params = [], callable $fallback = null)
     {
 
         $profileKey = "$serviceName->" . $func;
@@ -60,9 +60,7 @@ class Service
 
         /* @var $client AbstractServiceConnect */
         $client = $connectPool->getConnect();
-        /* @var \Swoft\Service\DispatcherService $dispatcherService */
-        $dispatcherService = App::getBean('dispatcherService');
-        $packer            = $dispatcherService->getPacker();
+        $packer = App::getPacker();
 
         $data = $packer->formatData($func, $params);
         $packData = $packer->pack($data);

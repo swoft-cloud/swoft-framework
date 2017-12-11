@@ -60,9 +60,9 @@ abstract class AbstractRouter
      */
     protected static $globalParams = [
         'any' => '[^/]+',   // match any except '/'
-        'num' => '[0-9]+',  // match a number
-        'id'  => '[1-9][0-9]*',  // match a ID number
-        'act' => '[a-zA-Z][\w-]+', // match a action name
+//        'num' => '[0-9]+',  // match a number
+//        'id'  => '[1-9][0-9]*',  // match a ID number
+//        'act' => '[a-zA-Z][\w-]+', // match a action name
         'all' => '.*'
     ];
 

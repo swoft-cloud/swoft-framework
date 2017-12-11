@@ -7,23 +7,24 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoft\App;
 use Swoft\Bean\Annotation\Bean;
+use Swoft\Bean\Collector;
 use Swoft\Middleware\MiddlewareInterface;
+use Swoft\Validator\ServiceValidator;
+use Swoft\Validator\ValidatorInterface;
 
 /**
- * service handler adapter
+ * the middleware of service middleware
  *
  * @Bean()
- * @uses      HandlerAdapterMiddleware
- * @version   2017年11月26日
+ * @uses      ValidatorMiddleware
+ * @version   2017年12月10日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class HandlerAdapterMiddleware implements MiddlewareInterface
+class ValidatorMiddleware implements MiddlewareInterface
 {
     /**
-     * execute service with handler
-     *
      * @param \Psr\Http\Message\ServerRequestInterface     $request
      * @param \Interop\Http\Server\RequestHandlerInterface $handler
      *
@@ -31,12 +32,17 @@ class HandlerAdapterMiddleware implements MiddlewareInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
+        /* @var ValidatorInterface $validator */
         $serviceHandler = $request->getAttribute(RouterMiddleware::ATTRIBUTE);
+        $serviceData    = $request->getAttribute(PackerMiddleware::ATTRIBUTE_DATA);
+        $validator      = App::getBean(ServiceValidator::class);
 
-        /* @var \Swoft\Router\Service\HandlerAdapter $handlerAdapter */
-        $handlerAdapter = App::getBean('serviceHandlerAdapter');
-        $response       = $handlerAdapter->doHandler($request, $serviceHandler);
+        list($className, $validatorKey) = $serviceHandler;
+        if (isset(Collector::$validator[$className][$validatorKey]['validator'])) {
+            $validators = Collector::$validator[$className][$validatorKey]['validator'];
+            $validator->validate($validators, $serviceHandler, $serviceData);
+        }
 
-        return $response;
+        return $handler->handle($request);
     }
 }

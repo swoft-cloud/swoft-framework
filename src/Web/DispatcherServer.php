@@ -8,11 +8,13 @@ use Swoft\Base\RequestContext;
 use Swoft\Base\RequestHandler;
 use Swoft\Event\Event;
 use Swoft\Exception\Handler\ExceptionHandlerManager;
+use Swoft\Middleware\Http\ParserMiddleware;
 use Swoft\Middleware\Http\UserMiddleware;
 use Swoft\Middleware\Http\FaviconIcoMiddleware;
 use Swoft\Middleware\Http\HandlerAdapterMiddleware;
 use Swoft\Middleware\Http\PoweredByMiddleware;
 use Swoft\Middleware\Http\RouterMiddleware;
+use Swoft\Middleware\Http\ValidatorMiddleware;
 
 /**
  * the dispatcher of http server
@@ -34,6 +36,8 @@ class DispatcherServer implements DispatcherInterface
         = [
 
         ];
+
+
 
     /**
      * handler adapter
@@ -67,7 +71,7 @@ class DispatcherServer implements DispatcherInterface
             $requestHandler = new RequestHandler($middlewares, $this->handlerAdapter);
             $response       = $requestHandler->handle($request);
         } catch (\Throwable $throwable) {
-            var_dump($throwable->getMessage(), $throwable->getFile(), $throwable->getLine(), $throwable->getCode());
+//            var_dump($throwable->getMessage(), $throwable->getFile(), $throwable->getLine(), $throwable->getCode());
             // Handle by ExceptionHandler
             $response = ExceptionHandlerManager::handle($throwable);
         } finally {
@@ -92,6 +96,7 @@ class DispatcherServer implements DispatcherInterface
         return [
             FaviconIcoMiddleware::class,
             PoweredByMiddleware::class,
+            ParserMiddleware::class,
             RouterMiddleware::class,
         ];
     }
@@ -104,7 +109,8 @@ class DispatcherServer implements DispatcherInterface
     public function lastMiddleware()
     {
         return [
-            UserMiddleware::class
+            UserMiddleware::class,
+            ValidatorMiddleware::class,
         ];
     }
 

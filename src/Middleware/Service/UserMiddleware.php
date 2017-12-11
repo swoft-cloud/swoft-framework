@@ -5,25 +5,24 @@ namespace Swoft\Middleware\Service;
 use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoft\App;
+use Swoft\Base\RequestHandler;
 use Swoft\Bean\Annotation\Bean;
+use Swoft\Bean\Collector;
 use Swoft\Middleware\MiddlewareInterface;
 
 /**
- * service handler adapter
+ * the annotation middlewares of action
  *
  * @Bean()
- * @uses      HandlerAdapterMiddleware
- * @version   2017年11月26日
+ * @uses      UserMiddleware
+ * @version   2017年12月10日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class HandlerAdapterMiddleware implements MiddlewareInterface
+class UserMiddleware implements MiddlewareInterface
 {
     /**
-     * execute service with handler
-     *
      * @param \Psr\Http\Message\ServerRequestInterface     $request
      * @param \Interop\Http\Server\RequestHandlerInterface $handler
      *
@@ -32,11 +31,18 @@ class HandlerAdapterMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $serviceHandler = $request->getAttribute(RouterMiddleware::ATTRIBUTE);
+        list($className, $funcName) = $serviceHandler;
 
-        /* @var \Swoft\Router\Service\HandlerAdapter $handlerAdapter */
-        $handlerAdapter = App::getBean('serviceHandlerAdapter');
-        $response       = $handlerAdapter->doHandler($request, $serviceHandler);
+        $middlewares         = [];
+        $middlewareCollector = Collector::$serviceMapping[$className]['middlewares']??[];
+        $groupMiddlewares    = $middlewareCollector['group'] ?? [];
+        $funcMiddlewares     = $middlewareCollector['actions'][$funcName]??[];
 
-        return $response;
+        $middlewares = array_merge($middlewares, $groupMiddlewares, $funcMiddlewares);
+        if (!empty($middlewares) && $handler instanceof RequestHandler) {
+            $handler->insertMiddlewares($middlewares);
+        }
+
+        return $handler->handle($request);
     }
 }

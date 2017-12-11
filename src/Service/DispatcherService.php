@@ -10,6 +10,8 @@ use Swoft\Helper\ResponseHelper;
 use Swoft\Middleware\Service\HandlerAdapterMiddleware;
 use Swoft\Middleware\Service\PackerMiddleware;
 use Swoft\Middleware\Service\RouterMiddleware;
+use Swoft\Middleware\Service\UserMiddleware;
+use Swoft\Middleware\Service\ValidatorMiddleware;
 use Swoft\Router\Service\HandlerAdapter;
 use Swoft\Web\Request;
 use Swoole\Server;
@@ -34,13 +36,6 @@ class DispatcherService implements DispatcherInterface
         = [
 
         ];
-
-    /**
-     * the tool of service packer
-     *
-     * @var \Swoft\Service\IPack
-     */
-    private $packer;
 
     /**
      * the default of handler adapter
@@ -113,27 +108,10 @@ class DispatcherService implements DispatcherInterface
      */
     public function lastMiddleware()
     {
-        return [];
-    }
-
-    /**
-     * the inited method of bean
-     */
-    public function init()
-    {
-        if ($this->packer == null || !is_subclass_of($this->packer, IPack::class)) {
-            $this->packer = App::getBean('jsonPacker');
-        }
-    }
-
-    /**
-     * the parker of service
-     *
-     * @return \Swoft\Service\IPack
-     */
-    public function getPacker(): IPack
-    {
-        return $this->packer;
+        return [
+            ValidatorMiddleware::class,
+            UserMiddleware::class,
+        ];
     }
 
     /**

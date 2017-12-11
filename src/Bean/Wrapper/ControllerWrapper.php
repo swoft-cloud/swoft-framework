@@ -3,10 +3,19 @@
 namespace Swoft\Bean\Wrapper;
 
 use Swoft\Bean\Annotation\Controller;
+use Swoft\Bean\Annotation\Enum;
+use Swoft\Bean\Annotation\EnumFloat;
+use Swoft\Bean\Annotation\EnumInteger;
+use Swoft\Bean\Annotation\EnumNumber;
+use Swoft\Bean\Annotation\EnumString;
+use Swoft\Bean\Annotation\Floats;
 use Swoft\Bean\Annotation\Inject;
+use Swoft\Bean\Annotation\Integer;
 use Swoft\Bean\Annotation\Middleware;
 use Swoft\Bean\Annotation\Middlewares;
+use Swoft\Bean\Annotation\Number;
 use Swoft\Bean\Annotation\RequestMapping;
+use Swoft\Bean\Annotation\Strings;
 use Swoft\Bean\Annotation\Value;
 use Swoft\Bean\Annotation\View;
 
@@ -55,6 +64,11 @@ class ControllerWrapper extends AbstractWrapper
             View::class,
             Middlewares::class,
             Middleware::class,
+            Strings::class,
+            Floats::class,
+            Number::class,
+            Integer::class,
+            Enum::class
         ];
 
     /**
