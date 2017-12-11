@@ -180,7 +180,7 @@ class ValidatorHelper
      * @return bool
      * @throws \Swoft\Exception\ValidatorException
      */
-    private function validateError(string $message, bool $throws)
+    private static function validateError(string $message, bool $throws)
     {
         if ($throws) {
             throw new ValidatorException($message);
