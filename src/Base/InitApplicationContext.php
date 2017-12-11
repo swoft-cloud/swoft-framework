@@ -4,7 +4,7 @@ namespace Swoft\Base;
 
 use Swoft\App;
 use Swoft\Bean\Collector;
-use Swoft\Event\Event;
+use Swoft\Event\AppEvent;
 
 /**
  * 应用初始化
@@ -54,7 +54,7 @@ class InitApplicationContext
     private function applicationLoader()
     {
         // 应用初始化加载事件
-        App::trigger(Event::APPLICATION_LOADER, null);
+        App::trigger(AppEvent::APPLICATION_LOADER, null);
     }
 
     /**

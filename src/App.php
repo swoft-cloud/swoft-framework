@@ -6,7 +6,6 @@ use Swoft\Base\ApplicationContext;
 use Swoft\Base\Config;
 use Swoft\Base\RequestContext;
 use Swoft\Base\Timer;
-use Swoft\Event\ApplicationEvent;
 use Swoft\Log\Logger;
 use Swoft\Pool\RedisPool;
 use Swoft\Server\IServer;
@@ -252,15 +251,15 @@ class App
     }
 
     /**
-     * 发布事件
-     *
-     * @param string                $name   发布的事件名称
-     * @param ApplicationEvent|null $event  发布的时间对象
-     * @param array                 $params 附加数据信息
+     * 触发事件
+     * @param string|\Swoft\Event\EventInterface $event 发布的事件名称|对象
+     * @param mixed $target
+     * @param array $params 附加数据信息
+     * @return mixed
      */
-    public static function trigger(string $name, ApplicationEvent $event = null, ...$params)
+    public static function trigger($event, $target = null, ...$params)
     {
-        ApplicationContext::publishEvent($name, $event, ...$params);
+        return ApplicationContext::getBean('eventManager')->trigger($event, $target, $params);
     }
 
     /**
@@ -269,6 +268,7 @@ class App
      * @param string $category 翻译文件类别，比如xxx.xx/xx
      * @param array  $params   参数
      * @param string $language 当前语言环境
+     * @return string
      */
     public static function t(string $category, array $params, string $language = 'en')
     {

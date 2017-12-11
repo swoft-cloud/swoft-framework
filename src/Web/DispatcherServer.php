@@ -6,7 +6,7 @@ use Swoft\App;
 use Swoft\Base\DispatcherInterface;
 use Swoft\Base\RequestContext;
 use Swoft\Base\RequestHandler;
-use Swoft\Event\Event;
+use Swoft\Event\AppEvent;
 use Swoft\Exception\Handler\ExceptionHandlerManager;
 use Swoft\Middleware\Http\ParserMiddleware;
 use Swoft\Middleware\Http\UserMiddleware;
@@ -127,7 +127,7 @@ class DispatcherServer implements DispatcherInterface
         RequestContext::setResponse($response);
 
         // Trigger 'Before Request' event
-        App::trigger(Event::BEFORE_REQUEST);
+        App::trigger(AppEvent::BEFORE_REQUEST);
     }
 
     /**
@@ -148,6 +148,6 @@ class DispatcherServer implements DispatcherInterface
         $response->send();
 
         // Trigger 'After Request' event
-        App::trigger(Event::AFTER_REQUEST);
+        App::trigger(AppEvent::AFTER_REQUEST);
     }
 }
