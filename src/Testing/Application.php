@@ -8,8 +8,6 @@
 namespace Swoft\Testing;
 
 
-use Swoft\Web\Middlewares\PowerByMiddlewre;
-
 class Application extends \Swoft\Web\Application
 {
 

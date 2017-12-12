@@ -3,8 +3,8 @@
 namespace Swoft\Pool;
 
 use Swoft\App;
-use Swoft\Redis\Cache\RedisConnect;
-use Swoft\Redis\Cache\SyncRedisConnect;
+use Swoft\Cache\Redis\RedisConnect;
+use Swoft\Cache\Redis\SyncRedisConnect;
 
 /**
  * redis连接池

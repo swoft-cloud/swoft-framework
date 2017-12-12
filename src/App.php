@@ -6,12 +6,10 @@ use Swoft\Base\ApplicationContext;
 use Swoft\Base\Config;
 use Swoft\Base\RequestContext;
 use Swoft\Base\Timer;
-use Swoft\Event\ApplicationEvent;
 use Swoft\Log\Logger;
 use Swoft\Pool\RedisPool;
 use Swoft\Server\IServer;
 use Swoft\Service\ConsulProvider;
-use Swoft\Service\IPack;
 use Swoft\Web\Application;
 
 /**
@@ -73,9 +71,10 @@ class App
      *
      * @var array
      */
-    private static $aliases = [
-        '@Swoft' => __DIR__
-    ];
+    private static $aliases
+        = [
+            '@Swoft' => __DIR__,
+        ];
 
     /**
      * 获取mysqlBean对象
@@ -106,6 +105,16 @@ class App
     }
 
     /**
+     * request router
+     *
+     * @return \Swoft\Router\Http\HandlerMapping
+     */
+    public static function getHttpRouter()
+    {
+        return App::getBean('httpRouter');
+    }
+
+    /**
      * consul对象
      *
      * @return ConsulProvider
@@ -119,6 +128,7 @@ class App
      * 查询一个bean
      *
      * @param string $name 名称
+     *
      * @return mixed
      */
     public static function getBean(string $name)
@@ -132,6 +142,22 @@ class App
     public static function getApplication()
     {
         return ApplicationContext::getBean('application');
+    }
+
+    /**
+     * @return \Swoft\Web\DispatcherServer
+     */
+    public static function getDispatcherServer()
+    {
+        return ApplicationContext::getBean('dispatcherServer');
+    }
+
+    /**
+     * @return \Swoft\Service\DispatcherService
+     */
+    public static function getDispatcherService()
+    {
+        return ApplicationContext::getBean('dispatcherService');
     }
 
     /**
@@ -185,13 +211,13 @@ class App
     }
 
     /**
-     * 内部服务数据解包、打包
+     * the packer of rpc service
      *
-     * @return IPack
+     * @return \Swoft\Service\ServicePacker;
      */
     public static function getPacker()
     {
-        return ApplicationContext::getBean('packer');
+        return App::getBean('servicePacker');
     }
 
     /**
@@ -225,15 +251,18 @@ class App
     }
 
     /**
-     * 发布事件
-     *
-     * @param string                $name   发布的事件名称
-     * @param ApplicationEvent|null $event  发布的时间对象
-     * @param array                 $params 附加数据信息
+     * 触发事件
+     * @param string|\Swoft\Event\EventInterface $event 发布的事件名称|对象
+     * @param mixed $target
+     * @param array $params 附加数据信息
+     * @return mixed
      */
-    public static function trigger(string $name, ApplicationEvent $event = null, ...$params)
+    public static function trigger($event, $target = null, ...$params)
     {
-        ApplicationContext::publishEvent($name, $event, ...$params);
+        /** @var \Swoft\Event\EventManager $em */
+        $em = ApplicationContext::getBean('eventManager');
+
+        return $em->trigger($event, $target, $params);
     }
 
     /**
@@ -242,6 +271,7 @@ class App
      * @param string $category 翻译文件类别，比如xxx.xx/xx
      * @param array  $params   参数
      * @param string $language 当前语言环境
+     * @return string
      */
     public static function t(string $category, array $params, string $language = 'en')
     {
@@ -252,12 +282,12 @@ class App
      * 注册多个别名
      *
      * @param array $aliases 别名数组
-     * <pre>
-     * [
-     *   '@root' => BASE_PATH
-     *   ......
-     * ]
-     * </pre>
+     *                       <pre>
+     *                       [
+     *                       '@root' => BASE_PATH
+     *                       ......
+     *                       ]
+     *                       </pre>
      */
     public static function setAliases(array $aliases)
     {
@@ -281,6 +311,7 @@ class App
         // 删除别名
         if ($path == null) {
             unset(self::$aliases[$alias]);
+
             return;
         }
 
@@ -288,21 +319,23 @@ class App
         $isAlias = strpos($path, '@');
         if ($isAlias === false) {
             self::$aliases[$alias] = $path;
+
             return;
         }
 
         // $path是一个别名
         if (isset(self::$aliases[$path])) {
             self::$aliases[$alias] = self::$aliases[$path];
+
             return;
         }
 
         list($root) = explode('/', $path);
-        if (! isset(self::$aliases[$root])) {
+        if (!isset(self::$aliases[$root])) {
             throw new \InvalidArgumentException("设置的根别名不存在，alias=" . $root);
         }
 
-        $rootPath = self::$aliases[$root];
+        $rootPath  = self::$aliases[$root];
         $aliasPath = str_replace($root, "", $path);
 
         self::$aliases[$alias] = $rootPath . $aliasPath;
@@ -312,6 +345,7 @@ class App
      * 获取别名路径
      *
      * @param string $alias
+     *
      * @return string
      */
     public static function getAlias(string $alias)
@@ -327,13 +361,13 @@ class App
         }
 
         list($root) = explode('/', $alias);
-        if (! isset(self::$aliases[$root])) {
+        if (!isset(self::$aliases[$root])) {
             throw new \InvalidArgumentException("设置的根别名不存在，alias=" . $root);
         }
 
-        $rootPath = self::$aliases[$root];
+        $rootPath  = self::$aliases[$root];
         $aliasPath = str_replace($root, "", $alias);
-        $path = $rootPath . $aliasPath;
+        $path      = $rootPath . $aliasPath;
 
         return $path;
     }
@@ -437,6 +471,7 @@ class App
         if ($server != null && property_exists($server, 'taskworker') && $server->taskworker == false) {
             return true;
         }
+
         return false;
     }
 

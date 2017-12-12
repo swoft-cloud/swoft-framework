@@ -68,6 +68,9 @@ abstract class Controller
      */
     public function getMethodName(string $actionId)
     {
+        if (empty($actionId)) {
+            $actionId = $this->defaultAction;
+        }
         $methodName = $this->actionPrefix . ucfirst($actionId);
 
         if (! method_exists($this, $methodName)) {

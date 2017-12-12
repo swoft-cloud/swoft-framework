@@ -5,30 +5,29 @@ namespace Swoft\Event\Listeners;
 use Swoft\App;
 use Swoft\Base\RequestContext;
 use Swoft\Bean\Annotation\Listener;
-use Swoft\Event\ApplicationEvent;
-use Swoft\Event\Event;
+use Swoft\Event\EventInterface;
+use Swoft\Event\AppEvent;
 use Swoft\Event\Events\BeforeTaskEvent;
-use Swoft\Event\IApplicationListener;
+use Swoft\Event\EventHandlerInterface;
 
 /**
  * 任务前置事件
  *
- * @Listener(Event::BEFORE_TASK)
+ * @Listener(AppEvent::BEFORE_TASK)
  * @uses      BeforeTaskListener
  * @version   2017年09月26日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class BeforeTaskListener implements IApplicationListener
+class BeforeTaskListener implements EventHandlerInterface
 {
     /**
      * 事件回调
      *
-     * @param ApplicationEvent|null $event      事件对象
-     * @param array                 ...$params  事件附加信息
+     * @param EventInterface $event      事件对象
      */
-    public function onApplicationEvent(ApplicationEvent $event = null, ...$params)
+    public function handle(EventInterface $event)
     {
         /* @var BeforeTaskEvent $beforeEvent*/
         $beforeEvent = $event;

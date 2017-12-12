@@ -32,11 +32,9 @@ class ViewParser extends AbstractParser
         string $methodName = "",
         $propertyValue = null
     ) {
-        if (isset(Collector::$requestMapping[$className])) {
-            Collector::$requestMapping[$className]['view'] = [
-                'template' => $objectAnnotation->getTemplate(),
-                'layout' => $objectAnnotation->getLayout(),
-            ];
-        }
+        Collector::$requestMapping[$className]['view'][$methodName] = [
+            'template' => $objectAnnotation->getTemplate(),
+            'layout' => $objectAnnotation->getLayout(),
+        ];
     }
 }

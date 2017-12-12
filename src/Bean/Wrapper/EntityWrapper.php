@@ -4,7 +4,6 @@ namespace Swoft\Bean\Wrapper;
 
 use Swoft\Bean\Annotation\Column;
 use Swoft\Bean\Annotation\Entity;
-use Swoft\Bean\Annotation\Enum;
 use Swoft\Bean\Annotation\Id;
 use Swoft\Bean\Annotation\Required;
 use Swoft\Bean\Annotation\Table;
@@ -39,7 +38,6 @@ class EntityWrapper extends AbstractWrapper
     protected $propertyAnnotations
         = [
             Id::class,
-            Enum::class,
             Column::class,
             Required::class,
         ];
