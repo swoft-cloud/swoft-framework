@@ -2,9 +2,9 @@
 
 namespace Swoft\Http;
 
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use Swoft\App;
+use Swoft\Base\Coroutine;
 use Swoft\Web\Psr7Request;
 use Swoft\Web\Uri;
 
@@ -25,23 +25,68 @@ class Client
     protected $adapter;
 
     /**
+     * @var array
+     * @example [
+     *      'adapter' => 'curl',
+     *      'base_uri' => 'http://www.swoft.org',
+     * ]
+     */
+    protected $configs = [];
+
+    /**
+     * @var string
+     */
+    protected $defaultUserAgent = '';
+
+    /**
+     * Client constructor.
+     *
+     * @param array $config
+     */
+    public function __construct(array $config = [])
+    {
+        // Convert the base_uri to a UriInterface
+        if (isset($config['base_uri'])) {
+            $config['base_uri'] = $this->convertBaseUri($config['base_uri']);
+        }
+
+        // Set specified adapter if config adapter
+        if (isset($config['adapter'])) {
+            if (is_string($config['adapter']) && class_exists($config['adapter'])) {
+                $this->setAdapter(new $config['adapter']);
+            } else {
+                $this->setAdapter($config['adapter']);
+            }
+        }
+
+        $this->configureDefaults($config);
+    }
+
+    /**
+     * Send a Http request
+     *
      * @param string $method
      * @param string $uri
      * @param array $options
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return HttpResult
      */
-    public function request(string $method, string $uri, array $options = []): ResponseInterface
+    public function request(string $method, string $uri, array $options = []): HttpResult
     {
+        $options = $this->prepareDefaults($options);
         $headers = isset($options['headers']) ? $options['headers'] : [];
         $body = isset($options['body']) ? $options['body'] : null;
         $version = isset($options['version']) ? $options['version'] : '1.1';
         // Merge the URI into the base URI.
         $uri = $this->buildUri($uri, $options);
+        $profileKey = 'http.' . (string)$uri;
+        App::profileStart($profileKey);
         if (is_array($body)) {
             $this->invalidBody();
         }
         $request = new Psr7Request($method, $uri, $headers, $body, $version);
-        return $this->getAdapter()->request($request, $options);
+        $result = $this->getAdapter()->request($request, $options);
+        App::profileEnd($profileKey);
+        return $result;
     }
 
     /**
@@ -55,7 +100,7 @@ class Client
             $uri = new Uri($uri);
         }
         if (isset($options['base_uri'])) {
-            $baseUri = $options['base_uri'] instanceof UriInterface ? $options['base_uri'] : new Uri($options['base_uri']);
+            $baseUri = $this->convertBaseUri($options['base_uri']);
             $uri = $this->resolve($baseUri, $uri);
         }
 
@@ -116,7 +161,6 @@ class Client
      * Removes dot segments from a path and returns the new path.
      *
      * @param string $path
-     *
      * @return string
      * @link http://tools.ietf.org/html/rfc3986#section-5.2.4
      */
@@ -156,8 +200,8 @@ class Client
     public function getAdapter(): Adapter\AdapterInterface
     {
         if (!$this->adapter instanceof Adapter\AdapterInterface) {
-            if ($this->isSupportDefer()) {
-                $this->setAdapter(new Adapter\DeferAdapter());
+            if (Coroutine::isSupportCoroutine()) {
+                $this->setAdapter(new Adapter\CoroutineAdapter());
             } else {
                 $this->setAdapter(new Adapter\CurlAdapter());
             }
@@ -166,21 +210,133 @@ class Client
     }
 
     /**
-     * @param Adapter\AdapterInterface $adapter
+     * @param Adapter\AdapterInterface|string $adapter
      * @return Client
      */
-    public function setAdapter(Adapter\AdapterInterface $adapter)
+    public function setAdapter($adapter)
     {
+        if (is_string($adapter)) {
+            switch ($adapter) {
+                case 'php':
+                case 'curl':
+                    $adapter = new Adapter\CurlAdapter();
+                    break;
+                case 'co':
+                case 'coroutine':
+                case 'swoole':
+                    $adapter = new Adapter\CoroutineAdapter();
+                    break;
+            }
+        }
+        if (!$adapter instanceof Adapter\AdapterInterface) {
+            throw new \InvalidArgumentException('Invalid http client adapter');
+        }
         $this->adapter = $adapter;
         return $this;
     }
 
     /**
-     * @return bool
+     *
+     * @param string|Uri $baseUri
+     * @return UriInterface|Uri
      */
-    private function isSupportDefer(): bool
+    protected function convertBaseUri($baseUri)
     {
-        return App::isWorkerStatus();
+        $baseUri = $baseUri instanceof UriInterface ? $baseUri : new Uri($baseUri);
+        return $baseUri;
+    }
+
+    /**
+     * Configures the default options for a client.
+     *
+     * @param array $config
+     */
+    protected function configureDefaults(array $config)
+    {
+        $defaults = [
+            'http_errors' => true,
+            'decode_content' => true,
+            'verify' => true,
+        ];
+
+        $this->configs = $config + $defaults;
+
+        // TODO add cookies settings after session and cookies feature finished
+
+        // Add the default user-agent header.
+        if (!isset($this->configs['headers'])) {
+            $this->configs['headers'] = ['User-Agent' => $this->getDefaultUserAgent()];
+        } else {
+            // Add the User-Agent header if one was not already set.
+            foreach (array_keys($this->configs['headers']) as $name) {
+                if (strtolower($name) === 'user-agent') {
+                    return;
+                }
+            }
+            $this->configs['headers']['User-Agent'] = $this->getDefaultUserAgent();
+        }
+
+    }
+
+    /**
+     * Merges default options into the array.
+     *
+     * @param array $options Options to modify by reference
+     *
+     * @return array
+     */
+    protected function prepareDefaults($options)
+    {
+        $defaults = $this->configs;
+
+        if (!empty($defaults['headers'])) {
+            // Default headers are only added if they are not present.
+            $defaults['_conditional'] = $defaults['headers'];
+            unset($defaults['headers']);
+        }
+
+        // Special handling for headers is required as they are added as
+        // conditional headers and as headers passed to a request ctor.
+        if (array_key_exists('headers', $options)) {
+            // Allows default headers to be unset.
+            if ($options['headers'] === null) {
+                $defaults['_conditional'] = null;
+                unset($options['headers']);
+            } elseif (!is_array($options['headers'])) {
+                throw new \InvalidArgumentException('headers must be an array');
+            }
+        }
+
+        // Shallow merge defaults underneath options.
+        $result = $options + $defaults;
+
+        // Remove null values.
+        foreach ($result as $k => $v) {
+            if ($v === null) {
+                unset($result[$k]);
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the default User-Agent string to use with Guzzle
+     *
+     * @return string
+     */
+    public function getDefaultUserAgent()
+    {
+        if (!$this->defaultUserAgent) {
+            $defaultAgent = 'Swoft/' . App::version();
+            if (!Coroutine::isSupportCoroutine() && extension_loaded('curl') && function_exists('curl_version')) {
+                $defaultAgent .= ' curl/' . \curl_version()['version'];
+            }
+            $defaultAgent .= ' PHP/' . PHP_VERSION;
+            $this->defaultUserAgent = $defaultAgent;
+        }
+
+        return $this->defaultUserAgent;
     }
 
 }

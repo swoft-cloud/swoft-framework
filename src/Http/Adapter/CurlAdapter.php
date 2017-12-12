@@ -4,6 +4,7 @@ namespace Swoft\Http\Adapter;
 
 use Psr\Http\Message\RequestInterface;
 use Swoft\App;
+use Swoft\Http\HttpResult;
 
 
 /**
@@ -16,71 +17,163 @@ use Swoft\App;
 class CurlAdapter implements AdapterInterface
 {
 
-    const DEFAULT_TIMEOUT = 3;
+    use ResponseTrait;
 
-    public function request(RequestInterface $request, array $options = [])
+    /**
+     * @var array
+     */
+    protected $defaultOptions = [];
+
+    /**
+     * @param RequestInterface $request
+     * @param array $options
+     * @return HttpResult
+     * @throws \RuntimeException
+     */
+    public function request(RequestInterface $request, array $options = []): HttpResult
     {
-        $url = (string)$request->getUri();
-        echo '<pre>';var_dump($url);echo '</pre>';exit();
-        $profileKey = 'http.' . $url;
+        $options = $this->handleOptions($request, array_merge($this->defaultOptions, (array)$options));
 
-        $timeout = $options['timeout'] ?? self::DEFAULT_TIMEOUT;
+        $url = (string)$request->getUri();
+        $profileKey = 'http.' . $url;
 
         App::profileStart($profileKey);
 
-        $curl = curl_init();
+        $resource = curl_init();
 
-        // 设置请求的URL
-        curl_setopt($curl, CURLOPT_URL, (string)$request->getUri()->withFragment(''));
+        $this->applyOptions($resource, $request, $options);
+        $this->applyMethod($resource, $request);
 
-        // Response 返回 Headers
-        curl_setopt($curl, CURLOPT_HEADER, true);
+        curl_setopt($resource, CURLOPT_URL, (string)$request->getUri()->withFragment(''));
+        // Response do not contains Headers
+        curl_setopt($resource, CURLOPT_HEADER, false);
+        curl_setopt($resource, CURLINFO_HEADER_OUT, true);
+        curl_setopt($resource, CURLOPT_RETURNTRANSFER, true);
+        // HTTPS do not verify Certificate and HOST
+        curl_setopt($resource, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($resource, CURLOPT_SSL_VERIFYHOST, false);
 
-        // 设为TRUE把curl_exec()结果转化为字符串，而不是直接输出
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-        // HTTPS 请求不验证证书和HOST
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-
-        // 设置连接等待时间和header
-        curl_setopt($curl, CURLOPT_HTTPHEADER, $request->getHeaders());
-        curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, $timeout);
-        curl_setopt($curl, CURLOPT_TIMEOUT, $timeout);
-
-        switch (strtoupper($request->getMethod())) {
-            case 'GET':
-                curl_setopt($curl, CURLOPT_HTTPGET, true);
-                break;
-            case 'POST':
-                curl_setopt($curl, CURLOPT_POST, true);
-                curl_setopt($curl, CURLOPT_NOBODY, true);
-                curl_setopt($curl, CURLOPT_POSTFIELDS, (string)$request->getBody());
-                break;
-            case 'PUT' :
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-                curl_setopt($curl, CURLOPT_POSTFIELDS, (string)$request->getBody());
-                break;
-            case 'DELETE':
-                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "DELETE");
-                curl_setopt($curl, CURLOPT_POSTFIELDS, (string)$request->getBody());
-                break;
-        }
-
-        $result = curl_exec($curl);
-        $error = curl_errno($curl);
-        if (!empty($error)) {
-            App::error("httpClient curl出错 url = $url error=" . $error);
-        }
-//        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE);
-        curl_close($curl);
+        $result = curl_exec($resource);
 
         App::profileEnd($profileKey);
+
+        $errorNo = curl_errno($resource);
+        $errorString = curl_error($resource);
+        if (!empty($error)) {
+            App::error(sprintf('HttpClient Request ERROR #%s url=%s', $errorNo, $url));
+            throw new \RuntimeException($errorNo, $errorString);
+        }
+
+        $result = new HttpResult(null, $resource, $profileKey, $result, false);
         return $result;
     }
 
-    public function requestDefer(RequestInterface $request, array $options = [])
+    /**
+     * Get the adapter default user agent
+     *
+     * @return string
+     */
+    public function getUserAgent(): string
     {
+        $userAgent = 'Swoft/' . App::version();
+        $userAgent .= ' Swoft/' . SWOOLE_VERSION;
+        $userAgent .= ' PHP/' . PHP_VERSION;
+        if (extension_loaded('curl') && function_exists('curl_version')) {
+            $userAgent .= ' curl/' . \curl_version()['version'];
+        }
+        return $userAgent;
+    }
 
+    /**
+     * @param RequestInterface $request
+     * @param array $options
+     * @return array
+     */
+    private function handleOptions(RequestInterface $request, $options)
+    {
+        // Auth
+        if (!empty($options['auth']) && is_array($options['auth'])) {
+            $value = $options['auth'];
+            $type = isset($value[2]) ? strtolower($value[2]) : 'basic';
+            switch ($type) {
+                case 'basic':
+                    $options['_headers']['Authorization'] = 'Basic '
+                        . base64_encode("$value[0]:$value[1]");
+                    break;
+                case 'digest':
+                    $options['_options'][CURLOPT_HTTPAUTH] = CURLAUTH_DIGEST;
+                    $options['_options'][CURLOPT_USERPWD] = "$value[0]:$value[1]";
+                    break;
+                case 'ntlm':
+                    $options['_options'][CURLOPT_HTTPAUTH] = CURLAUTH_NTLM;
+                    $options['_options'][CURLOPT_USERPWD] = "$value[0]:$value[1]";
+                    break;
+            }
+        }
+
+        // Timeout
+        $timeoutRequiresNoSignal = false;
+        if (isset($options['timeout'])) {
+            $timeoutRequiresNoSignal |= $options['timeout'] < 1;
+            $options['_options'][CURLOPT_TIMEOUT_MS] = $options['timeout'] * 1000;
+        }
+        if (isset($options['connect_timeout'])) {
+            $timeoutRequiresNoSignal |= $options['connect_timeout'] < 1;
+            $options['_options'][CURLOPT_CONNECTTIMEOUT_MS] = $options['connect_timeout'] * 1000;
+        }
+        if ($timeoutRequiresNoSignal && strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN') {
+            $options['_options'][CURLOPT_NOSIGNAL] = true;
+        }
+
+        // Ip resolve
+        // CURL default value is CURL_IPRESOLVE_WHATEVER
+        if (isset($options['force_ip_resolve'])) {
+            if ('v4' === $options['force_ip_resolve']) {
+                $options['_options'][CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V4;
+            } else {
+                if ('v6' === $options['force_ip_resolve']) {
+                    $options['_options'][CURLOPT_IPRESOLVE] = CURL_IPRESOLVE_V6;
+                }
+            }
+        }
+
+        return $options;
+    }
+
+    /**
+     * @param resource $resource
+     * @param RequestInterface $request
+     * @param array $options
+     */
+    private function applyOptions($resource, RequestInterface $request, array $options)
+    {
+        foreach ($options['_options'] ?? [] as $key => $value) {
+            curl_setopt($resource, $key, $value);
+        }
+
+        curl_setopt($resource, CURLOPT_HTTPHEADER, array_merge($request->getHeaders(), (array)$options['_headers']));
+    }
+
+    /**
+     * @param resource $resource
+     * @param RequestInterface $request
+     */
+    private function applyMethod($resource, RequestInterface $request)
+    {
+        switch (strtoupper($request->getMethod())) {
+            case 'GET':
+                curl_setopt($resource, CURLOPT_HTTPGET, true);
+                break;
+            case 'POST':
+                curl_setopt($resource, CURLOPT_POST, true);
+                curl_setopt($resource, CURLOPT_NOBODY, true);
+                curl_setopt($resource, CURLOPT_POSTFIELDS, (string)$request->getBody()->getContents());
+                break;
+            case 'PUT' :
+            case 'DELETE':
+                curl_setopt($resource, CURLOPT_CUSTOMREQUEST, strtoupper($request->getMethod()));
+                curl_setopt($resource, CURLOPT_POSTFIELDS, (string)$request->getBody()->getContents());
+                break;
+        }
     }
 }

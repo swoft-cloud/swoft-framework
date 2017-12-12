@@ -2,9 +2,10 @@
 
 namespace Swoft\Test\HttpClient;
 
+use Swoft\App;
 use Swoft\Http\Client;
-use Swoft\I18n\I18n;
 use Swoft\Test\AbstractTestCase;
+use Swoft\Testing\Base\Response;
 
 
 /**
@@ -23,10 +24,37 @@ class HttpClientTest extends AbstractTestCase
     public function get()
     {
         $client = new Client();
+        // Http
+        /** @var Response $response */
         $response = $client->request('GET', '', [
-            'base_uri' => 'www.baidu.com',
-        ]);
-        $this->assertTrue(true);
+            'base_uri' => 'http://www.baidu.com',
+        ])->getResponse();
+        $response->assertSuccessful()->assertSee('百度一下，你就知道');
+
+        // Https
+        /** @var Response $response */
+        $response = $client->request('GET', '', [
+            'base_uri' => 'https://www.baidu.com',
+        ])->getResult();
+        $response->assertSuccessful()->assertSee('百度一下，你就知道');
+
+        // Http 302 -> Https
+        /** @var Response $response */
+        $response = $client->request('GET', '', [
+            'base_uri' => 'http://www.swoft.org',
+        ])->getResult();
+        $response->assertStatus(302);
+    }
+
+    /**
+     * @test
+     * @requires extension curl
+     */
+    public function defaultUserAgent()
+    {
+        $client = new Client();
+        $expected = sprintf('Swoft/%s curl/%s PHP/%s', App::version(), \curl_version()['version'], PHP_VERSION);
+        $this->assertEquals($expected, $client->getDefaultUserAgent());
     }
 
 }

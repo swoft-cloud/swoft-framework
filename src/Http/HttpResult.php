@@ -2,8 +2,12 @@
 
 namespace Swoft\Http;
 
+use Psr\Http\Message\ResponseInterface;
 use Swoft\App;
+use Swoft\Base\Coroutine;
+use Swoft\Http\Adapter\ResponseTrait;
 use Swoft\Web\AbstractResult;
+use Swoft\Web\SwooleStream;
 
 /**
  * Http结果
@@ -16,18 +20,40 @@ use Swoft\Web\AbstractResult;
  */
 class HttpResult extends AbstractResult
 {
+
+    use ResponseTrait;
+
     /**
      * 返回数据结果
      *
-     * @return mixed
+     * @return ResponseInterface
      */
     public function getResult()
     {
-        $this->client->recv();
-        $result = $this->client->body;
-        $this->client->close();
-
+        if (Coroutine::isSupportCoroutine()) {
+            $this->client->recv();
+            // TODO: build a response
+            $result = $this->client->body;
+            $this->client->close();
+        } else {
+            $status = curl_getinfo($this->client, CURLINFO_HTTP_CODE);
+            $headers = curl_getinfo($this->client);
+            $response = $this->createResponse()
+                ->withBody(new SwooleStream($this->sendResult))
+                ->withStatus($status)
+                ->withHeaders($headers);
+            curl_close($this->client);
+        }
         App::debug("http调用结果=" . json_encode($result));
-        return $result;
+        return $response;
+    }
+
+    /**
+     * @alias getResult()
+     * @return ResponseInterface
+     */
+    public function getResponse()
+    {
+        return $this->getResult();
     }
 }

@@ -3,7 +3,7 @@
 namespace Swoft\Http\Adapter;
 
 use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
+use Swoft\Http\HttpResult;
 
 /**
  * @uses      AdapterInterface
@@ -16,17 +16,19 @@ interface AdapterInterface
 {
 
     /**
+     * Send a http request
+     *
      * @param RequestInterface $request
      * @param array $options
-     * @return ResponseInterface
+     * @return HttpResult
      */
-    public function request(RequestInterface $request, array $options = []);
+    public function request(RequestInterface $request, array $options = []): HttpResult;
 
     /**
-     * @param RequestInterface $request
-     * @param array $options
-     * @return ResponseInterface
+     * Get the adapter default user agent
+     *
+     * @return string
      */
-    public function requestDefer(RequestInterface $request, array $options = []);
+    public function getUserAgent(): string;
 
 }

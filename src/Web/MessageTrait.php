@@ -181,6 +181,19 @@ trait MessageTrait
     }
 
     /**
+     * @param array $headers
+     * @return static
+     */
+    public function withHeaders(array $headers)
+    {
+        $new = clone $this;
+        foreach ($headers as $name => $value) {
+            $new = $new->withHeader(str_replace('_', '-', $name), $value);
+        }
+        return $new;
+    }
+
+    /**
      * Return an instance with the specified header appended with the given value.
      * Existing values for the specified header will be maintained. The new
      * value(s) will be appended to the existing list. If the header did not

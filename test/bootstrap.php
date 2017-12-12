@@ -8,3 +8,4 @@ $server = new \Swoft\Server\HttpServer();
 $initApplicationContext = new \Swoft\Base\InitApplicationContext();
 $initApplicationContext->routePath = dirname(dirname(__FILE__)) . '/test/config/routes.php';
 $initApplicationContext->init();
+\Swoft\App::$isInTest = true;

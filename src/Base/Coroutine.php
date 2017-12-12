@@ -2,6 +2,7 @@
 
 namespace Swoft\Base;
 
+use Swoft\App;
 use Swoft\Console\Console;
 use Swoft\Helper\PhpHelper;
 use Swoft\Process\Process;
@@ -47,7 +48,7 @@ class Coroutine
         if ($context == ApplicationContext::TASK) {
             return Task::getId();
         }
-        if($context == ApplicationContext::CONSOLE){
+        if ($context == ApplicationContext::CONSOLE) {
             return Console::id();
         }
 
@@ -101,5 +102,15 @@ class Coroutine
     public static function resume($corId)
     {
         SwCoroutine::resume($corId);
+    }
+
+    /**
+     * Is Support Coroutine
+     *
+     * @return bool
+     */
+    public function isSupportCoroutine(): bool
+    {
+        return App::isWorkerStatus();
     }
 }
