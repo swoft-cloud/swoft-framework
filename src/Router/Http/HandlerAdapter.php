@@ -8,7 +8,6 @@ use Swoft\Base\RequestContext;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Exception\Http\MethodNotAllowedException;
 use Swoft\Exception\Http\RouteNotFoundException;
-use Swoft\Exception\RuntimeException;
 use Swoft\Helper\PhpHelper;
 use Swoft\Router\HandlerAdapterInterface;
 use Swoft\Web\Request;
@@ -122,7 +121,7 @@ class HandlerAdapter implements HandlerAdapterInterface
         // Set Controller and Action info to Request Context
         RequestContext::setContextData([
             'controllerClass'  => $className,
-            'controllerAction' => $action,
+            'controllerAction' => $action ?: 'actionIndex',
         ]);
 
         return [$handler, $matches];
