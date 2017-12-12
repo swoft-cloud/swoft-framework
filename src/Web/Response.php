@@ -57,6 +57,8 @@ class Response extends \Swoft\Base\Response
         $template = Collector::$requestMapping[$controllerClass]['view'][$controllerAction]['template'] ?? null;
         $layout = Collector::$requestMapping[$controllerClass]['view'][$controllerAction]['layout'] ?? null;
         $response = $this->render($template, $data, $layout);
+        // Headers
+        $response = $response->withoutHeader('Content-Type')->withAddedHeader('Content-Type', 'text/html');
         return $response;
     }
 
