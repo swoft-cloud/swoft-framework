@@ -5,7 +5,7 @@ namespace Swoft\Event;
 /**
  * Class ListenerQueue
  * @package Swoft\Event
- * @use 监听器队列存储管理类 @link [windwalker framework](https://github.com/ventoviro/windwalker)
+ * @uses 监听器队列存储管理类 @link [windwalker framework](https://github.com/ventoviro/windwalker)
  * @version   2017年08月30日
  * @author    inhere <in.798@qq.com>
  * @copyright Copyright 2010-2016 Swoft software
