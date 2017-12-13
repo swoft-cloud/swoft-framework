@@ -1,16 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: inhere
- * Date: 2017-12-07
- * Time: 11:22
- */
 
 namespace Swoft\Event;
 
 /**
  * Trait EventAwareTrait
  * @package Swoft\Event
+ * @version   2017年08月30日
+ * @author    inhere <in.798@qq.com>
+ * @copyright Copyright 2010-2016 Swoft software
+ * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 trait EventAwareTrait
 {
