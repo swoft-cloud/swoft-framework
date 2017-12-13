@@ -1,17 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: inhere
- * Date: 16/8/27
- * Time: 下午12:34
- * reference windwalker https://github.com/ventoviro/windwalker
- */
 
 namespace Swoft\Event;
 
 /**
  * Class Event
  * @package Swoft\Event
+ * @link windwalker https://github.com/ventoviro/windwalker
+ * @version   2017年08月30日
+ * @author    inhere <in.798@qq.com>
+ * @copyright Copyright 2010-2016 Swoft software
+ * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class Event implements EventInterface, \ArrayAccess, \Serializable
 {

@@ -1,18 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Inhere
- * Date: 2015/2/12
- * Use : 监听器队列存储管理类
- * @From : [windwalker framework](https://github.com/ventoviro/windwalker)
- * File: ListenersQueue.php
- */
 
 namespace Swoft\Event;
 
 /**
  * Class ListenerQueue
  * @package Swoft\Event
+ * @uses 监听器队列存储管理类 @link [windwalker framework](https://github.com/ventoviro/windwalker)
+ * @version   2017年08月30日
+ * @author    inhere <in.798@qq.com>
+ * @copyright Copyright 2010-2016 Swoft software
+ * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class ListenerQueue implements \IteratorAggregate, \Countable
 {

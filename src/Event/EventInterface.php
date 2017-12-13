@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: inhere
- * Date: 2017-10-16
- * Time: 16:40
- */
 
 namespace Swoft\Event;
 
@@ -12,6 +6,10 @@ namespace Swoft\Event;
  * Interface EventInterface - Representation of an event
  * @package Swoft\Event
  * @link https://github.com/php-fig/fig-standards/blob/master/proposed/event-manager.md
+ * @version   2017年08月30日
+ * @author    inhere <in.798@qq.com>
+ * @copyright Copyright 2010-2016 Swoft software
+ * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 interface EventInterface
 {
