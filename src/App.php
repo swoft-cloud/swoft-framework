@@ -9,7 +9,7 @@ use Swoft\Base\Timer;
 use Swoft\Log\Logger;
 use Swoft\Pool\RedisPool;
 use Swoft\Server\IServer;
-use Swoft\Service\ConsulProvider;
+use Swoft\Service\ConsulProviderInterface;
 use Swoft\Web\Application;
 
 /**
@@ -117,7 +117,7 @@ class App
     /**
      * consul对象
      *
-     * @return ConsulProvider
+     * @return ConsulProviderInterface
      */
     public static function getConsulProvider()
     {

@@ -8,13 +8,13 @@ use Swoft\Http\HttpClient;
 /**
  * consul服务
  *
- * @uses      ConsulProvider
+ * @uses      ConsulProviderInterface
  * @version   2017年07月23日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class ConsulProvider implements ServiceProvider
+class ConsulProviderInterface implements ProviderInterface
 {
     /**
      * @var string consul服务地址

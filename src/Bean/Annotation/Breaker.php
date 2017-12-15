@@ -3,39 +3,28 @@
 namespace Swoft\Bean\Annotation;
 
 /**
- * the annotation of value
- *
- * 1. 注入值
- * 2. 注入property配置文件值
- * 3. 注入env环境变量
+ * the annotation of breaker
  *
  * @Annotation
- * @Target({"PROPERTY"})
+ * @Target("CLASS")
  *
- * @uses      Value
- * @version   2017年11月14日
+ * @uses      Breaker
+ * @version   2017年12月15日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class Value
+class Breaker
 {
     /**
-     * the key of properties
+     * the name of breaker
      *
      * @var string
      */
-    private $name = "";
+    private $name;
 
     /**
-     * the key of env config
-     *
-     * @var string
-     */
-    private $env = "";
-
-    /**
-     * Value constructor.
+     * Breaker constructor.
      *
      * @param array $values
      */
@@ -47,9 +36,6 @@ class Value
         if (isset($values['name'])) {
             $this->name = $values['name'];
         }
-        if (isset($values['env'])) {
-            $this->env = $values['env'];
-        }
     }
 
     /**
@@ -58,13 +44,5 @@ class Value
     public function getName(): string
     {
         return $this->name;
-    }
-
-    /**
-     * @return string
-     */
-    public function getEnv(): string
-    {
-        return $this->env;
     }
 }

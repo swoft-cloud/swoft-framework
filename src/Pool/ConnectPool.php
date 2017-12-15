@@ -3,8 +3,9 @@
 namespace Swoft\Pool;
 
 use Swoft\App;
+use Swoft\Bean\Annotation\Inject;
 use Swoft\Pool\Balancer\IBalancer;
-use Swoft\Service\ServiceProvider;
+use Swoft\Service\ProviderInterface;
 
 /**
  * 通用连接池
@@ -23,40 +24,69 @@ abstract class ConnectPool implements IPool
     protected $serviceName = "";
 
     /**
-     * @var int 最大空闲连接数
+     * the maximum number of idle connections
+     *
+     * @var int
      */
     protected $maxIdel = 6;
 
     /**
-     * @var int 最大活跃连接数
+     * the maximum number of active connections
+     *
+     * @var int
      */
     protected $maxActive = 50;
 
     /**
-     * @var int 最大等待连接数
+     * the maximum number of wait connections
+     *
+     * @var int
      */
     protected $maxWait = 100;
 
     /**
-     * @var int 单位毫秒
+     * the time of connect timeout
+     *
+     * @var int
      */
     protected $timeout = 200;
 
     /**
-     * @var bool 是否使用第三方服务发现
-     */
-    protected $useProvider = false;
-
-    /**
-     * @var array 有效连接地址
+     * the addresses of connection
+     *
      * <pre>
      * [
      *  '127.0.0.1:88',
      *  '127.0.0.1:88'
      * ]
      * </pre>
+     *
+     * @var array
      */
-    protected $uri = "";
+    protected $uri = [];
+
+    /**
+     * whether to user provider(consul/etcd/zookeeper)
+     *
+     * @var bool
+     */
+    protected $useProvider = false;
+
+    /**
+     * the default balancer is random balancer
+     *
+     * @Inject()
+     * @var IBalancer;
+     */
+    protected $balancer = null;
+
+    /**
+     * the default provider is consul provider
+     *
+     * @Inject()
+     * @var ProviderInterface
+     */
+    protected $serviceProvider = null;
 
     /**
      * @var int 当前连接数
@@ -68,15 +98,6 @@ abstract class ConnectPool implements IPool
      */
     protected $queue = null;
 
-    /**
-     * @var IBalancer 负载均衡，useProvider=true有效
-     */
-    protected $balancer = null;
-
-    /**
-     * @var ServiceProvider 第三服务发现，useProvider=true有效
-     */
-    protected $serviceProvider = null;
 
     /**
      * 连接池中取一个连接

@@ -8,7 +8,7 @@ return [
         'suffix' => 'Service', // service文件后缀
     ],
     'consulProvider' => [
-        'class'   => \Swoft\Service\ConsulProvider::class,
+        'class'   => \Swoft\Service\ConsulProviderInterface::class,
         'address' => '127.0.0.1:80'
     ],
     "userPool"       => [

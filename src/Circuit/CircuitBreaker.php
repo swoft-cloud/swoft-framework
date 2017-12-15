@@ -64,22 +64,31 @@ class CircuitBreaker
     /**
      * @var \swoole_lock 半开状态锁
      */
-    private $halfOpenLock = null;
+    protected $halfOpenLock = null;
 
     /**
-     * @var int 连续失败次数，如果到达，状态切换为open
+     * The number of successive failures
+     * If the arrival, the state switch to open
+     *
+     * @var int
      */
-    private $swithToFailCount = 6;
+    protected $swithToFailCount = 6;
 
     /**
-     * @var int 连续成功次数，如果到达，状态切换为close
+     * The number of successive successes
+     * If the arrival, the state switch to close
+     *
+     * @var int
      */
-    private $swithToSuccessCount = 6;
+    protected $swithToSuccessCount = 6;
 
     /**
-     * @var int 单位毫秒
+     * Switch close to open delay time
+     * The unit is milliseconds
+     *
+     * @var int
      */
-    private $delaySwithTimer = 5000;
+    protected $delaySwithTimer = 5000;
 
     /**
      * 初始化
