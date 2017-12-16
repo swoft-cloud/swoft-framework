@@ -348,7 +348,7 @@ class App
      *
      * @return string
      */
-    public static function getAlias(string $alias)
+    public static function getAlias($alias)
     {
         if (isset(self::$aliases[$alias])) {
             return self::$aliases[$alias];
