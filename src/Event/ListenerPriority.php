@@ -1,17 +1,14 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: inhere
- * Date: 16/8/27
- * Time: 下午12:37
- * Use : 监听器优先级级别 部分常量
- */
 
 namespace Swoft\Event;
 
 /**
  * Class ListenerPriority
  * @package Swoft\Event
+ * @version   2017年08月30日
+ * @author    inhere <in.798@qq.com>
+ * @copyright Copyright 2010-2016 Swoft software
+ * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 final class ListenerPriority
 {
