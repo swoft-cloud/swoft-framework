@@ -8,6 +8,7 @@ use Swoft\Bean\ObjectDefinition\MethodInjection;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
 use Swoft\Bean\Resource\AnnotationResource;
 use Swoft\Bean\Resource\DefinitionResource;
+use Swoft\Pool\Config\RedisPoolConfig;
 
 /**
  * 全局容器
@@ -311,6 +312,11 @@ class Container
                 $injectAry[$key] = $propertyVlaue;
             }
         }
+
+        if(empty($injectAry)){
+            $injectAry = $injectProperty;
+        }
+
         return $injectAry;
     }
 }

@@ -3,12 +3,9 @@
 namespace Swoft\Pool;
 
 use Swoft\App;
-use Swoft\Bean\Annotation\Inject;
-use Swoft\Pool\Balancer\IBalancer;
-use Swoft\Service\ProviderInterface;
 
 /**
- * 通用连接池
+ * the pool of connection
  *
  * @uses      ConnectPool
  * @version   2017年06月15日
@@ -19,85 +16,25 @@ use Swoft\Service\ProviderInterface;
 abstract class ConnectPool implements IPool
 {
     /**
-     * @var string 服务名称
-     */
-    protected $serviceName = "";
-
-    /**
-     * the maximum number of idle connections
+     * the nubmer of current connections
      *
      * @var int
      */
-    protected $maxIdel = 6;
+    protected $currentCount = 0;
 
     /**
-     * the maximum number of active connections
+     * the queque of connection
      *
-     * @var int
-     */
-    protected $maxActive = 50;
-
-    /**
-     * the maximum number of wait connections
-     *
-     * @var int
-     */
-    protected $maxWait = 100;
-
-    /**
-     * the time of connect timeout
-     *
-     * @var int
-     */
-    protected $timeout = 200;
-
-    /**
-     * the addresses of connection
-     *
-     * <pre>
-     * [
-     *  '127.0.0.1:88',
-     *  '127.0.0.1:88'
-     * ]
-     * </pre>
-     *
-     * @var array
-     */
-    protected $uri = [];
-
-    /**
-     * whether to user provider(consul/etcd/zookeeper)
-     *
-     * @var bool
-     */
-    protected $useProvider = false;
-
-    /**
-     * the default balancer is random balancer
-     *
-     * @Inject()
-     * @var IBalancer;
-     */
-    protected $balancer = null;
-
-    /**
-     * the default provider is consul provider
-     *
-     * @Inject()
-     * @var ProviderInterface
-     */
-    protected $serviceProvider = null;
-
-    /**
-     * @var int 当前连接数
-     */
-    protected $currentCounter = 0;
-
-    /**
-     * @var \SplQueue 连接队列
+     * @var \SplQueue
      */
     protected $queue = null;
 
+    /**
+     * the config of pool
+     *
+     * @var PoolConfigInterface
+     */
+    protected $poolConfig;
 
     /**
      * 连接池中取一个连接
@@ -111,18 +48,20 @@ abstract class ConnectPool implements IPool
         }
 
         $connect = null;
-        if ($this->currentCounter > $this->maxActive) {
+        if ($this->currentCount > $this->poolConfig->getMaxActive()) {
             return null;
         }
         if (!$this->queue->isEmpty()) {
             $connect = $this->queue->shift();
+
             return $connect;
         }
 
         $connect = $this->createConnect();
         if ($connect !== null) {
-            $this->currentCounter++;
+            $this->currentCount++;
         }
+
         return $connect;
     }
 
@@ -133,9 +72,9 @@ abstract class ConnectPool implements IPool
      */
     public function release($connect)
     {
-        if ($this->queue->count() < $this->maxActive) {
+        if ($this->queue->count() < $this->poolConfig->getMaxActive()) {
             $this->queue->push($connect);
-            $this->currentCounter--;
+            $this->currentCount--;
         }
     }
 
@@ -146,8 +85,11 @@ abstract class ConnectPool implements IPool
      */
     public function getConnectAddress()
     {
-        $serviceList = $this->getServiceList();
-        return $this->balancer->select($serviceList);
+        $serviceList  = $this->getServiceList();
+        $balancerType = $this->poolConfig->getBalancer();
+        $balancer     = App::getBalancerSelector()->select($balancerType);
+
+        return $balancer->select($serviceList);
     }
 
     /**
@@ -163,15 +105,21 @@ abstract class ConnectPool implements IPool
      */
     protected function getServiceList()
     {
-        if ($this->useProvider) {
-            return $this->serviceProvider->getServiceList($this->serviceName);
+        $providerSelector = App::getProviderSelector();
+        $name             = $this->poolConfig->getName();
+        if ($this->poolConfig->isUseProvider()) {
+            $type = $this->poolConfig->getProvider();
+
+            return $providerSelector->select($type)->getServiceList($name);
         }
 
-        if (empty($this->uri)) {
-            App::error($this->serviceName."服务，没有配置uri");
-            throw new \InvalidArgumentException($this->serviceName."服务，没有配置uri");
+        $uri = $this->poolConfig->getUri();
+        if (empty($uri)) {
+            App::error("$name 服务，没有配置uri");
+            throw new \InvalidArgumentException("$name 服务，没有配置uri");
         }
-        return $this->uri;
+
+        return $uri;
     }
 
     /**
@@ -179,7 +127,7 @@ abstract class ConnectPool implements IPool
      */
     public function getTimeout(): int
     {
-        return $this->timeout;
+        return $this->poolConfig->getTimeout();
     }
 
     abstract public function createConnect();

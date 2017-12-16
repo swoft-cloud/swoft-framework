@@ -221,6 +221,26 @@ class App
     }
 
     /**
+     * the selector of balancer
+     *
+     * @return \Swoft\Pool\BalancerSelector
+     */
+    public static function getBalancerSelector()
+    {
+        return App::getBean('balancerSelector');
+    }
+
+    /**
+     * the selector of provider
+     *
+     * @return \Swoft\Pool\ProviderSelector
+     */
+    public static function getProviderSelector()
+    {
+        return App::getBean('providerSelector');
+    }
+
+    /**
      * request对象
      *
      * @return Web\Request

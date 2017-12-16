@@ -5,10 +5,10 @@ namespace Swoft\Bean;
 use Monolog\Formatter\LineFormatter;
 use Swoft\App;
 use Swoft\Base\Config;
-use Swoft\Filter\FilterChain;
 use Swoft\Helper\ArrayHelper;
 use Swoft\Helper\DirHelper;
-use Swoft\Pool\Balancer\RoundRobinBalancer;
+use Swoft\Pool\BalancerSelector;
+use Swoft\Pool\ProviderSelector;
 use Swoft\Web\Application;
 
 /**
@@ -88,15 +88,17 @@ class BeanFactory implements BeanFactoryInterface
                 'properties' => value(function () {
                     $config = new Config();
                     $config->load('@properties', []);
+
                     return $config->toArray();
-                })
+                }),
             ],
             'application'        => ['class' => Application::class],
-            'roundRobinBalancer' => ['class' => RoundRobinBalancer::class],
-            "lineFormatter"        => [
+            'balancerSelector'    => ['class' => BalancerSelector::class],
+            'providerSelector'    => ['class' => ProviderSelector::class],
+            "lineFormatter"      => [
                 'class'      => LineFormatter::class,
                 "format"     => '%datetime% [%level_name%] [%channel%] [logid:%logid%] [spanid:%spanid%] %messages%',
-                'dateFormat' => 'Y/m/d H:i:s'
+                'dateFormat' => 'Y/m/d H:i:s',
             ],
         ];
     }
@@ -111,6 +113,7 @@ class BeanFactory implements BeanFactoryInterface
     private static function merge(array $definitions)
     {
         $definitions = ArrayHelper::merge(self::coreBeans(), $definitions);
+
         return $definitions;
     }
 
@@ -123,7 +126,7 @@ class BeanFactory implements BeanFactoryInterface
     {
         $config = new Config();
         $config->load(App::getAlias('@beans'), [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
-        $configDefinitions = $config->toArray();
+        $configDefinitions  = $config->toArray();
         $mergedDdefinitions = ArrayHelper::merge($configDefinitions, $definitions);
         new self($mergedDdefinitions);
     }
