@@ -11,60 +11,282 @@ namespace Swoft\Router\Http;
  * @author    inhere <in.798@qq.com>
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
- *
  */
-abstract class AbstractRouter
+abstract class AbstractRouter implements RouterInterface
 {
-    // match result status
-    const FOUND = 1;
-    const NOT_FOUND = 2;
-    const METHOD_NOT_ALLOWED = 3;
-
-    const FAV_ICON = '/favicon.ico';
-    const DEFAULT_REGEX = '[^/]+';
-
-    // supported method list
-    const ANY = 'ANY';
-
-    const GET = 'GET';
-    const POST = 'POST';
-    const PUT = 'PUT';
-    const PATCH = 'PATCH';
-    const DELETE = 'DELETE';
-    const OPTIONS = 'OPTIONS';
-    const HEAD = 'HEAD';
-    const SEARCH = 'SEARCH';
-    const CONNECT = 'CONNECT';
-    const TRACE = 'TRACE';
-
-    /**
-     * supported methods
-     * @var array
-     */
-    const SUPPORTED_METHODS = [
-        'ANY',
-        'GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD', 'SEARCH', 'CONNECT', 'TRACE',
-    ];
-
-    /**
-     * the matched result index key
-     */
-    const INDEX_STATUS = 0;
-    const INDEX_PATH = 1;
-    const INDEX_INFO = 2;
-
     /**
      * some available patterns regex
-     * $router->get('/user/{num}', 'handler');
+     * $router->get('/user/{id}', 'handler');
      * @var array
      */
     protected static $globalParams = [
+        'all' => '.*',
         'any' => '[^/]+',   // match any except '/'
-//        'num' => '[0-9]+',  // match a number
-//        'id'  => '[1-9][0-9]*',  // match a ID number
-//        'act' => '[a-zA-Z][\w-]+', // match a action name
-        'all' => '.*'
+        // 'num' => '[0-9]+',  // match a number
+        // 'int' => '\d+',     // match a number
+        // 'id' => '[1-9][0-9]*',  // match a ID number
+        // 'act' => '[a-zA-Z][\w-]+', // match a action name
     ];
+
+    /** @var bool */
+    protected $initialized = false;
+
+    /** @var string */
+    protected $currentGroupPrefix;
+
+    /** @var array */
+    protected $currentGroupOption;
+
+    /**
+     * static Routes - no dynamic argument match
+     * 整个路由 path 都是静态字符串 e.g. '/user/login'
+     * @var array[]
+     * [
+     *     '/user/login' => [
+     *          // METHOD => [...]
+     *          'GET' => [
+     *              'handler' => 'handler',
+     *              'option' => [...],
+     *          ],
+     *          'PUT' => [
+     *              'handler' => 'handler',
+     *              'option' => [...],
+     *          ],
+     *          ...
+     *      ],
+     *      ... ...
+     * ]
+     */
+    protected $staticRoutes = [];
+
+    /**
+     * regular Routes - have dynamic arguments, but the first node is normal string.
+     * 第一节是个静态字符串，称之为有规律的动态路由。按第一节的信息进行分组存储
+     * e.g '/hello/{name}' '/user/{id}'
+     * @var array[]
+     * [
+     *     // 使用完整的第一节作为key进行分组
+     *     'add' => [
+     *          [
+     *              'start' => '/add/',
+     *              'regex' => '/add/(\w+)',
+     *              'methods' => 'GET',
+     *              'handler' => 'handler',
+     *              'option' => [...],
+     *          ],
+     *          ...
+     *      ],
+     *     'blog' => [
+     *        [
+     *              'start' => '/blog/post-',
+     *              'regex' => '/blog/post-(\w+)',
+     *              'methods' => 'GET',
+     *              'handler' => 'handler',
+     *              'option' => [...],
+     *        ],
+     *        ...
+     *     ],
+     *     ... ...
+     * ]
+     */
+    protected $regularRoutes = [];
+
+    /**
+     * vague Routes - have dynamic arguments,but the first node is exists regex.
+     * 第一节就包含了正则匹配，称之为无规律/模糊的动态路由
+     * e.g '/{name}/profile' '/{some}/{some2}'
+     * @var array
+     * [
+     *     // 使用 HTTP METHOD 作为 key进行分组
+     *     'GET' => [
+     *          [
+     *              // 必定包含的字符串
+     *              'include' => '/profile',
+     *              'regex' => '/(\w+)/profile',
+     *              'handler' => 'handler',
+     *              'option' => [...],
+     *          ],
+     *          ...
+     *     ],
+     *     'POST' => [
+     *          [
+     *              'include' => null,
+     *              'regex' => '/(\w+)/(\w+)',
+     *              'handler' => 'handler',
+     *              'option' => [...],
+     *          ],
+     *          ...
+     *     ],
+     *      ... ...
+     * ]
+     */
+    protected $vagueRoutes = [];
+
+    /**
+     * There are last route caches
+     * @see $staticRoutes
+     * @var array[]
+     */
+    protected $routeCaches = [];
+
+    /*******************************************************************************
+     * router config
+     ******************************************************************************/
+
+    /**
+     * Setting a routes file.
+     * @var string
+     */
+    public $routesFile;
+
+    /**
+     * Ignore last slash char('/'). If is True, will clear last '/'.
+     * @var bool
+     */
+    public $ignoreLastSlash = false;
+
+    /**
+     * The param route cache number.
+     * @var int
+     */
+    public $tmpCacheNumber = 0;
+
+    /**
+     * Match all request.
+     * 1. If is a valid URI path, will matchAll all request uri to the path.
+     * 2. If is a closure, will matchAll all request then call it
+     * eg: '/site/maintenance' or `function () { echo 'System Maintaining ... ...'; }`
+     * @var mixed
+     */
+    public $matchAll;
+
+    /**
+     * @var bool NotAllowed As NotFound. If True, only two status value will be return(FOUND, NOT_FOUND).
+     */
+    public $notAllowedAsNotFound = false;
+
+    /**
+     * Auto route match @like yii framework
+     * If is True, will auto find the handler controller file.
+     * @var bool
+     */
+    public $autoRoute = false;
+
+    /**
+     * The default controllers namespace. eg: 'App\\Controllers'
+     * @var string
+     */
+    public $controllerNamespace;
+
+    /**
+     * Controller suffix, is valid when '$autoRoute' = true. eg: 'Controller'
+     * @var string
+     */
+    public $controllerSuffix = 'Controller';
+
+    /**
+     * object creator.
+     * @param array $config
+     * @return self
+     * @throws \LogicException
+     */
+    public static function make(array $config = [])
+    {
+        return new static($config);
+    }
+
+    /**
+     * object constructor.
+     * @param array $config
+     * @throws \LogicException
+     */
+    public function __construct(array $config = [])
+    {
+        $this->setConfig($config);
+
+        $this->currentGroupPrefix = '';
+        $this->currentGroupOption = [];
+
+        // load routes
+        if (($file = $this->routesFile) && is_file($file)) {
+            require $file;
+        }
+    }
+
+    /**
+     * @param array $config
+     * @throws \LogicException
+     */
+    public function setConfig(array $config)
+    {
+        if ($this->initialized) {
+            throw new \LogicException('Routing has been added, and configuration is not allowed!');
+        }
+
+        $props = [
+            'routesFile' => 1,
+            'ignoreLastSlash' => 1,
+            'tmpCacheNumber' => 1,
+            'notAllowedAsNotFound' => 1,
+            'matchAll' => 1,
+            'autoRoute' => 1,
+            'controllerNamespace' => 1,
+            'controllerSuffix' => 1,
+        ];
+
+        foreach ($config as $name => $value) {
+            if (isset($props[$name])) {
+                $this->$name = $value;
+            }
+        }
+    }
+
+    /*******************************************************************************
+     * route collection
+     ******************************************************************************/
+
+    /**
+     * Defines a route callback and method
+     * @param string $method
+     * @param array $args
+     * @return static
+     * @throws \LogicException
+     * @throws \InvalidArgumentException
+     */
+    public function __call($method, array $args)
+    {
+        if (\in_array(strtoupper($method), self::SUPPORTED_METHODS, true)) {
+            if (\count($args) < 2) {
+                throw new \InvalidArgumentException("The method [$method] parameters is missing.");
+            }
+
+            return $this->map($method, ...$args);
+        }
+
+        throw new \InvalidArgumentException("The method [$method] not exists in the class.");
+    }
+
+    /**
+     * Create a route group with a common prefix.
+     * All routes created in the passed callback will have the given group prefix prepended.
+     * @ref package 'nikic/fast-route'
+     * @param string $prefix
+     * @param \Closure $callback
+     * @param array $opts
+     */
+    public function group($prefix, \Closure $callback, array $opts = [])
+    {
+        $previousGroupPrefix = $this->currentGroupPrefix;
+        $this->currentGroupPrefix = $previousGroupPrefix . '/' . trim($prefix, '/');
+
+        $previousGroupOption = $this->currentGroupOption;
+        $this->currentGroupOption = $opts;
+
+        $callback($this);
+
+        $this->currentGroupPrefix = $previousGroupPrefix;
+        $this->currentGroupOption = $previousGroupOption;
+    }
 
     /**
      * validate and format arguments
@@ -80,7 +302,7 @@ abstract class AbstractRouter
         }
 
         $allow = implode(',', self::SUPPORTED_METHODS) . ',';
-        $methods = array_map(function ($m) use($allow) {
+        $methods = array_map(function ($m) use ($allow) {
             $m = strtoupper(trim($m));
 
             if (!$m || false === strpos($allow, $m . ',')) {
@@ -90,13 +312,13 @@ abstract class AbstractRouter
             return $m;
         }, (array)$methods);
 
-        if (!\is_string($handler) && !\is_object($handler)) {
-            throw new \InvalidArgumentException('The route handler is not empty and type only allow: string,object');
-        }
-
-        if (\is_object($handler) && !\is_callable($handler)) {
-            throw new \InvalidArgumentException('The route object handler must be is callable');
-        }
+        // if (!\is_string($handler) && !\is_object($handler)) {
+        //     throw new \InvalidArgumentException('The route handler is not empty and type only allow: string,object');
+        // }
+        //
+        // if (\is_object($handler) && !\is_callable($handler)) {
+        //     throw new \InvalidArgumentException('The route object handler must be is callable');
+        // }
 
         $methods = implode(',', $methods) . ',';
 
@@ -108,11 +330,11 @@ abstract class AbstractRouter
     }
 
     /**
-     * has dynamic param
+     * is Static Route
      * @param string $route
      * @return bool
      */
-    protected static function isNoDynamicParam($route)
+    public static function isStaticRoute($route)
     {
         return strpos($route, '{') === false && strpos($route, '[') === false;
     }
@@ -121,7 +343,7 @@ abstract class AbstractRouter
      * @param string $path
      * @return string
      */
-    protected static function getFirstFromPath($path)
+    protected function getFirstFromPath($path)
     {
         $tmp = trim($path, '/'); // clear first,end '/'
 
@@ -131,36 +353,37 @@ abstract class AbstractRouter
         }
 
         // eg '/about.html'
-        if (strpos($tmp, '.')) {
-            return strstr($tmp, '.', true);
-        }
+        // if (strpos($tmp, '.')) {
+        //     return strstr($tmp, '.', true);
+        // }
 
         return $tmp;
     }
 
     /**
      * @param string $path
-     * @param bool $ignoreLastSep
+     * @param bool $ignoreLastSlash
      * @return string
      */
-    protected static function formatUriPath($path, $ignoreLastSep)
+    protected function formatUriPath($path, $ignoreLastSlash)
     {
-      // clear '//', '///' => '/'
-      $path = rawurldecode(preg_replace('#\/\/+#', '/', $path));
+        // clear '//', '///' => '/'
+        $path = rawurldecode(preg_replace('#\/\/+#', '/', $path));
 
-      // setting 'ignoreLastSep'
-      if ($path !== '/' && $ignoreLastSep) {
-        $path = rtrim($path, '/');
-      }
+        // setting 'ignoreLastSlash'
+        if ($path !== '/' && $ignoreLastSlash) {
+            $path = rtrim($path, '/');
+        }
 
-      return $path;
+        return $path;
     }
+
     /**
      * @param array $matches
      * @param array $conf
      * @return array
      */
-    protected static function filterMatches(array $matches, array $conf)
+    protected function filterMatches(array $matches, array $conf)
     {
         // clear all int key
         $matches = array_filter($matches, '\is_string', ARRAY_FILTER_USE_KEY);
@@ -185,14 +408,18 @@ abstract class AbstractRouter
      * @return array
      * @throws \LogicException
      */
-    public static function parseParamRoute($route, array $params, array $conf)
+    public function parseParamRoute($route, array $params, array $conf)
     {
-        $tmp = $route;
+        $bak = $route;
+        $noOptional = null;
+        // $hasOptional = false;
 
         // 解析可选参数位
         // '/hello[/{name}]'      match: /hello/tom   /hello
         // '/my[/{name}[/{age}]]' match: /my/tom/78  /my/tom
-        if (false !== strpos($route, ']')) {
+        if (false !== ($pos = strpos($route, '['))) {
+            // $hasOptional = true;
+            $noOptional = substr($route, 0, $pos);
             $withoutClosingOptionals = rtrim($route, ']');
             $optionalNum = \strlen($route) - \strlen($withoutClosingOptionals);
 
@@ -216,7 +443,7 @@ abstract class AbstractRouter
             foreach ($m[1] as $name) {
                 $key = '{' . $name . '}';
                 // 匹配定义的 param  , 未匹配到的使用默认 self::DEFAULT_REGEX
-                $regex = isset($params[$name]) ? $params[$name] : self::DEFAULT_REGEX;
+                $regex = $params[$name] ?? self::DEFAULT_REGEX;
 
                 // 将匹配结果命名 (?P<arg1>[^/]+)
                 $replacePairs[$key] = '(?P<' . $name . '>' . $regex . ')';
@@ -229,82 +456,75 @@ abstract class AbstractRouter
         // 分析路由字符串是否是有规律的
         $first = null;
         $regex = '#^' . $route . '$#';
+        $info = [
+            'regex' => $regex,
+            'original' => $bak,
+        ];
 
-        // e.g '/hello[/{name}]' first: 'hello', '/user/{id}' first: 'user', '/a/{post}' first: 'a'
+        // e.g '/user/{id}' first: 'user', '/a/{post}' first: 'a'
         // first node is a normal string
-        // if (preg_match('#^/([\w-]+)#', $tmp, $m)) {
-        // if (preg_match('#^/([\w-]+)/?[\w-]*#', $tmp, $m)) {
-        if (preg_match('#^/([\w-]+)/[\w-]*#', $tmp, $m)) {
+        if (preg_match('#^/([\w-]+)/[\w-]*/?#', $bak, $m)) {
             $first = $m[1];
-            $info = [
-                'regex'  => $regex,
-                'start' => $m[0],
-                'original' => $tmp,
-            ];
-            // first node contain regex param '/{some}/{some2}/xyz'
+            $info['start'] = $m[0];
+            // first node contain regex param '/hello[/{name}]' '/{some}/{some2}/xyz'
         } else {
             $include = null;
 
-            if (preg_match('#/([\w-]+)/?[\w-]*#', $tmp, $m)) {
+            if ($noOptional) {
+                if (strpos($noOptional, '{') === false) {
+                    $include = $noOptional;
+                } else {
+                    $bak = $noOptional;
+                }
+            }
+
+            if (!$include && preg_match('#/([\w-]+)/?[\w-]*#', $bak, $m)) {
                 $include = $m[0];
             }
 
-            $info = [
-                'regex' => $regex,
-                'include' => $include,
-                'original' => $tmp,
-            ];
+            $info['include'] = $include;
         }
 
         return [$first, array_merge($info, $conf)];
     }
 
     /**
-     * @param array $routes
-     * [
-     *   'GET,POST' => [
-     *       'handler' => 'handler',
-     *       'methods' => 'GET,POST',
-     *       'option' => [...],
-     *   ],
-     *   'PUT' => [
-     *       'handler' => 'handler',
-     *       'methods' => 'PUT',
-     *       'option' => [...],
-     *   ],
-     *   ...
-     * ]
+     * @param array $routesData
      * @param string $path
      * @param string $method
      * @return array
      */
-    public static function findInStaticRoutes(array $routes, $path, $method)
-    {
-        $methods = null;
+    abstract protected function findInRegularRoutes(array $routesData, $path, $method);
 
-        foreach ($routes as $conf) {
-            if (false !== strpos($conf['methods'] . ',', $method . ',')) {
-                return [self::FOUND, $path, $conf];
-            }
+    /**
+     * @param array $routesData
+     * @param string $path
+     * @param string $method
+     * @return array
+     */
+    abstract protected function findInVagueRoutes(array $routesData, $path, $method);
 
-            $methods .= $conf['methods'] . ',';
-        }
-
-        // method not allowed
-        return [self::METHOD_NOT_ALLOWED, $path, array_unique(explode(',', trim($methods, ',')))];
-    }
+    /**
+     * @param string $path
+     * @param string $method
+     * @param array $conf
+     */
+    abstract protected function cacheMatchedParamRoute($path, $method, array $conf);
 
     /**
      * handle auto route match, when config `'autoRoute' => true`
      * @param string $path The route path
-     * @param string $controllerNamespace controller namespace. eg: 'app\\controllers'
-     * @param string $controllerSuffix controller suffix. eg: 'Controller'
+     * @internal string $cnp controller namespace. eg: 'app\\controllers'
+     * @internal string $sfx controller suffix. eg: 'Controller'
      * @return bool|callable
      */
-    public static function matchAutoRoute($path, $controllerNamespace, $controllerSuffix = '')
+    public function matchAutoRoute($path)
     {
-        $cnp = trim($controllerNamespace);
-        $sfx = trim($controllerSuffix);
+        if (!$cnp = trim($this->controllerNamespace)) {
+            return false;
+        }
+
+        $sfx = trim($this->controllerSuffix);
         $tmp = trim($path, '/- ');
 
         // one node. eg: 'home'
@@ -356,12 +576,13 @@ abstract class AbstractRouter
     }
 
     /**
-     * @param array $params
      * @param array $tmpParams
      * @return array
      */
-    public static function getAvailableParams(array $params, $tmpParams)
+    public function getAvailableParams(array $tmpParams)
     {
+        $params = self::$globalParams;
+
         if ($tmpParams) {
             foreach ($tmpParams as $name => $pattern) {
                 $key = trim($name, '{}');
@@ -425,5 +646,61 @@ abstract class AbstractRouter
     public static function getSupportedMethods()
     {
         return self::SUPPORTED_METHODS;
+    }
+
+    /**
+     * @param array $staticRoutes
+     */
+    public function setStaticRoutes(array $staticRoutes)
+    {
+        $this->staticRoutes = $staticRoutes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getStaticRoutes()
+    {
+        return $this->staticRoutes;
+    }
+
+    /**
+     * @param \array[] $regularRoutes
+     */
+    public function setRegularRoutes(array $regularRoutes)
+    {
+        $this->regularRoutes = $regularRoutes;
+    }
+
+    /**
+     * @return \array[]
+     */
+    public function getRegularRoutes()
+    {
+        return $this->regularRoutes;
+    }
+
+    /**
+     * @param array $vagueRoutes
+     */
+    public function setVagueRoutes($vagueRoutes)
+    {
+        $this->vagueRoutes = $vagueRoutes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getVagueRoutes()
+    {
+        return $this->vagueRoutes;
+    }
+
+    /**
+     * @return array
+     */
+    public function getRouteCaches()
+    {
+        return $this->routeCaches;
     }
 }
