@@ -10,7 +10,7 @@ namespace Swoft\Event;
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-trait EventAwareTrait
+trait EventManagerAwareTrait
 {
     /**
      * @var EventManager|EventManagerInterface
@@ -18,10 +18,16 @@ trait EventAwareTrait
     protected $eventManager;
 
     /**
+     * @param bool $createIfNotExists
      * @return EventManager|EventManagerInterface
+     * @throws \InvalidArgumentException
      */
-    public function getEventManager()
+    public function getEventManager($createIfNotExists = true)
     {
+        if (!$this->eventManager && $createIfNotExists) {
+            $this->setEventManager(new EventManager());
+        }
+
         return $this->eventManager;
     }
 
@@ -31,6 +37,10 @@ trait EventAwareTrait
     public function setEventManager(EventManagerInterface $eventManager)
     {
         $this->eventManager = $eventManager;
+
+        if (method_exists($this, 'attachDefaultListeners')) {
+            $this->attachDefaultListeners($eventManager);
+        }
     }
 
     /**

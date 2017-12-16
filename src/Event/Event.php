@@ -13,15 +13,10 @@ namespace Swoft\Event;
  */
 class Event implements EventInterface, \ArrayAccess, \Serializable
 {
-    /**
-     * @var string 当前的事件名称
-     */
+    /** @var string Event name */
     protected $name;
 
-    /**
-     * 参数
-     * @var array
-     */
+    /** @var array Event params */
     protected $params = [];
 
     /**
@@ -46,7 +41,9 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
             $this->setName($name);
         }
 
-        $this->params = $params;
+        if ($params) {
+            $this->params = $params;
+        }
     }
 
     /**
@@ -56,14 +53,10 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
      */
     public static function checkName(string $name)
     {
-        $name = trim($name);
+        $name = trim($name, '. ');
 
-        if (!$name || \strlen($name) > 50) {
-            throw new \InvalidArgumentException('Set up the name can be a not empty string of not more than 50 characters!');
-        }
-
-        if (!preg_match('/^\w[\w-.]{1,56}$/i', $name)) {
-            throw new \InvalidArgumentException("The service Id[$name] is invalid string！");
+        if (!$name || \strlen($name) > 64) {
+            throw new \InvalidArgumentException('Set up the name can be a not empty string of not more than 64 characters!');
         }
 
         return $name;
@@ -87,7 +80,7 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
     }
 
     /**
-     * set all param
+     * set all params
      * @param array $params
      */
     public function setParams(array $params)
@@ -289,3 +282,4 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
     }
 
 }
+

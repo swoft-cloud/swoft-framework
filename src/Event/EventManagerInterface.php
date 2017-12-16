@@ -2,7 +2,6 @@
 
 namespace Swoft\Event;
 
-
 /**
  * Interface EventManagerInterface - Interface for EventManager
  * @package Swoft\Event
