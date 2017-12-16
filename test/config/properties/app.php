@@ -2,7 +2,8 @@
 return [
     "version"           => '1.0',
     'autoInitBean'      => true,
-    'beanScan'          => [],
+    'beanScan'          => [
+    ],
     'I18n'              => [
         'sourceLanguage' => '@root/resources/messages/',
     ],
@@ -12,5 +13,8 @@ return [
         'user' => [
             'timeout' => 3000
         ]
-    ]
+    ],
+    'database' => require dirname(__FILE__).DS."db.php",
+    'cache'    => require dirname(__FILE__).DS."cache.php",
+    'service'  => require dirname(__FILE__).DS."service.php",
 ];

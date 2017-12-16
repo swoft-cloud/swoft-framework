@@ -1,21 +1,29 @@
 <?php
 
-namespace Swoft\Pool;
+namespace Swoft\Testing\Pool\Config;
+
+use Swoft\Bean\Annotation\Bean;
+use Swoft\Bean\Annotation\Value;
+use Swoft\Pool\BalancerSelector;
+use Swoft\Pool\PoolProperties;
+use Swoft\Pool\ProviderSelector;
 
 /**
- * the properties of pool
+ * the config of env
  *
- * @uses      PoolProperties
- * @version   2017年12月16日
+ * @Bean()
+ * @uses      EnvPoolConfig
+ * @version   2017年12月17日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class PoolProperties implements PoolConfigInterface
+class EnvPoolConfig extends PoolProperties
 {
     /**
      * the name of pool
      *
+     * @Value(env="${TEST_NAME}")
      * @var string
      */
     protected $name = "";
@@ -23,6 +31,7 @@ class PoolProperties implements PoolConfigInterface
     /**
      * the maximum number of idle connections
      *
+     * @Value(env="${TEST_MAX_IDEL}")
      * @var int
      */
     protected $maxIdel = 6;
@@ -30,6 +39,7 @@ class PoolProperties implements PoolConfigInterface
     /**
      * the maximum number of active connections
      *
+     * @Value(env="${TEST_MAX_ACTIVE}")
      * @var int
      */
     protected $maxActive = 50;
@@ -37,6 +47,7 @@ class PoolProperties implements PoolConfigInterface
     /**
      * the maximum number of wait connections
      *
+     * @Value(env="${TEST_MAX_WAIT}")
      * @var int
      */
     protected $maxWait = 100;
@@ -44,6 +55,7 @@ class PoolProperties implements PoolConfigInterface
     /**
      * the time of connect timeout
      *
+     * @Value(env="${TEST_TIMEOUT}")
      * @var int
      */
     protected $timeout = 200;
@@ -58,6 +70,7 @@ class PoolProperties implements PoolConfigInterface
      * ]
      * </pre>
      *
+     * @Value(env="${TEST_URI}")
      * @var array
      */
     protected $uri = [];
@@ -65,6 +78,7 @@ class PoolProperties implements PoolConfigInterface
     /**
      * whether to user provider(consul/etcd/zookeeper)
      *
+     * @Value(env="${TEST_USE_PROVIDER}")
      * @var bool
      */
     protected $useProvider = false;
@@ -72,6 +86,7 @@ class PoolProperties implements PoolConfigInterface
     /**
      * the default balancer is random balancer
      *
+     * @Value(env="${TEST_BALANCER}")
      * @var string
      */
     protected $balancer = BalancerSelector::TYPE_RANDOM;
@@ -79,79 +94,8 @@ class PoolProperties implements PoolConfigInterface
     /**
      * the default provider is consul provider
      *
+     * @Value(env="${TEST_PROVIDER}")
      * @var string
      */
     protected $provider = ProviderSelector::TYPE_CONSUL;
-
-    /**
-     * @return string
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaxIdel(): int
-    {
-        return $this->maxIdel;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaxActive(): int
-    {
-        return $this->maxActive;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaxWait(): int
-    {
-        return $this->maxWait;
-    }
-
-    /**
-     * @return int
-     */
-    public function getTimeout(): int
-    {
-        return $this->timeout;
-    }
-
-    /**
-     * @return array
-     */
-    public function getUri(): array
-    {
-        return $this->uri;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isUseProvider(): bool
-    {
-        return $this->useProvider;
-    }
-
-    /**
-     * @return string
-     */
-    public function getBalancer(): string
-    {
-        return $this->balancer;
-    }
-
-    /**
-     * @return string
-     */
-    public function getProvider(): string
-    {
-        return $this->provider;
-    }
 }
