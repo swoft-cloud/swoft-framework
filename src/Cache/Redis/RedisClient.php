@@ -89,8 +89,7 @@ class RedisClient
     public static function deferCall(string $method, array $params)
     {
         $profileKey = self::getRedisProfile($method);
-        /** @var \Swoft\Pool\ConnectPool $connectPool */
-        $connectPool = App::getBean(RedisPool::class);
+        $connectPool = App::getPool(RedisPool::class);
 
         /* @var $client RedisConnect */
         $client = $connectPool->getConnect();

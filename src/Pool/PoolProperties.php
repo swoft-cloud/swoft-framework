@@ -154,4 +154,14 @@ class PoolProperties implements PoolConfigInterface
     {
         return $this->provider;
     }
+
+    /**
+     * init
+     */
+    public function init()
+    {
+        if(empty($this->name)){
+            $this->name = uniqid();
+        }
+    }
 }

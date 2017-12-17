@@ -52,11 +52,8 @@ class Service
 
         $profileKey = "$serviceName->" . $func;
 
-        /* @var $criuitBreaker CircuitBreaker */
-        $criuitBreaker = App::getBean($serviceName . "Breaker");
-
-        /* @var  $connectPool ServicePool */
-        $connectPool = App::getBean($serviceName . "Pool");
+        $criuitBreaker = App::getBreaker($serviceName);
+        $connectPool = App::getPool($serviceName);
 
         /* @var $client AbstractServiceConnect */
         $client = $connectPool->getConnect();

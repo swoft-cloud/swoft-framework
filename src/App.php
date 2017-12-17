@@ -6,11 +6,15 @@ use Swoft\Base\ApplicationContext;
 use Swoft\Base\Config;
 use Swoft\Base\RequestContext;
 use Swoft\Base\Timer;
+use Swoft\Bean\Collector;
+use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
 use Swoft\Pool\RedisPool;
 use Swoft\Server\IServer;
 use Swoft\Service\ConsulProviderInterface;
 use Swoft\Web\Application;
+use Swoft\Pool\ConnectPool;
+use Swoft\Circuit\CircuitBreaker;
 
 /**
  * 应用简写类
@@ -238,6 +242,42 @@ class App
     public static function getProviderSelector()
     {
         return App::getBean('providerSelector');
+    }
+
+    /**
+     * get pool by name
+     *
+     * @param string $name
+     *
+     * @return ConnectPool
+     */
+    public static function getPool(string $name)
+    {
+        if (!isset(Collector::$pools[$name])) {
+            throw new InvalidArgumentException("the pool of $name is not exist!");
+        }
+
+        $poolBeanName = Collector::$pools[$name];
+
+        return App::getBean($poolBeanName);
+    }
+
+    /**
+     * get breaker by name
+     *
+     * @param string $name
+     *
+     * @return CircuitBreaker
+     */
+    public static function getBreaker(string $name)
+    {
+        if (!isset(Collector::$breakers[$name])) {
+            throw new InvalidArgumentException("the breaker of $name is not exist!");
+        }
+
+        $breakerBeanName = Collector::$breakers[$name];
+
+        return App::getBean($breakerBeanName);
     }
 
     /**

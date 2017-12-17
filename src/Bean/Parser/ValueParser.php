@@ -3,8 +3,6 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Value;
-use Swoft\I18n\I18n;
-use Swoft\Pool\Config\RedisPoolConfig;
 
 /**
  * value注解解析器
@@ -47,14 +45,6 @@ class ValueParser extends AbstractParser
             $value = !empty($value) && $isArray? explode(",", $value): $value;
             $injectProperty = ($value !== null) ? $value : $injectProperty;
             $isRef = ($value !== null) ? false : $isRef;
-        }
-
-        if($injectProperty === null){
-            throw new \InvalidArgumentException("the value of @value is null class={$className} property={$propertyName}");
-        }
-
-        if($className == RedisPoolConfig::class){
-//            var_dump($injectProperty, $propertyName, "\n______\n");
         }
 
         return [$injectProperty, $isRef];
