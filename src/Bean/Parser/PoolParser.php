@@ -33,7 +33,6 @@ class PoolParser extends AbstractParser
         string $methodName = "",
         $propertyValue = null
     ) {
-
         $poolName = $objectAnnotation->getName();
         $poolName = empty($poolName) ? $className : $poolName;
         Collector::$pools[$poolName] = $className;

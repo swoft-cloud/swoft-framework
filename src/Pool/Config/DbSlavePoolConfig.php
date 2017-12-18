@@ -2,19 +2,23 @@
 
 namespace Swoft\Pool\Config;
 
+use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Value;
+use Swoft\Pool\BalancerSelector;
+use Swoft\Pool\ProviderSelector;
 use Swoft\Testing\Pool\Config\PropertyPoolConfig;
 
 /**
  * the slave config of database
  *
- * @uses      DbSalvePoolConfig
+ * @Bean()
+ * @uses      DbSlavePoolConfig
  * @version   2017年12月17日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class DbSalvePoolConfig extends PropertyPoolConfig
+class DbSlavePoolConfig extends PropertyPoolConfig
 {
     /**
      * the name of pool

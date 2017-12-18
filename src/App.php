@@ -7,14 +7,13 @@ use Swoft\Base\Config;
 use Swoft\Base\RequestContext;
 use Swoft\Base\Timer;
 use Swoft\Bean\Collector;
+use Swoft\Circuit\CircuitBreaker;
 use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
+use Swoft\Pool\ConnectPool;
 use Swoft\Pool\RedisPool;
 use Swoft\Server\IServer;
-use Swoft\Service\ConsulProviderInterface;
 use Swoft\Web\Application;
-use Swoft\Pool\ConnectPool;
-use Swoft\Circuit\CircuitBreaker;
 
 /**
  * 应用简写类
@@ -116,16 +115,6 @@ class App
     public static function getHttpRouter()
     {
         return App::getBean('httpRouter');
-    }
-
-    /**
-     * consul对象
-     *
-     * @return ConsulProviderInterface
-     */
-    public static function getConsulProvider()
-    {
-        return self::getBean('consulProvider');
     }
 
     /**

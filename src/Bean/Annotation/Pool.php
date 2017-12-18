@@ -21,7 +21,7 @@ class Pool
      *
      * @var string
      */
-    private $name;
+    private $name = "";
 
     /**
      * Pool constructor.

@@ -4,7 +4,7 @@ namespace Swoft\Pool;
 
 use Swoft\Bean\Annotation\Inject;
 use Swoft\Bean\Annotation\Pool;
-use Swoft\Pool\Config\DbSalvePoolConfig;
+use Swoft\Pool\Config\DbSlavePoolConfig;
 
 /**
  * the pool of slave
@@ -20,7 +20,7 @@ class DbSlavePool extends DbPool
 {
     /**
      * @Inject()
-     * @var DbSalvePoolConfig
+     * @var DbSlavePoolConfig
      */
     protected $poolConfig;
 }

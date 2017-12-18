@@ -5,11 +5,17 @@ namespace Swoft\Test\Pool;
 use Swoft\App;
 use Swoft\Pool\ProviderSelector;
 use Swoft\Test\AbstractTestCase;
+use Swoft\Testing\Pool\Config\DbEnvPoolConfig;
+use Swoft\Testing\Pool\Config\DbPptPoolConfig;
+use Swoft\Testing\Pool\Config\DbSlaveEnvPoolConfig;
+use Swoft\Testing\Pool\Config\DbSlavePptConfig;
 use Swoft\Testing\Pool\Config\EnvAndPptPoolConfig;
 use Swoft\Testing\Pool\Config\EnvPoolConfig;
 use Swoft\Testing\Pool\Config\PartEnvPoolConfig;
 use Swoft\Testing\Pool\Config\PartPoolConfig;
 use Swoft\Testing\Pool\Config\PropertyPoolConfig;
+use Swoft\Testing\Pool\Config\RedisEnvPoolConfig;
+use Swoft\Testing\Pool\Config\RedisPptPoolConfig;
 
 /**
  * pool test
@@ -103,6 +109,114 @@ class PoolTest extends AbstractTestCase
             '127.0.0.1:6379',
         ]);
         $this->assertEquals($pConfig->getBalancer(), 'r1');
+        $this->assertEquals($pConfig->getMaxActive(), 2);
+        $this->assertEquals($pConfig->getMaxIdel(), 2);
+        $this->assertEquals($pConfig->isUseProvider(), true);
+        $this->assertEquals($pConfig->getMaxWait(), 2);
+    }
+
+    public function testRedisPoolPpt()
+    {
+        /* @var \Swoft\Pool\PoolProperties $pConfig */
+        $pConfig = App::getBean(RedisPptPoolConfig::class);
+        $this->assertEquals($pConfig->getName(), 'redis1');
+        $this->assertEquals($pConfig->getProvider(), 'consul1');
+        $this->assertEquals($pConfig->getTimeout(), 1);
+        $this->assertEquals($pConfig->getUri(), [
+            '127.0.0.1:1111',
+            '127.0.0.1:1111',
+        ]);
+        $this->assertEquals($pConfig->getBalancer(), 'random1');
+        $this->assertEquals($pConfig->getMaxActive(), 1);
+        $this->assertEquals($pConfig->getMaxIdel(), 1);
+        $this->assertEquals($pConfig->isUseProvider(), true);
+        $this->assertEquals($pConfig->getMaxWait(), 1);
+    }
+
+    public function testRedisPoolEnv()
+    {
+        /* @var \Swoft\Pool\PoolProperties $pConfig */
+        $pConfig = App::getBean(RedisEnvPoolConfig::class);
+        $this->assertEquals($pConfig->getName(), 'redis2');
+        $this->assertEquals($pConfig->getProvider(), 'consul2');
+        $this->assertEquals($pConfig->getTimeout(), 2);
+        $this->assertEquals($pConfig->getUri(), [
+            '127.0.0.1:2222',
+            '127.0.0.1:2222',
+        ]);
+        $this->assertEquals($pConfig->getBalancer(), 'random2');
+        $this->assertEquals($pConfig->getMaxActive(), 2);
+        $this->assertEquals($pConfig->getMaxIdel(), 2);
+        $this->assertEquals($pConfig->isUseProvider(), true);
+        $this->assertEquals($pConfig->getMaxWait(), 2);
+    }
+
+    public function testDbPpt()
+    {
+        /* @var \Swoft\Pool\PoolProperties $pConfig */
+        $pConfig = App::getBean(DbPptPoolConfig::class);
+        $this->assertEquals($pConfig->getName(), 'master1');
+        $this->assertEquals($pConfig->getProvider(), 'consul1');
+        $this->assertEquals($pConfig->getTimeout(), 1);
+        $this->assertEquals($pConfig->getUri(), [
+            '127.0.0.1:3301',
+            '127.0.0.1:3301',
+        ]);
+        $this->assertEquals($pConfig->getBalancer(), 'random1');
+        $this->assertEquals($pConfig->getMaxActive(), 1);
+        $this->assertEquals($pConfig->getMaxIdel(), 1);
+        $this->assertEquals($pConfig->isUseProvider(), true);
+        $this->assertEquals($pConfig->getMaxWait(), 1);
+    }
+
+    public function testDbEnv()
+    {
+        /* @var \Swoft\Pool\PoolProperties $pConfig */
+        $pConfig = App::getBean(DbEnvPoolConfig::class);
+        $this->assertEquals($pConfig->getName(), 'master2');
+        $this->assertEquals($pConfig->getProvider(), 'consul2');
+        $this->assertEquals($pConfig->getTimeout(), 2);
+        $this->assertEquals($pConfig->getUri(), [
+            '127.0.0.1:3302',
+            '127.0.0.1:3302',
+        ]);
+        $this->assertEquals($pConfig->getBalancer(), 'random2');
+        $this->assertEquals($pConfig->getMaxActive(), 2);
+        $this->assertEquals($pConfig->getMaxIdel(), 2);
+        $this->assertEquals($pConfig->isUseProvider(), true);
+        $this->assertEquals($pConfig->getMaxWait(), 2);
+    }
+
+    public function testDbSlavePpt()
+    {
+        /* @var \Swoft\Pool\PoolProperties $pConfig */
+        $pConfig = App::getBean(DbSlavePptConfig::class);
+        $this->assertEquals($pConfig->getName(), 'slave1');
+        $this->assertEquals($pConfig->getProvider(), 'consul1');
+        $this->assertEquals($pConfig->getTimeout(), 1);
+        $this->assertEquals($pConfig->getUri(), [
+            '127.0.0.1:3301',
+            '127.0.0.1:3301',
+        ]);
+        $this->assertEquals($pConfig->getBalancer(), 'random1');
+        $this->assertEquals($pConfig->getMaxActive(), 1);
+        $this->assertEquals($pConfig->getMaxIdel(), 1);
+        $this->assertEquals($pConfig->isUseProvider(), true);
+        $this->assertEquals($pConfig->getMaxWait(), 1);
+    }
+
+    public function testDbSlaveEnv()
+    {
+        /* @var \Swoft\Pool\PoolProperties $pConfig */
+        $pConfig = App::getBean(DbSlaveEnvPoolConfig::class);
+        $this->assertEquals($pConfig->getName(), 'slave2');
+        $this->assertEquals($pConfig->getProvider(), 'consul2');
+        $this->assertEquals($pConfig->getTimeout(), 2);
+        $this->assertEquals($pConfig->getUri(), [
+            '127.0.0.1:3302',
+            '127.0.0.1:3302',
+        ]);
+        $this->assertEquals($pConfig->getBalancer(), 'random2');
         $this->assertEquals($pConfig->getMaxActive(), 2);
         $this->assertEquals($pConfig->getMaxIdel(), 2);
         $this->assertEquals($pConfig->isUseProvider(), true);

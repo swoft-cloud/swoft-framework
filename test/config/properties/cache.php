@@ -1,17 +1,17 @@
 <?php
 return [
     'redis' => [
-        'name' => 'redis',
+        'name' => 'redis1',
         "uri"         => [
-            '127.0.0.1:6379',
-            '127.0.0.1:6379',
+            '127.0.0.1:1111',
+            '127.0.0.1:1111',
         ],
-        "maxIdel"     => 8,
-        "maxActive"   => 8,
-        "maxWait"     => 8,
-        "timeout"     => 8,
-        "balancer"    => 'random',
-        "useProvider" => false,
-        'provider'    => 'consul',
+        "maxIdel"     => 1,
+        "maxActive"   => 1,
+        "maxWait"     => 1,
+        "timeout"     => 1,
+        "balancer"    => 'random1',
+        "useProvider" => true,
+        'provider'    => 'consul1',
     ],
 ];
