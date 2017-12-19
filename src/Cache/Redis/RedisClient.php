@@ -5,6 +5,7 @@ namespace Swoft\Cache\Redis;
 use Swoft\App;
 use Swoft\Cache\CacheResult;
 use Swoft\Exception\RedisException;
+use Swoft\Pool\RedisPool;
 
 /**
  * redis客户端封装
@@ -32,11 +33,6 @@ use Swoft\Exception\RedisException;
  */
 class RedisClient
 {
-    /**
-     * 服务名称
-     */
-    const SERVICE_NAME = "redisPool";
-
     /**
      * 目前支持redis操作方法的集合,若需新方法支持，添加到里面即可。
      */
@@ -70,7 +66,7 @@ class RedisClient
         $profileKey = self::getRedisProfile($method);
 
         /** @var \Swoft\Pool\ConnectPool $connectPool */
-        $connectPool = App::getBean(self::SERVICE_NAME);
+        $connectPool = App::getBean(RedisPool::class);
 
         /* @var RedisConnect $client */
         $client = $connectPool->getConnect();
@@ -93,8 +89,7 @@ class RedisClient
     public static function deferCall(string $method, array $params)
     {
         $profileKey = self::getRedisProfile($method);
-        /** @var \Swoft\Pool\ConnectPool $connectPool */
-        $connectPool = App::getBean(self::SERVICE_NAME);
+        $connectPool = App::getPool(RedisPool::class);
 
         /* @var $client RedisConnect */
         $client = $connectPool->getConnect();
@@ -131,6 +126,6 @@ class RedisClient
      */
     private static function getRedisProfile(string $method)
     {
-        return self::SERVICE_NAME . "." . $method;
+        return "redis.$method";
     }
 }

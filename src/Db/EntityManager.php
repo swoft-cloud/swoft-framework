@@ -8,6 +8,7 @@ use Swoft\Bean\Collector;
 use Swoft\Exception\DbException;
 use Swoft\Pool\ConnectPool;
 use Swoft\Pool\DbPool;
+use Swoft\Pool\DbSlavePool;
 
 /**
  * 实体管理器
@@ -23,12 +24,12 @@ class EntityManager implements IEntityManager
     /**
      * 数据库主节点连接池ID
      */
-    const MASTER = "dbMaster";
+    const MASTER = DbPool::class;
 
     /**
      * 数据库从节点连接池ID
      */
-    const SLAVE = "dbSlave";
+    const SLAVE = DbSlavePool::class;
 
     /**
      * 数据库驱动

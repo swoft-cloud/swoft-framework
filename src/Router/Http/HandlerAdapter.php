@@ -121,7 +121,7 @@ class HandlerAdapter implements HandlerAdapterInterface
         // Set Controller and Action info to Request Context
         RequestContext::setContextData([
             'controllerClass'  => $className,
-            'controllerAction' => $action,
+            'controllerAction' => $action ?: 'actionIndex',
         ]);
 
         return [$handler, $matches];

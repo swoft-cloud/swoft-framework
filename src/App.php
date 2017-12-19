@@ -6,10 +6,13 @@ use Swoft\Base\ApplicationContext;
 use Swoft\Base\Config;
 use Swoft\Base\RequestContext;
 use Swoft\Base\Timer;
+use Swoft\Bean\Collector;
+use Swoft\Circuit\CircuitBreaker;
+use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
+use Swoft\Pool\ConnectPool;
 use Swoft\Pool\RedisPool;
 use Swoft\Server\IServer;
-use Swoft\Service\ConsulProvider;
 use Swoft\Web\Application;
 
 /**
@@ -115,16 +118,6 @@ class App
     }
 
     /**
-     * consul对象
-     *
-     * @return ConsulProvider
-     */
-    public static function getConsulProvider()
-    {
-        return self::getBean('consulProvider');
-    }
-
-    /**
      * 查询一个bean
      *
      * @param string $name 名称
@@ -218,6 +211,62 @@ class App
     public static function getPacker()
     {
         return App::getBean('servicePacker');
+    }
+
+    /**
+     * the selector of balancer
+     *
+     * @return \Swoft\Pool\BalancerSelector
+     */
+    public static function getBalancerSelector()
+    {
+        return App::getBean('balancerSelector');
+    }
+
+    /**
+     * the selector of provider
+     *
+     * @return \Swoft\Pool\ProviderSelector
+     */
+    public static function getProviderSelector()
+    {
+        return App::getBean('providerSelector');
+    }
+
+    /**
+     * get pool by name
+     *
+     * @param string $name
+     *
+     * @return ConnectPool
+     */
+    public static function getPool(string $name)
+    {
+        if (!isset(Collector::$pools[$name])) {
+            throw new InvalidArgumentException("the pool of $name is not exist!");
+        }
+
+        $poolBeanName = Collector::$pools[$name];
+
+        return App::getBean($poolBeanName);
+    }
+
+    /**
+     * get breaker by name
+     *
+     * @param string $name
+     *
+     * @return CircuitBreaker
+     */
+    public static function getBreaker(string $name)
+    {
+        if (!isset(Collector::$breakers[$name])) {
+            throw new InvalidArgumentException("the breaker of $name is not exist!");
+        }
+
+        $breakerBeanName = Collector::$breakers[$name];
+
+        return App::getBean($breakerBeanName);
     }
 
     /**
@@ -348,7 +397,7 @@ class App
      *
      * @return string
      */
-    public static function getAlias(string $alias)
+    public static function getAlias($alias)
     {
         if (isset(self::$aliases[$alias])) {
             return self::$aliases[$alias];

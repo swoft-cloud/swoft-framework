@@ -2,11 +2,16 @@
 
 namespace Swoft\Pool;
 
+
 use Swoft\App;
+use Swoft\Bean\Annotation\Inject;
+use Swoft\Bean\Annotation\Pool;
+use Swoft\Pool\Config\DbPoolConfig;
 
 /**
  * 数据库连接池
  *
+ * @Pool()
  * @uses      DbPool
  * @version   2017年09月01日
  * @author    stelin <phpcrazy@126.com>
@@ -16,6 +21,13 @@ use Swoft\App;
 class DbPool extends ConnectPool
 {
     const MYSQL = "Mysql";
+
+    /**
+     * @Inject()
+     *
+     * @var DbPoolConfig
+     */
+    protected $poolConfig;
 
     /**
      * 数据库驱动
