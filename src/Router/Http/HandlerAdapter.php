@@ -8,6 +8,7 @@ use Swoft\Base\RequestContext;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Exception\Http\MethodNotAllowedException;
 use Swoft\Exception\Http\RouteNotFoundException;
+use Swoft\Exception\InvalidArgumentException;
 use Swoft\Helper\PhpHelper;
 use Swoft\Router\HandlerAdapterInterface;
 use Swoft\Web\Request;
@@ -121,7 +122,7 @@ class HandlerAdapter implements HandlerAdapterInterface
         // Set Controller and Action info to Request Context
         RequestContext::setContextData([
             'controllerClass'  => $className,
-            'controllerAction' => $action ?: 'actionIndex',
+            'controllerAction' => $action ?: 'index',
         ]);
 
         return [$handler, $matches];
@@ -141,7 +142,7 @@ class HandlerAdapter implements HandlerAdapterInterface
 
         $actionId = empty($actionId) ? $httpRouter->defaultAction : $actionId;
         if (!method_exists($controller, $actionId)) {
-            $actionId = $httpRouter->actionPrefix . ucfirst($actionId);
+            throw new InvalidArgumentException("the {$actionId} of action is not exist!");
         }
 
         return [$controller, $actionId];

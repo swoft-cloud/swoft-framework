@@ -397,8 +397,7 @@ class HandlerMapping extends AbstractRouter implements HandlerMappingInterface
             $action   = $route['action'];
 
             // 解析注入action名称
-            $actionMethod = $this->getActionMethod($this->actionPrefix, $action);
-            $mapRoute     = empty($mapRoute) ? $actionMethod : $mapRoute;
+            $mapRoute = empty($mapRoute) ? $action : $mapRoute;
 
             // '/'开头的路由是一个单独的路由，未使用'/'需要和控制器组拼成一个路由
             $uri     = strpos($mapRoute, '/') === 0 ? $mapRoute : $controllerPrefix . '/' . $mapRoute;
@@ -407,23 +406,6 @@ class HandlerMapping extends AbstractRouter implements HandlerMappingInterface
             // 注入路由规则
             $this->map($method, $uri, $handler, []);
         }
-    }
-
-    /**
-     * 获取action方法
-     *
-     * @param string $actionPrefix 配置的默认action前缀
-     * @param string $action       action方法
-     *
-     * @return string
-     */
-    private function getActionMethod(string $actionPrefix, string $action)
-    {
-        $prefixes = [$actionPrefix, ucfirst($actionPrefix)];
-        $action = str_replace($prefixes, '', $action);
-        $action = lcfirst($action);
-
-        return $action;
     }
 
     /**
