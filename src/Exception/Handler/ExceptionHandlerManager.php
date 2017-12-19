@@ -19,12 +19,14 @@ class ExceptionHandlerManager
      *
      * @var array
      */
-    protected static $defaultExceptionHandlers = [
+    protected static $defaultExceptionHandlers
+        = [
             SystemErrorHandler::class        => 1,
             RuntimeExceptionHandler::class   => 2,
             HttpExceptionHandler::class      => 3,
             ValidatorExceptionHandler::class => 4,
             ServiceExceptionHandler::class   => 5,
+            DefaultExceptionHandler::class   => 100,
         ];
 
     /**

@@ -37,7 +37,7 @@ class AfterTaskListener implements EventHandlerInterface
         App::getLogger()->appendNoticeLog(true);
 
         if($type != Task::TYPE_CRON){
-            RequestContext::destory();
+            RequestContext::destroy();
         }
     }
 }

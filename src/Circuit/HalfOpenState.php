@@ -59,16 +59,16 @@ class HalfOpenState extends CircuitBreakerState
 
         $failCount = $this->circuitBreaker->getFailCounter();
         $successCount = $this->circuitBreaker->getSuccessCounter();
-        $swithToFailCount = $this->circuitBreaker->getSwithToFailCount();
-        $swithToSuccessCount = $this->circuitBreaker->getSwithToSuccessCount();
+        $swithToFailCount = $this->circuitBreaker->getSwitchToFailCount();
+        $swithToSuccessCount = $this->circuitBreaker->getSwitchToSuccessCount();
 
         if ($failCount >= $swithToFailCount && $this->circuitBreaker->isHalfOpen()) {
-            $this->circuitBreaker->swithToOpenState();
+            $this->circuitBreaker->switchToOpenState();
             App::trace($this->getServiceName()."服务，当前[半开状态]，失败次数达到上限，开始切换到开启状态");
         }
 
         if ($successCount >= $swithToSuccessCount) {
-            $this->circuitBreaker->swithToCloseState();
+            $this->circuitBreaker->switchToCloseState();
             App::trace($this->getServiceName()."服务，当前[半开状态]，成功次数达到上限，服务以及恢复，开始切换到关闭状态");
         }
 

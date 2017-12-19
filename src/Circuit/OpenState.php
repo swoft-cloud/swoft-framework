@@ -37,14 +37,14 @@ class OpenState extends CircuitBreakerState
         $nowTime = time();
 
         if ($this->circuitBreaker->isOpen()
-            && $nowTime > $this->circuitBreaker->getSwithOpenToHalfOpenTime()
+            && $nowTime > $this->circuitBreaker->getSwitchOpenToHalfOpenTime()
         ) {
-            $delayTime = $this->circuitBreaker->getDelaySwithTimer();
+            $delayTime = $this->circuitBreaker->getDelaySwitchTimer();
 
             // 定时器不是严格的，新增3s,容错时间
             $swithToHalfStateTime = $nowTime + ($delayTime / 1000) + 3;
             App::getTimer()->addAfterTimer('openState', $delayTime, [$this, 'delayCallback']);
-            $this->circuitBreaker->setSwithOpenToHalfOpenTime($swithToHalfStateTime);
+            $this->circuitBreaker->setSwitchOpenToHalfOpenTime($swithToHalfStateTime);
 
             App::trace($this->getServiceName()."服务，当前[开启状态]，创建延迟触发器，一段时间后状态切换为半开状态");
         }
@@ -59,7 +59,7 @@ class OpenState extends CircuitBreakerState
     {
         if ($this->circuitBreaker->isOpen()) {
             App::debug($this->getServiceName()."服务,当前服务[开启状态]，延迟触发器已触发，准备开始切换到半开状态");
-            $this->circuitBreaker->swithToHalfState();
+            $this->circuitBreaker->switchToHalfState();
         }
     }
 }

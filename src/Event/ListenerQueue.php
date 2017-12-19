@@ -1,36 +1,32 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Inhere
- * Date: 2015/2/12
- * Use : 监听器队列存储管理类
- * @From : [windwalker framework](https://github.com/ventoviro/windwalker)
- * File: ListenersQueue.php
- */
 
 namespace Swoft\Event;
 
 /**
- * Class ListenerQueue
+ * Class ListenerQueue - 一个事件的监听器队列存储管理类
  * @package Swoft\Event
+ * @uses 监听器队列存储管理类 @link [windwalker framework](https://github.com/ventoviro/windwalker)
+ * @version   2017年08月30日
+ * @author    inhere <in.798@qq.com>
+ * @copyright Copyright 2010-2016 Swoft software
+ * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class ListenerQueue implements \IteratorAggregate, \Countable
 {
     /**
-     * 对象存储器
+     * 对象存储器 - 监听器实例存储
      * @var \SplObjectStorage
      */
-    protected $store;
+    private $store;
 
     /**
      * 优先级队列
      * @var \SplPriorityQueue
      */
-    protected $queue;
+    private $queue;
 
     /**
-     * 计数器
-     * 设定最大值为 PHP_INT_MAX == 300
+     * 计数器。设定最大值为 PHP_INT_MAX
      * @var int
      */
     private $counter = PHP_INT_MAX;
@@ -43,22 +39,21 @@ class ListenerQueue implements \IteratorAggregate, \Countable
 
     /**
      * 添加一个监听器, 增加了添加 callback(string|array)
-     * @param $listener \Closure|callable|\stdClass 监听器
-     * @param $priority integer 优先级
+     * @param \Closure|callable|\stdClass|mixed $listener  监听器
+     * @param integer $priority 优先级
      * @return $this
      */
     public function add($listener, $priority)
     {
+        // transfer to object. like string/array
+        if (!\is_object($listener)) {
+            $listener = new LazyListener($listener);
+        }
+
         if (!$this->has($listener)) {
             // Compute the internal priority as an array. 计算内部优先级为一个数组。
+            // @see http://php.net/manual/zh/splpriorityqueue.compare.php#93999
             $priorityData = [(int)$priority, $this->counter--];
-
-            // a Callback(string|array)
-            if (!\is_object($listener) && \is_callable($listener)) {
-                $callback = $listener;
-                $listener = new \stdClass;
-                $listener->callback = $callback;
-            }
 
             $this->store->attach($listener, $priorityData);
             $this->queue->insert($listener, $priorityData);
@@ -81,7 +76,7 @@ class ListenerQueue implements \IteratorAggregate, \Countable
             $queue = new \SplPriorityQueue();
 
             foreach ($this->store as $otherListener) {
-                // 优先级
+                // 优先级信息 @see self::add(). It like `[priority, counter value]`
                 $priority = $this->store->getInfo();
                 $queue->insert($otherListener, $priority);
             }
@@ -101,6 +96,7 @@ class ListenerQueue implements \IteratorAggregate, \Countable
     public function getPriority($listener, $default = null)
     {
         if ($this->store->contains($listener)) {
+            // @see self::add(). attach as: `[priority, counter value]`
             return $this->store[$listener][0];
         }
 
@@ -153,7 +149,7 @@ class ListenerQueue implements \IteratorAggregate, \Countable
      */
     public function exists($listener)
     {
-        return $this->store->contains($listener);
+        return $this->has($listener);
     }
 
     /**
@@ -165,6 +161,7 @@ class ListenerQueue implements \IteratorAggregate, \Countable
         // SplPriorityQueue queue is a heap.
         $queue = clone $this->queue;
 
+        // rewind pointer.
         if (!$queue->isEmpty()) {
             $queue->top();
         }
@@ -179,5 +176,4 @@ class ListenerQueue implements \IteratorAggregate, \Countable
     {
         return \count($this->queue);
     }
-
 }

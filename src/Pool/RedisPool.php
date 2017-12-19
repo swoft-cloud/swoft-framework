@@ -3,12 +3,17 @@
 namespace Swoft\Pool;
 
 use Swoft\App;
+use Swoft\Bean\Annotation\Bean;
+use Swoft\Bean\Annotation\Inject;
+use Swoft\Bean\Annotation\Pool;
 use Swoft\Cache\Redis\RedisConnect;
 use Swoft\Cache\Redis\SyncRedisConnect;
+use Swoft\Pool\Config\RedisPoolConfig;
 
 /**
  * redis连接池
  *
+ * @Pool()
  * @uses      RedisPool
  * @version   2017年05月11日
  * @author    stelin <phpcrazy@126.com>
@@ -17,6 +22,14 @@ use Swoft\Cache\Redis\SyncRedisConnect;
  */
 class RedisPool extends ConnectPool
 {
+    /**
+     * the config of redis pool
+     *
+     * @Inject()
+     * @var RedisPoolConfig
+     */
+    protected $poolConfig;
+
     /**
      * 创建一个连接
      *

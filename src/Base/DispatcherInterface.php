@@ -28,14 +28,14 @@ interface DispatcherInterface
     public function requestMiddlewares();
 
     /**
-     * the firsted middlewares of request
+     * the first middleware of request
      *
      * @return array
      */
     public function firstMiddleware();
 
     /**
-     * the lasted middlewares of request
+     * the last middleware of request
      *
      * @return array
      */

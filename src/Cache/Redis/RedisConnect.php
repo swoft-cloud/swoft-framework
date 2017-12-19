@@ -83,7 +83,7 @@ class RedisConnect extends AbstractConnect
             throw new \InvalidArgumentException("redis 连接 uri 格式不正确，uri= ,请参考:tcp://127.0.0.1:6379/1?auth=password" . $uri);
         }
         isset($parseAry['path']) && $parseAry['database'] = str_replace('/', '', $parseAry['path']);
-        $query = $parseAry['query'];
+        $query = $parseAry['query']?? "";
         parse_str($query, $options);
         $configs = array_merge($parseAry, $options);
         unset($configs['path']);

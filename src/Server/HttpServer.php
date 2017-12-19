@@ -21,7 +21,7 @@ use Swoole\Http\Server;
 class HttpServer extends RpcServer
 {
     /**
-     * @var \Swoole\Server\Port tcp监听器
+     * @var \Swoole\Server::$port tcp监听器
      */
     protected $listen;
 
@@ -36,8 +36,8 @@ class HttpServer extends RpcServer
         // 设置事件监听
         $this->server->set($this->setting);
         $this->server->on('start', [$this, 'onStart']);
-        $this->server->on('workerstart', [$this, 'onWorkerStart']);
-        $this->server->on('managerstart', [$this, 'onManagerStart']);
+        $this->server->on('workerStart', [$this, 'onWorkerStart']);
+        $this->server->on('managerStart', [$this, 'onManagerStart']);
         $this->server->on('request', [$this, 'onRequest']);
         $this->server->on('task', [$this, 'onTask']);
         $this->server->on('pipeMessage', [$this, 'onPipeMessage']);
