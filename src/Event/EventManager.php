@@ -12,8 +12,21 @@ namespace Swoft\Event;
  */
 class EventManager implements EventManagerInterface
 {
+    // 通配符 - 所有触发的事件都会流过
+    const MATCH_ALL = '*';
+
     /**
-     * 1.事件存储
+     * @var self
+     */
+    private $parent;
+
+    /**
+     * @var EventInterface
+     */
+    private $basicEvent;
+
+    /**
+     * 预定义的事件存储
      * @var EventInterface[]
      * [
      *     'event name' => (object)EventInterface -- event description
@@ -22,10 +35,32 @@ class EventManager implements EventManagerInterface
     protected $events = [];
 
     /**
-     * 2.监听器存储
-     * @var ListenerQueue[] array
+     * 监听器存储
+     * @var ListenerQueue[]
      */
     protected $listeners = [];
+
+    /*
+     * 含有通配符的监听器存储 eg 'db.*'
+     * - '*' 只有这一个字符时，所有的事件处理都会经过它
+     * - 'db.*' 触发有 'db.' 前缀的事件也都会经过 'db.*' 的监听器处理
+     * @var array
+     */
+    // protected $wildcards = [];
+
+    /**
+     * EventManager constructor.
+     * @param EventManagerInterface|null $parent
+     * @throws \InvalidArgumentException
+     */
+    public function __construct(EventManagerInterface $parent = null)
+    {
+        if ($parent) {
+            $this->parent = $parent;
+        }
+
+        $this->basicEvent = new Event;
+    }
 
     public function __destruct()
     {
@@ -34,117 +69,8 @@ class EventManager implements EventManagerInterface
 
     public function clear()
     {
+        $this->parent = $this->basicEvent = null;
         $this->events = $this->listeners = [];
-    }
-
-    /*******************************************************************************
-     * Event manager
-     ******************************************************************************/
-
-    /**
-     * 添加一个不存在的事件
-     * @param Event|string $event | event name
-     * @param array $params
-     * @return $this
-     * @throws \InvalidArgumentException
-     */
-    public function addEvent($event, array $params = [])
-    {
-        if (\is_string($event)) {
-            $event = new Event(trim($event), $params);
-        }
-
-        /** @var $event Event */
-        if (($event instanceof EventInterface) && !isset($this->events[$event->getName()])) {
-            $this->events[$event->getName()] = $event;
-        }
-
-        return $this;
-    }
-
-    /**
-     * 设定一个事件处理
-     * @param string|EventInterface $event
-     * @param array $params
-     * @return $this
-     * @throws \InvalidArgumentException
-     */
-    public function setEvent($event, array $params = [])
-    {
-        if (\is_string($event)) {
-            $event = new Event(trim($event), $params);
-        }
-
-        if ($event instanceof EventInterface) {
-            $this->events[$event->getName()] = $event;
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @param null $default
-     * @return mixed|null
-     */
-    public function getEvent($name, $default = null)
-    {
-        return $this->events[$name] ?? $default;
-    }
-
-
-    public function removeEvent($event)
-    {
-        if ($event instanceof EventInterface) {
-            $event = $event->getName();
-        }
-
-        if (isset($this->events[$event])) {
-            unset($this->events[$event]);
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param $event
-     * @return bool
-     */
-    public function hasEvent($event)
-    {
-        if ($event instanceof EventInterface) {
-            $event = $event->getName();
-        }
-
-        return isset($this->events[$event]);
-    }
-
-
-    /**
-     * @return array
-     */
-    public function getEvents()
-    {
-        return $this->events;
-    }
-
-    /**
-     * @param $events
-     * @throws \InvalidArgumentException
-     */
-    public function setEvents(array $events)
-    {
-        foreach ($events as $key => $event) {
-            $this->setEvent($event);
-        }
-    }
-
-    /**
-     * @return int
-     */
-    public function countEvents()
-    {
-        return \count($this->events);
     }
 
     /*******************************************************************************
@@ -154,16 +80,13 @@ class EventManager implements EventManagerInterface
     /**
      * Attaches a listener to an event
      * @param string $event the event to attach too
-     * @param callable|EventHandlerInterface|mixed $callback a callable listener function
+     * @param callable|EventHandlerInterface|mixed $callback A callable listener
      * @param int $priority the priority at which the $callback executed
      * @return bool true on success false on failure
-     * @throws \InvalidArgumentException
      */
     public function attach($event, $callback, $priority = 0)
     {
-        $this->addListener($callback, [$event => $priority]);
-
-        return true;
+        return $this->addListener($callback, [$event => $priority]);
     }
 
     /**
@@ -175,6 +98,14 @@ class EventManager implements EventManagerInterface
     public function detach($event, $callback)
     {
         return $this->removeListener($callback, $event);
+    }
+
+    /**
+     * @param EventSubscriberInterface $eventSubscriber
+     */
+    public function addSubscriber(EventSubscriberInterface $eventSubscriber)
+    {
+        $this->addListener($eventSubscriber);
     }
 
     /**
@@ -194,22 +125,20 @@ class EventManager implements EventManagerInterface
      *     $definition = 'event name'
      * OR
      *     // The priority of the listener 监听器的优先级
-     *     // 此时若 $listener 是个正常的类，会自动将所有的 以 `on` 开头的公共方法作为事件名称，关联到 $listener
      *     $definition = 1
-     * @return $this
-     * @throws \InvalidArgumentException
+     * @return bool
      */
     public function addListener($listener, $definition = null)
     {
-        // func
-        if (\is_string($listener)) {
-            $callback = $listener;
-            $listener = new \stdClass();
-            $listener->callback = $callback;
-        }
-
+        // ensure $listener is a object.
         if (!\is_object($listener)) {
-            throw new \InvalidArgumentException('The given listener must is: object or Closure.');
+            if (\is_string($listener) && \class_exists($listener)) {
+                $listener = new $listener;
+
+                // like 'function' OR '[object, method]'
+            } else {
+                $listener = new LazyListener($listener);
+            }
         }
 
         $defaultPriority = ListenerPriority::NORMAL;
@@ -223,9 +152,27 @@ class EventManager implements EventManagerInterface
             $definition = [$definition->getName() => $defaultPriority];
         }
 
-        // 1. an Array
+        if ($listener instanceof EventSubscriberInterface) {
+            foreach ($listener::getSubscribedEvents() as $name => $conf) {
+                if (!isset($this->listeners[$name])) {
+                    $this->listeners[$name] = new ListenerQueue;
+                }
+
+                $queue = $this->listeners[$name];
+
+                if (\is_string($conf)) {
+                    $queue->add(new LazyListener([$listener, $conf]), $defaultPriority);
+                    // ['onPost', ListenerPriority::LOW]
+                } elseif (\is_string($conf[0])) {
+                    $queue->add(new LazyListener([$listener, $conf[0]]), $conf[1] ?? $defaultPriority);
+                }
+            }
+
+            return true;
+        }
+
+        // 将 监听器 关联到 各个事件
         if ($definition) {
-            // 循环: 将 监听器 关联到 各个事件
             foreach ($definition as $name => $priority) {
                 if (\is_int($name)) {
                     if (!$priority || !\is_string($priority)) {
@@ -236,7 +183,9 @@ class EventManager implements EventManagerInterface
                     $priority = $defaultPriority;
                 }
 
-                $name = trim($name);
+                if (!$name = trim($name, '. ')) {
+                    continue;
+                }
 
                 if (!isset($this->listeners[$name])) {
                     $this->listeners[$name] = new ListenerQueue;
@@ -245,33 +194,156 @@ class EventManager implements EventManagerInterface
                 $this->listeners[$name]->add($listener, $priority);
             }
 
-            return $this;
+            return true;
         }
 
-        // if (!\is_object($listener) || $listener instanceof \Closure) {
-        //     return $this;
-        // }
-
-        // 2. is an Object.
-
-        // 得到要绑定的监听器中所有方法名(only public methods)
-        // $methods = get_class_methods($listener);
-
-        // 循环: 将 监听器 关联到 各个事件
-        // foreach ($methods as $name) {
-        //     if (strpos($name, 'on') !== 0) {
-        //         continue;
-        //     }
-        //
-        //     if (!isset($this->listeners[$name])) {
-        //         $this->listeners[$name] = new ListenerQueue;
-        //     }
-        //
-        //     $this->listeners[$name]->add($listener, $definition[$name] ?? $defaultPriority);
-        // }
-
-        return $this;
+        return false;
     }
+
+    /**
+     * {@inheritDoc}
+     * @throws \InvalidArgumentException
+     */
+    public function triggerEvent(EventInterface $event)
+    {
+        return $this->trigger($event);
+    }
+
+    /**
+     * @param array $events
+     * @param array $args
+     * @return array
+     * @throws \InvalidArgumentException
+     */
+    public function triggerBatch(array $events, array $args = [])
+    {
+        $results = [];
+
+        foreach ($events as $event) {
+            $results[] = $this->trigger($event, null, $args);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Trigger an event
+     * Can accept an EventInterface or will create one if not passed
+     * @param  string|EventInterface $event 'app.start' 'app.stop'
+     * @param  mixed|string $target It is object or string.
+     * @param  array|mixed $args
+     * @return EventInterface
+     * @throws \InvalidArgumentException
+     */
+    public function trigger($event, $target = null, array $args = [])
+    {
+        if (!$event instanceof EventInterface) {
+            $event = (string)$event;
+
+            if (isset($this->events[$event])) {
+                $event = $this->events[$event];
+            } else {
+                $event = $this->wrapperEvent($event);
+            }
+        }
+
+        /** @var EventInterface $event */
+        if (!$name = $event->getName()) {
+            throw new \InvalidArgumentException('The triggered event name cannot be empty!');
+        }
+
+        $event->setParams($args);
+        $event->setTarget($target);
+
+        // Initial value of stop propagation flag should be false
+        $event->stopPropagation(false);
+
+        // have matched listener
+        if (isset($this->listeners[$name])) {
+            $this->triggerListeners($this->listeners[$name], $event);
+
+            if ($event->isPropagationStopped()) {
+                return $event;
+            }
+        }
+
+        // have matched listener in parent
+        if ($this->parent && ($listenerQueue = $this->parent->getListenerQueue($event))) {
+            $this->triggerListeners($listenerQueue, $event);
+            unset($listenerQueue);
+        }
+
+        // like 'app.start' 'app.db.query'
+        if ($pos = \strrpos($name, '.')) {
+            $prefix = substr($name, 0, $pos);
+            $method = substr($name, $pos + 1);
+
+            // have a group listener. eg 'app'
+            if (isset($this->listeners[$prefix])) {
+                $this->triggerListeners($this->listeners[$prefix], $event, $method);
+            }
+
+            if ($event->isPropagationStopped()) {
+                return $event;
+            }
+
+            // have a wildcards listener. eg 'app.*'
+            $wildcardEvent = $prefix . '.*';
+
+            if (isset($this->listeners[$wildcardEvent])) {
+                $this->triggerListeners($this->listeners[$wildcardEvent], $event, $method);
+            }
+
+            if ($event->isPropagationStopped()) {
+                return $event;
+            }
+        }
+
+        // have global wildcards '*' listener.
+        if (isset($this->listeners['*'])) {
+            $this->triggerListeners($this->listeners['*'], $event);
+        }
+
+        return $event;
+    }
+
+    /**
+     * @param array|ListenerQueue $listeners
+     * @param EventInterface $event
+     * @param null $method
+     */
+    protected function triggerListeners($listeners, EventInterface $event, $method = null)
+    {
+        // $handled = false;
+        $name = $event->getName();
+        $callable = false === \strpos($name, '.');
+
+        // 循环调用监听器，处理事件
+        foreach ($listeners as $listener) {
+            if ($event->isPropagationStopped()) {
+                break;
+            }
+
+            if (\is_object($listener)) {
+                if ($listener instanceof EventHandlerInterface) {
+                    $listener->handle($event);
+                } elseif ($method && method_exists($listener, $method)) {
+                    $listener->$method($event);
+                } elseif ($callable && method_exists($listener, $name)) {
+                    $listener->$name($event);
+                } elseif (method_exists($listener, '__invoke')) {
+                    $listener($event);
+                }
+            } elseif (\is_callable($listener)) {
+                $listener($event);
+            }
+        }
+    }
+
+    // protected function collectListeners(EventInterface $event)
+    // {
+    //     // $name = $event->getName();
+    // }
 
     /**
      * 是否存在 对事件的 监听队列
@@ -443,77 +515,168 @@ class EventManager implements EventManagerInterface
         }
     }
 
+    /*******************************************************************************
+     * Event manager
+     ******************************************************************************/
+
     /**
-     * Trigger an event
-     * Can accept an EventInterface or will create one if not passed
-     * @param  string|EventInterface $event 'app.start' 'app.stop'
-     * @param  mixed|string $target
-     * @param  array|mixed $args
-     * @return mixed
+     * 添加一个不存在的事件
+     * @param EventInterface|string $event | event name
+     * @param array $params
+     * @return $this
      * @throws \InvalidArgumentException
      */
-    public function trigger($event, $target = null, array $args = [])
+    public function addEvent($event, array $params = [])
     {
-        if (!($event instanceof EventInterface)) {
-            if (isset($this->events[$event])) {
-                $event = $this->events[$event];
-            } else {
-                $event = new Event($event);
-            }
+        $event = $this->wrapperEvent($event, null, $params);
+
+        /** @var $event Event */
+        if (($event instanceof EventInterface) && !isset($this->events[$event->getName()])) {
+            $this->events[$event->getName()] = $event;
         }
 
-        /** @var EventInterface $event */
-        $name = $event->getName();
-        $event->addParams($args);
-        $event->setTarget($target);
+        return $this;
+    }
 
-        if (isset($this->listeners[$name])) {
-            $this->fireListeners($this->listeners[$name], $event, $name);
+    /**
+     * 设定一个事件处理
+     * @param string|EventInterface $event
+     * @param array $params
+     * @return $this
+     * @throws \InvalidArgumentException
+     */
+    public function setEvent($event, array $params = [])
+    {
+        $event = $this->wrapperEvent($event, null, $params);
 
-            if ($event->isPropagationStopped()) {
-                return $event;
-            }
+        if ($event instanceof EventInterface) {
+            $this->events[$event->getName()] = $event;
         }
 
-        // like 'app.start'
-        if (\strpos($name, '.')) {
-            list($name, $method) = explode('.', $name, 2);
+        return $this;
+    }
 
-            if (isset($this->listeners[$name])) {
-                $this->fireListeners($this->listeners[$name], $event, $method);
-            }
+    /**
+     * @param string $name
+     * @param null $default
+     * @return mixed|null
+     */
+    public function getEvent($name, $default = null)
+    {
+        return $this->events[$name] ?? $default;
+    }
+
+    /**
+     * @param $event
+     * @return $this
+     */
+    public function removeEvent($event)
+    {
+        if ($event instanceof EventInterface) {
+            $event = $event->getName();
+        }
+
+        if (isset($this->events[$event])) {
+            unset($this->events[$event]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param $event
+     * @return bool
+     */
+    public function hasEvent($event)
+    {
+        if ($event instanceof EventInterface) {
+            $event = $event->getName();
+        }
+
+        return isset($this->events[$event]);
+    }
+
+    /**
+     * @return array
+     */
+    public function getEvents()
+    {
+        return $this->events;
+    }
+
+    /**
+     * @param array $events
+     * @throws \InvalidArgumentException
+     */
+    public function setEvents(array $events)
+    {
+        foreach ($events as $key => $event) {
+            $this->setEvent($event);
+        }
+    }
+
+    /**
+     * @param $event
+     * @param null|string $target
+     * @param array $params
+     * @return EventInterface
+     */
+    public function wrapperEvent($event, $target = null, array $params = [])
+    {
+        if (!$event instanceof EventInterface) {
+            $name = (string)$event;
+            $event = clone $this->basicEvent;
+            $event->setName($name);
+        }
+
+        if ($target) {
+            $event->setTarget($target);
+        }
+
+        if ($params) {
+            $event->setParams($params);
         }
 
         return $event;
     }
 
     /**
-     * @param array|ListenerQueue $listeners
-     * @param EventInterface $event
-     * @param null $method
+     * @return int
      */
-    protected function fireListeners($listeners, EventInterface $event, $method = null)
+    public function countEvents()
     {
-        // 循环调用监听器，处理事件
-        foreach ($listeners as $listener) {
-            if ($event->isPropagationStopped()) {
-                break;
-            }
+        return \count($this->events);
+    }
 
-            if (\is_object($listener)) {
-                if ($listener instanceof \stdClass) {
-                    $cb = $listener->callback;
-                    $cb($event);
-                } elseif ($method && method_exists($listener, $method)) {
-                    $listener->$method($event);
-                } elseif ($listener instanceof EventHandlerInterface) {
-                    $listener->handle($event);
-                } elseif (method_exists($listener, '__invoke')) {
-                    $listener($event);
-                }
-            } elseif (\is_callable($listener)) {
-                $listener($event);
-            }
-        }
+    /**
+     * @return EventManager
+     */
+    public function getParent(): EventManagerInterface
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @param EventManagerInterface $parent
+     */
+    public function setParent(EventManagerInterface $parent)
+    {
+        $this->parent = $parent;
+    }
+
+    /**
+     * @return EventInterface
+     */
+    public function getBasicEvent(): EventInterface
+    {
+        return $this->basicEvent;
+    }
+
+    /**
+     * @param EventInterface $basicEvent
+     */
+    public function setBasicEvent(EventInterface $basicEvent)
+    {
+        $this->basicEvent = $basicEvent;
     }
 }
