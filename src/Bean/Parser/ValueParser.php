@@ -3,6 +3,8 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Value;
+use Swoft\Console\DocumentParser;
+use Swoft\Testing\Pool\Config\PropertyPoolConfig;
 
 /**
  * value注解解析器
@@ -33,23 +35,74 @@ class ValueParser extends AbstractParser
             throw new \InvalidArgumentException("the name and env of @Value can't be empty! class={$className} property={$propertyName}");
         }
 
-        $isRef = false;
+        $isRef          = false;
         $injectProperty = null;
         if (!empty($injectValue)) {
             list($injectProperty, $isRef) = $this->annotationResource->getTransferProperty($injectValue);
         }
 
         if (!empty($envValue)) {
-            $value = $this->getEnvValue($envValue);
-            $isArray = strpos($value, ',') !== false;
-            $value = !empty($value) && $isArray? explode(",", $value): $value;
+            $value          = $this->getEnvValue($envValue);
+            $isArray        = $this->isEnvArrayValue($className, $propertyName);
+            $value          = $this->getTransferEnvValue($value, $isArray);
             $injectProperty = ($value !== null) ? $value : $injectProperty;
-            $isRef = ($value !== null) ? false : $isRef;
+            $isRef          = ($value !== null) ? false : $isRef;
         }
 
         return [$injectProperty, $isRef];
     }
 
+    /**
+     * transfer the value of env
+     *
+     * @param mixed $value
+     * @param bool  $isArray
+     *
+     * @return array
+     */
+    private function getTransferEnvValue($value, bool $isArray)
+    {
+        if ($isArray == false) {
+            return $value;
+        }
+
+        if (empty($value)) {
+            $value = [];
+        } else {
+            $value = explode(",", $value);
+        }
+
+        return $value;
+    }
+
+    /**
+     * whether the value of env is array
+     *
+     * @param string $className
+     * @param string $propertyName
+     *
+     * @return bool
+     */
+    private function isEnvArrayValue(string $className, string $propertyName)
+    {
+        $rc   = new \ReflectionClass($className);
+        $rp   = $rc->getProperty($propertyName);
+        $doc  = $rp->getDocComment();
+        $tags = DocumentParser::tagList($doc);
+        if (isset($tags['var']) && $tags['var'] == 'array') {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * match env value
+     *
+     * @param string $envValue
+     *
+     * @return mixed|string
+     */
     private function getEnvValue(string $envValue)
     {
         $value = $envValue;

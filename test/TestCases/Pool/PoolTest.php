@@ -5,6 +5,8 @@ namespace Swoft\Test\Pool;
 use Swoft\App;
 use Swoft\Pool\ProviderSelector;
 use Swoft\Test\AbstractTestCase;
+use Swoft\Testing\Pool\Config\ConsulEnvConfig;
+use Swoft\Testing\Pool\Config\ConsulPptConfig;
 use Swoft\Testing\Pool\Config\DbEnvPoolConfig;
 use Swoft\Testing\Pool\Config\DbPptPoolConfig;
 use Swoft\Testing\Pool\Config\DbSlaveEnvPoolConfig;
@@ -70,7 +72,6 @@ class PoolTest extends AbstractTestCase
         $this->assertEquals($pConfig->getTimeout(), 2);
         $this->assertEquals($pConfig->getUri(), [
             '127.0.0.1:6378',
-            '127.0.0.1:6379',
         ]);
         $this->assertEquals($pConfig->getBalancer(), 'r1');
         $this->assertEquals($pConfig->getMaxActive(), 2);
@@ -88,7 +89,6 @@ class PoolTest extends AbstractTestCase
         $this->assertEquals($pConfig->getTimeout(), 2);
         $this->assertEquals($pConfig->getUri(), [
             '127.0.0.1:6378',
-            '127.0.0.1:6379',
         ]);
         $this->assertEquals($pConfig->getBalancer(), 'random');
         $this->assertEquals($pConfig->getMaxActive(), 2);
@@ -106,7 +106,6 @@ class PoolTest extends AbstractTestCase
         $this->assertEquals($pConfig->getTimeout(), 2);
         $this->assertEquals($pConfig->getUri(), [
             '127.0.0.1:6378',
-            '127.0.0.1:6379',
         ]);
         $this->assertEquals($pConfig->getBalancer(), 'r1');
         $this->assertEquals($pConfig->getMaxActive(), 2);
@@ -221,5 +220,25 @@ class PoolTest extends AbstractTestCase
         $this->assertEquals($pConfig->getMaxIdel(), 2);
         $this->assertEquals($pConfig->isUseProvider(), true);
         $this->assertEquals($pConfig->getMaxWait(), 2);
+    }
+
+    public function testConsulPpt()
+    {
+        /* @var \Swoft\Testing\Pool\Config\ConsulPptConfig $pConfig */
+        $pConfig = App::getBean(ConsulPptConfig::class);
+        $this->assertEquals('http://127.0.0.1:81', $pConfig->getAddress());
+        $this->assertEquals(1, $pConfig->getTimeout());
+        $this->assertEquals(1, $pConfig->getInterval());
+        $this->assertEquals(['1'], $pConfig->getTags());
+    }
+
+    public function testConsulEnv()
+    {
+        /* @var \Swoft\Testing\Pool\Config\ConsulPptConfig $pConfig */
+        $pConfig = App::getBean(ConsulEnvConfig::class);
+        $this->assertEquals('http://127.0.0.1:82', $pConfig->getAddress());
+        $this->assertEquals(2, $pConfig->getTimeout());
+        $this->assertEquals(2, $pConfig->getInterval());
+        $this->assertEquals([1,2], $pConfig->getTags());
     }
 }

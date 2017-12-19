@@ -33,7 +33,7 @@ class DefaultExceptionHandler extends AbstractHandler
         $exception = $this->getException();
         $this->setStatusCode($exception->getCode());
 
-        $message = $exception->getMessage()." file=".$exception->getFile()." line=".$exception->getLine();
+        $message = $exception->getMessage();
         $this->setMessage($message);
         return $this;
     }

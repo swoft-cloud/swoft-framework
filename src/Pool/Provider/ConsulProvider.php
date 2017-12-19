@@ -22,7 +22,7 @@ class ConsulProvider implements ProviderInterface
     /**
      * adress
      *
-     * @Value(name="provider.consul.address}", env="${PROVIDER_CONSUL_ADDRESS}")
+     * @Value(name="${config.provider.consul.address}", env="${PROVIDER_CONSUL_ADDRESS}")
      * @var string
      */
     private $address = 'http://127.0.0.1:80';
@@ -30,7 +30,7 @@ class ConsulProvider implements ProviderInterface
     /**
      * the tags of register service
      *
-     * @Value(name="provider.consul.tags}", env="${PROVIDER_CONSUL_TAGS}")
+     * @Value(name="${config.provider.consul.tags}", env="${PROVIDER_CONSUL_TAGS}")
      * @var array
      */
     private $tags = [];
@@ -38,7 +38,7 @@ class ConsulProvider implements ProviderInterface
     /**
      * the timeout of consul
      *
-     * @Value(name="provider.consul.timeout}", env="${PROVIDER_CONSUL_TIMEOUT}")
+     * @Value(name="${config.provider.consul.timeout}", env="${PROVIDER_CONSUL_TIMEOUT}")
      * @var int
      */
     private $timeout = 300;
@@ -46,7 +46,7 @@ class ConsulProvider implements ProviderInterface
     /**
      * the interval of register service
      *
-     * @Value(name="provider.consul.interval}", env="${PROVIDER_CONSUL_INTERVAL}")
+     * @Value(name="${config.provider.consul.interval}", env="${PROVIDER_CONSUL_INTERVAL}")
      * @var int
      */
     private $interval = 3;
