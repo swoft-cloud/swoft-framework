@@ -26,13 +26,6 @@ use Swoft\Router\HandlerMappingInterface;
 class HandlerMapping extends AbstractRouter implements HandlerMappingInterface
 {
     /**
-     * action prefix
-     *
-     * @var string
-     */
-    public $actionPrefix = 'action';
-
-    /**
      * default action
      *
      * @var string
