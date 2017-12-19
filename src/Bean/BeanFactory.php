@@ -5,7 +5,6 @@ namespace Swoft\Bean;
 use Monolog\Formatter\LineFormatter;
 use Swoft\App;
 use Swoft\Base\Config;
-use Swoft\Filter\FilterChain;
 use Swoft\Helper\ArrayHelper;
 use Swoft\Helper\DirHelper;
 use Swoft\Pool\Balancer\RoundRobinBalancer;
@@ -60,12 +59,9 @@ class BeanFactory implements BeanFactoryInterface
      *
      * @param string $beanName
      * @param array  $definition
-     *
-     * @return mixed
      */
     public static function createBean(string $beanName, array $definition)
     {
-        return self::$container->create($beanName, $definition);
     }
 
     /**
@@ -124,7 +120,7 @@ class BeanFactory implements BeanFactoryInterface
         $config = new Config();
         $config->load(App::getAlias('@beans'), [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
         $configDefinitions = $config->toArray();
-        $mergedDdefinitions = ArrayHelper::merge($configDefinitions, $definitions);
-        new self($mergedDdefinitions);
+        $mergeDefinitions = ArrayHelper::merge($configDefinitions, $definitions);
+        new self($mergeDefinitions);
     }
 }

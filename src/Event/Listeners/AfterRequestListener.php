@@ -29,6 +29,6 @@ class AfterRequestListener implements EventHandlerInterface
     public function handle(EventInterface $event)
     {
         App::getLogger()->appendNoticeLog();
-        RequestContext::destory();
+        RequestContext::destroy();
     }
 }

@@ -39,8 +39,8 @@ class RpcServer extends AbstractServer
         $setting = array_merge($this->setting, $listenSetting);
         $this->server->set($setting);
         $this->server->on('start', [$this, 'onStart']);
-        $this->server->on('workerstart', [$this, 'onWorkerStart']);
-        $this->server->on('managerstart', [$this, 'onManagerStart']);
+        $this->server->on('workerStart', [$this, 'onWorkerStart']);
+        $this->server->on('managerStart', [$this, 'onManagerStart']);
         $this->server->on('task', [$this, 'onTask']);
         $this->server->on('finish', [$this, 'onFinish']);
         $this->server->on('connect', [$this, 'onConnect']);

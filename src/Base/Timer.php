@@ -29,17 +29,17 @@ class Timer
     /**
      * 添加一个定时器，只执行一次
      *
-     * @param string   $name     名称
-     * @param int      $time     毫秒
+     * @param string $name 名称
+     * @param int $time 毫秒
      * @param callable $callback 回调函数
-     * @param  array   $params   参数
+     * @param array $params 参数
      *
      * @return int
      */
     public function addAfterTimer(string $name, int $time, callable $callback, $params = [])
     {
         array_unshift($params, $name, $callback);
-        $tid = swoole_timer_after($time, [$this, 'timerCallback'], $params);
+        $tid = \Swoole\Timer::after($time, [$this, 'timerCallback'], $params);
         $this->timers[$name][$tid] = $tid;
         return $tid;
     }
@@ -47,10 +47,10 @@ class Timer
     /**
      * 添加一个定时器，每隔时间执行
      *
-     * @param string   $name     名称
-     * @param int      $time     毫秒
+     * @param string $name 名称
+     * @param int $time 毫秒
      * @param callable $callback 回调函数
-     * @param    array $params   参数
+     * @param    array $params 参数
      *
      * @return int
      */
@@ -58,7 +58,7 @@ class Timer
     {
         array_unshift($params, $name, $callback);
 
-        $tid = swoole_timer_tick($time, [$this, 'timerCallback'], $params);
+        $tid = \Swoole\Timer::tick($time, [$this, 'timerCallback'], $params);
 
         $this->timers[$name][$tid] = $tid;
 
@@ -78,7 +78,7 @@ class Timer
             return true;
         }
         foreach ($this->timers[$name] as $tid => $tidVal) {
-            swoole_timer_clear($tid);
+            \Swoole\Timer::clear($tid);
         }
         unset($this->timers[$name]);
 
@@ -123,7 +123,7 @@ class Timer
             'logid'       => uniqid(),
             'spanid'      => 0,
             'uri'         => $this->getTimerUri($name),
-            'requestTime' => microtime(true)
+            'requestTime' => microtime(true),
         ];
         RequestContext::setContextData($contextData);
     }

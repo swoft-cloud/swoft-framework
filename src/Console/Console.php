@@ -213,12 +213,12 @@ class Console implements IConsole
     {
         // 当前版本信息
         $swoftVersion = App::version();
-        $phpVersio = phpversion();
-        $swooleVersion = swoole_version();
+        $phpVersion = phpversion();
+        $swooleVersion = SWOOLE_VERSION;
 
         // 显示面板
         $this->output->writeLogo();
-        $this->output->writeln("swoft: <info>$swoftVersion</info>, php: <info>$phpVersio</info>, swoole: <info>$swooleVersion</info>", true);
+        $this->output->writeln("swoft: <info>$swoftVersion</info>, php: <info>$phpVersion</info>, swoole: <info>$swooleVersion</info>", true);
         $this->output->writeln("");
     }
 
