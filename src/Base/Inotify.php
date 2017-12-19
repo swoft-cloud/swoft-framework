@@ -5,6 +5,7 @@ namespace Swoft\Base;
 use Swoft\App;
 use Swoft\Server\IServer;
 use Swoole\Event;
+use Swoft\Bean\Annotation\Bean;
 
 /**
  * 文件更新自动监听
