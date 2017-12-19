@@ -43,13 +43,6 @@ class ApplicationContext
     private static $context = self::CONSOLE;
 
     /**
-     * 监听器集合
-     *
-     * @var array
-     */
-    // private static $listeners = [];
-
-    /**
      * 运行过程中创建一个Bean
      *
      * Below are some examples:
@@ -148,7 +141,6 @@ class ApplicationContext
      */
     public static function addListener(string $name, $listener, $priority = 0)
     {
-        // self::$listeners[$name][] = $listener;
         BeanFactory::getBean('eventManager')->attach($name, $listener, $priority);
     }
 }

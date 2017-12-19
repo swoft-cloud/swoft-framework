@@ -75,7 +75,7 @@ class RequestContext
      */
     public static function setRequest(\Swoole\Http\Request $request)
     {
-        $coroutineId = self::getcoroutineId();
+        $coroutineId = self::getCoroutineId();
         if ($request instanceof TestingSwooleRequest) {
             self::$coroutineLocal[$coroutineId][self::COROUTINE_REQUEST] = \Swoft\Testing\Web\Request::loadFromSwooleRequest($request);
         } else {
@@ -90,7 +90,7 @@ class RequestContext
      */
     public static function setResponse(\Swoole\Http\Response $response)
     {
-        $coroutineId = self::getcoroutineId();
+        $coroutineId = self::getCoroutineId();
         if ($response instanceof TestingSwooleResponse) {
             // in test process
             self::$coroutineLocal[$coroutineId][self::COROUTINE_RESPONSE] = new \Swoft\Testing\Web\Response($response);
@@ -107,7 +107,7 @@ class RequestContext
     public static function setContextData(array $contextData = [])
     {
         $existContext = [];
-        $coroutineId  = self::getcoroutineId();
+        $coroutineId  = self::getCoroutineId();
         if (isset(self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA])) {
             $existContext = self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA];
         }
@@ -122,7 +122,7 @@ class RequestContext
      */
     public static function setContextDataByKey(string $key, $val)
     {
-        $coroutineId = self::getcoroutineId();
+        $coroutineId = self::getCoroutineId();
         self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA][$key] = $val;
     }
 
@@ -135,7 +135,7 @@ class RequestContext
      */
     public static function getContextDataByKey(string $key, $default = null)
     {
-        $coroutineId = self::getcoroutineId();
+        $coroutineId = self::getCoroutineId();
         if (isset(self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA][$key])) {
             return self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA][$key];
         }
@@ -171,9 +171,9 @@ class RequestContext
     /**
      * 销毁当前协程数据
      */
-    public static function destory()
+    public static function destroy()
     {
-        $coroutineId = self::getcoroutineId();
+        $coroutineId = self::getCoroutineId();
         if (isset(self::$coroutineLocal[$coroutineId])) {
             unset(self::$coroutineLocal[$coroutineId]);
         }
@@ -187,7 +187,7 @@ class RequestContext
      */
     private static function getCoroutineContext(string $name)
     {
-        $coroutineId = self::getcoroutineId();
+        $coroutineId = self::getCoroutineId();
         if (! isset(self::$coroutineLocal[$coroutineId])) {
             return null;
         }
@@ -204,7 +204,7 @@ class RequestContext
      *
      * @return int
      */
-    private static function getcoroutineId()
+    private static function getCoroutineId()
     {
         return Coroutine::tid();
     }

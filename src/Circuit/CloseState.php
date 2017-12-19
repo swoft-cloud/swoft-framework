@@ -51,10 +51,10 @@ class CloseState extends CircuitBreakerState
         }
 
         $failCount = $this->circuitBreaker->getFailCounter();
-        $swithToFailCount = $this->circuitBreaker->getSwithToFailCount();
+        $swithToFailCount = $this->circuitBreaker->getSwitchToFailCount();
         if ($failCount >= $swithToFailCount && $this->circuitBreaker->isClose()) {
             App::trace($this->circuitBreaker->serviceName."服务，当前[关闭状态]，服务失败次数达到上限，开始切换为开启状态，failCount=".$failCount);
-            $this->circuitBreaker->swithToOpenState();
+            $this->circuitBreaker->switchToOpenState();
         }
 
         App::trace($this->circuitBreaker->serviceName."服务，当前[关闭状态]，failCount=".$this->circuitBreaker->getFailCounter());

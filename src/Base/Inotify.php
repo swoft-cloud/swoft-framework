@@ -3,8 +3,9 @@
 namespace Swoft\Base;
 
 use Swoft\App;
-use Swoft\Bean\Annotation\Bean;
 use Swoft\Server\IServer;
+use Swoole\Event;
+use Swoft\Bean\Annotation\Bean;
 
 /**
  * 文件更新自动监听
@@ -101,7 +102,7 @@ class Inotify
     private function addSwooleEvent($inotify)
     {
         // swoole Event add
-        swoole_event_add($inotify, function ($inotify) {
+        Event::add($inotify, function ($inotify) {
             // 读取有事件变化的文件
             $events = inotify_read($inotify);
             if ($events) {
@@ -144,7 +145,7 @@ class Inotify
             return;
         }
 
-        // 延迟一秒
+        // 延迟, 防止太频繁, 自动 reload 失败
         sleep(3);
 
         echo "inotify开始自动reloading...\n";
