@@ -8,6 +8,12 @@ use Swoft\Base\RequestContext;
 use Swoft\Bean\BeanFactory;
 use Swoft\Console\Input\Input;
 use Swoft\Console\Output\Output;
+use Swoft\Server\Booting\Bootable;
+use Swoft\Server\Booting\InitMbFunsEncoding;
+use Swoft\Server\Booting\InitSwoftConfig;
+use Swoft\Server\Booting\InitWorkerLock;
+use Swoft\Server\Booting\LoadEnv;
+use Swoft\Server\Booting\LoadInitConfiguration;
 
 /**
  * console控制器
@@ -69,7 +75,9 @@ class ConsoleController extends ConsoleCommand
      */
     private function init(string $command)
     {
+        $this->bootstrap();
         BeanFactory::reload();
+
 
         // 初始化
         $spanid = 0;
@@ -87,5 +95,24 @@ class ConsoleController extends ConsoleCommand
         App::getLogger()->setFlushInterval($this->flushInterval);
     }
 
+    /**
+     * 待重构
+     */
+    private function bootstrap()
+    {
+        $defaultItems = [
+            InitMbFunsEncoding::class,
+            LoadEnv::class,
+            LoadInitConfiguration::class,
+        ];
+        foreach ($defaultItems as $bootstrapItem) {
+            if (class_exists($bootstrapItem)) {
+                $itemInstance = new $bootstrapItem();
+                if ($itemInstance instanceof Bootable) {
+                    $itemInstance->bootstrap();
+                }
+            }
+        }
+    }
 
 }

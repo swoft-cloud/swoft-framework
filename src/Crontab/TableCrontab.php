@@ -48,25 +48,23 @@ class TableCrontab
     /**
      * @var array $originStruct 任务表结构
      */
-    private $originStruct
-        = [
-            'rule'       => [\Swoole\Table::TYPE_STRING, 100],
-            'taskClass'  => [\Swoole\Table::TYPE_STRING, 255],
-            'taskMethod' => [\Swoole\Table::TYPE_STRING, 255],
-            'add_time'   => [\Swoole\Table::TYPE_STRING, 11]
-        ];
+    private $originStruct = [
+        'rule'       => [\Swoole\Table::TYPE_STRING, 100],
+        'taskClass'  => [\Swoole\Table::TYPE_STRING, 255],
+        'taskMethod' => [\Swoole\Table::TYPE_STRING, 255],
+        'add_time'   => [\Swoole\Table::TYPE_STRING, 11],
+    ];
 
     /**
      * @var array $runTimeStruct 运行表结构
      */
-    private $runTimeStruct
-        = [
-            'taskClass'  => [\Swoole\Table::TYPE_STRING, 255],
-            'taskMethod' => [\Swoole\Table::TYPE_STRING, 255],
-            'minte'      => [\Swoole\Table::TYPE_STRING, 20],
-            'sec'        => [\Swoole\Table::TYPE_STRING, 20],
-            'runStatus'  => [\Swoole\TABLE::TYPE_INT, 4]
-        ];
+    private $runTimeStruct = [
+        'taskClass'  => [\Swoole\Table::TYPE_STRING, 255],
+        'taskMethod' => [\Swoole\Table::TYPE_STRING, 255],
+        'minte'      => [\Swoole\Table::TYPE_STRING, 20],
+        'sec'        => [\Swoole\Table::TYPE_STRING, 20],
+        'runStatus'  => [\Swoole\TABLE::TYPE_INT, 4],
+    ];
 
     /**
      * 创建配置表

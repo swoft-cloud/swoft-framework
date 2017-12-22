@@ -3,6 +3,7 @@
 namespace Swoft\Base;
 
 use Swoft\App;
+use Swoft\Helper\ArrayHelper;
 use Swoft\Testing\SwooleResponse as TestingSwooleResponse;
 use Swoft\Testing\SwooleRequest as TestingSwooleRequest;
 
@@ -20,7 +21,7 @@ class RequestContext
     /**
      * 请求数据共享区
      */
-    const COROUTINE_DATA = "Data";
+    const COROUTINE_DATA = "data";
 
     /**
      * 当前请求request
@@ -50,12 +51,11 @@ class RequestContext
     /**
      * 请求response
      *
-     * @param int $cid 协程ID
      * @return \Swoft\Web\Response
      */
-    public static function getResponse($cid = null)
+    public static function getResponse()
     {
-        return self::getCoroutineContext(self::COROUTINE_RESPONSE, $cid);
+        return self::getCoroutineContext(self::COROUTINE_RESPONSE);
     }
 
     /**
@@ -75,7 +75,7 @@ class RequestContext
      */
     public static function setRequest(\Swoole\Http\Request $request)
     {
-        $coroutineId = self::getcoroutineId();
+        $coroutineId = self::getCoroutineId();
         if ($request instanceof TestingSwooleRequest) {
             self::$coroutineLocal[$coroutineId][self::COROUTINE_REQUEST] = \Swoft\Testing\Web\Request::loadFromSwooleRequest($request);
         } else {
@@ -90,7 +90,7 @@ class RequestContext
      */
     public static function setResponse(\Swoole\Http\Response $response)
     {
-        $coroutineId = self::getcoroutineId();
+        $coroutineId = self::getCoroutineId();
         if ($response instanceof TestingSwooleResponse) {
             // in test process
             self::$coroutineLocal[$coroutineId][self::COROUTINE_RESPONSE] = new \Swoft\Testing\Web\Response($response);
@@ -106,8 +106,12 @@ class RequestContext
      */
     public static function setContextData(array $contextData = [])
     {
-        $coroutineId = self::getcoroutineId();
-        self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA] = $contextData;
+        $existContext = [];
+        $coroutineId  = self::getCoroutineId();
+        if (isset(self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA])) {
+            $existContext = self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA];
+        }
+        self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA] = ArrayHelper::merge($contextData, $existContext);
     }
 
     /**
@@ -118,7 +122,7 @@ class RequestContext
      */
     public static function setContextDataByKey(string $key, $val)
     {
-        $coroutineId = self::getcoroutineId();
+        $coroutineId = self::getCoroutineId();
         self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA][$key] = $val;
     }
 
@@ -131,7 +135,7 @@ class RequestContext
      */
     public static function getContextDataByKey(string $key, $default = null)
     {
-        $coroutineId = self::getcoroutineId();
+        $coroutineId = self::getCoroutineId();
         if (isset(self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA][$key])) {
             return self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA][$key];
         }
@@ -167,9 +171,9 @@ class RequestContext
     /**
      * 销毁当前协程数据
      */
-    public static function destory()
+    public static function destroy()
     {
-        $coroutineId = self::getcoroutineId();
+        $coroutineId = self::getCoroutineId();
         if (isset(self::$coroutineLocal[$coroutineId])) {
             unset(self::$coroutineLocal[$coroutineId]);
         }
@@ -179,12 +183,11 @@ class RequestContext
      * 获取协程上下文
      *
      * @param string   $name 协程KEY
-     * @param int|null $cid  协程ID
      * @return mixed|null
      */
-    private static function getCoroutineContext(string $name, $cid = null)
+    private static function getCoroutineContext(string $name)
     {
-        $coroutineId = ($cid === null ? self::getcoroutineId() : $cid);
+        $coroutineId = self::getCoroutineId();
         if (! isset(self::$coroutineLocal[$coroutineId])) {
             return null;
         }
@@ -201,7 +204,7 @@ class RequestContext
      *
      * @return int
      */
-    private static function getcoroutineId()
+    private static function getCoroutineId()
     {
         return Coroutine::tid();
     }

@@ -17,6 +17,11 @@ namespace Swoft\Bean\Annotation;
 class Number
 {
     /**
+     * @var string
+     */
+    private $from = ValidatorFrom::POST;
+
+    /**
      * 字段名称
      *
      * @var string
@@ -40,7 +45,7 @@ class Number
     /**
      * 默认值，如果是null，强制验证参数
      *
-     * @var null|int
+     * @var int
      */
     private $default = null;
 
@@ -51,6 +56,9 @@ class Number
      */
     public function __construct(array $values)
     {
+        if (isset($values['from'])) {
+            $this->from = $values['from'];
+        }
         if (isset($values['name'])) {
             $this->name = $values['name'];
         }
@@ -90,10 +98,18 @@ class Number
     }
 
     /**
-     * @return int|null
+     * @return int
      */
     public function getDefault()
     {
         return $this->default;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFrom(): string
+    {
+        return $this->from;
     }
 }

@@ -6,7 +6,7 @@ use Swoft\App;
 use Swoft\Base\ApplicationContext;
 use Swoft\Base\InitApplicationContext;
 use Swoft\Bean\BeanFactory;
-use Swoft\Event\Event;
+use Swoft\Event\AppEvent;
 use Swoft\Event\Events\BeforeTaskEvent;
 use Swoft\Helper\ProcessHelper;
 use Swoft\Process\Process;
@@ -39,8 +39,8 @@ class RpcServer extends AbstractServer
         $setting = array_merge($this->setting, $listenSetting);
         $this->server->set($setting);
         $this->server->on('start', [$this, 'onStart']);
-        $this->server->on('workerstart', [$this, 'onWorkerStart']);
-        $this->server->on('managerstart', [$this, 'onManagerStart']);
+        $this->server->on('workerStart', [$this, 'onWorkerStart']);
+        $this->server->on('managerStart', [$this, 'onManagerStart']);
         $this->server->on('task', [$this, 'onTask']);
         $this->server->on('finish', [$this, 'onFinish']);
         $this->server->on('connect', [$this, 'onConnect']);
@@ -107,7 +107,7 @@ class RpcServer extends AbstractServer
      */
     public function onReceive(Server $server, int $fd, int $fromId, string $data)
     {
-        App::getApplication()->doReceive($server, $fd, $fromId, $data);
+        App::getDispatcherService()->doDispatcher($server, $fd, $fromId, $data);
     }
 
     /**
@@ -191,10 +191,10 @@ class RpcServer extends AbstractServer
         $logid = $task['logid'] ?? uniqid();
         $spanid = $task['spanid'] ?? 0;
 
-        $event = new BeforeTaskEvent($this, $logid, $spanid, $name, $method, $type);
-        App::trigger(Event::BEFORE_TASK, $event);
+        $event = new BeforeTaskEvent(AppEvent::BEFORE_TASK, $logid, $spanid, $name, $method, $type);
+        App::trigger($event);
         $result = Task::run($name, $method, $params);
-        App::trigger(Event::AFTER_TASK, null, $type);
+        App::trigger(AppEvent::AFTER_TASK, null, $type);
 
         if ($type == Task::TYPE_CRON) {
             return $result;

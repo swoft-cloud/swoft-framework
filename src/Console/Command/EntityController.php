@@ -9,6 +9,7 @@ use Swoft\Console\Output\Output;
 use Swoft\Bean\BeanFactory;
 use Swoft\App;
 use Swoft\Db\Entity\Mysql\Schema;
+use Swoft\Pool\DbSlavePool;
 
 /**
  * the group command list of database entity
@@ -101,7 +102,7 @@ class EntityController extends ConsoleController
     private function init()
     {
         App::setAlias('@entityPath', $this->filePath);
-        $pool = App::getBean('dbSlave');
+        $pool = App::getBean(DbSlavePool::class);
         $driver = $pool->getDriver();
         if (in_array($driver, $this->drivers)) {
            $schema = new Schema();

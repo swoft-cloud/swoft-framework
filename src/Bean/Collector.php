@@ -47,4 +47,25 @@ class Collector
      * @var array
      */
     public static $crontab = [];
+
+    /**
+     * validator
+     *
+     * @var array
+     */
+    public static $validator = [];
+
+    /**
+     * pools
+     *
+     * @var array
+     */
+    public static $pools = [];
+
+    /**
+     * circuit breakers
+     *
+     * @var array
+     */
+    public static $breakers = [];
 }

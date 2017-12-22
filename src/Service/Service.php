@@ -47,20 +47,18 @@ class Service
      *
      * @return mixed
      */
-    public static function call(string $serviceName, string $func, array $params, callable $fallback = null)
+    public static function call(string $serviceName, string $func, array $params = [], callable $fallback = null)
     {
 
         $profileKey = "$serviceName->" . $func;
 
-        /* @var $criuitBreaker CircuitBreaker */
-        $criuitBreaker = App::getBean($serviceName . "Breaker");
-
-        /* @var  $connectPool ServicePool */
-        $connectPool = App::getBean($serviceName . "Pool");
+        $criuitBreaker = App::getBreaker($serviceName);
+        $connectPool = App::getPool($serviceName);
 
         /* @var $client AbstractServiceConnect */
         $client = $connectPool->getConnect();
         $packer = App::getPacker();
+
         $data = $packer->formatData($func, $params);
         $packData = $packer->pack($data);
         $result = $criuitBreaker->call([$client, 'send'], [$packData], $fallback);

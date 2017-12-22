@@ -5,43 +5,39 @@
 </p>
 
 [![Latest Version](https://img.shields.io/badge/dev-v0.1.2-yellow.svg?maxAge=2592000)](https://packagist.org/packages/swoft/swoft)
+[![Build Status](https://travis-ci.org/swoft-cloud/framework.svg?branch=master)](https://travis-ci.org/swoft-cloud/framework)
 [![Php Version](https://img.shields.io/badge/php-%3E=7.0-brightgreen.svg?maxAge=2592000)](https://packagist.org/packages/swoft/swoft)
 [![Swoole Version](https://img.shields.io/badge/swoole-%3E=2.0.9-brightgreen.svg?maxAge=2592000)](https://packagist.org/packages/swoft/swoft)
 [![Hiredis Version](https://img.shields.io/badge/hiredis-%3E=0.1-brightgreen.svg?maxAge=2592000)](https://packagist.org/packages/swoft/swoft)
-[![Swoft Doc](https://img.shields.io/badge/docs-passing-green.svg?maxAge=2592000)](http://doc.swoft.org/)
+[![Swoft Doc](https://img.shields.io/badge/docs-passing-green.svg?maxAge=2592000)](https://doc.swoft.org)
 [![Swoft License](https://img.shields.io/badge/license-apache%202.0-lightgrey.svg?maxAge=2592000)](https://github.com/swoft-cloud/swoft/blob/master/LICENSE)
 
 # 简介
-Swoft 是基于 Swoole 2.x 的高性能 PHP 微服务框架，内置 HTTP 服务器，框架全协程实现，性能大大优于传统的 PHP-FPM 模式。
+基于 Swoole 原生协程，新时代PHP高性能协程框架，内置 HTTP 服务器，框架全协程实现，性能大大优于传统的 PHP-FPM 模式。
 
 - 基于 Swoole 扩展
 - 内置 HTTP 协程服务器
 - MVC 分层设计
 - 高性能路由
 - 全局容器注入
+- 灵活的中间件
 - 高性能 RPC
 - 别名机制
 - 事件机制
 - 国际化(i18n)
+- 参数验证器
+- RESTful支持
 - 服务治理熔断、降级、负载、注册与发现
 - 连接池 Mysql、Redis、RPC
 - 数据库 ORM
 - 协程、异步任务投递
 - 自定义用户进程
-- RPC、Redis、HTTP、Mysql 协程和同步客户端无缝切换
+- RPC、Redis、HTTP、Mysql 协程和同步阻塞客户端无缝切换
 - Inotify 自动 Reload
 - 强大的日志系统
 
-# 系统架构
-
-<p align="center">
-    <a href="https://github.com/stelin/swoft" target="_blank">
-        <img src="https://github.com/swoft-cloud/swoft-doc/blob/master/assets/images/architecture.png" alt="swoft" />
-    </a>
-</p>
-
 # 文档
-[**中文文档**](http://doc.swoft.org)
+[**中文文档**](https://doc.swoft.org)
 
 QQ交流群:548173319
 
@@ -50,7 +46,7 @@ QQ交流群:548173319
 2. [Swoole 2.x](https://github.com/swoole/swoole-src/releases), 需开启协程和异步Redis
 3. [Hiredis](https://github.com/redis/hiredis/releases)
 4. [Composer](https://getcomposer.org/)
-5. [Inotify](http://pecl.php.net/package/inotify) (可选)
+5. [Inotify](https://pecl.php.net/package/inotify) (可选)
 
 # 安装
 

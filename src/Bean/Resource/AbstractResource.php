@@ -2,6 +2,8 @@
 
 namespace Swoft\Bean\Resource;
 
+use Swoft\I18n\I18n;
+
 /**
  * 抽象bean资源
  *
@@ -72,18 +74,16 @@ abstract class AbstractResource implements IResource
         }
 
         // '${config.xx.yy}' 格式解析, 层级解析
-        $layerProperty = "";
         unset($propertyKeys[0]);
-
+        $layerProperty = empty($propertyKeys)? null: $this->properties;
         foreach ($propertyKeys as $subPropertyKey) {
-            if (isset($this->properties[$subPropertyKey])) {
-                $layerProperty = $this->properties[$subPropertyKey];
+            if (isset($layerProperty[$subPropertyKey])) {
+                $layerProperty = $layerProperty[$subPropertyKey];
                 continue;
             }
-            if (!isset($layerProperty[$subPropertyKey])) {
-                throw new \InvalidArgumentException("$subPropertyKey is not exisit configed");
-            }
-            $layerProperty = $layerProperty[$subPropertyKey];
+
+            $layerProperty  = null;
+            break;
         }
 
         return $layerProperty;

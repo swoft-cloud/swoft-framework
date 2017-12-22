@@ -78,6 +78,7 @@ class Container
 
     public function create(string $beanName, array $definition)
     {
+
     }
 
     /**
@@ -281,7 +282,9 @@ class Container
                 $injectProperty = $this->get($injectProperty);
             }
 
-            $property->setValue($object, $injectProperty);
+            if($injectProperty !== null){
+                $property->setValue($object, $injectProperty);
+            }
         }
     }
 
@@ -311,6 +314,11 @@ class Container
                 $injectAry[$key] = $propertyVlaue;
             }
         }
+
+        if(empty($injectAry)){
+            $injectAry = $injectProperty;
+        }
+
         return $injectAry;
     }
 }
