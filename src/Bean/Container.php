@@ -8,6 +8,8 @@ use Swoft\Bean\ObjectDefinition\MethodInjection;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
 use Swoft\Bean\Resource\AnnotationResource;
 use Swoft\Bean\Resource\DefinitionResource;
+use Swoft\Proxy\Handler\CacheHandler;
+use Swoft\Proxy\Proxy;
 
 /**
  * 全局容器
@@ -195,12 +197,27 @@ class Container
             $object->{$this->initMethod}();
         }
 
+        $object = $this->proxyBean($object);
         // 单例处理
         if ($scope == Scope::SINGLETON) {
             $this->singletonEntries[$name] = $object;
         }
 
         return $object;
+    }
+
+    /**
+     * proxy bean
+     *
+     * @param object $object
+     * @return object
+     */
+    private function proxyBean($object)
+    {
+        $handler     = new CacheHandler($object);
+        $proxyObject = Proxy::newProxyInstance(get_class($object), $handler);
+
+        return $proxyObject;
     }
 
     /**
