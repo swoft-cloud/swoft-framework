@@ -25,6 +25,6 @@ class CacheHandler implements HandlerInterface
 
     public function invoke($method, $parameters)
     {
-        $this->target->$method(...$parameters);
+        return $this->target->$method(...$parameters);
     }
 }

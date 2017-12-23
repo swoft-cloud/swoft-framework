@@ -85,9 +85,7 @@ class Proxy
 
             $paramsStr = implode(',', $params);
             $template.= "{
-                \$params = [$paramsStr];
-                \$argsNum = func_num_args();
-                \$params = array_slice(\$params, 0, \$argsNum);
+                \$params = func_get_args();
                 return \$this->hanadler->invoke('{$methodName}', \$params);
             }
             ";
