@@ -43,17 +43,19 @@ class Proxy
             }
         ";
 
+        // the template of methods
         $template .= self::getMethodsTemplate($reflectionMethods);
         $template .= "}";
 
         eval($template);
-
         $newRc = new \ReflectionClass($proxyClassName);
 
         return $newRc->newInstance($handler);
     }
 
     /**
+     * return template of method
+     *
      * @param \ReflectionMethod[] $reflectionMethods
      *
      * @return string
@@ -64,27 +66,27 @@ class Proxy
         foreach ($reflectionMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->getName();
 
+            // not to overrided method
             if (!$reflectionMethod->isPublic() || StringHelper::startsWith($methodName, '__') || $reflectionMethod->isStatic()) {
                 continue;
             }
-            if ($reflectionMethod->isProtected()) {
-                $template .= " protected function $methodName (";
-            } else {
-                $template .= " public function $methodName (";
-            }
 
-            list($paramTemplate, $params) = self::getParameterTemplate($reflectionMethod);
-            $template               .= $paramTemplate;
-            $template               .= ' ) ';
+            // the template of parameter
+            $template .= " public function $methodName (";
+            $template .= self::getParameterTemplate($reflectionMethod);
+            $template .= ' ) ';
+
+            // the template of return type
             $reflectionMethodReturn = $reflectionMethod->getReturnType();
             if ($reflectionMethodReturn !== null) {
                 $returnType = $reflectionMethodReturn->__toString();
-                $returnType = ($returnType == 'self')?$reflectionMethod->getDeclaringClass()->getName():$returnType;
-                $template .= " : $returnType";
+                $returnType = ($returnType == 'self') ? $reflectionMethod->getDeclaringClass()->getName() : $returnType;
+                $template   .= " : $returnType";
             }
 
-            $paramsStr = implode(',', $params);
-            $template.= "{
+            // overrided method
+            $template
+                .= "{
                 \$params = func_get_args();
                 return \$this->hanadler->invoke('{$methodName}', \$params);
             }
@@ -95,67 +97,79 @@ class Proxy
     }
 
     /**
+     * return the template of parameter
+     *
      * @param \ReflectionMethod $reflectionMethod
      *
-     * @return array
+     * @return string
      */
-    private static function getParameterTemplate(\ReflectionMethod $reflectionMethod): array
+    private static function getParameterTemplate(\ReflectionMethod $reflectionMethod): string
     {
         $template             = "";
-        $params               = [];
         $reflectionParameters = $reflectionMethod->getParameters();
         $paramCount           = count($reflectionParameters);
         foreach ($reflectionParameters as $reflectionParameter) {
+
             $paramCount--;
+            // the type of parameter
             $type = $reflectionParameter->getType();
             if ($type !== null) {
                 $type     = $type->__toString();
                 $template .= " $type ";
             }
+
+            // the name of parameter
             $paramName = $reflectionParameter->getName();
-            if($reflectionParameter->isPassedByReference()){
-                $template  .= " &\${$paramName} ";
-            }elseif($reflectionParameter->isVariadic()){
-                $template  .= " ...\${$paramName} ";
-            }else{
-                $template  .= " \${$paramName} ";
+            if ($reflectionParameter->isPassedByReference()) {
+                $template .= " &\${$paramName} ";
+            } elseif ($reflectionParameter->isVariadic()) {
+                $template .= " ...\${$paramName} ";
+            } else {
+                $template .= " \${$paramName} ";
             }
 
-            if($reflectionParameter->isOptional() && $reflectionParameter->isVariadic() == false){
-                $template .= self::getMethodDefault($reflectionParameter);
+            // the deault of parameter
+            if ($reflectionParameter->isOptional() && $reflectionParameter->isVariadic() == false) {
+                $template .= self::getParameterDefault($reflectionParameter);
             }
 
             if ($paramCount !== 0) {
                 $template .= ',';
             }
-
-            $params[] = "\${$paramName}";
         }
 
-        return [$template, $params];
+        return $template;
     }
 
-    private static function getMethodDefault(\ReflectionParameter $reflectionParameter)
+    /**
+     * the template of deault
+     *
+     * @param \ReflectionParameter $reflectionParameter
+     *
+     * @return string
+     */
+    private static function getParameterDefault(\ReflectionParameter $reflectionParameter): string
     {
-        $template = "";
+        $template     = "";
         $defaultValue = $reflectionParameter->getDefaultValue();
-        if($reflectionParameter->isDefaultValueConstant()){
+        if ($reflectionParameter->isDefaultValueConstant()) {
             $defaultConst = $reflectionParameter->getDefaultValueConstantName();
-            $template = " = {$defaultConst}";
-        }elseif(is_bool($defaultValue)){
-            $value = ($defaultValue)?"true":"false";
+            $template     = " = {$defaultConst}";
+        } elseif (is_bool($defaultValue)) {
+            $value    = ($defaultValue) ? "true" : "false";
             $template = " = {$value}";
-        }elseif(is_string($defaultValue)){
+        } elseif (is_string($defaultValue)) {
             $template = " = ''";
-        }elseif(is_int($defaultValue)){
+        } elseif (is_int($defaultValue)) {
             $template = " = 0";
-        }elseif(is_array($defaultValue)){
+        } elseif (is_array($defaultValue)) {
             $template = " = []";
-        }elseif(is_float($defaultValue)){
+        } elseif (is_float($defaultValue)) {
             $template = " = []";
-        }elseif(is_object($defaultValue) || is_null($defaultValue)){
+        } elseif (is_object($defaultValue) || is_null($defaultValue)) {
             $template = " = null";
         }
+
         return $template;
     }
 }
