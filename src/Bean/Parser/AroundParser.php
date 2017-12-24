@@ -32,7 +32,7 @@ class AroundParser extends AbstractParser
             return null;
         }
 
-        Collector::$aspects[$className]['advice']['around'] = $methodName;
+        Collector::$aspects[$className]['advice']['around'] = [$className, $methodName];
 
         return null;
     }

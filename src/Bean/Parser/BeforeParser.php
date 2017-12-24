@@ -32,7 +32,7 @@ class BeforeParser extends AbstractParser
             return null;
         }
 
-        Collector::$aspects[$className]['advice']['before'] = $methodName;
+        Collector::$aspects[$className]['advice']['before'] = [$className, $methodName];
 
         return null;
     }

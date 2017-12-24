@@ -2,6 +2,7 @@
 
 namespace Swoft\Event\Listeners;
 
+use Swoft\Aop\Aop;
 use Swoft\App;
 use Swoft\Bean\Annotation\Listener;
 use Swoft\Bean\Collector;
@@ -36,6 +37,12 @@ class ApplicationLoaderListener implements EventHandlerInterface
 
         $httpRouter->registerRoutes($requestMapping);
         $serviceRouter->register($serviceMapping);
+
+        $aspects = Collector::$aspects;
+
+        /* @var \Swoft\Aop\Aop $aop */
+        $aop = App::getBean(Aop::class);
+        $aop->register($aspects);
 
         App::setProperties();
     }

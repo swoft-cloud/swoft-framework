@@ -32,7 +32,7 @@ class AfterReturningParser extends AbstractParser
             return null;
         }
 
-        Collector::$aspects[$className]['advice']['afterReturning'] = $methodName;
+        Collector::$aspects[$className]['advice']['afterReturning'] = [$className, $methodName];
 
         return null;
     }

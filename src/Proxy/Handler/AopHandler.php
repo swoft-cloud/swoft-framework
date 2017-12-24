@@ -23,6 +23,15 @@ class AopHandler implements HandlerInterface
         $this->target = $target;
     }
 
+    /**
+     * ProceedingJoinPoint
+     * JoinPoint
+     *
+     * @param $method
+     * @param $parameters
+     *
+     * @return mixed
+     */
     public function invoke($method, $parameters)
     {
         return $this->target->$method(...$parameters);
