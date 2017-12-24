@@ -8,7 +8,7 @@ use Swoft\Bean\ObjectDefinition\MethodInjection;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
 use Swoft\Bean\Resource\AnnotationResource;
 use Swoft\Bean\Resource\DefinitionResource;
-use Swoft\Proxy\Handler\CacheHandler;
+use Swoft\Proxy\Handler\AopHandler;
 use Swoft\Proxy\Proxy;
 
 /**
@@ -214,7 +214,7 @@ class Container
      */
     private function proxyBean($object)
     {
-        $handler     = new CacheHandler($object);
+        $handler     = new AopHandler($object);
         $proxyObject = Proxy::newProxyInstance(get_class($object), $handler);
 
         return $proxyObject;

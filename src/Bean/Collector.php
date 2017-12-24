@@ -68,4 +68,11 @@ class Collector
      * @var array
      */
     public static $breakers = [];
+
+    /**
+     * aspects
+     *
+     * @var array
+     */
+    public static $aspects = [];
 }
