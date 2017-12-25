@@ -186,7 +186,7 @@ class SetGetGenerator
             $length !== null ? ", length={$length}" : '',
             $isEnum ? "     * @Enum(value={{$enumParam}})\n" : '',
             $required ? "     * @Required()\n" : '',
-            $default !== false ? " = {$default};" : ($required ? ' = \'\';' : ';')
+            $default !== false ? (is_int($default) ? " = {$default};" : " = '{$default}';") : ($required ? ' = \'\';' : ';')
         ], $propertyStub);
     }
 

@@ -3,7 +3,7 @@
 namespace Swoft\Console\Command;
 
 use Swoft\Console\ConsoleController;
-use \Swoft\Db\Entity\Generator;
+use Swoft\Db\Entity\Generator;
 use Swoft\Console\Input\Input;
 use Swoft\Console\Output\Output;
 use Swoft\Bean\BeanFactory;
@@ -99,7 +99,7 @@ class EntityController extends ConsoleController
     /**
      * 初始化方法
      */
-    private function init()
+    public function init(): bool
     {
         App::setAlias('@entityPath', $this->filePath);
         $pool = App::getBean(DbSlavePool::class);
@@ -113,6 +113,8 @@ class EntityController extends ConsoleController
         }
         $syncDbConnect = $pool->createConnect();
         $this->generatorEntity = new Generator($syncDbConnect);
+
+        return true;
     }
 
     /**
