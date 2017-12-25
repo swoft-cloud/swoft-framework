@@ -212,13 +212,13 @@ class PoolTest extends AbstractTestCase
         $this->assertEquals($pConfig->getProvider(), 'consul2');
         $this->assertEquals($pConfig->getTimeout(), 2);
         $this->assertEquals($pConfig->getUri(), [
-            '127.0.0.1:3302',
-            '127.0.0.1:3302',
+            '127.0.0.1:3306/test?user=root&password=&charset=utf8',
+            '127.0.0.1:3306/test?user=root&password=&charset=utf8',
         ]);
-        $this->assertEquals($pConfig->getBalancer(), 'random2');
+        $this->assertEquals($pConfig->getBalancer(), 'random');
         $this->assertEquals($pConfig->getMaxActive(), 2);
         $this->assertEquals($pConfig->getMaxIdel(), 2);
-        $this->assertEquals($pConfig->isUseProvider(), true);
+        $this->assertEquals($pConfig->isUseProvider(), false);
         $this->assertEquals($pConfig->getMaxWait(), 2);
     }
 
