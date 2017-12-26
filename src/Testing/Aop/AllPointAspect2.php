@@ -12,27 +12,26 @@ use Swoft\Bean\Annotation\Before;
 use Swoft\Bean\Annotation\PointBean;
 
 /**
- * the test of aspcet
  *
  * @Aspect()
  * @PointBean(
  *     include={AopBean::class},
  * )
  *
- * @uses      AllPointAspect
- * @version   2017年12月24日
+ * @uses      AllPointAspect2
+ * @version   2017年12月27日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class AllPointAspect
+class AllPointAspect2
 {
     /**
      * @Before()
      */
     public function before()
     {
-        echo "aop=1 before !\n";
+        echo "aop=2 before !\n";
     }
 
     /**
@@ -40,7 +39,7 @@ class AllPointAspect
      */
     public function after()
     {
-        echo "aop=1 after !\n";
+        echo "aop=2 after !\n";
     }
 
     /**
@@ -48,7 +47,7 @@ class AllPointAspect
      */
     public function afterReturn()
     {
-        echo "aop=1 afterReturn !\n";
+        echo "aop=2 afterReturn !\n";
     }
 
     /**
@@ -57,9 +56,9 @@ class AllPointAspect
      */
     public function around(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        echo "aop=1 around before !\n";
+        echo "aop=2 around before !\n";
         $result = $proceedingJoinPoint->proceed();
-        echo "aop=1 around after !\n";
+        echo "aop=2 around after !\n";
         return $result;
     }
 
@@ -68,6 +67,6 @@ class AllPointAspect
      */
     public function afterThrowing()
     {
-        echo "aop=1 afterThrowing !\n";
+        echo "aop=2 afterThrowing !\n";
     }
 }

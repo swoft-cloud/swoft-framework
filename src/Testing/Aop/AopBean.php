@@ -19,4 +19,9 @@ class AopBean
     {
         return "do aop";
     }
+
+    public function doAop2()
+    {
+        return "do aop";
+    }
 }

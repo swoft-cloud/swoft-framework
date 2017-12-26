@@ -38,11 +38,9 @@ class AopHandler implements HandlerInterface
      */
     public function invoke($method, $parameters)
     {
-        var_dump(ApplicationContext::containsBean(Aop::class));
-        return $this->target->$method(...$parameters);
-
         /* @var Aop $aop*/
-//        $aop = App::getBean(Aop::class);
-//        return $aop->execute($this->target, $method, $parameters);
+        $aop = App::getBean(Aop::class);
+        return $aop->execute($this->target, $method, $parameters);
+//        return $this->target->$method(...$parameters);
     }
 }

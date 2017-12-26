@@ -3,6 +3,7 @@
 namespace Swoft\Bean;
 
 use Swoft\Aop\Aop;
+use Swoft\Aop\AopInterface;
 use Swoft\App;
 use Swoft\Base\ApplicationContext;
 use Swoft\Bean\Annotation\Scope;
@@ -201,7 +202,10 @@ class Container
             $object->{$this->initMethod}();
         }
 
-        $object = $this->proxyBean($object);
+        if(!($object instanceof AopInterface)){
+            $object = $this->proxyBean($name, $className, $object);
+        }
+
         // 单例处理
         if ($scope == Scope::SINGLETON) {
             $this->singletonEntries[$name] = $object;
@@ -216,8 +220,17 @@ class Container
      * @param object $object
      * @return object
      */
-    private function proxyBean($object)
+    private function proxyBean(string $name, $className, $object)
     {
+        /* @var Aop $aop*/
+        $aop = App::getBean(Aop::class);
+
+        $rc = new \ReflectionClass($className);
+        $rms = $rc->getMethods();
+        foreach ($rms as $rm){
+            $aop->match($name, $className, $rm->getName(),[]);
+        }
+
         $handler     = new AopHandler($object);
         $proxyObject = Proxy::newProxyInstance(get_class($object), $handler);
 

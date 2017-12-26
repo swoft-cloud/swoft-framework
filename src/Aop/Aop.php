@@ -2,7 +2,9 @@
 
 namespace Swoft\Aop;
 
+use Swoft\App;
 use Swoft\Bean\Annotation\Bean;
+use Swoft\Bean\Collector;
 
 /**
  * the class of aop
@@ -29,6 +31,12 @@ class Aop implements AopInterface
      */
     private $aspects = [];
 
+    public function init()
+    {
+        $aspects = Collector::$aspects;
+        $this->register($aspects);
+    }
+
     /**
      * @param object $target
      * @param string $method
@@ -38,17 +46,16 @@ class Aop implements AopInterface
      */
     public function execute($target, string $method, array $params)
     {
-        $class = get_parent_class($target);
+        $class = get_class($target);
         if (!isset($this->map[$class][$method]) || empty($this->map[$class][$method])) {
             return $target->$method(...$params);
         }
 
-        $this->match(Aop::class, $class, $method, []);
         $advices = $this->map[$class][$method];
         return $this->doAdvice($target, $method, $params, $advices);
     }
 
-    private function doAdvice($target, string $method, array $params, array $advices)
+    public function doAdvice($target, string $method, array $params, array $advices)
     {
         $result = null;
 
@@ -56,38 +63,40 @@ class Aop implements AopInterface
         try {
             if (isset($advice['around']) && !empty($advice['around'])) {
                 list($aspectClass, $aspectMethod) = $advice['around'];
-                $proceedingJoinPoint = new ProceedingJoinPoint($target, $method, $params, $advice);
+                $proceedingJoinPoint = new ProceedingJoinPoint($target, $method, $params, $advice, $advices);
 
-                $result = $aspectClass->$aspectMethod($proceedingJoinPoint);
+                $aspect = App::getBean($aspectClass);
+                $result = $aspect->$aspectMethod($proceedingJoinPoint);
             } else {
                 // before
                 if ($advice['before'] && !empty($advice['before'])) {
                     list($aspectClass, $aspectMethod) = $advice['before'];
-                    $aspectClass->$aspectMethod();
+
+                    $aspect = App::getBean($aspectClass);
+                    $aspect->$aspectMethod();
                 }
                 $result = $target->$method(...$params);
             }
 
-            if (!empty($advices)) {
-                return $this->doAdvice($target, $method, $params, $advices);
-            }
-
             if (isset($advice['after']) && !empty($advice['after'])) {
                 list($aspectClass, $aspectMethod) = $advice['after'];
-                $aspectClass->$aspectMethod();
+                $aspect = App::getBean($aspectClass);
+                $aspect->$aspectMethod();
             }
         } catch (\Exception $e) {
             if (isset($advice['afterThrowing']) && !empty($advice['afterThrowing'])) {
                 list($aspectClass, $aspectMethod) = $advice['afterThrowing'];
+                $aspect = App::getBean($aspectClass);
 
-                return $aspectClass->$aspectMethod();
+                return $aspect->$aspectMethod();
             }
         }
 
         if (isset($advice['afterReturning']) && !empty($advice['afterReturning'])) {
             list($aspectClass, $aspectMethod) = $advice['afterReturning'];
+            $aspect = App::getBean($aspectClass);
 
-            return $aspectClass->$aspectMethod();
+            return $aspect->$aspectMethod();
         }
 
         return $result;
@@ -95,7 +104,6 @@ class Aop implements AopInterface
 
     public function match(string $beanName, string $class, string $method, array $annotations)
     {
-        $advices = [];
         foreach ($this->aspects as $aspectClass => $aspect) {
             if (!isset($aspect['point']) || !isset($aspect['advice'])) {
                 continue;
@@ -118,13 +126,9 @@ class Aop implements AopInterface
                 || $this->matchExecution($class, $method, $pointExecutionExclude);
 
             if ($includeMath && !$excludeMath) {
-                $advices[] = $aspect['advice'];
+                $this->map[$class][$method][] = $aspect['advice'];
             }
         }
-
-        $this->map[$class][$method] = $advices;
-
-        return $advices;
     }
 
     public function register(array $aspects)

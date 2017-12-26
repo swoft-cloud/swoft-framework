@@ -2,7 +2,10 @@
 
 namespace Swoft\Test;
 
+use Swoft\Aop\Aop;
+use Swoft\App;
 use Swoft\Proxy\Proxy;
+use Swoft\Testing\Aop\AopBean;
 use Swoft\Testing\Bean\ProxyTest;
 use Swoft\Testing\Bean\TestHandler;
 
@@ -35,5 +38,13 @@ class BeanTest extends AbstractTestCase
         $this->assertEquals('p1p2beforeafter', $proxy->publicFun1Trait('p1', 'p2'));
         $this->assertEquals('p1p2beforeafter', $proxy->publicFun2Trait('p1', 'p2'));
         $this->assertEquals('p1p2beforeafter', $proxy->publicFun3Trait('p1', 'p2'));
+    }
+
+    public function testAround()
+    {
+        /* @var AopBean $aopBean*/
+        $aopBean = App::getBean(AopBean::class);
+        $result = $aopBean->doAop();
+        var_dump($result);
     }
 }
