@@ -2,33 +2,21 @@
 
 namespace Swoft\Testing\Aop;
 
+use Swoft\Aop\ProceedingJoinPoint;
 use Swoft\Bean\Annotation\After;
 use Swoft\Bean\Annotation\AfterReturning;
 use Swoft\Bean\Annotation\AfterThrowing;
 use Swoft\Bean\Annotation\Around;
 use Swoft\Bean\Annotation\Aspect;
 use Swoft\Bean\Annotation\Before;
-use Swoft\Bean\Annotation\PointAnnotation;
 use Swoft\Bean\Annotation\PointBean;
-use Swoft\Bean\Annotation\PointExecution;
 
 /**
  * the test of aspcet
  *
  * @Aspect()
  * @PointBean(
- *     include={"name1", "name2"},
- *     exclude={"ename1", "ename2"}
- * )
- *
- * @PointAnnotation(
- *     include={"a1", "a2"},
- *     exclude={"ea1", "ea2"}
- * )
- *
- * @PointExecution(
- *     include={"exe1","exe12"},
- *     exclude={"eexe1","eexe12"}
+ *     include={AopBean::class},
  * )
  *
  * @uses      AllPointAspect
@@ -44,44 +32,7 @@ class AllPointAspect
      */
     public function before()
     {
-        $aspects = [
-            'class' =>[
-                'order' => 12,
-                'points' =>[
-                    "bean"       => [
-                        "include" => [],
-                        "exclude" => [],
-                    ],
-                    "annotation" => [
-                        "include" => [],
-                        "exclude" => [],
-                    ],
-                    "execution"  => [
-                        "include" => [],
-                        "exclude" => [],
-                    ],
-                ],
-                'advice' => [
-                    'before' => 'method',
-                    'after'  => 'method',
-                ]
-            ],
-        ];
-
-        $map = [
-            'class' => [
-                'method' => [
-                    [
-                        'before' => 'method',
-                        'after'  => 'method',
-                    ],
-                    [
-                        'before' => 'method',
-                        'after'  => 'method',
-                    ],
-                ],
-            ],
-        ];
+        echo "aop before !\n";
     }
 
     /**
@@ -89,7 +40,7 @@ class AllPointAspect
      */
     public function after()
     {
-
+        echo "aop after !\n";
     }
 
     /**
@@ -97,22 +48,26 @@ class AllPointAspect
      */
     public function afterReturn()
     {
-
+        echo "aop afterReturn !\n";
     }
 
     /**
      * @Around()
+     * @param ProceedingJoinPoint $proceedingJoinPoint
      */
-    public function around()
+    public function around(ProceedingJoinPoint $proceedingJoinPoint)
     {
-
+        echo "aop around before !\n";
+        $result = $proceedingJoinPoint->proceed();
+        echo "aop around after !\n";
+        return $result;
     }
 
     /**
      * @AfterThrowing()
      */
-    public function afterReturning()
+    public function afterThrowing()
     {
-
+        echo "aop afterThrowing !\n";
     }
 }

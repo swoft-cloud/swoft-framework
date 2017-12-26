@@ -2,6 +2,9 @@
 
 namespace Swoft\Bean;
 
+use Swoft\Aop\Aop;
+use Swoft\App;
+use Swoft\Base\ApplicationContext;
 use Swoft\Bean\Annotation\Scope;
 use Swoft\Bean\ObjectDefinition\ArgsInjection;
 use Swoft\Bean\ObjectDefinition\MethodInjection;
@@ -10,6 +13,7 @@ use Swoft\Bean\Resource\AnnotationResource;
 use Swoft\Bean\Resource\DefinitionResource;
 use Swoft\Proxy\Handler\AopHandler;
 use Swoft\Proxy\Proxy;
+use Swoft\Web\Application;
 
 /**
  * 全局容器
