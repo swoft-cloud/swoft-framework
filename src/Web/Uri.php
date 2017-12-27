@@ -165,7 +165,7 @@ class Uri implements UriInterface
      */
     public function getHost()
     {
-        $this->host;
+        return $this->host;
     }
 
     /**
