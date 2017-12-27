@@ -161,6 +161,7 @@ class Request extends Psr7Request implements ServerRequestInterface
     private static function getUriFromGlobals(\Swoole\Http\Request $swooleRequest)
     {
         $server = $swooleRequest->server;
+        $header = $swooleRequest->header;
         $uri = new Uri();
         $uri = $uri->withScheme(! empty($server['https']) && $server['https'] !== 'off' ? 'https' : 'http');
 
@@ -176,6 +177,8 @@ class Request extends Psr7Request implements ServerRequestInterface
             $uri = $uri->withHost($server['server_name']);
         } elseif (isset($server['server_addr'])) {
             $uri = $uri->withHost($server['server_addr']);
+        } elseif (isset($header['host'])) {
+            $uri = $uri->withHost($header['host']);
         }
 
         if (! $hasPort && isset($server['server_port'])) {
