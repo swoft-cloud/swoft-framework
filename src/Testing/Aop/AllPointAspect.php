@@ -2,6 +2,7 @@
 
 namespace Swoft\Testing\Aop;
 
+use Swoft\Aop\JoinPoint;
 use Swoft\Aop\ProceedingJoinPoint;
 use Swoft\Bean\Annotation\After;
 use Swoft\Bean\Annotation\AfterReturning;
@@ -28,11 +29,16 @@ use Swoft\Bean\Annotation\PointBean;
 class AllPointAspect
 {
     /**
+     * @var
+     */
+    private $test;
+
+    /**
      * @Before()
      */
     public function before()
     {
-        echo "aop=1 before !\n";
+        $this->test .= ' before1 ';
     }
 
     /**
@@ -40,27 +46,29 @@ class AllPointAspect
      */
     public function after()
     {
-        echo "aop=1 after !\n";
+        $this->test .= ' after1 ';
     }
 
     /**
      * @AfterReturning()
      */
-    public function afterReturn()
+    public function afterReturn(JoinPoint $joinPoint)
     {
-        echo "aop=1 afterReturn !\n";
+        $result = $joinPoint->getReturn();
+        return $result.' afterReturn1 ';
     }
 
     /**
      * @Around()
      * @param ProceedingJoinPoint $proceedingJoinPoint
+     * @return mixed
      */
     public function around(ProceedingJoinPoint $proceedingJoinPoint)
     {
-        echo "aop=1 around before !\n";
+        $this->test .= ' around-before1 ';
         $result = $proceedingJoinPoint->proceed();
-        echo "aop=1 around after !\n";
-        return $result;
+        $this->test .= ' around-after1 ';
+        return $result.$this->test;
     }
 
     /**

@@ -64,9 +64,10 @@ class ProceedingJoinPoint implements ProceedingJoinPointInterface
             $aspect->$aspectMethod();
         }
 
-        // execute
-        $result = $this->target->{$this->method}(...$this->args);
-        if(!empty($this->advices)){
+        if(empty($this->advices)){
+            // execute
+            $result = $this->target->{$this->method}(...$this->args);
+        }else{
             /* @var \Swoft\Aop\Aop $aop*/
             $aop = App::getBean(Aop::class);
             $result = $aop->doAdvice($this->target, $this->method, $this->args, $this->advices);

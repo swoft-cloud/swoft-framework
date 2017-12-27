@@ -52,6 +52,7 @@ class Aop implements AopInterface
         }
 
         $advices = $this->map[$class][$method];
+
         return $this->doAdvice($target, $method, $params, $advices);
     }
 
@@ -62,44 +63,62 @@ class Aop implements AopInterface
         $advice = array_shift($advices);
         try {
             if (isset($advice['around']) && !empty($advice['around'])) {
-                list($aspectClass, $aspectMethod) = $advice['around'];
-                $proceedingJoinPoint = new ProceedingJoinPoint($target, $method, $params, $advice, $advices);
-
-                $aspect = App::getBean($aspectClass);
-                $result = $aspect->$aspectMethod($proceedingJoinPoint);
+                $result = $this->doPoint($advice['around'], $target, $method, $params, $advice, $advices);
             } else {
                 // before
                 if ($advice['before'] && !empty($advice['before'])) {
-                    list($aspectClass, $aspectMethod) = $advice['before'];
-
-                    $aspect = App::getBean($aspectClass);
-                    $aspect->$aspectMethod();
+                    $result = $this->doPoint($advice['before'], $target, $method, $params, $advice, $advices);
                 }
                 $result = $target->$method(...$params);
             }
 
             if (isset($advice['after']) && !empty($advice['after'])) {
-                list($aspectClass, $aspectMethod) = $advice['after'];
-                $aspect = App::getBean($aspectClass);
-                $aspect->$aspectMethod();
+                $this->doPoint($advice['after'], $target, $method, $params, $advice, $advices, $result);
             }
         } catch (\Exception $e) {
             if (isset($advice['afterThrowing']) && !empty($advice['afterThrowing'])) {
-                list($aspectClass, $aspectMethod) = $advice['afterThrowing'];
-                $aspect = App::getBean($aspectClass);
-
-                return $aspect->$aspectMethod();
+                return $this->doPoint($advice['afterThrowing'], $target, $method, $params, $advice, $advices);;
             }
         }
 
         if (isset($advice['afterReturning']) && !empty($advice['afterReturning'])) {
-            list($aspectClass, $aspectMethod) = $advice['afterReturning'];
-            $aspect = App::getBean($aspectClass);
-
-            return $aspect->$aspectMethod();
+            return $this->doPoint($advice['afterReturning'], $target, $method, $params, $advice, $advices, $result);
         }
 
         return $result;
+    }
+
+    private function doPoint(array $pointAdvice, $target, string $method, array $args, array $advice, array $advices, $return = null)
+    {
+        list($aspectClass, $aspectMethod) = $pointAdvice;
+
+        $aspectArgs = [];
+        $rc         = new \ReflectionClass($aspectClass);
+        $rm         = $rc->getMethod($aspectMethod);
+        $rmps       = $rm->getParameters();
+        foreach ($rmps as $rmp) {
+            $paramType = $rmp->getType();
+            if ($paramType === null) {
+                $aspectArgs[] = null;
+                continue;
+            }
+
+            $type = $paramType->__toString();
+            if ($type === JoinPoint::class) {
+                $aspectArgs[] = new JoinPoint($target, $method, $args, $return);
+                continue;
+            }
+
+            if ($type == ProceedingJoinPoint::class) {
+                $aspectArgs[] = new ProceedingJoinPoint($target, $method, $args, $advice, $advices, $return);
+                continue;
+            }
+            $aspectArgs[] = null;
+        }
+
+        $aspect = App::getBean($aspectClass);
+
+        return $aspect->$aspectMethod(...$aspectArgs);
     }
 
     public function match(string $beanName, string $class, string $method, array $annotations)

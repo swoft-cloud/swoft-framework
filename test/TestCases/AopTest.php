@@ -2,7 +2,9 @@
 
 namespace Swoft\Test;
 
+use Swoft\App;
 use Swoft\Bean\Collector;
+use Swoft\Testing\Aop\AopBean;
 
 /**
  *
@@ -15,7 +17,11 @@ use Swoft\Bean\Collector;
  */
 class AopTest extends AbstractTestCase
 {
-    public function testAop(){
-
+    public function testAllAdvice()
+    {
+        /* @var \Swoft\Testing\Aop\AopBean $aopBean*/
+        $aopBean = App::getBean(AopBean::class);
+        $result = $aopBean->doAop();
+        $this->assertEquals('do aop around-before2  before2  around-after2  afterReturn2  around-before1  before1  around-after1  afterReturn1 ', $result);
     }
 }
