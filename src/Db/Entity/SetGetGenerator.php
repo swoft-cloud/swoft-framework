@@ -161,7 +161,7 @@ class SetGetGenerator
         if ($isEnum) {
            preg_match_all("/enum\((.*?)\)/", $columnType, $matches); 
            $enumParam = $matches[1][0];
-           $enumParam = str_replace('\'', '"', $enumParam);
+           $enumParam = explode(',', str_replace('\'', '', $enumParam));
         }
 
         $formatComment = "     * @var {$phpType} \${$property} {$comment}\n";
@@ -175,16 +175,14 @@ class SetGetGenerator
             '{{property}}',
             '{{type}}',
             '{{length}}',
-            "{{@Enum}}\n",
             "{{@Required}}\n",
             '{{hasDefault}}'
         ], [
             $formatComment,
             $primaryKey ? "     * @Id()\n" : '',
             $property,
-            !empty($dbType) ? $dbType : (is_int($default) ? '"int"' : '"string"'),
+            !empty($dbType) ? $dbType :($isEnum ? '"feature-enum"' : (is_int($default) ? '"int"' : '"string"')),
             $length !== null ? ", length={$length}" : '',
-            $isEnum ? "     * @Enum(value={{$enumParam}})\n" : '',
             $required ? "     * @Required()\n" : '',
             $default !== false ? (is_int($default) ? " = {$default};" : " = '{$default}';") : ($required ? ' = \'\';' : ';')
         ], $propertyStub);
@@ -227,6 +225,7 @@ class SetGetGenerator
     {
         $function = 'get' . ucfirst($fieldInfo['name']);
         $attribute = $fieldInfo['name'];
+        $default = !empty($fieldInfo['default']) ? $fieldInfo['default'] : false;
         $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
         $returnType = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed' ;
         $this->getterStub .= PHP_EOL . str_replace([
@@ -238,7 +237,7 @@ class SetGetGenerator
             $function,
             $attribute,
             $returnType,
-            $returnType !== 'mixed' && !$primaryKey ? ": {$returnType}" : '',
+            $returnType !== 'mixed' && !$primaryKey  && $default !== false ? ": {$returnType}" : '',
         ], $getterStub);
     }
 

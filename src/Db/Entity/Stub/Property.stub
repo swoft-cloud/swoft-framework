@@ -2,7 +2,6 @@
 {{comment}}
 {{@Id}}
      * @Column(name="{{property}}", type={{type}}{{length}})
-{{@Enum}}
 {{@Required}}
      */
     private ${{property}}{{hasDefault}}
