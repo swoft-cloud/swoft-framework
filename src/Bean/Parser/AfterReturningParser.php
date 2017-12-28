@@ -24,7 +24,7 @@ class AfterReturningParser extends AbstractParser
      * @param string         $propertyName
      * @param string         $methodName
      *
-     * @return mixed
+     * @return void
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
