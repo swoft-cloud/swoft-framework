@@ -13,34 +13,22 @@ use Swoft\App;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class ProceedingJoinPoint implements ProceedingJoinPointInterface
+class ProceedingJoinPoint extends JoinPoint implements ProceedingJoinPointInterface
 {
-    /**
-     * @var array
-     */
-    private $args = [];
-
-    /**
-     * @var object
-     */
-    private $target;
-
-    /**
-     * @var string
-     */
-    private $method;
-
     /**
      * @var array
      */
     private $advice;
 
+    /**
+     * @var array
+     */
     private $advices;
 
     /**
      * ProceedingJoinPoint constructor.
      *
-     * @param        $target
+     * @param object $target
      * @param string $method
      * @param array  $args
      * @param array  $advice
@@ -48,28 +36,35 @@ class ProceedingJoinPoint implements ProceedingJoinPointInterface
      */
     public function __construct($target, string $method, array $args, array $advice, array $advices)
     {
-        $this->target  = $target;
-        $this->method  = $method;
-        $this->args    = $args;
+        parent::__construct($target, $method, $args, null);
         $this->advice  = $advice;
         $this->advices = $advices;
     }
 
-    public function proceed()
+    /**
+     * proceed
+     *
+     * @param array $params
+     * If the params is not empty, the params is used to call the method of target
+     *
+     * @return mixed
+     */
+    public function proceed($params = [])
     {
         // before
-        if ($this->advice['before'] && !empty($this->advice['before'])) {
+        if (isset($this->advice['before']) && !empty($this->advice['before'])) {
             list($aspectClass, $aspectMethod) = $this->advice['before'];
             $aspect = App::getBean($aspectClass);
             $aspect->$aspectMethod();
         }
 
-        if(empty($this->advices)){
+        if (empty($this->advices)) {
             // execute
-            $result = $this->target->{$this->method}(...$this->args);
-        }else{
-            /* @var \Swoft\Aop\Aop $aop*/
-            $aop = App::getBean(Aop::class);
+            $methodParams = !empty($params) ? $params : $this->args;
+            $result       = $this->target->{$this->method}(...$methodParams);
+        } else {
+            /* @var \Swoft\Aop\Aop $aop */
+            $aop    = App::getBean(Aop::class);
             $result = $aop->doAdvice($this->target, $this->method, $this->args, $this->advices);
         }
 
@@ -78,19 +73,6 @@ class ProceedingJoinPoint implements ProceedingJoinPointInterface
 
     public function reProceed(array $args = [])
     {
-        // TODO: Implement reProceed() method.
+
     }
-
-
-    public function getArgs(): array
-    {
-        // TODO: Implement getArgs() method.
-    }
-
-    public function getTarget()
-    {
-        // TODO: Implement getTarget() method.
-    }
-
-
 }

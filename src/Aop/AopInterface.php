@@ -13,6 +13,21 @@ namespace Swoft\Aop;
  */
 interface AopInterface
 {
+    /**
+     * execute by aop
+     *
+     * @param object $target
+     * @param string $method
+     * @param array  $params
+     *
+     * @return mixed
+     */
     public function execute($target, string $method, array $params);
+
+    /**
+     * register aop
+     *
+     * @param array $aspects
+     */
     public function register(array $aspects);
 }

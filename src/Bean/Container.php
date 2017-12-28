@@ -217,18 +217,24 @@ class Container
     /**
      * proxy bean
      *
+     * @param string $name
+     * @param string $className
      * @param object $object
+     *
      * @return object
      */
-    private function proxyBean(string $name, $className, $object)
+    private function proxyBean(string $name, string $className, $object)
     {
-        /* @var Aop $aop*/
+        /* @var Aop $aop */
         $aop = App::getBean(Aop::class);
 
-        $rc = new \ReflectionClass($className);
+        $rc  = new \ReflectionClass($className);
         $rms = $rc->getMethods();
-        foreach ($rms as $rm){
-            $aop->match($name, $className, $rm->getName(),[]);
+        foreach ($rms as $rm) {
+            $method      = $rm->getName();
+            $annotations = Collector::$methodAnnotations[$className][$method]??[];
+            $annotations = array_unique($annotations);
+            $aop->match($name, $className, $method, $annotations);
         }
 
         $handler     = new AopHandler($object);

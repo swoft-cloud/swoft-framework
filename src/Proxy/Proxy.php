@@ -67,7 +67,7 @@ class Proxy
             $methodName = $reflectionMethod->getName();
 
             // not to overrided method
-            if (!$reflectionMethod->isPublic() || StringHelper::startsWith($methodName, '__') || $reflectionMethod->isStatic()) {
+            if ($reflectionMethod->isConstructor() || $reflectionMethod->isStatic()) {
                 continue;
             }
 

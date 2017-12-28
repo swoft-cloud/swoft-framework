@@ -11,9 +11,13 @@ namespace Swoft\Aop;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-interface ProceedingJoinPointInterface extends JoinPointInterface
+interface ProceedingJoinPointInterface
 {
-    public function reProceed(array $args = []);
+    /**
+     * @param array $params
+     *
+     * @return mixed
+     */
+    public function proceed($params = []);
 
-    public function proceed();
 }

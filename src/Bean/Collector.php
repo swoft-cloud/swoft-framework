@@ -75,4 +75,11 @@ class Collector
      * @var array
      */
     public static $aspects = [];
+
+    /**
+     * the annotations of method
+     *
+     * @var array
+     */
+    public static $methodAnnotations = [];
 }

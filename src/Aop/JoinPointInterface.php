@@ -13,7 +13,18 @@ namespace Swoft\Aop;
  */
 interface JoinPointInterface
 {
+    /**
+     * @return array
+     */
     public function getArgs(): array;
 
+    /**
+     * @return object
+     */
     public function getTarget();
+
+    /**
+     * @return string
+     */
+    public function getMethod();
 }

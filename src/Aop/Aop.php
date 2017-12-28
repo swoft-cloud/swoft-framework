@@ -21,28 +21,31 @@ class Aop implements AopInterface
     /**
      * @var array
      */
-    private $map
-        = [
-
-        ];
+    private $map = [];
 
     /**
      * @var array
      */
     private $aspects = [];
 
+    /**
+     * init
+     */
     public function init()
     {
+        // register aop
         $aspects = Collector::$aspects;
         $this->register($aspects);
     }
 
     /**
-     * @param object $target
-     * @param string $method
-     * @param array  $params
+     * execute origin method by aop
      *
-     * @return mixed;
+     * @param object $target the object of origin
+     * @param string $method the method of object
+     * @param array  $params the params of method
+     *
+     * @return mixed
      */
     public function execute($target, string $method, array $params)
     {
@@ -56,12 +59,24 @@ class Aop implements AopInterface
         return $this->doAdvice($target, $method, $params, $advices);
     }
 
+    /**
+     * do advice
+     *
+     * @param object $target  the object of origin
+     * @param string $method  the method of object
+     * @param array  $params  the params of method
+     * @param array  $advices the advices of aop
+     *
+     * @return mixed
+     */
     public function doAdvice($target, string $method, array $params, array $advices)
     {
         $result = null;
-
         $advice = array_shift($advices);
+
         try {
+
+            // around
             if (isset($advice['around']) && !empty($advice['around'])) {
                 $result = $this->doPoint($advice['around'], $target, $method, $params, $advice, $advices);
             } else {
@@ -72,6 +87,7 @@ class Aop implements AopInterface
                 $result = $target->$method(...$params);
             }
 
+            // after
             if (isset($advice['after']) && !empty($advice['after'])) {
                 $this->doPoint($advice['after'], $target, $method, $params, $advice, $advices, $result);
             }
@@ -81,6 +97,7 @@ class Aop implements AopInterface
             }
         }
 
+        // afterReturning
         if (isset($advice['afterReturning']) && !empty($advice['afterReturning'])) {
             return $this->doPoint($advice['afterReturning'], $target, $method, $params, $advice, $advices, $result);
         }
@@ -88,14 +105,29 @@ class Aop implements AopInterface
         return $result;
     }
 
+    /**
+     * do pointcut
+     *
+     * @param array  $pointAdvice the pointcut advice
+     * @param object $target      the object of origin
+     * @param string $method      the method of object
+     * @param array  $args        the params of method
+     * @param array  $advice      the advice of pointcut
+     * @param array  $advices     the advices of aop
+     * @param mixed  $return
+     *
+     * @return mixed
+     */
     private function doPoint(array $pointAdvice, $target, string $method, array $args, array $advice, array $advices, $return = null)
     {
         list($aspectClass, $aspectMethod) = $pointAdvice;
 
+        $rc   = new \ReflectionClass($aspectClass);
+        $rm   = $rc->getMethod($aspectMethod);
+        $rmps = $rm->getParameters();
+
+        // bind the param of method
         $aspectArgs = [];
-        $rc         = new \ReflectionClass($aspectClass);
-        $rm         = $rc->getMethod($aspectMethod);
-        $rmps       = $rm->getParameters();
         foreach ($rmps as $rmp) {
             $paramType = $rmp->getType();
             if ($paramType === null) {
@@ -103,12 +135,14 @@ class Aop implements AopInterface
                 continue;
             }
 
+            // JoinPoint object
             $type = $paramType->__toString();
             if ($type === JoinPoint::class) {
                 $aspectArgs[] = new JoinPoint($target, $method, $args, $return);
                 continue;
             }
 
+            // ProceedingJoinPoint object
             if ($type == ProceedingJoinPoint::class) {
                 $aspectArgs[] = new ProceedingJoinPoint($target, $method, $args, $advice, $advices, $return);
                 continue;
@@ -121,6 +155,14 @@ class Aop implements AopInterface
         return $aspect->$aspectMethod(...$aspectArgs);
     }
 
+    /**
+     * match aop
+     *
+     * @param string $beanName    the name of bean
+     * @param string $class       class name
+     * @param string $method      method
+     * @param array  $annotations the annotations of method
+     */
     public function match(string $beanName, string $class, string $method, array $annotations)
     {
         foreach ($this->aspects as $aspectClass => $aspect) {
@@ -128,10 +170,12 @@ class Aop implements AopInterface
                 continue;
             }
 
+            // incloude
             $pointBeanInclude       = $aspect['point']['bean']['include']?? [];
             $pointAnnotationInclude = $aspect['point']['annotation']['include']?? [];
             $pointExecutionInclude  = $aspect['point']['execution']['include']?? [];
 
+            // exclude
             $pointBeanExclude       = $aspect['point']['bean']['exclude']?? [];
             $pointAnnotationExclude = $aspect['point']['annotation']['exclude']?? [];
             $pointExecutionExclude  = $aspect['point']['execution']['exclude']?? [];
@@ -150,12 +194,25 @@ class Aop implements AopInterface
         }
     }
 
+    /**
+     * register aop
+     *
+     * @param array $aspects
+     */
     public function register(array $aspects)
     {
         array_multisort(array_column($aspects, 'order'), SORT_ASC, $aspects);
         $this->aspects = $aspects;
     }
 
+    /**
+     * match bean and annotation
+     *
+     * @param array $pointAry
+     * @param array $classAry
+     *
+     * @return bool
+     */
     private function matchBeanAndAnnotation(array $pointAry, array $classAry): bool
     {
         $intersectAry = array_intersect($pointAry, $classAry);
@@ -166,12 +223,32 @@ class Aop implements AopInterface
         return true;
     }
 
-    private function matchExecution(string $class, $method, array $executions): bool
+    /**
+     * match execution
+     *
+     * @param string $class
+     * @param string $method
+     * @param array  $executions
+     *
+     * @return bool
+     */
+    private function matchExecution(string $class, string $method, array $executions): bool
     {
-        $methodPath = $class . "\\" . $method;
         foreach ($executions as $execution) {
-            $reg = sprintf('/^%s$/', $execution);
-            if (preg_match($reg, $methodPath)) {
+            $executionAry = explode("::", $execution);
+            if (count($executionAry) < 2) {
+                continue;
+            }
+
+            // class
+            list($executionClass, $executionMethod) = $executionAry;
+            if ($executionClass != $class) {
+                continue;
+            }
+
+            // method
+            $reg = '/^' . $executionMethod . '$/';
+            if (preg_match($reg, $method)) {
                 return true;
             }
         }
