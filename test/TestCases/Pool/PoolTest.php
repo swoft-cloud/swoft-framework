@@ -11,6 +11,7 @@ use Swoft\Testing\Pool\Config\DbEnvPoolConfig;
 use Swoft\Testing\Pool\Config\DbPptPoolConfig;
 use Swoft\Testing\Pool\Config\DbSlaveEnvPoolConfig;
 use Swoft\Testing\Pool\Config\DbSlavePptConfig;
+use Swoft\Testing\Pool\Config\EnvAndPptFromPptPoolConfig;
 use Swoft\Testing\Pool\Config\EnvAndPptPoolConfig;
 use Swoft\Testing\Pool\Config\EnvPoolConfig;
 use Swoft\Testing\Pool\Config\PartEnvPoolConfig;
@@ -108,6 +109,24 @@ class PoolTest extends AbstractTestCase
             '127.0.0.1:6378',
         ]);
         $this->assertEquals($pConfig->getBalancer(), 'r1');
+        $this->assertEquals($pConfig->getMaxActive(), 2);
+        $this->assertEquals($pConfig->getMaxIdel(), 2);
+        $this->assertEquals($pConfig->isUseProvider(), true);
+        $this->assertEquals($pConfig->getMaxWait(), 2);
+    }
+
+    public function testPoolConfigEnvAndConfig()
+    {
+        /* @var \Swoft\Pool\PoolProperties $pConfig */
+        $pConfig = App::getBean(EnvAndPptFromPptPoolConfig::class);
+        $this->assertEquals($pConfig->getName(), 'test2');
+        $this->assertEquals($pConfig->getProvider(), 'p2');
+        $this->assertEquals($pConfig->getTimeout(), 2);
+        $this->assertEquals($pConfig->getUri(), [
+            '127.0.0.1:6379',
+            '127.0.0.1:6378',
+        ]);
+        $this->assertEquals($pConfig->getBalancer(), 'b2');
         $this->assertEquals($pConfig->getMaxActive(), 2);
         $this->assertEquals($pConfig->getMaxIdel(), 2);
         $this->assertEquals($pConfig->isUseProvider(), true);
