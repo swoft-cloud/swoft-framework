@@ -41,6 +41,5 @@ class AopHandler implements HandlerInterface
         /* @var Aop $aop*/
         $aop = App::getBean(Aop::class);
         return $aop->execute($this->target, $method, $parameters);
-//        return $this->target->$method(...$parameters);
     }
 }
