@@ -3,6 +3,8 @@
 namespace Swoft\Bean\Wrapper;
 
 use Swoft\Bean\Annotation\Bean;
+use Swoft\Bean\Annotation\Cacheable;
+use Swoft\Bean\Annotation\CachePut;
 use Swoft\Bean\Annotation\Inject;
 use Swoft\Bean\Annotation\Value;
 
@@ -39,6 +41,16 @@ class BeanWrapper extends AbstractWrapper
         ];
 
     /**
+     * the annotations of method
+     *
+     * @var array
+     */
+    protected $methodAnnotations = [
+        Cacheable::class,
+        CachePut::class,
+    ];
+
+    /**
      * 是否解析类注解
      *
      * @param array $annotations
@@ -71,6 +83,6 @@ class BeanWrapper extends AbstractWrapper
      */
     public function isParseMethodAnnotations(array $annotations)
     {
-        return false;
+        return isset($annotations[Cacheable::class]) || isset($annotations[CachePut::class]);
     }
 }

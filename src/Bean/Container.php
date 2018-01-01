@@ -2,12 +2,19 @@
 
 namespace Swoft\Bean;
 
+use Swoft\Aop\Aop;
+use Swoft\Aop\AopInterface;
+use Swoft\App;
+use Swoft\Base\ApplicationContext;
 use Swoft\Bean\Annotation\Scope;
 use Swoft\Bean\ObjectDefinition\ArgsInjection;
 use Swoft\Bean\ObjectDefinition\MethodInjection;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
 use Swoft\Bean\Resource\AnnotationResource;
 use Swoft\Bean\Resource\DefinitionResource;
+use Swoft\Proxy\Handler\AopHandler;
+use Swoft\Proxy\Proxy;
+use Swoft\Web\Application;
 
 /**
  * 全局容器
@@ -195,12 +202,45 @@ class Container
             $object->{$this->initMethod}();
         }
 
+        if(!($object instanceof AopInterface)){
+            $object = $this->proxyBean($name, $className, $object);
+        }
+
         // 单例处理
         if ($scope == Scope::SINGLETON) {
             $this->singletonEntries[$name] = $object;
         }
 
         return $object;
+    }
+
+    /**
+     * proxy bean
+     *
+     * @param string $name
+     * @param string $className
+     * @param object $object
+     *
+     * @return object
+     */
+    private function proxyBean(string $name, string $className, $object)
+    {
+        /* @var Aop $aop */
+        $aop = App::getBean(Aop::class);
+
+        $rc  = new \ReflectionClass($className);
+        $rms = $rc->getMethods();
+        foreach ($rms as $rm) {
+            $method      = $rm->getName();
+            $annotations = Collector::$methodAnnotations[$className][$method]??[];
+            $annotations = array_unique($annotations);
+            $aop->match($name, $className, $method, $annotations);
+        }
+
+        $handler     = new AopHandler($object);
+        $proxyObject = Proxy::newProxyInstance(get_class($object), $handler);
+
+        return $proxyObject;
     }
 
     /**
