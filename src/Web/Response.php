@@ -7,6 +7,7 @@ use Swoft\Bean\Collector;
 use Swoft\Contract\Arrayable;
 use Swoft\Helper\JsonHelper;
 use Swoft\Helper\StringHelper;
+use Swoft\App;
 
 /**
  * 响应response
@@ -62,17 +63,22 @@ class Response extends \Swoft\Base\Response
      * return a View format response
      *
      * @param array|Arrayable $data
+     * @param null|string $template It's a default value, use Annotation template first
+     * @param null|string $layout It's a default value, use Annotation layout first
      * @return \Swoft\Web\Response
      */
-    public function view($data = []): Response
+    public function view($data = [], $template = null, $layout = null): Response
     {
         if ($data instanceof Arrayable) {
             $data = $data->toArray();
         }
         $controllerClass = RequestContext::getContextDataByKey('controllerClass');
-        $template = Collector::$requestMapping[$controllerClass]['view']['template'] ?? null;
-        $layout = Collector::$requestMapping[$controllerClass]['view']['layout'] ?? null;
+        $controllerAction = RequestContext::getContextDataByKey('controllerAction');
+        $template = Collector::$requestMapping[$controllerClass]['view'][$controllerAction]['template'] ?? App::getAlias($template);
+        $layout = Collector::$requestMapping[$controllerClass]['view'][$controllerAction]['layout'] ?? App::getAlias($layout);
         $response = $this->render($template, $data, $layout);
+        // Headers
+        $response = $response->withoutHeader('Content-Type')->withAddedHeader('Content-Type', 'text/html');
         return $response;
     }
 
@@ -143,7 +149,8 @@ class Response extends \Swoft\Base\Response
         $accepts = RequestContext::getRequest()->getHeader('accept');
         $currentAccept = current($accepts);
         $controllerClass = RequestContext::getContextDataByKey('controllerClass');
-        $template = Collector::$requestMapping[$controllerClass]['view']['template'] ?? null;
+        $controllerAction = RequestContext::getContextDataByKey('controllerAction');
+        $template = Collector::$requestMapping[$controllerClass]['view'][$controllerAction]['template'] ?? null;
         $matchViewModel = $this->isMatchAccept($currentAccept, 'text/html') && $controllerClass && $this->isArrayable($data) && $template && ! $this->getException();
         switch ($currentAccept) {
             // View

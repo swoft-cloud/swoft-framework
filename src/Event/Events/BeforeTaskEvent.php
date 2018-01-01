@@ -2,8 +2,7 @@
 
 namespace Swoft\Event\Events;
 
-use Swoft\Event\ApplicationEvent;
-
+use Swoft\Event\Event;
 
 /**
  * 任务前置事件源
@@ -14,7 +13,7 @@ use Swoft\Event\ApplicationEvent;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class BeforeTaskEvent extends ApplicationEvent
+class BeforeTaskEvent extends Event
 {
     /**
      * 日志ID
@@ -53,17 +52,18 @@ class BeforeTaskEvent extends ApplicationEvent
 
     /**
      * BeforeTaskEvent constructor.
-     *
-     * @param null   $source
+     * @param null $name
      * @param string $logid
-     * @param int    $spanid
+     * @param int $spanid
      * @param string $taskName
      * @param string $method
      * @param string $type
+     * @throws \InvalidArgumentException
      */
-    public function __construct($source = null, string $logid, int $spanid, string $taskName, string $method, string $type)
+    public function __construct($name = null, string $logid, int $spanid, string $taskName, string $method, string $type)
     {
-        parent::__construct($source);
+        parent::__construct($name);
+
         $this->type = $type;
         $this->logid = $logid;
         $this->spanid = $spanid;

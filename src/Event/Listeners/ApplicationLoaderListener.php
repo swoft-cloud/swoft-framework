@@ -2,35 +2,41 @@
 
 namespace Swoft\Event\Listeners;
 
+use Swoft\Aop\Aop;
 use Swoft\App;
 use Swoft\Bean\Annotation\Listener;
 use Swoft\Bean\Collector;
-use Swoft\Event\ApplicationEvent;
-use Swoft\Event\Event;
-use Swoft\Event\IApplicationListener;
-use Swoft\Web\Router;
+use Swoft\Event\EventInterface;
+use Swoft\Event\AppEvent;
+use Swoft\Event\EventHandlerInterface;
 
 /**
  * 应用加载事件
  *
- * @Listener(Event::APPLICATION_LOADER)
+ * @Listener(AppEvent::APPLICATION_LOADER)
  * @uses      ApplicationLoaderListener
  * @version   2017年09月04日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class ApplicationLoaderListener implements IApplicationListener
+class ApplicationLoaderListener implements EventHandlerInterface
 {
-    public function onApplicationEvent(ApplicationEvent $event = null, ...$params)
+    /**
+     * @param EventInterface $event      事件对象
+     */
+    public function handle(EventInterface $event)
     {
-        // 路由自动注册
-        /* @var Router $router */
-        $router = App::getBean('router');
+        /* @var \Swoft\Router\Http\HandlerMapping $httpRouter */
+        $httpRouter = App::getBean('httpRouter');
+        /* @var \Swoft\Router\Service\HandlerMapping $serviceRouter */
+        $serviceRouter = App::getBean('serviceRouter');
+
         $requestMapping = Collector::$requestMapping;
         $serviceMapping = Collector::$serviceMapping;
-        $router->registerRoutes($requestMapping);
-        $router->registerServices($serviceMapping);
+
+        $httpRouter->registerRoutes($requestMapping);
+        $serviceRouter->register($serviceMapping);
 
         App::setProperties();
     }

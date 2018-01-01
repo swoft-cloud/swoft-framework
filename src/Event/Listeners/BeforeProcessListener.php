@@ -5,33 +5,34 @@ namespace Swoft\Event\Listeners;
 use Swoft\App;
 use Swoft\Base\ApplicationContext;
 use Swoft\Base\RequestContext;
-use Swoft\Event\ApplicationEvent;
-use Swoft\Event\IApplicationListener;
+use Swoft\Event\EventInterface;
+use Swoft\Event\EventHandlerInterface;
 use Swoft\Bean\Annotation\Listener;
-use Swoft\Event\Event;
+use Swoft\Event\AppEvent;
 use Swoole\Process;
 
 /**
  * 进程开始事件
  *
- * @Listener(Event::BEFORE_PROCESS)
+ * @Listener(AppEvent::BEFORE_PROCESS)
  * @uses      BeforeProcessListener
  * @version   2017年10月04日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class BeforeProcessListener implements IApplicationListener
+class BeforeProcessListener implements EventHandlerInterface
 {
     /**
      * 事件回调
      *
-     * @param ApplicationEvent|null $event     事件对象
-     * @param array                 ...$params 事件附加信息
+     * @param EventInterface $event      事件对象
      */
-    public function onApplicationEvent(ApplicationEvent $event = null, ...$params)
+    public function handle(EventInterface $event)
     {
-        if (count($params) < 3) {
+        $params = $event->getParams();
+
+        if (\count($params) < 3) {
             return;
         }
 

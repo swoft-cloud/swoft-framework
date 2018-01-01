@@ -7,7 +7,6 @@ use Swoft\Console\Input\Input;
 use Swoft\Console\Output\Output;
 use Swoft\Console\Style\Style;
 use Swoft\Helper\PhpHelper;
-use Swoft\Web\ErrorHandler;
 
 /**
  * 命令行
@@ -71,13 +70,6 @@ class Console implements IConsole
      * @var array
      */
     private $scanCmds = [];
-
-    /**
-     * 错误处理器
-     *
-     * @var ErrorHandler
-     */
-    private $errorHandler;
 
     /**
      * 每个命令唯一ID
@@ -221,12 +213,12 @@ class Console implements IConsole
     {
         // 当前版本信息
         $swoftVersion = App::version();
-        $phpVersio = phpversion();
-        $swooleVersion = swoole_version();
+        $phpVersion = phpversion();
+        $swooleVersion = SWOOLE_VERSION;
 
         // 显示面板
         $this->output->writeLogo();
-        $this->output->writeln("swoft: <info>$swoftVersion</info>, php: <info>$phpVersio</info>, swoole: <info>$swooleVersion</info>", true);
+        $this->output->writeln("swoft: <info>$swoftVersion</info>, php: <info>$phpVersion</info>, swoole: <info>$swooleVersion</info>", true);
         $this->output->writeln("");
     }
 

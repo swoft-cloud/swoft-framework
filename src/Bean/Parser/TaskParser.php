@@ -32,6 +32,6 @@ class TaskParser extends AbstractParser
         $name = $objectAnnotation->getName();
         $beanName = empty($name) ? $className : $name;
         Collector::$crontab[$className]['task'] = $beanName;
-        return [$beanName, Scope::SINGLETON];
+        return [$beanName, Scope::SINGLETON, ""];
     }
 }

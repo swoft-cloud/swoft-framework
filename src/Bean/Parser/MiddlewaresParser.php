@@ -20,11 +20,12 @@ class MiddlewaresParser extends AbstractParser
     /**
      * Parse middlewares annotation
      *
-     * @param string $className
-     * @param object $objectAnnotation
-     * @param string $propertyName
-     * @param string $methodName
+     * @param string      $className
+     * @param Middlewares $objectAnnotation
+     * @param string      $propertyName
+     * @param string      $methodName
      * @param string|null $propertyValue
+     *
      * @return mixed
      */
     public function parser(
@@ -35,19 +36,37 @@ class MiddlewaresParser extends AbstractParser
         $propertyValue = null
     ) {
         $middlewares = [];
-        if ($objectAnnotation instanceof Middlewares) {
-            foreach ($objectAnnotation->getMiddlewares() as $middleware) {
-                if ($middleware instanceof Middleware) {
-                    $middlewares[] = $middleware->getClass();
-                }
+        foreach ($objectAnnotation->getMiddlewares() as $middleware) {
+            if ($middleware instanceof Middleware) {
+                $middlewares[] = $middleware->getClass();
             }
-            $middlewares = array_unique($middlewares);
         }
-        if ($methodName) {
-            Collector::$requestMapping[$className]['middlewares']['actions'][$methodName] = $middlewares;
-        } else {
-            Collector::$requestMapping[$className]['middlewares']['group'] = $middlewares;
+        $middlewares = array_unique($middlewares);
+
+        if(isset(Collector::$requestMapping[$className]) && !empty($methodName)){
+            $scanMiddlewares = Collector::$requestMapping[$className]['middlewares']['actions'][$methodName]??[];
+            Collector::$requestMapping[$className]['middlewares']['actions'][$methodName] = array_merge($scanMiddlewares, $middlewares);
+            return null;
         }
+
+        if(isset(Collector::$requestMapping[$className]) && empty($methodName)){
+            $scanMiddlewares = Collector::$requestMapping[$className]['middlewares']['group']??[];
+            Collector::$requestMapping[$className]['middlewares']['group'] = array_merge($scanMiddlewares, $middlewares);
+            return null;
+        }
+
+        if(isset(Collector::$serviceMapping[$className]) && !empty($methodName)){
+            $scanMiddlewares = Collector::$serviceMapping[$className]['middlewares']['actions'][$methodName]??[];
+            Collector::$serviceMapping[$className]['middlewares']['actions'][$methodName] = array_merge($scanMiddlewares, $middlewares);
+            return null;
+        }
+
+        if(isset(Collector::$serviceMapping[$className]) && empty($methodName)){
+            $scanMiddlewares = Collector::$serviceMapping[$className]['middlewares']['group']??[];
+            Collector::$serviceMapping[$className]['middlewares']['group'] = array_merge($scanMiddlewares, $middlewares);
+            return null;
+        }
+
         return null;
     }
 }

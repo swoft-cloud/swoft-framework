@@ -8,9 +8,6 @@
 namespace Swoft\Testing;
 
 
-use Swoft\App;
-use Swoft\Web\Middlewares\PowerByMiddlewre;
-
 class Application extends \Swoft\Web\Application
 {
     public function __construct()

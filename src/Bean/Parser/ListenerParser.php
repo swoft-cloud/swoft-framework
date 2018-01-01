@@ -35,6 +35,6 @@ class ListenerParser extends AbstractParser
 
         // 监听器收集
         Collector::$listeners[$eventName][] = $beanName;
-        return [$beanName, $scope];
+        return [$beanName, $scope, ""];
     }
 }

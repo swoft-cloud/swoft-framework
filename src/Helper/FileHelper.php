@@ -47,4 +47,34 @@ class FileHelper
 
         return false;
     }
+
+    /**
+     * md5 of dir
+     *
+     * @param string $dir
+     *
+     * @return bool|string
+     */
+    public static function md5File($dir)
+    {
+        if (!is_dir($dir)) {
+            return "";
+        }
+
+        $md5File = array();
+        $d       = dir($dir);
+        while (false !== ($entry = $d->read())) {
+            if ($entry != '.' && $entry != '..') {
+                if (is_dir($dir . '/' . $entry)) {
+                    $md5File[] = self::md5File($dir . '/' . $entry);
+                } else {
+                    $md5File[] = md5_file($dir . '/' . $entry);
+                }
+                $md5File[] = $entry;
+            }
+        }
+        $d->close();
+
+        return md5(implode('', $md5File));
+    }
 }

@@ -32,6 +32,6 @@ class TableParser extends AbstractParser
         // 表映射收集
         $tableName = $objectAnnotation->getName();
         Collector::$entities[$className]['table']['name'] = $tableName;
-        return $this->defaultClass;
+        return null;
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Swoft\Bean\Parser;
 
-use Swoft\Bean\Annotation\Scope;
 use Swoft\Bean\Resource\AnnotationResource;
 
 /**
@@ -24,20 +23,6 @@ abstract class AbstractParser implements IParser
     protected $annotationResource;
 
     /**
-     * 默认属性解析值
-     *
-     * @var array
-     */
-    protected $defaultProperty;
-
-    /**
-     * 默认类解析值
-     *
-     * @var array
-     */
-    protected $defaultClass;
-
-    /**
      * AbstractParser constructor.
      *
      * @param AnnotationResource $annotationResource
@@ -45,7 +30,5 @@ abstract class AbstractParser implements IParser
     public function __construct(AnnotationResource $annotationResource)
     {
         $this->annotationResource = $annotationResource;
-        $this->defaultClass = ['', Scope::SINGLETON];
-        $this->defaultProperty = [null, false];
     }
 }
