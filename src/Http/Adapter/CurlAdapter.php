@@ -192,7 +192,7 @@ class CurlAdapter implements AdapterInterface
                 $ucKey = implode('-', $exploded);
                 $headers[$ucKey] = is_array($value) ? current($value) : $value;
             }
-            $headers = array_replace($headers, (array)$options['_headers']);
+            $headers = array_replace($headers, (array)($options['_headers'] ?? []));
             return $headers;
         });
         foreach ($headers as $name => $value) {
@@ -267,7 +267,7 @@ class CurlAdapter implements AdapterInterface
     private function checkExtension()
     {
         $isInstalled = extension_loaded('curl');
-        if (! $isInstalled) {
+        if (!$isInstalled) {
             throw new \RuntimeException('Curl extension required');
         }
     }
