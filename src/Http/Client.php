@@ -236,7 +236,6 @@ class Client
     }
 
     /**
-     *
      * @param string|Uri $baseUri
      * @return UriInterface|Uri
      */
@@ -285,7 +284,6 @@ class Client
         }
 
         // Special handling for headers is required as they are added as
-        // conditional headers and as headers passed to a request ctor.
         if (array_key_exists('headers', $options)) {
             // Allows default headers to be unset.
             if ($options['headers'] === null) {
