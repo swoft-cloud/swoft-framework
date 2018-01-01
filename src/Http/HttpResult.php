@@ -81,15 +81,20 @@ class HttpResult extends AbstractResult
     }
 
     /**
+     * Transfer sockets error code to HTTP status code.
+     *
+     * TODO transfer more error code
      * @param $client
      * @return int
      */
     private function deduceStatusCode($client): int
     {
         if ($client->errCode == 110) {
-
+            $status = 404;
+        } else {
+            $status = $client->statusCode;
         }
-        return $client->statusCode > 0 ? $client->statusCode : 500;
+        return $status > 0 ? $status : 500;
     }
 
     /**
