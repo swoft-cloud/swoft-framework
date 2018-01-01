@@ -74,7 +74,7 @@ abstract class AbstractResult implements ResultInterface
             $this->client->setDefer(false);
         }
 
-        if($this->release){
+        if($this->release && $this->connectPool instanceof ConnectPool){
             $this->connectPool->release($this->client);
         }
         return $result;

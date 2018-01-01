@@ -74,7 +74,7 @@ class App
      * @var array
      */
     private static $aliases = [
-        '@Swoft' => __DIR__
+        '@swoft' => __DIR__
     ];
 
     /**
@@ -92,7 +92,7 @@ class App
      */
     public static function version()
     {
-        return '0.1.1';
+        return '0.2.2';
     }
 
     /**

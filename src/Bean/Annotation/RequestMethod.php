@@ -3,23 +3,38 @@
 namespace Swoft\Bean\Annotation;
 
 /**
- * 请求方法
- *
- * @uses      RequestMethod
- * @version   2017年08月22日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * HTTP request method
  */
 class RequestMethod
 {
     /**
-     * get方法
+     * Get method
      */
-    const GET = "get";
+    const GET = 'get';
 
     /**
-     * post方法
+     * Post method
      */
-    const POST = "post";
+    const POST = 'post';
+
+    /**
+     * Put method
+     */
+    const PUT = 'put';
+
+    /**
+     * Delete method
+     */
+    const DELETE = 'delete';
+
+    /**
+     * Patch method
+     */
+    const PATCH = 'patch';
+
+    /**
+     * Options method
+     */
+    const OPTIONS = 'options';
+
 }

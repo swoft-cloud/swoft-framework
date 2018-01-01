@@ -5,9 +5,11 @@ namespace Swoft\Http;
 use Psr\Http\Message\ResponseInterface;
 use Swoft\App;
 use Swoft\Base\Coroutine;
+use Swoft\Http\Adapter\AdapterInterface;
+use Swoft\Http\Adapter\CoroutineAdapter;
 use Swoft\Http\Adapter\ResponseTrait;
 use Swoft\Web\AbstractResult;
-use Swoft\Web\SwooleStream;
+use Swoft\Web\Streams\SwooleStream;
 
 /**
  * Http结果
@@ -24,27 +26,48 @@ class HttpResult extends AbstractResult
     use ResponseTrait;
 
     /**
+     * @var AdapterInterface
+     */
+    protected $adapter;
+
+    /**
      * 返回数据结果
      *
      * @return ResponseInterface
      */
     public function getResult()
     {
-        if (Coroutine::isSupportCoroutine()) {
-            $this->client->recv();
-            // TODO: build a response
-            $result = $this->client->body;
-            $this->client->close();
-        } else {
-            $status = curl_getinfo($this->client, CURLINFO_HTTP_CODE);
-            $headers = curl_getinfo($this->client);
+        $client = $this->client;
+        if ($this->getAdapter() instanceof CoroutineAdapter) {
+            $this->recv();
+            $this->sendResult = $client->body;
+            $client->close();
+            $headers = value(function () {
+                $headers = [];
+                foreach ($this->client->headers as $key => $value) {
+                    $exploded = explode('-', $key);
+                    foreach ($exploded as &$str) {
+                        $str = ucfirst($str);
+                    }
+                    $ucKey = implode('-', $exploded);
+                    $headers[$ucKey] = $value;
+                }
+                return $headers;
+            });
             $response = $this->createResponse()
-                ->withBody(new SwooleStream($this->sendResult))
+                ->withBody(new SwooleStream($this->sendResult ?? ''))
+                ->withHeaders($headers ?? [])
+                ->withStatus($this->deduceStatusCode($client));
+        } else {
+            $status = curl_getinfo($client, CURLINFO_HTTP_CODE);
+            $headers = curl_getinfo($client);
+            curl_close($client);
+            $response = $this->createResponse()
+                ->withBody(new SwooleStream($this->sendResult ?? ''))
                 ->withStatus($status)
                 ->withHeaders($headers);
-            curl_close($this->client);
         }
-        App::debug("http调用结果=" . json_encode($result));
+        App::debug("HTTP request result = " . json_encode($this->sendResult));
         return $response;
     }
 
@@ -55,5 +78,35 @@ class HttpResult extends AbstractResult
     public function getResponse()
     {
         return $this->getResult();
+    }
+
+    /**
+     * @param $client
+     * @return int
+     */
+    private function deduceStatusCode($client): int
+    {
+        if ($client->errCode == 110) {
+
+        }
+        return $client->statusCode > 0 ? $client->statusCode : 500;
+    }
+
+    /**
+     * @return AdapterInterface
+     */
+    public function getAdapter(): AdapterInterface
+    {
+        return $this->adapter;
+    }
+
+    /**
+     * @param AdapterInterface $adapter
+     * @return HttpResult
+     */
+    public function setAdapter($adapter)
+    {
+        $this->adapter = $adapter;
+        return $this;
     }
 }

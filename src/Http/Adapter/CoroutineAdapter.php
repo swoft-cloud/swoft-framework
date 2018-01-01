@@ -4,7 +4,9 @@ namespace Swoft\Http\Adapter;
 
 use Psr\Http\Message\RequestInterface;
 use Swoft\App;
+use Swoft\Helper\JsonHelper;
 use Swoft\Http\HttpResult;
+use Swoft\Web\Uri;
 use Swoole\Coroutine\Http\Client as CoHttpClient;
 
 
@@ -18,7 +20,16 @@ use Swoole\Coroutine\Http\Client as CoHttpClient;
 class CoroutineAdapter implements AdapterInterface
 {
 
+    use ResponseTrait;
+
     /**
+     * @var array
+     */
+    protected $defaultOptions = [];
+
+    /**
+     * TODO add Middleware, and handle redirect situation
+     *
      * @param RequestInterface $request
      * @param array $options
      * @return HttpResult
@@ -32,22 +43,23 @@ class CoroutineAdapter implements AdapterInterface
 
         App::profileStart($profileKey);
 
-        list($host, $port) = $this->ipResolve($request);
+        list($host, $port) = $this->ipResolve($request, $options);
 
         $client = new CoHttpClient($host, $port);
         $this->applyOptions($client, $request, $options);
-        $this->applyMethod($client, $request);
+        $this->applyMethod($client, $request, $options);
         $client->setDefer();
         $client->execute((string)$request->getUri()->withFragment(''));
 
         App::profileEnd($profileKey);
-        
-        if (isset($client->errCode)) {
+
+        if (isset($client->errCode) && $client->errCode !== 0) {
             App::error(sprintf('HttpClient Request ERROR #%s url=%s', $client->errCode, $url));
-            throw new \RuntimeException($client->errCode, socket_strerror($client->errCode));
+            throw new \RuntimeException(\socket_strerror($client->errCode), $client->errCode);
         }
-        
-        $result = new HttpResult(null, $client, $profileKey, $client->body);
+
+        $result = new HttpResult(null, $client, $profileKey, null, false);
+        $result->setAdapter($this);
         return $result;
     }
 
@@ -68,12 +80,21 @@ class CoroutineAdapter implements AdapterInterface
      * DNS lookup
      *
      * @param RequestInterface $request
+     * @param array $options
      * @return string
      */
-    protected function ipResolve(RequestInterface $request)
+    protected function ipResolve(RequestInterface $request, array &$options = [])
     {
         $host = $request->getUri()->getHost();
-        $port = $request->getUri()->getPort();
+        if (isset($options['port']) && is_numeric($options['port'])) {
+            $port = (int)$options['port'];
+        } elseif ($request->getUri()->getPort()) {
+            $port = $request->getUri()->getPort();
+        } elseif ($request->getUri() instanceof Uri) {
+            /** @var Uri $uri */
+            $uri = $request->getUri();
+            $port = $uri->isDefaultPort() ? $uri->getDefaultPort() : 80;
+        }
         $ipLong = ip2long($host);
 
         if ($ipLong !== false) {
@@ -83,8 +104,9 @@ class CoroutineAdapter implements AdapterInterface
         // DHS Lookup
         $ip = swoole_async_dns_lookup_coro($host);
         if (!$ip) {
-            App::error("DNS lookup failure, domain=" . $host);
-            throw new \InvalidArgumentException("DNS lookup failure, domain=" . $host);
+            $message = sprintf('DNS lookup failure, domain = %s', $host);
+            App::error($message);
+            throw new \InvalidArgumentException($message);
         }
         return [$ip, $port];
     }
@@ -130,27 +152,97 @@ class CoroutineAdapter implements AdapterInterface
      * @param RequestInterface $request
      * @param array $options
      */
-    protected function applyOptions(CoHttpClient $client, RequestInterface $request, array $options)
+    protected function applyOptions(CoHttpClient $client, RequestInterface $request, array &$options)
     {
-        $client->set($options['_options']);
-        $client->setHeaders(array_merge($request->getHeaders(), $options['_headers']));
+        if (isset($options['body']) && $options['body']) {
+            $options['_headers']['Content-Type'] = 'text/plain';
+        }
+
+        if (isset($options['form_params'])) {
+            if (isset($options['multipart'])) {
+                throw new \InvalidArgumentException('You cannot use '
+                    . 'form_params and multipart at the same time. Use the '
+                    . 'form_params option if you want to send application/'
+                    . 'x-www-form-urlencoded requests, and the multipart '
+                    . 'option to send multipart/form-data requests.');
+            }
+            $options['body'] = http_build_query($options['form_params'], '', '&');
+            unset($options['form_params']);
+            $options['_headers']['Content-Type'] = 'application/x-www-form-urlencoded';
+        }
+
+        if (isset($options['multipart'])) {
+            // TODO add multipart support
+            unset($options['multipart']);
+        }
+
+        if (isset($options['json'])) {
+            $options['body'] = JsonHelper::encode($options['json']);
+            unset($options['json']);
+            $options['_headers']['Content-Type'] = 'application/json';
+        }
+        $client->set($options['_options'] ?? []);
+
+        $headers = value(function () use ($request, $options) {
+            $headers = [
+                'Accept' => '*',
+            ];
+            foreach ($request->getHeaders() as $key => $value) {
+                $exploded = explode('-', $key);
+                foreach ($exploded as &$str) {
+                    $str = ucfirst($str);
+                }
+                $ucKey = implode('-', $exploded);
+                $headers[$ucKey] = is_array($value) ? current($value) : $value;
+            }
+            $headers = array_replace($headers, (array)$options['_headers']);
+            return $headers;
+        });
+        $client->setHeaders($headers ?? []);
     }
 
     /**
      * @param CoHttpClient $client
      * @param RequestInterface $request
+     * @param array $options
      * @return void
      */
-    protected function applyMethod(CoHttpClient $client, RequestInterface $request)
+    protected function applyMethod(CoHttpClient $client, RequestInterface $request, array &$options)
     {
         $client->setMethod($request->getMethod());
         switch (strtoupper($request->getMethod())) {
             case 'POST':
             case 'PUT' :
             case 'DELETE':
-                $client->setData((string)$request->getBody()->getContents());
+                $postFields = $this->buildPostFields($options);
+                $client->setData($postFields);
                 break;
         }
+    }
+
+    /**
+     * @param array $options
+     * @return mixed|string
+     */
+    private function buildPostFields(array $options)
+    {
+        $postFields = '';
+        if (isset($options['body']) && is_string($options['body'])) {
+            $postFields = $options['body'];
+        }
+        return (string)$postFields;
+    }
+
+    /**
+     * Get the adapter User-Agent string
+     *
+     * @return string
+     */
+    public function getDefaultUserAgent()
+    {
+        $defaultAgent = 'Swoft/' . App::version();
+        $defaultAgent .= ' PHP/' . PHP_VERSION;
+        return $defaultAgent;
     }
 
 }

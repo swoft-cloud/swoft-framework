@@ -4,6 +4,7 @@ namespace Swoft\Http\Adapter;
 
 use Psr\Http\Message\RequestInterface;
 use Swoft\App;
+use Swoft\Helper\JsonHelper;
 use Swoft\Http\HttpResult;
 
 
@@ -32,6 +33,7 @@ class CurlAdapter implements AdapterInterface
      */
     public function request(RequestInterface $request, array $options = []): HttpResult
     {
+        $this->checkExtension();
         $options = $this->handleOptions($request, array_merge($this->defaultOptions, (array)$options));
 
         $url = (string)$request->getUri();
@@ -42,7 +44,7 @@ class CurlAdapter implements AdapterInterface
         $resource = curl_init();
 
         $this->applyOptions($resource, $request, $options);
-        $this->applyMethod($resource, $request);
+        $this->applyMethod($resource, $request, $options);
 
         curl_setopt($resource, CURLOPT_URL, (string)$request->getUri()->withFragment(''));
         // Response do not contains Headers
@@ -65,6 +67,7 @@ class CurlAdapter implements AdapterInterface
         }
 
         $result = new HttpResult(null, $resource, $profileKey, $result, false);
+        $result->setAdapter($this);
         return $result;
     }
 
@@ -145,20 +148,72 @@ class CurlAdapter implements AdapterInterface
      * @param RequestInterface $request
      * @param array $options
      */
-    private function applyOptions($resource, RequestInterface $request, array $options)
+    private function applyOptions($resource, RequestInterface $request, array &$options)
     {
+        if (isset($options['body']) && $options['body']) {
+            $options['_headers']['Content-Type'] = 'text/plain';
+        }
+
+        if (isset($options['form_params'])) {
+            if (isset($options['multipart'])) {
+                throw new \InvalidArgumentException('You cannot use '
+                    . 'form_params and multipart at the same time. Use the '
+                    . 'form_params option if you want to send application/'
+                    . 'x-www-form-urlencoded requests, and the multipart '
+                    . 'option to send multipart/form-data requests.');
+            }
+            $options['body'] = http_build_query($options['form_params'], '', '&');
+            unset($options['form_params']);
+            $options['_headers']['Content-Type'] = 'application/x-www-form-urlencoded';
+        }
+
+        if (isset($options['multipart'])) {
+            // TODO add multipart support
+            unset($options['multipart']);
+        }
+
+        if (isset($options['json'])) {
+            $options['body'] = JsonHelper::encode($options['json']);
+            unset($options['json']);
+            $options['_headers']['Content-Type'] = 'application/json';
+        }
+
         foreach ($options['_options'] ?? [] as $key => $value) {
             curl_setopt($resource, $key, $value);
         }
 
-        curl_setopt($resource, CURLOPT_HTTPHEADER, array_merge($request->getHeaders(), (array)$options['_headers']));
+        $headers = value(function () use ($request, $options, $resource) {
+            $headers = [];
+            foreach ($request->getHeaders() as $key => $value) {
+                $exploded = explode('-', $key);
+                foreach ($exploded as &$str) {
+                    $str = ucfirst($str);
+                }
+                $ucKey = implode('-', $exploded);
+                $headers[$ucKey] = is_array($value) ? current($value) : $value;
+            }
+            $headers = array_replace($headers, (array)$options['_headers']);
+            return $headers;
+        });
+        foreach ($headers as $name => $value) {
+            switch ($name) {
+                case 'User-Agent':
+                    curl_setopt($resource, CURLOPT_USERAGENT, $value);
+                    unset($headers[$name]);
+                    break;
+            }
+            $headers[] = implode(':', [$name, $value]);
+            unset($headers[$name]);
+        }
+        curl_setopt($resource, CURLOPT_HTTPHEADER, $headers);
     }
 
     /**
      * @param resource $resource
      * @param RequestInterface $request
+     * @param array $options
      */
-    private function applyMethod($resource, RequestInterface $request)
+    private function applyMethod($resource, RequestInterface $request, array &$options = [])
     {
         switch (strtoupper($request->getMethod())) {
             case 'GET':
@@ -166,14 +221,55 @@ class CurlAdapter implements AdapterInterface
                 break;
             case 'POST':
                 curl_setopt($resource, CURLOPT_POST, true);
-                curl_setopt($resource, CURLOPT_NOBODY, true);
-                curl_setopt($resource, CURLOPT_POSTFIELDS, (string)$request->getBody()->getContents());
+                $postFields = $this->buildPostFields($options);
+                curl_setopt($resource, CURLOPT_POSTFIELDS, $postFields);
                 break;
             case 'PUT' :
             case 'DELETE':
+                $postFields = $this->buildPostFields($options);
                 curl_setopt($resource, CURLOPT_CUSTOMREQUEST, strtoupper($request->getMethod()));
-                curl_setopt($resource, CURLOPT_POSTFIELDS, (string)$request->getBody()->getContents());
+                curl_setopt($resource, CURLOPT_POSTFIELDS, $postFields);
                 break;
         }
     }
+
+    /**
+     * @param array $options
+     * @return mixed|string
+     */
+    private function buildPostFields(array $options)
+    {
+        $postFields = '';
+        if (isset($options['body']) && is_string($options['body'])) {
+            $postFields = $options['body'];
+        }
+        return (string)$postFields;
+    }
+
+    /**
+     * Get the adapter User-Agent string
+     *
+     * @return string
+     */
+    public function getDefaultUserAgent()
+    {
+        $defaultAgent = 'Swoft/' . App::version();
+        if (extension_loaded('curl') && function_exists('curl_version')) {
+            $defaultAgent .= ' curl/' . \curl_version()['version'];
+        }
+        $defaultAgent .= ' PHP/' . PHP_VERSION;
+        return $defaultAgent;
+    }
+
+    /**
+     * @throws \RuntimeException
+     */
+    private function checkExtension()
+    {
+        $isInstalled = extension_loaded('curl');
+        if (! $isInstalled) {
+            throw new \RuntimeException('Curl extension required');
+        }
+    }
+
 }

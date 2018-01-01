@@ -60,6 +60,7 @@ class Client
         }
 
         $this->configureDefaults($config);
+
     }
 
     /**
@@ -80,11 +81,10 @@ class Client
         $uri = $this->buildUri($uri, $options);
         $profileKey = 'http.' . (string)$uri;
         App::profileStart($profileKey);
-        if (is_array($body)) {
-            $this->invalidBody();
-        }
         $request = new Psr7Request($method, $uri, $headers, $body, $version);
-        $result = $this->getAdapter()->request($request, $options);
+        $adapter = $this->getAdapter();
+        $this->setDefaultUserAgent();
+        $result = $adapter->request($request, $options);
         App::profileEnd($profileKey);
         return $result;
     }
@@ -216,7 +216,7 @@ class Client
     public function setAdapter($adapter)
     {
         if (is_string($adapter)) {
-            switch ($adapter) {
+            switch (strtolower($adapter)) {
                 case 'php':
                 case 'curl':
                     $adapter = new Adapter\CurlAdapter();
@@ -259,22 +259,11 @@ class Client
             'verify' => true,
         ];
 
+        // TODO finish defaults config feature
+
         $this->configs = $config + $defaults;
 
         // TODO add cookies settings after session and cookies feature finished
-
-        // Add the default user-agent header.
-        if (!isset($this->configs['headers'])) {
-            $this->configs['headers'] = ['User-Agent' => $this->getDefaultUserAgent()];
-        } else {
-            // Add the User-Agent header if one was not already set.
-            foreach (array_keys($this->configs['headers']) as $name) {
-                if (strtolower($name) === 'user-agent') {
-                    return;
-                }
-            }
-            $this->configs['headers']['User-Agent'] = $this->getDefaultUserAgent();
-        }
 
     }
 
@@ -291,7 +280,7 @@ class Client
 
         if (!empty($defaults['headers'])) {
             // Default headers are only added if they are not present.
-            $defaults['_conditional'] = $defaults['headers'];
+            $defaults['_headers'] = $defaults['headers'];
             unset($defaults['headers']);
         }
 
@@ -300,7 +289,7 @@ class Client
         if (array_key_exists('headers', $options)) {
             // Allows default headers to be unset.
             if ($options['headers'] === null) {
-                $defaults['_conditional'] = null;
+                $defaults['_headers'] = null;
                 unset($options['headers']);
             } elseif (!is_array($options['headers'])) {
                 throw new \InvalidArgumentException('headers must be an array');
@@ -321,22 +310,54 @@ class Client
     }
 
     /**
-     * Get the default User-Agent string to use with Guzzle
+     * Get the default User-Agent string
      *
      * @return string
      */
     public function getDefaultUserAgent()
     {
         if (!$this->defaultUserAgent) {
-            $defaultAgent = 'Swoft/' . App::version();
-            if (!Coroutine::isSupportCoroutine() && extension_loaded('curl') && function_exists('curl_version')) {
-                $defaultAgent .= ' curl/' . \curl_version()['version'];
+            $currentMethodName = __FUNCTION__;
+            $isAdapterUserAgent = method_exists($this->getAdapter(), $currentMethodName);
+            if ($isAdapterUserAgent) {
+                $this->defaultUserAgent = $this->getAdapter()->$currentMethodName();
+            } else {
+                $defaultAgent = 'Swoft/' . App::version();
+                if (!Coroutine::isSupportCoroutine() && extension_loaded('curl') && function_exists('curl_version')) {
+                    $defaultAgent .= ' curl/' . \curl_version()['version'];
+                }
+                $defaultAgent .= ' PHP/' . PHP_VERSION;
+                $this->defaultUserAgent = $defaultAgent;
             }
-            $defaultAgent .= ' PHP/' . PHP_VERSION;
-            $this->defaultUserAgent = $defaultAgent;
         }
 
         return $this->defaultUserAgent;
+    }
+
+    /**
+     * Set default User-Agent to Client.
+     *
+     * @important Notice that this method should always
+     * use after setAdapter() method, or else getDefaultUserAgent()
+     * and getAdapter() methods will automated get an Adapter,
+     * probably is not the adapter you wanted.
+     *
+     * @return void
+     */
+    private function setDefaultUserAgent()
+    {
+        // Add the default user-agent header.
+        if (!isset($this->configs['headers'])) {
+            $this->configs['headers'] = ['User-Agent' => $this->getDefaultUserAgent()];
+        } else {
+            // Add the User-Agent header if one was not already set.
+            foreach (array_keys($this->configs['headers']) as $name) {
+                if (strtolower($name) === 'user-agent') {
+                    return;
+                }
+            }
+            $this->configs['headers']['User-Agent'] = $this->getDefaultUserAgent();
+        }
     }
 
 }

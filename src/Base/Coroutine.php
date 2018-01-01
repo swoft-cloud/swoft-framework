@@ -109,8 +109,26 @@ class Coroutine
      *
      * @return bool
      */
-    public function isSupportCoroutine(): bool
+    public static function isSupportCoroutine(): bool
     {
-        return App::isWorkerStatus();
+        if (swoole_version() >= '2.0.11') {
+            return true;
+        } else {
+            return App::isWorkerStatus();
+        }
     }
+
+    /**
+     * Determine if should create a coroutine when you
+     * want to use a Coroutine Client, and you shoud
+     * always use self::isSupportCoroutine() before
+     * call this method.
+     *
+     * @return bool
+     */
+    public static function shouldWrapCoroutine()
+    {
+        return App::isWorkerStatus() && swoole_version() >= '2.0.11';
+    }
+    
 }
