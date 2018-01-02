@@ -3,6 +3,7 @@
 namespace Swoft\Web;
 
 use Psr\Http\Message\StreamInterface;
+use Zend\Mime\Decode;
 
 /**
  * Trait implementing functionality common to requests and responses.
@@ -118,7 +119,7 @@ trait MessageTrait
     {
         $name = strtolower($name);
 
-        if (! isset($this->headerNames[$name])) {
+        if (!isset($this->headerNames[$name])) {
             return [];
         }
 
@@ -156,14 +157,14 @@ trait MessageTrait
      * immutability of the message, and MUST return an instance that has the
      * new and/or updated header and value.
      *
-     * @param string          $name  Case-insensitive header field name.
+     * @param string $name Case-insensitive header field name.
      * @param string|string[] $value Header value(s).
      * @return static
      * @throws \InvalidArgumentException for invalid header names or values.
      */
     public function withHeader($name, $value)
     {
-        if (! is_array($value)) {
+        if (!is_array($value)) {
             $value = [$value];
         }
 
@@ -181,6 +182,19 @@ trait MessageTrait
     }
 
     /**
+     * @param array $headers
+     * @return static
+     */
+    public function withHeaders(array $headers)
+    {
+        $new = clone $this;
+        foreach ($headers as $name => $value) {
+            $new = $new->withHeader(str_replace('_', '-', $name), $value);
+        }
+        return $new;
+    }
+
+    /**
      * Return an instance with the specified header appended with the given value.
      * Existing values for the specified header will be maintained. The new
      * value(s) will be appended to the existing list. If the header did not
@@ -189,14 +203,14 @@ trait MessageTrait
      * immutability of the message, and MUST return an instance that has the
      * new header and/or value.
      *
-     * @param string          $name  Case-insensitive header field name to add.
+     * @param string $name Case-insensitive header field name to add.
      * @param string|string[] $value Header value(s).
      * @return static
      * @throws \InvalidArgumentException for invalid header names or values.
      */
     public function withAddedHeader($name, $value)
     {
-        if (! is_array($value)) {
+        if (!is_array($value)) {
             $value = [$value];
         }
 
@@ -229,7 +243,7 @@ trait MessageTrait
     {
         $normalized = strtolower($name);
 
-        if (! isset($this->headerNames[$normalized])) {
+        if (!isset($this->headerNames[$normalized])) {
             return $this;
         }
 
@@ -249,7 +263,7 @@ trait MessageTrait
     {
         $this->headerNames = $this->headers = [];
         foreach ($headers as $header => $value) {
-            if (! is_array($value)) {
+            if (!is_array($value)) {
                 $value = [$value];
             }
 
@@ -273,7 +287,7 @@ trait MessageTrait
      */
     public function getBody()
     {
-        if (! $this->stream) {
+        if (!$this->stream) {
             $this->stream = new SwooleStream('');
         }
 
@@ -318,4 +332,47 @@ trait MessageTrait
             return trim($value, " \t");
         }, $values);
     }
+
+    /**
+     * Get a specific field from a header like content type or all fields as array
+     *
+     * If the header occurs more than once, only the value from the first header
+     * is returned.
+     *
+     * Throws an Exception if the requested header does not exist. If
+     * the specific header field does not exist, returns null.
+     *
+     * @param  string $name name of header, like in getHeader()
+     * @param  string $wantedPart the wanted part, default is first, if null an array with all parts is returned
+     * @param  string $firstName key name for the first part
+     * @return string|array wanted part or all parts as array($firstName => firstPart, partname => value)
+     * @throws \RuntimeException
+     */
+    public function getHeaderField($name, $wantedPart = '0', $firstName = '0')
+    {
+        return Decode::splitHeaderField($this->getHeaderLine($name), $wantedPart, $firstName);
+    }
+
+    /**
+     * @return string
+     */
+    public function getContentType()
+    {
+        return $this->getHeaderLine('Content-Type');
+    }
+
+    /**
+     * Check if part is a multipart message
+     *
+     * @return bool if part is multipart
+     */
+    public function isMultipart()
+    {
+        try {
+            return stripos($this->getContentType(), 'multipart/') === 0;
+        } catch (\ExceptionInterface $e) {
+            return false;
+        }
+    }
+
 }

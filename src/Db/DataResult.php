@@ -45,7 +45,7 @@ class DataResult extends AbstractResult
      *
      * @return array|bool 返回结果如果执行失败返回false，更新成功返回true,查询返回数据
      */
-    public function getResult(string $className = "")
+    public function getResult(string $className = '')
     {
         // 发包是否成功验证
         if ($this->sendResult === null || $this->sendResult === false) {
@@ -59,7 +59,7 @@ class DataResult extends AbstractResult
         $result = $this->transferResult($result);
 
         // 日志记录处理
-        list(, $sqlId) = explode(".", $this->profileKey);
+        list(, $sqlId) = explode('.', $this->profileKey);
         App::debug("SQL语句执行结果(defer) sqlId=$sqlId result=" . json_encode($result));
 
         // 填充实体数据
@@ -108,7 +108,7 @@ class DataResult extends AbstractResult
         } elseif ($this->isUpdateOrDelete && $result !== false) {
             $result = $this->client->getAffectedRows();
         } elseif ($this->isFindOne && $result != false) {
-            $result = $result[0]?? [];
+            $result = $result[0] ?? [];
         }
         return $result;
     }
