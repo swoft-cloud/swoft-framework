@@ -2,6 +2,7 @@
 
 namespace Swoft\Event\Listeners;
 
+use Swoft\Aop\Aop;
 use Swoft\App;
 use Swoft\Bean\Annotation\Listener;
 use Swoft\Bean\Collector;

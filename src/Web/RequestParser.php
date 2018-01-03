@@ -45,6 +45,7 @@ class RequestParser implements RequestParserInterface
     {
         $contentType = $request->getHeaderLine($this->headerKey);
         $parsers     = $this->mergeParsers();
+
         if (!isset($parsers[$contentType])) {
             return $request;
         }

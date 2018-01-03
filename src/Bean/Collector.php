@@ -68,4 +68,18 @@ class Collector
      * @var array
      */
     public static $breakers = [];
+
+    /**
+     * aspects
+     *
+     * @var array
+     */
+    public static $aspects = [];
+
+    /**
+     * the annotations of method
+     *
+     * @var array
+     */
+    public static $methodAnnotations = [];
 }
