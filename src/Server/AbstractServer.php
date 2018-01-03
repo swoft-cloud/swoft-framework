@@ -15,7 +15,7 @@ use Swoole\Server;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class AbstractServer implements IServer
+abstract class AbstractServer implements ServerInterface
 {
     /**
      * tcp配置信息
