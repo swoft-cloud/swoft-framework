@@ -4,6 +4,7 @@ namespace Swoft\Console\Output;
 
 /**
  * 输出接口
+ *
  * @uses      OutputInterface
  * @version   2017年10月08日
  * @author    stelin <phpcrazy@126.com>
