@@ -14,7 +14,7 @@ use Swoft\Pool\ConnectPool;
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class AbstractResult implements IResult
+abstract class AbstractResult implements ResultInterface
 {
     /**
      * @var ConnectPool 连接池
@@ -74,7 +74,7 @@ abstract class AbstractResult implements IResult
             $this->client->setDefer(false);
         }
 
-        if($this->release){
+        if($this->release && $this->connectPool instanceof ConnectPool){
             $this->connectPool->release($this->client);
         }
         return $result;
