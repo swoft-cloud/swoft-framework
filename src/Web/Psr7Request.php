@@ -5,6 +5,7 @@ namespace Swoft\Web;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use Swoft\Web\Streams\SwooleStream;
 
 /**
  * @uses      Psr7Request
@@ -239,7 +240,7 @@ class Psr7Request implements RequestInterface
             $header = $this->getHeader('host');
         } else {
             $header = 'Host';
-            $this->headers['host'] = 'Host';
+            $this->headerNames['host'] = 'Host';
         }
         // Ensure Host is the first header.
         $this->headers = [$header => [$host]] + $this->headers;

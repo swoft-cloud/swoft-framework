@@ -73,10 +73,11 @@ class Service
         App::profileEnd($profileKey);
         $connectPool->release($client);
 
-        App::debug("RPC调用结果，Data=" . json_encode($result));
+        App::debug('RPC调用结果，Data=' . json_encode($result));
         $result = $packer->unpack($result);
-        $datta = $packer->checkData($result);
-        return $datta;
+        $retData = $packer->checkData($result);
+
+        return $retData;
     }
 
     /**
@@ -94,18 +95,18 @@ class Service
 
         $profile = "$serviceName->" . $func;
 
-        /* @var $criuitBreaker CircuitBreaker */
-        $criuitBreaker = App::getBean($serviceName . "Breaker");
+        /* @var $circuitBreaker CircuitBreaker */
+        $circuitBreaker = App::getBean($serviceName . 'Breaker');
 
         /* @var $connectPool ServicePool */
-        $connectPool = App::getBean($serviceName . "Pool");
+        $connectPool = App::getBean($serviceName . 'Pool');
 
         /* @var $client AbstractServiceConnect */
         $client = $connectPool->getConnect();
         $packer = App::getPacker();
         $data = $packer->formatData($func, $params);
         $packData = $packer->pack($data);
-        $result = $criuitBreaker->call([$client, 'send'], [$packData], $fallback);
+        $result = $circuitBreaker->call([$client, 'send'], [$packData], $fallback);
 
         return new ServiceResult($connectPool, $client, $profile, $result);
     }

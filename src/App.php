@@ -12,7 +12,7 @@ use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
 use Swoft\Pool\ConnectPool;
 use Swoft\Pool\RedisPool;
-use Swoft\Server\IServer;
+use Swoft\Server\ServerInterface;
 use Swoft\Web\Application;
 
 /**
@@ -36,8 +36,7 @@ class App
 
     /**
      * 服务器对象
-     *
-     * @var IServer
+     * @var ServerInterface
      */
     public static $server;
 
@@ -74,10 +73,9 @@ class App
      *
      * @var array
      */
-    private static $aliases
-        = [
-            '@Swoft' => __DIR__,
-        ];
+    private static $aliases = [
+        '@swoft' => __DIR__
+    ];
 
     /**
      * 获取mysqlBean对象
@@ -94,7 +92,7 @@ class App
      */
     public static function version()
     {
-        return '0.1.1';
+        return '0.2.2';
     }
 
     /**
@@ -114,7 +112,7 @@ class App
      */
     public static function getHttpRouter()
     {
-        return App::getBean('httpRouter');
+        return self::getBean('httpRouter');
     }
 
     /**
@@ -210,7 +208,7 @@ class App
      */
     public static function getPacker()
     {
-        return App::getBean('servicePacker');
+        return self::getBean('servicePacker');
     }
 
     /**
@@ -220,7 +218,7 @@ class App
      */
     public static function getBalancerSelector()
     {
-        return App::getBean('balancerSelector');
+        return self::getBean('balancerSelector');
     }
 
     /**
@@ -230,7 +228,7 @@ class App
      */
     public static function getProviderSelector()
     {
-        return App::getBean('providerSelector');
+        return self::getBean('providerSelector');
     }
 
     /**
@@ -248,7 +246,7 @@ class App
 
         $poolBeanName = Collector::$pools[$name];
 
-        return App::getBean($poolBeanName);
+        return self::getBean($poolBeanName);
     }
 
     /**
@@ -266,7 +264,7 @@ class App
 
         $breakerBeanName = Collector::$breakers[$name];
 
-        return App::getBean($breakerBeanName);
+        return self::getBean($breakerBeanName);
     }
 
     /**
@@ -358,7 +356,7 @@ class App
         }
 
         // 删除别名
-        if ($path == null) {
+        if (!$path) {
             unset(self::$aliases[$alias]);
 
             return;
