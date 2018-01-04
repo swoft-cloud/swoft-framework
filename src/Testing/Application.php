@@ -8,6 +8,8 @@
 namespace Swoft\Testing;
 
 
+use Swoft\App;
+
 class Application extends \Swoft\Web\Application
 {
     public function __construct()

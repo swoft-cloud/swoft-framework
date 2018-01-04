@@ -2,13 +2,9 @@
 
 namespace Swoft\Cache;
 
-use Swoft\Bean\Annotation\Bean;
-use Swoft\Cache\Redis\CacheRedis;
-
 /**
  * the interface of cache
  *
- * @Bean(ref=CacheRedis::class)
  * @uses      CacheInterface
  * @version   2017年12月24日
  * @author    stelin <phpcrazy@126.com>

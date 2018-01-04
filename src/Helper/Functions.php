@@ -1,6 +1,4 @@
 <?php
-use Swoft\Cache\Redis\CacheRedis;
-
 /**
  * @version   2017-11-02
  * @author    huangzhhui <huangzhwork@gmail.com>
@@ -69,16 +67,25 @@ if (!function_exists('env')) {
 
 
 if (!function_exists('cache')) {
+
     /**
      * the function of cache
      *
-     * @param string $driver
+     * @param string|null $key
+     * @param mixed       $default
      *
-     * @return CacheRedis
+     * @return \Swoft\Cache\CacheInterface|mixed
      */
-    function cache($driver = CacheRedis::class)
+    function cache(string $key = null, $default = null)
     {
-        return \Swoft\App::getBean($driver);
+        /* @var Swoft\Cache\Cache  $cache */
+        $cache = \Swoft\App::getBean('cache');
+
+        if ($key === null) {
+            return $cache->getCache();
+        }
+
+        return $cache->get($key, $default);
     }
 }
 

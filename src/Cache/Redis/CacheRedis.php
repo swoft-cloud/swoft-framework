@@ -123,7 +123,7 @@ class CacheRedis implements CacheInterface
     public function get($key, $default = null)
     {
         $result = $this->call('get', [$key]);
-        if ($result === false) {
+        if ($result === false || $result === null) {
             return $default;
         }
 
@@ -137,7 +137,7 @@ class CacheRedis implements CacheInterface
      * @param mixed  $value
      * @param int    $ttl
      *
-     * @return string
+     * @return bool
      */
     public function set($key, $value, $ttl = null)
     {
@@ -195,7 +195,7 @@ class CacheRedis implements CacheInterface
      * @param iterable $values
      * @param int      $ttl
      *
-     * @return TRUE in case of success, FALSE in case of failure.
+     * @return bool TRUE in case of success, FALSE in case of failure.
      */
     public function setMultiple($values, $ttl = null)
     {
