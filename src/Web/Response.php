@@ -148,7 +148,7 @@ class Response extends \Swoft\Base\Response
     public function auto($data = null, int $status = 200): Response
     {
         $accepts = RequestContext::getRequest()->getHeader('accept');
-        $currentAccept = current($accepts);
+        $currentAccept = is_array($accepts) ? current($accepts) : '*/*';
         $controllerClass = RequestContext::getContextDataByKey('controllerClass');
         $controllerAction = RequestContext::getContextDataByKey('controllerAction');
         $template = Collector::$requestMapping[$controllerClass]['view'][$controllerAction]['template'] ?? null;
