@@ -8,6 +8,7 @@ use Swoft\Contract\Arrayable;
 use Swoft\Helper\JsonHelper;
 use Swoft\Helper\StringHelper;
 use Swoft\App;
+use Swoft\Web\Streams\SwooleStream;
 
 /**
  * 响应response
