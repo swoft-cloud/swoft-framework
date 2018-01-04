@@ -66,10 +66,10 @@ class Reload
             sleep($this->interval);
             $md5File = FileHelper::md5File($this->watchDir);
             if(strcmp($this->md5File, $md5File) !== 0){
-                echo "开始自动reloading...\n";
+                echo "Start reloading...\n";
                 $this->server->isRunning();
                 $this->server->getServer()->reload();
-                echo "自动成功\n";
+                echo "Reloaded\n";
             }
             $this->md5File = $md5File;
         }
