@@ -14,18 +14,4 @@ return [
         "useProvider" => true,
         'provider'    => 'p',
     ],
-    'test2' => [
-        'name' => 'test2',
-        "uri"         => [
-            '127.0.0.1:6379',
-            '127.0.0.1:6378',
-        ],
-        "maxIdel"     => 2,
-        "maxActive"   => 2,
-        "maxWait"     => 2,
-        "timeout"     => 2,
-        "balancer"    => 'b2',
-        "useProvider" => true,
-        'provider'    => 'p2',
-    ],
 ];
