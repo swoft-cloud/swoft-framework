@@ -4,4 +4,4 @@
      * @Column(name="{{property}}", type={{type}}{{length}})
 {{@Required}}
      */
-    private ${{property}}{{hasDefault}}
+    private ${{aliasProperty}}{{hasDefault}}
