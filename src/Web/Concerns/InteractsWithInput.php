@@ -3,7 +3,7 @@
 namespace Swoft\Web\Concerns;
 
 use Swoft\Helper\JsonHelper;
-use Swoft\Web\SwooleStream;
+use Swoft\Web\Streams\SwooleStream;
 
 /**
  * @uses      InteractsWithInput
