@@ -26,7 +26,8 @@ class RegAspect
     /**
      * @Around()
      */
-    public function around(ProceedingJoinPoint $proceedingJoinPoint){
+    public function around(ProceedingJoinPoint $proceedingJoinPoint)
+    {
         $tag = ' RegAspect around before ';
         $result = $proceedingJoinPoint->proceed();
         $tag .= ' RegAspect around after ';

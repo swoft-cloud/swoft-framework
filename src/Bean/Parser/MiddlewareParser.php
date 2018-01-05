@@ -5,7 +5,6 @@ namespace Swoft\Bean\Parser;
 use Swoft\Bean\Collector;
 use Swoft\Bean\Annotation\Middleware;
 
-
 /**
  * @uses      MiddlewareParser
  * @version   2017-11-17
@@ -38,24 +37,24 @@ class MiddlewareParser extends AbstractParser
             $objectAnnotation->getClass()
         ];
 
-        if(isset(Collector::$requestMapping[$className]) && !empty($methodName)){
+        if (isset(Collector::$requestMapping[$className]) && !empty($methodName)) {
             $scanMiddlewares = Collector::$requestMapping[$className]['middlewares']['actions'][$methodName]??[];
             Collector::$requestMapping[$className]['middlewares']['actions'][$methodName] = array_merge($middlewares, $scanMiddlewares);
             return null;
         }
 
-        if(isset(Collector::$requestMapping[$className]) && empty($methodName)){
+        if (isset(Collector::$requestMapping[$className]) && empty($methodName)) {
             $scanMiddlewares = Collector::$requestMapping[$className]['middlewares']['group']??[];
             Collector::$requestMapping[$className]['middlewares']['group'] = array_merge($middlewares, $scanMiddlewares);
             return null;
         }
-        if(isset(Collector::$serviceMapping[$className]) && !empty($methodName)){
+        if (isset(Collector::$serviceMapping[$className]) && !empty($methodName)) {
             $scanMiddlewares = Collector::$serviceMapping[$className]['middlewares']['actions'][$methodName]??[];
             Collector::$serviceMapping[$className]['middlewares']['actions'][$methodName] = array_merge($middlewares, $scanMiddlewares);
             return null;
         }
 
-        if(isset(Collector::$serviceMapping[$className]) && empty($methodName)){
+        if (isset(Collector::$serviceMapping[$className]) && empty($methodName)) {
             $scanMiddlewares = Collector::$serviceMapping[$className]['middlewares']['group']??[];
             Collector::$serviceMapping[$className]['middlewares']['group'] = array_merge($middlewares, $scanMiddlewares);
 

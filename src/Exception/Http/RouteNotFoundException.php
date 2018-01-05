@@ -2,7 +2,6 @@
 
 namespace Swoft\Exception\Http;
 
-
 /**
  * @uses      RouteNotFoundException
  * @version   2017年11月14日
@@ -12,5 +11,4 @@ namespace Swoft\Exception\Http;
  */
 class RouteNotFoundException extends NotFoundException
 {
-
 }

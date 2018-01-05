@@ -11,5 +11,4 @@ namespace Swoft\Exception;
  */
 class LoginException extends \LogicException
 {
-
 }

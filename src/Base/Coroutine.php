@@ -130,5 +130,4 @@ class Coroutine
     {
         return App::isWorkerStatus() && swoole_version() >= '2.0.11';
     }
-    
 }

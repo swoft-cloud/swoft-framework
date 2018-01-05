@@ -52,7 +52,9 @@ class HandlerAdapter implements HandlerAdapterInterface
         if ($status === HandlerMapping::METHOD_NOT_ALLOWED) {
             throw new MethodNotAllowedException(sprintf(
                 "Method '%s' not allowed for access %s, Allow: %s",
-                $request->getMethod(), $path, implode(',', $routeInfo[2])
+                $request->getMethod(),
+                $path,
+                implode(',', $routeInfo[2])
             ));
         }
 

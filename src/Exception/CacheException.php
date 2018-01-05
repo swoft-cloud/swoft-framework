@@ -1,6 +1,7 @@
 <?php
 
 namespace Swoft\Exception;
+
 use Psr\SimpleCache\InvalidArgumentException;
 
 /**
@@ -12,7 +13,6 @@ use Psr\SimpleCache\InvalidArgumentException;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class CacheException  extends \Exception implements InvalidArgumentException
+class CacheException extends \Exception implements InvalidArgumentException
 {
-
 }

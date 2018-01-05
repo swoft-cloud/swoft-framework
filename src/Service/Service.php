@@ -49,7 +49,6 @@ class Service
      */
     public static function call(string $serviceName, string $func, array $params = [], callable $fallback = null)
     {
-
         $profileKey = "$serviceName->" . $func;
 
         $criuitBreaker = App::getBreaker($serviceName);
@@ -92,7 +91,6 @@ class Service
      */
     public static function deferCall($serviceName, $func, array $params, $fallback = null)
     {
-
         $profile = "$serviceName->" . $func;
 
         /* @var $circuitBreaker CircuitBreaker */

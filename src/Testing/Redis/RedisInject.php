@@ -15,5 +15,4 @@ use Swoft\Bean\Annotation\Bean;
  */
 class RedisInject
 {
-
 }

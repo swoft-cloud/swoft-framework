@@ -23,5 +23,4 @@ trait ResponseTrait
     {
         return App::$isInTest ? new TestingBaseResponse() : new BaseResponse();
     }
-
 }

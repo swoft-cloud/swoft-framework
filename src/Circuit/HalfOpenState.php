@@ -37,7 +37,7 @@ class HalfOpenState extends CircuitBreakerState
         // 加锁
         $lock = $this->circuitBreaker->getHalfOpenLock();
         $lock->lock();
-        list($class ,$method) = $callback;
+        list($class, $method) = $callback;
 
         try {
             if ($class === null) {

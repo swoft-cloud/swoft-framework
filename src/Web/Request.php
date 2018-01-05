@@ -16,7 +16,6 @@ use Swoft\Web\Streams\SwooleStream;
  */
 class Request extends Psr7Request implements ServerRequestInterface
 {
-
     use InteractsWithInput;
 
     /**
@@ -367,7 +366,7 @@ class Request extends Psr7Request implements ServerRequestInterface
      */
     public function addParserBody(string $name, $value)
     {
-        if(is_array($this->parsedBody)){
+        if (is_array($this->parsedBody)) {
             $clone = clone $this;
             $clone->parsedBody[$name] = $value;
 
@@ -525,5 +524,4 @@ class Request extends Psr7Request implements ServerRequestInterface
         $this->swooleRequest = $swooleRequest;
         return $this;
     }
-
 }

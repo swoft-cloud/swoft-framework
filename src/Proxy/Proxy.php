@@ -109,7 +109,6 @@ class Proxy
         $reflectionParameters = $reflectionMethod->getParameters();
         $paramCount           = count($reflectionParameters);
         foreach ($reflectionParameters as $reflectionParameter) {
-
             $paramCount--;
             // the type of parameter
             $type = $reflectionParameter->getType();
@@ -173,5 +172,3 @@ class Proxy
         return $template;
     }
 }
-
-

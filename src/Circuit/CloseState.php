@@ -30,7 +30,7 @@ class CloseState extends CircuitBreakerState
      */
     public function doCall($callback, $params = [], $fallback = null)
     {
-        list($class ,$method) = $callback;
+        list($class, $method) = $callback;
 
         try {
             if ($class == null) {

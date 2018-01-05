@@ -91,7 +91,7 @@ class RequestHandler implements RequestHandlerInterface
         $chunkArray = array_chunk($this->middlewares, $offset);
         $after = [];
         $before = $chunkArray[0];
-        if(isset($chunkArray[1])){
+        if (isset($chunkArray[1])) {
             $after = $chunkArray[1];
         }
         $middlewares = array_merge((array)$before, $middlewares, (array)$after);

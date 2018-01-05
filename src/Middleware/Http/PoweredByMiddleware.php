@@ -8,7 +8,6 @@ use Psr\Http\Message\ServerRequestInterface;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Middleware\MiddlewareInterface;
 
-
 /**
  * add powere by
  *
@@ -36,5 +35,4 @@ class PoweredByMiddleware implements MiddlewareInterface
         $response = $handler->handle($request);
         return $response->withAddedHeader('X-Powered-By', 'Swoft');
     }
-
 }

@@ -21,7 +21,6 @@ use Swoft\Web\Streams\SwooleStream;
  */
 class Response extends \Swoft\Base\Response
 {
-
     use ViewRendererTrait;
 
     /**
@@ -274,5 +273,4 @@ class Response extends \Swoft\Base\Response
     {
         return StringHelper::contains($accept, $keyword) === true;
     }
-
 }

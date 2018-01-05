@@ -2,7 +2,6 @@
 
 namespace Swoft\Pipeline;
 
-
 /**
  * @uses      PipelineBuilder
  * @version   2017年11月15日
@@ -40,5 +39,4 @@ class PipelineBuilder
     {
         return new Pipeline($this->stages, $processor);
     }
-
 }

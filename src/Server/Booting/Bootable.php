@@ -11,7 +11,5 @@ namespace Swoft\Server\Booting;
  */
 interface Bootable
 {
-
     public function bootstrap();
-
 }

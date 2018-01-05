@@ -11,7 +11,5 @@ namespace Swoft\Exception\Http;
  */
 class NotFoundException extends HttpException
 {
-
     protected $code = 404;
-
 }

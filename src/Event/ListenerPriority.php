@@ -19,5 +19,4 @@ final class ListenerPriority
     const ABOVE_NORMAL = 100;
     const HIGH         = 200;
     const MAX          = 300;
-
-}// end class ListenerLevel
+}

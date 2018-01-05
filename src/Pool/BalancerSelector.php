@@ -45,8 +45,7 @@ class BalancerSelector implements SelectorInterface
     public function select(string $type)
     {
         $balancers = $this->mergeBalancers();
-        if(!isset($balancers[$type])){
-
+        if (!isset($balancers[$type])) {
         }
 
         $balancerBeanName = $balancers[$type];

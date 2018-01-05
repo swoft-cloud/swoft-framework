@@ -375,5 +375,4 @@ trait MessageTrait
             return false;
         }
     }
-
 }

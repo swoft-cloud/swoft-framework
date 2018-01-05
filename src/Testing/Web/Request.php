@@ -7,7 +7,6 @@
 
 namespace Swoft\Testing\Web;
 
-
 use Swoft\App;
 
 class Request extends \Swoft\Web\Request
@@ -19,6 +18,4 @@ class Request extends \Swoft\Web\Request
         }
         parent::__construct($method, $uri, $headers, $body, $version);
     }
-
-
 }

@@ -15,7 +15,6 @@ use Swoft\Helper\DirHelper;
  */
 class LoadInitConfiguration implements Bootable
 {
-
     public function bootstrap()
     {
         $path = App::getAlias('@configs');

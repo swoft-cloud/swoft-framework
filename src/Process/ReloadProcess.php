@@ -56,5 +56,4 @@ class ReloadProcess extends AbstractProcess
 
         return true;
     }
-
 }

@@ -248,5 +248,4 @@ class Request
         $key = strtolower($key);
         return $this->headers[$key] ?? $default;
     }
-
 }

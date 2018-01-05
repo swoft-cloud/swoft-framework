@@ -62,10 +62,10 @@ class Reload
      */
     public function run()
     {
-        while (true){
+        while (true) {
             sleep($this->interval);
             $md5File = FileHelper::md5File($this->watchDir);
-            if(strcmp($this->md5File, $md5File) !== 0){
+            if (strcmp($this->md5File, $md5File) !== 0) {
                 echo "Start reloading...\n";
                 $this->server->isRunning();
                 $this->server->getServer()->reload();
