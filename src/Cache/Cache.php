@@ -29,7 +29,7 @@ class Cache
     /**
      * @var string
      */
-    private $type = 'redis';
+    private $driver = 'redis';
 
     /**
      * @var array
@@ -47,7 +47,7 @@ class Cache
      */
     public function getCache(string $driver = null): CacheInterface
     {
-        $cacheDriver = $this->type;
+        $cacheDriver = $this->driver;
         $drivers     = $this->mergeDrivers();
 
         if ($driver != null) {
