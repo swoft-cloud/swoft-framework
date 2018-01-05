@@ -11,7 +11,5 @@ namespace Swoft\Exception\Http;
  */
 class ForbiddenException extends HttpException
 {
-
     protected $code = 403;
-
 }

@@ -105,9 +105,9 @@ class EntityController extends ConsoleController
         $pool = App::getBean(DbSlavePool::class);
         $driver = $pool->getDriver();
         if (in_array($driver, $this->drivers)) {
-           $schema = new Schema();
-           $schema->setDriver($driver);
-           $this->schema = $schema;
+            $schema = new Schema();
+            $schema->setDriver($driver);
+            $this->schema = $schema;
         } else {
             throw new \RuntimeException('There is no corresponding driver matching schema');
         }

@@ -4,7 +4,6 @@ namespace Swoft\Bean\Annotation;
 
 use Doctrine\Common\Annotations\Annotation\Target;
 
-
 /**
  * @Annotation
  * @Target({"ALL"})
@@ -70,5 +69,4 @@ class Middlewares
     {
         return $this->group;
     }
-
 }

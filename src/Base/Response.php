@@ -17,7 +17,6 @@ use Swoft\Web\MessageTrait;
  */
 class Response implements ResponseInterface
 {
-
     use MessageTrait;
 
     /** @var array Map of standard HTTP status code/reason phrases */
@@ -178,7 +177,6 @@ class Response implements ResponseInterface
      */
     public function send()
     {
-
     }
 
     /**
@@ -416,5 +414,4 @@ class Response implements ResponseInterface
     {
         return in_array($this->statusCode, array(204, 304));
     }
-
 }

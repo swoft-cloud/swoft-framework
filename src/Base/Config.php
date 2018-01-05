@@ -242,5 +242,4 @@ class Config implements \ArrayAccess, \Iterator
         $this->properties = $mapping;
         return $this;
     }
-
 }

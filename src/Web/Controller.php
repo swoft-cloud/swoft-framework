@@ -48,5 +48,4 @@ abstract class Controller extends \Swoft\Base\Controller
         $response = $this->runAction($actionId, $params);
         return $response;
     }
-
 }

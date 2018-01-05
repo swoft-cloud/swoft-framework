@@ -11,7 +11,6 @@ namespace Swoft\Server\Booting;
  */
 class InitMbFunsEncoding implements Bootable
 {
-
     public function bootstrap()
     {
         mb_internal_encoding("UTF-8");

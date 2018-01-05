@@ -13,5 +13,4 @@ namespace Swoft\Web;
  */
 class Application extends \Swoft\Base\Application
 {
-
 }

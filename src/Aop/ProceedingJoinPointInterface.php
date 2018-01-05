@@ -19,5 +19,4 @@ interface ProceedingJoinPointInterface
      * @return mixed
      */
     public function proceed($params = []);
-
 }

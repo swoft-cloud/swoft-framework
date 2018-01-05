@@ -984,7 +984,6 @@ class StringHelper
 
     public static function trim($str, $prefix = '', $suffix = '')
     {
-
     }
 
     public static function strSplit($str, $splitLength = 1)
@@ -1075,7 +1074,7 @@ class StringHelper
         }
 
         // Make sure alnum strings contain at least one letter and one digit
-        if ($type === 'alnum' AND $length > 1) {
+        if ($type === 'alnum' and $length > 1) {
             if (ctype_alpha($str)) {
                 // Add a random digit
                 $str[mt_rand(0, $length - 1)] = chr(mt_rand(48, 57));
@@ -1092,5 +1091,4 @@ class StringHelper
     {
         return is_string($str) && ! preg_match('/[^\x00-\x7F]/S', $str);
     }
-
 }

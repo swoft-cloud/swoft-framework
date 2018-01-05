@@ -6,7 +6,6 @@ use Swoft\Bean\Annotation\Middleware;
 use Swoft\Bean\Annotation\Middlewares;
 use Swoft\Bean\Collector;
 
-
 /**
  * @uses      MiddlewaresParser
  * @version   2017-11-17
@@ -43,25 +42,25 @@ class MiddlewaresParser extends AbstractParser
         }
         $middlewares = array_unique($middlewares);
 
-        if(isset(Collector::$requestMapping[$className]) && !empty($methodName)){
+        if (isset(Collector::$requestMapping[$className]) && !empty($methodName)) {
             $scanMiddlewares = Collector::$requestMapping[$className]['middlewares']['actions'][$methodName]??[];
             Collector::$requestMapping[$className]['middlewares']['actions'][$methodName] = array_merge($scanMiddlewares, $middlewares);
             return null;
         }
 
-        if(isset(Collector::$requestMapping[$className]) && empty($methodName)){
+        if (isset(Collector::$requestMapping[$className]) && empty($methodName)) {
             $scanMiddlewares = Collector::$requestMapping[$className]['middlewares']['group']??[];
             Collector::$requestMapping[$className]['middlewares']['group'] = array_merge($scanMiddlewares, $middlewares);
             return null;
         }
 
-        if(isset(Collector::$serviceMapping[$className]) && !empty($methodName)){
+        if (isset(Collector::$serviceMapping[$className]) && !empty($methodName)) {
             $scanMiddlewares = Collector::$serviceMapping[$className]['middlewares']['actions'][$methodName]??[];
             Collector::$serviceMapping[$className]['middlewares']['actions'][$methodName] = array_merge($scanMiddlewares, $middlewares);
             return null;
         }
 
-        if(isset(Collector::$serviceMapping[$className]) && empty($methodName)){
+        if (isset(Collector::$serviceMapping[$className]) && empty($methodName)) {
             $scanMiddlewares = Collector::$serviceMapping[$className]['middlewares']['group']??[];
             Collector::$serviceMapping[$className]['middlewares']['group'] = array_merge($scanMiddlewares, $middlewares);
             return null;

@@ -15,5 +15,4 @@ use Swoft\Pool\AbstractConnect;
  */
 abstract class AbstractServiceConnect extends AbstractConnect implements IServiceConnect
 {
-
 }

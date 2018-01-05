@@ -29,14 +29,14 @@ class AfterTaskListener implements EventHandlerInterface
      */
     public function handle(EventInterface $event)
     {
-        if(\count($event->getParams()) <= 0){
+        if (\count($event->getParams()) <= 0) {
             return ;
         }
 
         $type = $event->getParam(0);
         App::getLogger()->appendNoticeLog(true);
 
-        if($type != Task::TYPE_CRON){
+        if ($type != Task::TYPE_CRON) {
             RequestContext::destroy();
         }
     }

@@ -2,7 +2,6 @@
 
 namespace Swoft\Pipeline;
 
-
 /**
  * @uses      AbstractProcessor
  * @version   2017年11月15日
@@ -27,5 +26,4 @@ abstract class AbstractProcessor implements ProcessorInterface
     {
         $stages && $this->stages = $stages;
     }
-
 }

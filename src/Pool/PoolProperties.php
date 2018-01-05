@@ -160,7 +160,7 @@ class PoolProperties implements PoolConfigInterface
      */
     public function init()
     {
-        if(empty($this->name)){
+        if (empty($this->name)) {
             $this->name = uniqid();
         }
     }

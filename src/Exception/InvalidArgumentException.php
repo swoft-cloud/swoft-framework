@@ -11,5 +11,4 @@ namespace Swoft\Exception;
  */
 class InvalidArgumentException extends \InvalidArgumentException
 {
-
 }

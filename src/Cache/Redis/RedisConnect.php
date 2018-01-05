@@ -40,11 +40,11 @@ class RedisConnect extends AbstractConnect
             App::error("redis 连接失败，host=" . $config['host'] . " port=" . $config['port'] . " timeout=" . $timeout);
             return;
         }
-        if(isset($config['auth']) && false === $redis->auth($config['auth'])){
+        if (isset($config['auth']) && false === $redis->auth($config['auth'])) {
             App::error("redis 连接认证失败，host=" . $config['host'] . " port=" . $config['port'] . " timeout=" . $timeout);
             return;
         }
-        if(isset($config['database']) && $config['database'] < 16 && false === $redis->select($config['database'])){
+        if (isset($config['database']) && $config['database'] < 16 && false === $redis->select($config['database'])) {
             App::warning("redis 连接选择仓库失败，host=" . $config['host'] . " port=" . $config['port'] . " timeout=" . $timeout);
         }
 
@@ -56,7 +56,6 @@ class RedisConnect extends AbstractConnect
      */
     public function reConnect()
     {
-
     }
 
     /**

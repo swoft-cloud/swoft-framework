@@ -109,5 +109,4 @@ abstract class Controller
     {
         return $this->actionPrefix;
     }
-
 }

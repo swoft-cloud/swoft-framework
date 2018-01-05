@@ -16,7 +16,6 @@ use Swoft\Web\Streams\SwooleStream;
  */
 class Psr7Request implements RequestInterface
 {
-
     use MessageTrait;
 
     /**
@@ -245,5 +244,4 @@ class Psr7Request implements RequestInterface
         // Ensure Host is the first header.
         $this->headers = [$header => [$host]] + $this->headers;
     }
-
 }

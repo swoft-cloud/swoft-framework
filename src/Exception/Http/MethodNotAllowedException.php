@@ -11,7 +11,5 @@ namespace Swoft\Exception\Http;
  */
 class MethodNotAllowedException extends HttpException
 {
-
     protected $code = 405;
-
 }

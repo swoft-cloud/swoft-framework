@@ -21,7 +21,7 @@ class RedisAnnotation
      * @Cacheable()
      * @param mixed $id
      */
-    public function findById($id){
-
+    public function findById($id)
+    {
     }
 }

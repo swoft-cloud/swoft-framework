@@ -138,7 +138,6 @@ class ValidatorHelper
     {
         if (!is_string($value)) {
             return self::validateError("$value is not string", $throws);
-
         }
         $length = mb_strlen($value);
         if ($min !== null && $length < $min) {
@@ -150,7 +149,6 @@ class ValidatorHelper
         }
 
         return $value;
-
     }
 
     /**

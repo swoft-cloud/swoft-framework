@@ -7,7 +7,6 @@ use Swoft\App;
 use Swoft\Helper\JsonHelper;
 use Swoft\Http\HttpResult;
 
-
 /**
  * @uses      CurlAdapter
  * @version   2017-11-22
@@ -17,7 +16,6 @@ use Swoft\Http\HttpResult;
  */
 class CurlAdapter implements AdapterInterface
 {
-
     use ResponseTrait;
 
     /**
@@ -224,7 +222,7 @@ class CurlAdapter implements AdapterInterface
                 $postFields = $this->buildPostFields($options);
                 curl_setopt($resource, CURLOPT_POSTFIELDS, $postFields);
                 break;
-            case 'PUT' :
+            case 'PUT':
             case 'DELETE':
                 $postFields = $this->buildPostFields($options);
                 curl_setopt($resource, CURLOPT_CUSTOMREQUEST, strtoupper($request->getMethod()));
@@ -271,5 +269,4 @@ class CurlAdapter implements AdapterInterface
             throw new \RuntimeException('Curl extension required');
         }
     }
-
 }

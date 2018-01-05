@@ -92,9 +92,9 @@ interface ITable
 
     /**
      * 获取一行数据
-     * 
+     *
      * @param string $key   索引键
-     * @param string $field 列名 
+     * @param string $field 列名
      */
     public function get(string $key, $field = null);
 

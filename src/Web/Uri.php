@@ -487,8 +487,13 @@ class Uri implements UriInterface
      */
     public function __toString()
     {
-        return self::composeComponents($this->scheme, $this->getAuthority(), $this->path, $this->query,
-            $this->fragment);
+        return self::composeComponents(
+            $this->scheme,
+            $this->getAuthority(),
+            $this->path,
+            $this->query,
+            $this->fragment
+        );
     }
 
     /**
@@ -665,11 +670,14 @@ class Uri implements UriInterface
             throw new \InvalidArgumentException('Path must be a string');
         }
 
-        return preg_replace_callback('/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/',
+        return preg_replace_callback(
+            '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/',
             [
                 $this,
                 'rawurlencodeMatchZero'
-            ], $path);
+            ],
+            $path
+        );
     }
 
     /**
@@ -685,11 +693,14 @@ class Uri implements UriInterface
             throw new \InvalidArgumentException('Query and fragment must be a string');
         }
 
-        return preg_replace_callback('/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
+        return preg_replace_callback(
+            '/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
             [
                 $this,
                 'rawurlencodeMatchZero'
-            ], $str);
+            ],
+            $str
+        );
     }
 
     /**
@@ -700,5 +711,4 @@ class Uri implements UriInterface
     {
         return rawurlencode($match[0]);
     }
-
 }

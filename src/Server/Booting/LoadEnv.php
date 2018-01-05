@@ -14,7 +14,6 @@ use Swoft\App;
  */
 class LoadEnv implements Bootable
 {
-
     public function bootstrap()
     {
         $file = '.env';

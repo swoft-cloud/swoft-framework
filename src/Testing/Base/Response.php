@@ -13,7 +13,6 @@ use Swoft\App;
  */
 class Response extends \Swoft\Base\Response
 {
-
     use ResponseAssertTrait;
 
     public function __construct()
@@ -22,5 +21,4 @@ class Response extends \Swoft\Base\Response
             throw new \RuntimeException(sprintf('Is not available to use %s in non testing enviroment', __CLASS__));
         }
     }
-
 }

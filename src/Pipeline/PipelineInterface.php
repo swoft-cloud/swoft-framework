@@ -2,7 +2,6 @@
 
 namespace Swoft\Pipeline;
 
-
 /**
  * @uses      PipelineInterface
  * @version   2017年11月15日
@@ -44,5 +43,4 @@ interface PipelineInterface
      * @return mixed
      */
     public function then(\Closure $destination);
-
 }

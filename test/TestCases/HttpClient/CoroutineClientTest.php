@@ -8,7 +8,6 @@ use Swoft\Http\Client;
 use Swoft\Test\AbstractTestCase;
 use Swoft\Testing\Base\Response;
 
-
 /**
  * @uses      CoroutineClientTest
  * @version   2017-11-22
@@ -307,5 +306,4 @@ class CoroutineClientTest extends AbstractTestCase
             swoole_event_exit();
         });
     }
-
 }

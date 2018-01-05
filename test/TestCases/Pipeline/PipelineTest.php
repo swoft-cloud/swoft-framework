@@ -7,7 +7,6 @@ use Swoft\Test\Pipeline\Pipeline\ExceptionProcessor;
 use Swoft\Test\Pipeline\Pipeline\TestProcessor;
 use Swoft\Pipeline\Pipeline;
 
-
 /**
  * @uses      PipelineTest
  * @version   2017年11月15日
@@ -25,7 +24,8 @@ class PipelineTest extends AbstractTestCase
     {
         // 一般流程测试
         $pipeline = new Pipeline();
-        $result = $pipeline->add(TestProcessor::class)->add([TestProcessor::class, 'process'])->add(function ($payload
+        $result = $pipeline->add(TestProcessor::class)->add([TestProcessor::class, 'process'])->add(function (
+            $payload
         ) {
             return $payload + 1;
         })->process(1);
@@ -60,6 +60,4 @@ class PipelineTest extends AbstractTestCase
         $pipeline = new Pipeline();
         $pipeline->add(ExceptionProcessor::class)->process(1);
     }
-
-
 }

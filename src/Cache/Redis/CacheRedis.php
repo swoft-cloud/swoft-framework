@@ -291,5 +291,4 @@ class CacheRedis implements CacheInterface
     {
         return ($ttl == null) ? 0 : (int)$ttl;
     }
-
 }

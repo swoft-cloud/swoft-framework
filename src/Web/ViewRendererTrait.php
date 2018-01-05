@@ -79,5 +79,4 @@ trait ViewRendererTrait
         $result = $this->getRenderer()->renderContent($string, $data);
         return RequestContext::getResponse()->withContent($result);
     }
-
 }

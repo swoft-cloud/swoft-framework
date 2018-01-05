@@ -47,9 +47,9 @@ class Crontab
      */
     public function init(): bool
     {
-         // 非cli命令行
+        // 非cli命令行
         $context = ApplicationContext::getContext();
-        if($context == ApplicationContext::CONSOLE){
+        if ($context == ApplicationContext::CONSOLE) {
             return false;
         }
         $serverSetting = App::$server->getServerSetting();
