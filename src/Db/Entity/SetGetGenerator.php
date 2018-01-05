@@ -263,12 +263,11 @@ class SetGetGenerator
      */
     private function checkAliasProperty(string &$aliasProperty): bool
     {
-        if (!preg_match('/^[A-Za-z|_]/', $aliasProperty)) {
-            $aliasProperty = $this->prefix . $aliasProperty;
-        }
+        preg_match_all('/\w+/', $aliasProperty, $match);
+        $aliasProperty = implode('', $match[0]);
 
-        if (strpos($aliasProperty, '$') !== false) {
-            $aliasProperty = str_replace('$', '', $aliasProperty);
+        if (!preg_match('/^([A-z]|_]+)/', $aliasProperty)) {
+            $aliasProperty = $this->prefix . $aliasProperty;
         }
 
         return true;
