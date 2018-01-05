@@ -98,4 +98,20 @@ class RedisPoolConfig extends PoolProperties
      * @var string
      */
     protected $provider = ProviderSelector::TYPE_CONSUL;
+
+    /**
+     * the index of redis db
+     *
+     * @Value(name="${config.cache.redis.db}", env="${REDIS_DB}")
+     * @var int
+     */
+    protected $db = 0;
+
+    /**
+     * @return int
+     */
+    public function getDb(): int
+    {
+        return $this->db;
+    }
 }

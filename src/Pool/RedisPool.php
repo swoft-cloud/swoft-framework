@@ -3,7 +3,6 @@
 namespace Swoft\Pool;
 
 use Swoft\App;
-use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Inject;
 use Swoft\Bean\Annotation\Pool;
 use Swoft\Cache\Redis\RedisConnect;
@@ -38,9 +37,15 @@ class RedisPool extends ConnectPool
     public function createConnect()
     {
         if (App::isWorkerStatus()) {
-            return new RedisConnect($this);
+            $redis = new RedisConnect($this);
+        } else {
+            $redis = new SyncRedisConnect($this);
         }
-        return new SyncRedisConnect($this);
+
+        $dbIndex = $this->poolConfig->getDb();
+        $redis->select($dbIndex);
+
+        return $redis;
     }
 
     public function reConnect($client)
