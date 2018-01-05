@@ -84,13 +84,13 @@ abstract class AbstractGenerator
      * @param array  $fields     字段
      * @param Schema $schema     schema对象
      */
-    protected function parseProperty(string $entity, $entityName , array $fields, Schema $schema)
+    protected function parseProperty(string $entity, $entityName, array $fields, Schema $schema)
     {
-        $this->entity = $entity;
-        $this->entityName = $entityName;
+        $this->entity      = $entity;
+        $this->entityName  = $entityName;
         $this->entityClass = ucwords($this->entity);
-        $this->entityDate = date('Y年m月d日');
-        $this->fields = $fields;
+        $this->entityDate  = date('Y年m月d日');
+        $this->fields      = $fields;
 
         $param = [
             $schema,
