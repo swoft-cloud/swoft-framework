@@ -5,7 +5,7 @@ namespace Swoft\Db\Entity;
 use Swoft\App;
 
 /**
- * Stub操作类 
+ * Stub操作类
  *
  * @uses      SetGetGenerator
  * @version   2017年11月7日
@@ -32,7 +32,7 @@ class SetGetGenerator
     private $modelStubFile = 'Model.stub';
 
     /**
-     * @var string $PropertyStubFile PropertyStub 
+     * @var string $PropertyStubFile PropertyStub
      */
     private $propertyStubFile = 'Property.stub';
 
@@ -86,8 +86,8 @@ class SetGetGenerator
         $entityName,
         string $entityClass,
         string $entityDate,
-        array $fields)
-    {
+        array $fields
+    ) {
         $this->schema = $schema;
         $entityStub = $this->generateModel();
         $usesContent = '';
@@ -159,9 +159,9 @@ class SetGetGenerator
         $comment = $fieldInfo['column_comment'];
         $isEnum = strpos($columnType, 'enum') === false ? false : true;
         if ($isEnum) {
-           preg_match_all("/enum\((.*?)\)/", $columnType, $matches); 
-           $enumParam = $matches[1][0];
-           $enumParam = explode(',', str_replace('\'', '', $enumParam));
+            preg_match_all("/enum\((.*?)\)/", $columnType, $matches);
+            $enumParam = $matches[1][0];
+            $enumParam = explode(',', str_replace('\'', '', $enumParam));
         }
 
         $formatComment = "     * @var {$phpType} \${$property} {$comment}\n";

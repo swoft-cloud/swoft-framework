@@ -15,7 +15,6 @@ use Swoft\Server\AbstractServer;
  */
 class InitSwoftConfig implements Bootable
 {
-
     public function bootstrap()
     {
         $server = App::$server;

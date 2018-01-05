@@ -11,7 +11,5 @@ namespace Swoft\Exception\Http;
  */
 class UnauthorizedException extends HttpException
 {
-
     protected $code = 401;
-
 }

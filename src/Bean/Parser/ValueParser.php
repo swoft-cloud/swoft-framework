@@ -63,7 +63,7 @@ class ValueParser extends AbstractParser
      */
     private function getTransferEnvValue($value, bool $isArray)
     {
-        if($value === null){
+        if ($value === null) {
             return null;
         }
 

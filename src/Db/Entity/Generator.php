@@ -73,18 +73,18 @@ class Generator extends AbstractGenerator implements IGenerator
         $where[] = "TABLE_TYPE = 'BASE TABLE'";
         $where[] = "TABLE_SCHEMA = '{$this->db}'";
         if (!empty($this->tablesEnabled)) {
-            $tablesEnabled = array_map(function($item){
+            $tablesEnabled = array_map(function ($item) {
                 return "'{$item}'";
             }, $this->tablesEnabled);
             $where[] = 'TABLE_NAME IN (' . implode(',', $tablesEnabled) . ')';
         }
         if (!empty($this->tablesDisabled)) {
-            $tablesDisabled = array_map(function($item){
+            $tablesDisabled = array_map(function ($item) {
                 return "'{$item}'";
             }, $this->tablesDisabled);
             $where[] = 'TABLE_NAME NOT IN (' . implode(',', $tablesDisabled) . ')';
         }
-        $where = !empty($where) ? ' WHERE ' . implode(' AND ', $where) : null; 
+        $where = !empty($where) ? ' WHERE ' . implode(' AND ', $where) : null;
 
         $querySql = "SELECT `TABLE_NAME` AS `name`,`TABLE_COMMENT` as `comment` FROM {$schemaTable} {$where}";
         $this->dbHandler->prepare($querySql);
@@ -106,7 +106,7 @@ class Generator extends AbstractGenerator implements IGenerator
 
         $where[] = "TABLE_NAME = '{$table}'";
         $where[] = "TABLE_SCHEMA = '{$this->db}'";
-        $where = !empty($where) ? ' WHERE ' . implode(' AND ', $where) : null; 
+        $where = !empty($where) ? ' WHERE ' . implode(' AND ', $where) : null;
 
         $querySql = "SELECT `COLUMN_NAME` as `name`,`DATA_TYPE` as `type`,`CHARACTER_MAXIMUM_LENGTH` as `length`,`COLUMN_DEFAULT` as `default` ,`COLUMN_KEY` as `key`,`IS_NULLABLE` as `nullable`,`COLUMN_TYPE` as `column_type`,`COLUMN_COMMENT` as `column_comment` FROM {$schemaTable} {$where}";
         $this->dbHandler->prepare($querySql);
@@ -214,7 +214,7 @@ class Generator extends AbstractGenerator implements IGenerator
      * @param string $name 参数名
      * @param mixed  $value 参数值
      *
-     * @return self 
+     * @return self
      */
     public function __set($name, $value): self
     {

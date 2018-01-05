@@ -8,7 +8,6 @@ use Swoft\Base\Coroutine;
 use Swoft\Web\Psr7Request;
 use Swoft\Web\Uri;
 
-
 /**
  * @uses      Client
  * @version   2017-11-22
@@ -60,7 +59,6 @@ class Client
         }
 
         $this->configureDefaults($config);
-
     }
 
     /**
@@ -263,7 +261,6 @@ class Client
         $this->configs = $config + $defaults;
 
         // TODO add cookies settings after session and cookies feature finished
-
     }
 
     /**
@@ -357,5 +354,4 @@ class Client
             $this->configs['headers']['User-Agent'] = $this->getDefaultUserAgent();
         }
     }
-
 }

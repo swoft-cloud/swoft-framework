@@ -89,5 +89,4 @@ class HttpValidator extends AbstractValidator
 
         return $request;
     }
-
 }

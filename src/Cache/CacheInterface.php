@@ -13,5 +13,4 @@ namespace Swoft\Cache;
  */
 interface CacheInterface extends \Psr\SimpleCache\CacheInterface
 {
-
 }

@@ -31,7 +31,6 @@ class SyncServiceConnect extends AbstractServiceConnect
 
     public function reConnect()
     {
-
     }
 
     /**

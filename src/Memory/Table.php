@@ -286,7 +286,6 @@ class Table implements ITable
     {
         $method = 'get' . ucfirst($name);
         if (!method_exists($this, $method)) {
-
             throw new \RuntimeException('Call undefind property::' . $name);
         }
 

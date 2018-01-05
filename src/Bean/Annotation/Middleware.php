@@ -5,7 +5,6 @@ namespace Swoft\Bean\Annotation;
 use Doctrine\Common\Annotations\Annotation\Target;
 use Swoft\Helper\StringHelper;
 
-
 /**
  * @Annotation
  * @Target({"ALL"})
@@ -54,5 +53,4 @@ class Middleware
     {
         return $this->class;
     }
-
 }

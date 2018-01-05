@@ -43,5 +43,4 @@ class Scheduled
     {
         return $this->cron;
     }
-
 }

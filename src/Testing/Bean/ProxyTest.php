@@ -21,7 +21,6 @@ class ProxyTest extends ProxyBase
 
     public function __construct($c1, $c2)
     {
-
     }
 
     public function __set($name, $value)
@@ -31,48 +30,58 @@ class ProxyTest extends ProxyBase
 
     public static function staticMethod()
     {
-
     }
-    public function publicReturnAd($p ,&$data):Config {
+    public function publicReturnAd($p, &$data):Config
+    {
         return $p;
     }
 
-    public function publicReturnBool($p ,$strategy = false):Config {
+    public function publicReturnBool($p, $strategy = false):Config
+    {
         return $p;
     }
-    public function publicReturnBool2($p ,$strategy = true):Config {
-        return $p;
-    }
-
-    public function publicReturnObject2($p ,$strategy = ProviderSelector::TYPE_CONSUL):Config {
-        return $p;
-    }
-
-    public function publicReturnObject($p ,$strategy = ProviderSelector::TYPE_CONSUL):self {
+    public function publicReturnBool2($p, $strategy = true):Config
+    {
         return $p;
     }
 
-    public function publicReturnObject3($p ,$strategy = ProviderSelector::TYPE_CONSUL):ProxyTest {
+    public function publicReturnObject2($p, $strategy = ProviderSelector::TYPE_CONSUL):Config
+    {
         return $p;
     }
 
-    public function publicConst3($p ,$strategy = ProviderSelector::TYPE_CONSUL){
+    public function publicReturnObject($p, $strategy = ProviderSelector::TYPE_CONSUL):self
+    {
         return $p;
     }
 
-    public function publicConst2($p ,$strategy = __FILE__){
+    public function publicReturnObject3($p, $strategy = ProviderSelector::TYPE_CONSUL):ProxyTest
+    {
         return $p;
     }
 
-    public function publicConst($p ,$strategy = \Swoft\Helper\DirHelper::SCAN_BFS){
+    public function publicConst3($p, $strategy = ProviderSelector::TYPE_CONSUL)
+    {
         return $p;
     }
 
-    public function publicNull($p1, $deafult = null){
+    public function publicConst2($p, $strategy = __FILE__)
+    {
+        return $p;
+    }
+
+    public function publicConst($p, $strategy = \Swoft\Helper\DirHelper::SCAN_BFS)
+    {
+        return $p;
+    }
+
+    public function publicNull($p1, $deafult = null)
+    {
         return $p1;
     }
 
-    public function publicParams($p1, ...$params){
+    public function publicParams($p1, ...$params)
+    {
         return $p1 . count($params);
     }
     public function publicFun1($p1, $p2, $ary = [])

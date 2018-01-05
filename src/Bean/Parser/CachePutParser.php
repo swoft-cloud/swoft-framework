@@ -31,5 +31,4 @@ class CachePutParser extends AbstractParser
         Collector::$methodAnnotations[$className][$methodName][] = get_class($objectAnnotation);
         return null;
     }
-
 }

@@ -126,5 +126,4 @@ abstract class AbstractHandler
         $this->exception = $exception;
         return $this;
     }
-
 }

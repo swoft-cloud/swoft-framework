@@ -6,7 +6,6 @@ use Interop\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
-
 /**
  * middelware interface
  *
@@ -28,5 +27,4 @@ interface MiddlewareInterface extends \Interop\Http\Server\MiddlewareInterface
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface;
-
 }

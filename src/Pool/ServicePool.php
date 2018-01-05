@@ -25,7 +25,7 @@ class ServicePool extends ConnectPool
      */
     public function createConnect()
     {
-        if(App::isWorkerStatus()){
+        if (App::isWorkerStatus()) {
             return new ServiceConnect($this);
         }
         return new SyncServiceConnect($this);

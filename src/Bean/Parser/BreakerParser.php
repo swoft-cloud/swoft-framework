@@ -33,7 +33,6 @@ class BreakerParser extends AbstractParser
         string $methodName = "",
         $propertyValue = null
     ) {
-
         $breakerName = $objectAnnotation->getName();
         $breakerName = empty($breakerName) ? $className : $breakerName;
 
@@ -41,5 +40,4 @@ class BreakerParser extends AbstractParser
 
         return [$className, Scope::SINGLETON, ""];
     }
-
 }

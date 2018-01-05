@@ -22,7 +22,6 @@ use Swoft\Web\Streams\SwooleStream;
  */
 class HttpResult extends AbstractResult
 {
-
     use ResponseTrait;
 
     /**

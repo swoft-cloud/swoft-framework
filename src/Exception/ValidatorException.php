@@ -13,5 +13,4 @@ namespace Swoft\Exception;
  */
 class ValidatorException extends \Exception
 {
-
 }

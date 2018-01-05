@@ -25,7 +25,8 @@ class RegBean
         return 'regMethod2';
     }
 
-    public function methodParams($a, $b){
+    public function methodParams($a, $b)
+    {
         return 'methodParams-'.$a."-".$b;
     }
 }

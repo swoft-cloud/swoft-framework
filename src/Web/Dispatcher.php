@@ -38,5 +38,4 @@ class Dispatcher
         $response = (new RequestHandler($middlewares, $this->defaultHandler))->handle($request);
         return $response;
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace Swoft\Pipeline;
 
-
 /**
  * @uses      ProcessorInterface
  * @version   2017年11月15日
@@ -18,5 +17,4 @@ interface ProcessorInterface
      * @return mixed
      */
     public function process($payload);
-
 }

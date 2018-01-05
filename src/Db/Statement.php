@@ -219,7 +219,6 @@ trait Statement
      */
     public function getFromString()
     {
-
         $statement = "";
         if (empty($this->from)) {
             return $statement;
@@ -734,4 +733,3 @@ trait Statement
         return $this->from['alias'];
     }
 }
-

@@ -42,13 +42,12 @@ class CacheRedis implements CacheInterface
 
     public function clear()
     {
-
     }
 
     public function getMultiple($keys, $default = null)
     {
         $result = $this->call('mget', [$keys]);
-        if($result === false){
+        if ($result === false) {
             return $default;
         }
         return $result;
@@ -62,12 +61,10 @@ class CacheRedis implements CacheInterface
 
     public function deleteMultiple($keys)
     {
-
     }
 
     public function has($key)
     {
-
     }
 
     private function getTtl($ttl)
@@ -104,5 +101,4 @@ class CacheRedis implements CacheInterface
 
         return $result;
     }
-
 }

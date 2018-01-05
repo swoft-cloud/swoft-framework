@@ -78,5 +78,4 @@ class RequestParser implements RequestParserInterface
             'application/json' => RequestJsonParser::class,
         ];
     }
-
 }

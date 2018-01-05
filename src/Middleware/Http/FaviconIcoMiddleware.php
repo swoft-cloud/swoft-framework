@@ -9,7 +9,6 @@ use Swoft\Bean\Annotation\Bean;
 use Swoft\Exception\Http\NotAcceptableException;
 use Swoft\Middleware\MiddlewareInterface;
 
-
 /**
  * fix chrome bug
  *
