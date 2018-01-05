@@ -65,6 +65,10 @@ class ServerController extends ConsoleCommand
         if (!class_exists('Swoole\Coroutine')) {
             throw new \RuntimeException("The swoole is must enable coroutine by build param '--enable-coroutine'!");
         }
+
+        if (\extension_loaded('blackfire')) {
+            throw new \RuntimeException('The extension of blackfire must be closed, otherwise swoft will be affected!');
+        }
     }
 
     /**
