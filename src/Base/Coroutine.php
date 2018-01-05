@@ -2,6 +2,7 @@
 
 namespace Swoft\Base;
 
+use Swoft\App;
 use Swoft\Console\Console;
 use Swoft\Helper\PhpHelper;
 use Swoft\Process\Process;
@@ -47,7 +48,7 @@ class Coroutine
         if ($context == ApplicationContext::TASK) {
             return Task::getId();
         }
-        if($context == ApplicationContext::CONSOLE){
+        if ($context == ApplicationContext::CONSOLE) {
             return Console::id();
         }
 
@@ -102,4 +103,32 @@ class Coroutine
     {
         SwCoroutine::resume($corId);
     }
+
+    /**
+     * Is Support Coroutine
+     *
+     * @return bool
+     */
+    public static function isSupportCoroutine(): bool
+    {
+        if (swoole_version() >= '2.0.11') {
+            return true;
+        } else {
+            return App::isWorkerStatus();
+        }
+    }
+
+    /**
+     * Determine if should create a coroutine when you
+     * want to use a Coroutine Client, and you shoud
+     * always use self::isSupportCoroutine() before
+     * call this method.
+     *
+     * @return bool
+     */
+    public static function shouldWrapCoroutine()
+    {
+        return App::isWorkerStatus() && swoole_version() >= '2.0.11';
+    }
+    
 }

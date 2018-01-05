@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Web;
+namespace Swoft\Web\Streams;
 
 use Psr\Http\Message\StreamInterface;
 
@@ -29,7 +29,7 @@ class SwooleStream implements StreamInterface
      *
      * @param string $contents
      */
-    public function __construct($contents = '')
+    public function __construct(string $contents = '')
     {
         $this->contents = $contents;
         $this->size = strlen($this->contents);

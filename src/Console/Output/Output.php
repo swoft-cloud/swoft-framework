@@ -7,13 +7,13 @@ use Swoft\Console\Style\Style;
 /**
  * 输出
  *
- * @uses      Output
+ * @uses      OutputInterface
  * @version   2017年10月06日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class Output implements IOutput
+class Output implements OutputInterface
 {
     /**
      * 间隙字符
@@ -32,7 +32,6 @@ class Output implements IOutput
      * @param bool   $newline  是否换行
      * @param bool   $quit     是否退出
      *
-     * @return mixed
      */
     public function writeln($messages = '', $newline = true, $quit = false)
     {
@@ -73,19 +72,17 @@ class Output implements IOutput
      * @param string      $titleStyle 标题样式
      * @param string      $cmdStyle   命令样式
      * @param string|null $descStyle  描述样式
-     *
-     * @return mixed
      */
     public function writeList(array $list, $titleStyle = 'comment', string $cmdStyle = 'info', string $descStyle = null)
     {
         foreach ($list as $title => $items) {
             // 标题
             $title = "<$titleStyle>$title</$titleStyle>";
-            self::writeln($title);
+            $this->writeln($title);
 
             // 输出块内容
             $this->writeItems($items, $cmdStyle);
-            self::writeln("");
+            $this->writeln('');
         }
     }
 
@@ -99,19 +96,19 @@ class Output implements IOutput
     {
         foreach ($items as $cmd => $desc) {
             // 没有命令，只是一行数据
-            if (is_int($cmd)) {
+            if (\is_int($cmd)) {
                 $message = self::LEFT_CHAR . $desc;
-                self::writeln($message);
+                $this->writeln($message);
                 continue;
             }
 
             // 命令和描述
-            $maxLength = self::getCmdMaxLength(array_keys($items));
+            $maxLength = $this->getCmdMaxLength(array_keys($items));
             $cmd = str_pad($cmd, $maxLength, ' ');
             $cmd = "<$cmdStyle>$cmd</$cmdStyle>";
             $message = self::LEFT_CHAR . $cmd . self::GAP_CHAR . $desc;
-            self::writeln($message);
 
+            $this->writeln($message);
         }
     }
 
@@ -125,13 +122,15 @@ class Output implements IOutput
     private function getCmdMaxLength(array $cmds)
     {
         $max = 0;
+
         foreach ($cmds as $cmd) {
-            $length = strlen($cmd);
+            $length = \strlen($cmd);
             if ($length > $max) {
                 $max = $length;
                 continue;
             }
         }
+
         return $max;
     }
 }

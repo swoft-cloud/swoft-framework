@@ -6,11 +6,13 @@
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 
-if (! function_exists('value')) {
+
+if (!function_exists('value')) {
     /**
      * 返回闭包内的值
      *
      * @param mixed $value
+     *
      * @return mixed
      */
     function value($value)
@@ -19,12 +21,13 @@ if (! function_exists('value')) {
     }
 }
 
-if (! function_exists('env')) {
+if (!function_exists('env')) {
     /**
      * Gets the value of an environment variable.
      *
      * @param  string $key
-     * @param  mixed $default
+     * @param  mixed  $default
+     *
      * @return mixed
      */
     function env($key, $default = null)
@@ -59,5 +62,43 @@ if (! function_exists('env')) {
         }
 
         return $value;
+    }
+}
+
+
+if (!function_exists('cache')) {
+
+    /**
+     * the function of cache
+     *
+     * @param string|null $key
+     * @param mixed       $default
+     *
+     * @return \Swoft\Cache\CacheInterface|mixed
+     */
+    function cache(string $key = null, $default = null)
+    {
+        /* @var Swoft\Cache\Cache  $cache */
+        $cache = \Swoft\App::getBean('cache');
+
+        if ($key === null) {
+            return $cache->getCache();
+        }
+
+        return $cache->get($key, $default);
+    }
+}
+
+if (!function_exists('bean')) {
+    /**
+     * the function of bean
+     *
+     * @param $name
+     *
+     * @return object
+     */
+    function bean($name)
+    {
+        return \Swoft\App::getBean($name);
     }
 }

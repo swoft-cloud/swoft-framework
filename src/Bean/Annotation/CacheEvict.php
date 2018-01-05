@@ -3,18 +3,18 @@
 namespace Swoft\Bean\Annotation;
 
 /**
- * the annotion of cacheput
+ * the annotatioin of cache evict
  *
  * @Annotation
  * @Target("METHOD")
  *
- * @uses      CachePut
- * @version   2017年12月27日
+ * @uses      CacheEvict
+ * @version   2017年12月30日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class CachePut
+class CacheEvict
 {
     /**
      * @var string
@@ -27,14 +27,14 @@ class CachePut
     private $key;
 
     /**
-     * @var int;
-     */
-    private $ttl;
-
-    /**
      * @var string
      */
     private $condition;
+
+    /**
+     * @var bool;
+     */
+    private $all = false;
 
     /**
      * CachePut constructor.
@@ -52,8 +52,8 @@ class CachePut
         if (isset($values['key'])) {
             $this->key = $values['key'];
         }
-        if (isset($values['ttl'])) {
-            $this->ttl = $values['ttl'];
+        if (isset($values['all'])) {
+            $this->all = $values['all'];
         }
         if (isset($values['condition'])) {
             $this->condition = $values['condition'];
@@ -77,18 +77,18 @@ class CachePut
     }
 
     /**
-     * @return int
-     */
-    public function getTtl(): int
-    {
-        return $this->ttl;
-    }
-
-    /**
      * @return string
      */
     public function getCondition(): string
     {
         return $this->condition;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAll(): bool
+    {
+        return $this->all;
     }
 }

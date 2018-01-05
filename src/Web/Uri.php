@@ -284,7 +284,7 @@ class Uri implements UriInterface
      * user; an empty string for the user is equivalent to removing user
      * information.
      *
-     * @param string      $user     The user name to use for authority.
+     * @param string $user The user name to use for authority.
      * @param null|string $password The password associated with $user.
      * @return static A new instance with the specified user information.
      */
@@ -410,9 +410,9 @@ class Uri implements UriInterface
      * A value of null will set the query string key without a value, e.g. "key"
      * instead of "key=value".
      *
-     * @param UriInterface $uri   URI to use as a base.
-     * @param string       $key   Key to set.
-     * @param string|null  $value Value to set
+     * @param UriInterface $uri URI to use as a base.
+     * @param string $key Key to set.
+     * @param string|null $value Value to set
      * @return UriInterface
      */
     public static function withQueryValue(UriInterface $uri, $key, $value)
@@ -487,7 +487,8 @@ class Uri implements UriInterface
      */
     public function __toString()
     {
-        return self::composeComponents($this->scheme, $this->getAuthority(), $this->path, $this->query, $this->fragment);
+        return self::composeComponents($this->scheme, $this->getAuthority(), $this->path, $this->query,
+            $this->fragment);
     }
 
     /**
@@ -579,7 +580,7 @@ class Uri implements UriInterface
      */
     private function filterScheme($scheme)
     {
-        if (! is_string($scheme)) {
+        if (!is_string($scheme)) {
             throw new \InvalidArgumentException('Scheme must be a string');
         }
 
@@ -593,7 +594,7 @@ class Uri implements UriInterface
      */
     private function filterHost($host)
     {
-        if (! is_string($host)) {
+        if (!is_string($host)) {
             throw new \InvalidArgumentException('Host must be a string');
         }
 
@@ -634,12 +635,21 @@ class Uri implements UriInterface
      * `Psr\Http\Message\UriInterface::getPort` may return null or the standard port. This method can be used
      * independently of the implementation.
      *
-     * @param UriInterface $uri
      * @return bool
      */
-    public static function isDefaultPort(UriInterface $uri): bool
+    public function isDefaultPort(): bool
     {
-        return $uri->getPort() === null || (isset(self::$defaultPorts[$uri->getScheme()]) && $uri->getPort() === self::$defaultPorts[$uri->getScheme()]);
+        return $this->getPort() === null || (isset(self::$defaultPorts[$this->getScheme()]) && $this->getPort() === self::$defaultPorts[$this->getScheme()]);
+    }
+
+    /**
+     * Get default port of the current scheme.
+     *
+     * @return int|null
+     */
+    public function getDefaultPort()
+    {
+        return self::$defaultPorts[$this->getScheme()] ?? null;
     }
 
     /**
@@ -651,14 +661,15 @@ class Uri implements UriInterface
      */
     private function filterPath($path)
     {
-        if (! is_string($path)) {
+        if (!is_string($path)) {
             throw new \InvalidArgumentException('Path must be a string');
         }
 
-        return preg_replace_callback('/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/', [
-            $this,
-            'rawurlencodeMatchZero'
-        ], $path);
+        return preg_replace_callback('/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/]++|%(?![A-Fa-f0-9]{2}))/',
+            [
+                $this,
+                'rawurlencodeMatchZero'
+            ], $path);
     }
 
     /**
@@ -670,14 +681,15 @@ class Uri implements UriInterface
      */
     private function filterQueryAndFragment($str)
     {
-        if (! is_string($str)) {
+        if (!is_string($str)) {
             throw new \InvalidArgumentException('Query and fragment must be a string');
         }
 
-        return preg_replace_callback('/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/', [
-            $this,
-            'rawurlencodeMatchZero'
-        ], $str);
+        return preg_replace_callback('/(?:[^' . self::$charUnreserved . self::$charSubDelims . '%:@\/\?]++|%(?![A-Fa-f0-9]{2}))/',
+            [
+                $this,
+                'rawurlencodeMatchZero'
+            ], $str);
     }
 
     /**

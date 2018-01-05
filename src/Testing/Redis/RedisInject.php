@@ -1,16 +1,19 @@
 <?php
+namespace Swoft\Testing\Redis;
 
-namespace Swoft\Cache;
+use Swoft\Bean\Annotation\Bean;
 
 /**
- * the interface of cache
+ * the test of redis
  *
- * @uses      CacheInterface
- * @version   2017年12月24日
+ * @Bean()
+ * @uses      RedisInject
+ * @version   2018年01月01日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-interface CacheInterface extends \Psr\SimpleCache\CacheInterface
+class RedisInject
 {
+
 }
