@@ -5,6 +5,7 @@ namespace Swoft\Web;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Swoft\Web\Concerns\InteractsWithInput;
+use Swoft\Web\Streams\SwooleStream;
 
 /**
  * @uses      Request
