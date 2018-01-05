@@ -3,7 +3,6 @@
 namespace Swoft\Testing\Bean;
 
 use Swoft\Base\Config;
-use Swoft\Proxy\Proxy;
 use Swoft\Pool\ProviderSelector;
 
 /**
