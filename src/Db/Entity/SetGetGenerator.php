@@ -5,7 +5,7 @@ namespace Swoft\Db\Entity;
 use Swoft\App;
 
 /**
- * Stub操作类 
+ * Stub操作类
  *
  * @uses      SetGetGenerator
  * @version   2017年11月7日
@@ -13,7 +13,6 @@ use Swoft\App;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-
 class SetGetGenerator
 {
     /**
@@ -25,14 +24,14 @@ class SetGetGenerator
      * @var string $folder 模板目录
      */
     public $folder = 'Stub';
-    
+
     /**
      * @var string $modelStub ModelStub
      */
     private $modelStubFile = 'Model.stub';
 
     /**
-     * @var string $PropertyStubFile PropertyStub 
+     * @var string $PropertyStubFile PropertyStub
      */
     private $propertyStubFile = 'Property.stub';
 
@@ -56,6 +55,9 @@ class SetGetGenerator
      */
     private $setterStub = '';
 
+    /**
+     * @var string $prefix 别名前缀
+     */
     private $prefix = 'alias';
 
     /**
@@ -69,11 +71,11 @@ class SetGetGenerator
     }
 
     /**
-     * @__invoke
-     * @override
+     * __invoke
      *
      * @param Schema $schema      schema对象
      * @param array  $uses        需要use的类
+     * @param string $extends     实体基类
      * @param string $entity      实体
      * @param mixed  $entityName  实体中文名
      * @param string $entityClass 实体类
@@ -88,11 +90,11 @@ class SetGetGenerator
         $entityName,
         string $entityClass,
         string $entityDate,
-        array $fields)
-    {
+        array $fields
+    ) {
         $this->schema = $schema;
-        $entityStub = $this->generateModel();
-        $usesContent = '';
+        $entityStub   = $this->generateModel();
+        $usesContent  = '';
         foreach ($uses as $useClass) {
             $usesContent .= "use {$useClass};" . PHP_EOL;
         }
@@ -121,7 +123,7 @@ class SetGetGenerator
             $this->getterStub
         ], $entityStub);
 
-        file_put_contents(App::getAlias('@entityPath')."/{$entityClass}.php", $entityFile);
+        file_put_contents(App::getAlias('@entityPath') . "/{$entityClass}.php", $entityFile);
     }
 
     /**
@@ -132,8 +134,8 @@ class SetGetGenerator
     private function parseFields(array $fields)
     {
         $propertyStub = $this->generateProperty();
-        $setterStub = $this->generateSetter();
-        $getterStub = $this->generateGetter();
+        $setterStub   = $this->generateSetter();
+        $getterStub   = $this->generateGetter();
         foreach ($fields as $fieldInfo) {
             $this->parseProperty($propertyStub, $fieldInfo);
             $this->parseSetter($setterStub, $fieldInfo);
@@ -150,21 +152,21 @@ class SetGetGenerator
      */
     private function parseProperty(string $propertyStub, array $fieldInfo)
     {
-        $property = $fieldInfo['name'];
+        $property      = $fieldInfo['name'];
         $aliasProperty = $property;
-        $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
-        $required = $primaryKey ? false : ($fieldInfo['nullable'] === 'NO' ? true : false);
-        $default = !empty($fieldInfo['default']) ? $fieldInfo['default'] : false;
-        $dbType = isset($this->schema->dbSchema[$fieldInfo['type']]) ? $this->schema->dbSchema[$fieldInfo['type']] : '' ;
-        $phpType = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed' ;
-        $length = $fieldInfo['length'];
-        $columnType = $fieldInfo['column_type'];
-        $comment = $fieldInfo['column_comment'];
-        $isEnum = strpos($columnType, 'enum') === false ? false : true;
+        $primaryKey    = $fieldInfo['key'] === 'PRI' ? true : false;
+        $required      = $primaryKey ? false : ($fieldInfo['nullable'] === 'NO' ? true : false);
+        $default       = !empty($fieldInfo['default']) ? $fieldInfo['default'] : false;
+        $dbType        = isset($this->schema->dbSchema[$fieldInfo['type']]) ? $this->schema->dbSchema[$fieldInfo['type']] : '';
+        $phpType       = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed';
+        $length        = $fieldInfo['length'];
+        $columnType    = $fieldInfo['column_type'];
+        $comment       = $fieldInfo['column_comment'];
+        $isEnum        = strpos($columnType, 'enum') === false ? false : true;
         if ($isEnum) {
-           preg_match_all("/enum\((.*?)\)/", $columnType, $matches); 
-           $enumParam = $matches[1][0];
-           $enumParam = explode(',', str_replace('\'', '', $enumParam));
+            preg_match_all("/enum\((.*?)\)/", $columnType, $matches);
+            $enumParam = $matches[1][0];
+            $enumParam = explode(',', str_replace('\'', '', $enumParam));
         }
 
         $this->checkAliasProperty($aliasProperty);
@@ -175,81 +177,81 @@ class SetGetGenerator
         }
 
         $this->propertyStub .= PHP_EOL . str_replace([
-            "{{comment}}\n",
-            "{{@Id}}\n",
-            '{{property}}',
-            '{{aliasProperty}}',
-            '{{type}}',
-            '{{length}}',
-            "{{@Required}}\n",
-            '{{hasDefault}}'
-        ], [
-            $formatComment,
-            $primaryKey ? "     * @Id()\n" : '',
-            $property,
-            $aliasProperty,
-            !empty($dbType) ? $dbType :($isEnum ? '"feature-enum"' : (is_int($default) ? '"int"' : '"string"')),
-            $length !== null ? ", length={$length}" : '',
-            $required ? "     * @Required()\n" : '',
-            $default !== false ? (is_int($default) ? " = {$default};" : " = '{$default}';") : ($required ? ' = \'\';' : ';')
-        ], $propertyStub);
+                "{{comment}}\n",
+                "{{@Id}}\n",
+                '{{property}}',
+                '{{aliasProperty}}',
+                '{{type}}',
+                '{{length}}',
+                "{{@Required}}\n",
+                '{{hasDefault}}'
+            ], [
+                $formatComment,
+                $primaryKey ? "     * @Id()\n" : '',
+                $property,
+                $aliasProperty,
+                !empty($dbType) ? $dbType : ($isEnum ? '"feature-enum"' : (is_int($default) ? '"int"' : '"string"')),
+                $length !== null ? ", length={$length}" : '',
+                $required ? "     * @Required()\n" : '',
+                $default !== false ? (is_int($default) ? " = {$default};" : " = '{$default}';") : ($required ? ' = \'\';' : ';')
+            ], $propertyStub);
     }
 
     /**
      * 解析Setter
      *
      * @param string $setterStub setter模板
-     * @param array  $fieldInfo   字段信息
+     * @param array  $fieldInfo  字段信息
      *
      */
     private function parseSetter(string $setterStub, array $fieldInfo)
     {
-        $property = $fieldInfo['name'];
+        $property      = $fieldInfo['name'];
         $aliasProperty = $property;
         $this->checkAliasProperty($aliasProperty);
-        $function = 'set' . ucfirst($aliasProperty);
-        $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
-        $type = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed' ;
+        $function         = 'set' . ucfirst($aliasProperty);
+        $primaryKey       = $fieldInfo['key'] === 'PRI' ? true : false;
+        $type             = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed';
         $this->setterStub .= PHP_EOL . str_replace([
-            '{{function}}',
-            '{{attribute}}',
-            '{{type}}',
-            '{{hasReturnType}}'
-        ], [
-            $function,
-            $aliasProperty,
-            $type !== 'mixed' ? "{$type} " : '',
-            $primaryKey ? '' : ': self'
-        ], $setterStub);
+                '{{function}}',
+                '{{attribute}}',
+                '{{type}}',
+                '{{hasReturnType}}'
+            ], [
+                $function,
+                $aliasProperty,
+                $type !== 'mixed' ? "{$type} " : '',
+                $primaryKey ? '' : ': self'
+            ], $setterStub);
     }
 
     /**
      * 解析Getter
      *
      * @param string $getterStub getter模板
-     * @param array  $fieldInfo   字段信息
+     * @param array  $fieldInfo  字段信息
      *
      */
     private function parseGetter(string $getterStub, array $fieldInfo)
     {
-        $property = $fieldInfo['name'];
+        $property      = $fieldInfo['name'];
         $aliasProperty = $property;
         $this->checkAliasProperty($aliasProperty);
-        $function = 'get' . ucfirst($aliasProperty);
-        $default = !empty($fieldInfo['default']) ? $fieldInfo['default'] : false;
-        $primaryKey = $fieldInfo['key'] === 'PRI' ? true : false;
-        $returnType = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed' ;
+        $function         = 'get' . ucfirst($aliasProperty);
+        $default          = !empty($fieldInfo['default']) ? $fieldInfo['default'] : false;
+        $primaryKey       = $fieldInfo['key'] === 'PRI' ? true : false;
+        $returnType       = isset($this->schema->phpSchema[$fieldInfo['type']]) ? $this->schema->phpSchema[$fieldInfo['type']] : 'mixed';
         $this->getterStub .= PHP_EOL . str_replace([
-            '{{function}}',
-            '{{attribute}}',
-            '{{coReturnType}}',
-            '{{returnType}}',
-        ], [
-            $function,
-            $aliasProperty,
-            $returnType,
-            $returnType !== 'mixed' && !$primaryKey  && $default !== false ? ": {$returnType}" : '',
-        ], $getterStub);
+                '{{function}}',
+                '{{attribute}}',
+                '{{coReturnType}}',
+                '{{returnType}}',
+            ], [
+                $function,
+                $aliasProperty,
+                $returnType,
+                $returnType !== 'mixed' && !$primaryKey && $default !== false ? ": {$returnType}" : '',
+            ], $getterStub);
     }
 
     /**
@@ -264,8 +266,8 @@ class SetGetGenerator
         if (!preg_match('/^[A-Za-z|_]/', $aliasProperty)) {
             $aliasProperty = $this->prefix . $aliasProperty;
         }
-        
-        if(strpos($aliasProperty, '$') !== false) {
+
+        if (strpos($aliasProperty, '$') !== false) {
             $aliasProperty = str_replace('$', '', $aliasProperty);
         }
 

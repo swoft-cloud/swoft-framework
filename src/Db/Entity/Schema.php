@@ -15,10 +15,10 @@ namespace Swoft\Db\Entity;
 abstract class Schema
 {
     // PHP类型
-    const TYPE_INT = 'int';
+    const TYPE_INT    = 'int';
     const TYPE_STRING = 'string';
-    const TYPE_FLOAT = 'float';
-    const TYPE_BOOL = 'bool';
+    const TYPE_FLOAT  = 'float';
+    const TYPE_BOOL   = 'bool';
 
     /**
      * @var array entity映射关系
