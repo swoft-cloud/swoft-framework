@@ -7,7 +7,6 @@ use Swoft\Bean\Annotation\Bean;
 use Swoft\Cache\CacheInterface;
 use Swoft\Cache\CacheResult;
 use Swoft\Pool\RedisPool;
-use Swoole\Redis;
 
 /**
  * the cache of redis
