@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Base;
+namespace Swoft\Core;
 
 /**
  * 请求request对象，每个请求实例化一个

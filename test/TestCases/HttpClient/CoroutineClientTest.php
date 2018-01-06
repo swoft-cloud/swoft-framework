@@ -3,7 +3,7 @@
 namespace Swoft\Test\HttpClient;
 
 use Swoft\App;
-use Swoft\Base\Coroutine;
+use Swoft\Core\Coroutine;
 use Swoft\Http\Client;
 use Swoft\Test\AbstractTestCase;
 use Swoft\Testing\Base\Response;

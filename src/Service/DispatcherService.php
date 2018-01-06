@@ -3,8 +3,8 @@
 namespace Swoft\Service;
 
 use Swoft\App;
-use Swoft\Base\DispatcherInterface;
-use Swoft\Base\RequestHandler;
+use Swoft\Core\DispatcherInterface;
+use Swoft\Core\RequestHandler;
 use Swoft\Event\AppEvent;
 use Swoft\Helper\ResponseHelper;
 use Swoft\Middleware\Service\HandlerAdapterMiddleware;
@@ -65,7 +65,7 @@ class DispatcherService implements DispatcherInterface
             $middlewares    = $this->requestMiddlewares();
             $requestHandler = new RequestHandler($middlewares, $this->handlerAdapter);
 
-            /* @var \Swoft\Base\Response $response */
+            /* @var \Swoft\Core\Response $response */
             $response = $requestHandler->handle($serviceRequest);
             $data     = $response->getAttribute(HandlerAdapter::ATTRIBUTE);
         } catch (\Throwable $t) {

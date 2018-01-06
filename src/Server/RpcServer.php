@@ -3,8 +3,8 @@
 namespace Swoft\Server;
 
 use Swoft\App;
-use Swoft\Base\ApplicationContext;
-use Swoft\Base\InitApplicationContext;
+use Swoft\Core\ApplicationContext;
+use Swoft\Core\InitApplicationContext;
 use Swoft\Bean\BeanFactory;
 use Swoft\Event\AppEvent;
 use Swoft\Event\Events\BeforeTaskEvent;

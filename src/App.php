@@ -2,10 +2,10 @@
 
 namespace Swoft;
 
-use Swoft\Base\ApplicationContext;
-use Swoft\Base\Config;
-use Swoft\Base\RequestContext;
-use Swoft\Base\Timer;
+use Swoft\Core\ApplicationContext;
+use Swoft\Core\Config;
+use Swoft\Core\RequestContext;
+use Swoft\Core\Timer;
 use Swoft\Bean\Collector;
 use Swoft\Circuit\CircuitBreaker;
 use Swoft\Exception\InvalidArgumentException;

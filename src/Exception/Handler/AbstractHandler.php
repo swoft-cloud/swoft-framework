@@ -2,7 +2,7 @@
 
 namespace Swoft\Exception\Handler;
 
-use Swoft\Base\RequestContext;
+use Swoft\Core\RequestContext;
 use Swoft\Web\Response;
 
 /**

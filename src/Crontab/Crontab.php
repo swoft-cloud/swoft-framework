@@ -2,7 +2,7 @@
 
 namespace Swoft\Crontab;
 
-use Swoft\Base\ApplicationContext;
+use Swoft\Core\ApplicationContext;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Collector;
 use Swoft\Memory\Table;

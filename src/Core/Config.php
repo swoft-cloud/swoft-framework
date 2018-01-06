@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Base;
+namespace Swoft\Core;
 
 use Swoft\App;
 use Swoft\Helper\ArrayHelper;
@@ -200,7 +200,7 @@ class Config implements \ArrayAccess, \Iterator
      * @param string $strategy Scan strategy, DirHelper::SCAN_CURRENT_DIR Only Scan the current directory; DirHelper::SCAN_BFS Breadth First Search; DirHelper::SCAN_DFS Depth First Search
      * @param string $structure self::STRUCTURE_MERGE merge all files result to an array, e.g. [ content1, content2 ]; self::STRUCTURE_SEPARATE merge all files result to an assoc array, use the file name as key, e.g. [ fileName1 => content1, fileName2 => content2 ]
      *
-     * @return \Swoft\Base\Config
+     * @return \Swoft\Core\Config
      */
     public function load(
         string $dir,

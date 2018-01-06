@@ -2,7 +2,7 @@
 
 namespace Swoft\Web;
 
-use Swoft\Base\RequestContext;
+use Swoft\Core\RequestContext;
 use Swoft\Bean\Collector;
 use Swoft\Contract\Arrayable;
 use Swoft\Helper\JsonHelper;
@@ -19,7 +19,7 @@ use Swoft\Web\Streams\SwooleStream;
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class Response extends \Swoft\Base\Response
+class Response extends \Swoft\Core\Response
 {
     use ViewRendererTrait;
 
