@@ -4,7 +4,6 @@ namespace Swoft\Cache;
 
 use Swoft\App;
 use Swoft\Cache\Redis\CacheRedis;
-use Swoft\Cache\CacheInterface;
 
 /**
  * cache
