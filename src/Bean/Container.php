@@ -5,7 +5,7 @@ namespace Swoft\Bean;
 use Swoft\Aop\Aop;
 use Swoft\Aop\AopInterface;
 use Swoft\App;
-use Swoft\Base\ApplicationContext;
+use Swoft\Core\ApplicationContext;
 use Swoft\Bean\Annotation\Scope;
 use Swoft\Bean\ObjectDefinition\ArgsInjection;
 use Swoft\Bean\ObjectDefinition\MethodInjection;

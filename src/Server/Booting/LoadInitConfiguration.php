@@ -3,7 +3,7 @@
 namespace Swoft\Server\Booting;
 
 use Swoft\App;
-use Swoft\Base\Config;
+use Swoft\Core\Config;
 use Swoft\Helper\DirHelper;
 
 /**

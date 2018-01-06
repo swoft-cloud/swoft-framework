@@ -4,7 +4,7 @@ namespace Swoft\Http;
 
 use Psr\Http\Message\ResponseInterface;
 use Swoft\App;
-use Swoft\Base\Coroutine;
+use Swoft\Core\Coroutine;
 use Swoft\Http\Adapter\AdapterInterface;
 use Swoft\Http\Adapter\CoroutineAdapter;
 use Swoft\Http\Adapter\ResponseTrait;

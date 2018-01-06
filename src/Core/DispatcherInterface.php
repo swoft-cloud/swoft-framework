@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Base;
+namespace Swoft\Core;
 
 /**
  * dispatcher interface

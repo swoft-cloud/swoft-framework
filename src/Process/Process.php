@@ -3,7 +3,7 @@
 namespace Swoft\Process;
 
 use Swoft\App;
-use Swoft\Base\InitApplicationContext;
+use Swoft\Core\InitApplicationContext;
 use Swoft\Bean\BeanFactory;
 use Swoft\Event\AppEvent;
 use Swoft\Helper\PhpHelper;

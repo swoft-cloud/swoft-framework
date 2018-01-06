@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Base;
+namespace Swoft\Core;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;

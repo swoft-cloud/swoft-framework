@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Base;
+namespace Swoft\Core;
 
 use Swoft\App;
 use Swoft\Helper\FileHelper;

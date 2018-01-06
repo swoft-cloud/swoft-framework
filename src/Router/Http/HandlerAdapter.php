@@ -4,7 +4,7 @@ namespace Swoft\Router\Http;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Swoft\App;
-use Swoft\Base\RequestContext;
+use Swoft\Core\RequestContext;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Exception\Http\MethodNotAllowedException;
 use Swoft\Exception\Http\RouteNotFoundException;

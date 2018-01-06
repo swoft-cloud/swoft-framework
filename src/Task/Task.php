@@ -3,7 +3,7 @@
 namespace Swoft\Task;
 
 use Swoft\App;
-use Swoft\Base\RequestContext;
+use Swoft\Core\RequestContext;
 use Swoft\Bean\BeanFactory;
 
 /**

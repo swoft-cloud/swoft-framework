@@ -3,7 +3,7 @@
 namespace Swoft\Event\Listeners;
 
 use Swoft\App;
-use Swoft\Base\RequestContext;
+use Swoft\Core\RequestContext;
 use Swoft\Bean\Annotation\Listener;
 use Swoft\Event\AppEvent;
 use Swoft\Event\EventHandlerInterface;
