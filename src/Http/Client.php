@@ -4,7 +4,7 @@ namespace Swoft\Http;
 
 use Psr\Http\Message\UriInterface;
 use Swoft\App;
-use Swoft\Base\Coroutine;
+use Swoft\Core\Coroutine;
 use Swoft\Web\Psr7Request;
 use Swoft\Web\Uri;
 

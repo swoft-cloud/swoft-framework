@@ -9,7 +9,7 @@
 namespace Swoft\Web;
 
 use Swoft\App;
-use Swoft\Base\RequestContext;
+use Swoft\Core\RequestContext;
 
 /**
  * Trait ViewRendererTrait

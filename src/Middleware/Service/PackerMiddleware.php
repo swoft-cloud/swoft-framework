@@ -61,7 +61,7 @@ class PackerMiddleware implements MiddlewareInterface
         App::trigger(AppEvent::BEFORE_RECEIVE, null, $data);
         $request = $request->withAttribute(self::ATTRIBUTE_DATA, $data);
 
-        /* @var \Swoft\Base\Response $response */
+        /* @var \Swoft\Core\Response $response */
         $response      = $handler->handle($request);
         $serviceResult = $response->getAttribute(HandlerAdapter::ATTRIBUTE);
         $serviceResult = $packer->pack($serviceResult);

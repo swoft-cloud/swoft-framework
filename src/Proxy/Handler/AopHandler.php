@@ -4,7 +4,7 @@ namespace Swoft\Proxy\Handler;
 
 use Swoft\Aop\Aop;
 use Swoft\App;
-use Swoft\Base\ApplicationContext;
+use Swoft\Core\ApplicationContext;
 
 /**
  * the handler of aop

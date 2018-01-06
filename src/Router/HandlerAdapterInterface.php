@@ -21,7 +21,7 @@ interface HandlerAdapterInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param array                                    $handler
      *
-     * @return \Swoft\Base\Response
+     * @return \Swoft\Core\Response
      */
     public function doHandler(ServerRequestInterface $request, array $handler);
 }

@@ -2,8 +2,8 @@
 
 namespace Swoft\Log;
 
-use Swoft\Base\Coroutine;
-use Swoft\Base\RequestContext;
+use Swoft\Core\Coroutine;
+use Swoft\Core\RequestContext;
 
 /**
  * 日志类

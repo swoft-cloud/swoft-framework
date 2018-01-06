@@ -4,7 +4,7 @@ namespace Swoft\Bean;
 
 use Monolog\Formatter\LineFormatter;
 use Swoft\App;
-use Swoft\Base\Config;
+use Swoft\Core\Config;
 use Swoft\Helper\ArrayHelper;
 use Swoft\Helper\DirHelper;
 use Swoft\Pool\BalancerSelector;
