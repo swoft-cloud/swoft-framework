@@ -3,7 +3,6 @@
 namespace Swoft\Core;
 
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\StreamInterface;
 use Swoft\Web\MessageTrait;
 
 /**

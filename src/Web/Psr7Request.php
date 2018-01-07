@@ -8,7 +8,7 @@ use Psr\Http\Message\UriInterface;
 use Swoft\Web\Streams\SwooleStream;
 
 /**
- * @uses      Psr7Request
+ * @uses      Request
  * @version   2017-11-03
  * @author    huangzhhui <huangzhwork@gmail.com>
  * @copyright Copyright 2010-2017 Swoft software
