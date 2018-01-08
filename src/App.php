@@ -106,16 +106,6 @@ class App
     }
 
     /**
-     * request router
-     *
-     * @return \Swoft\Router\Http\HandlerMapping
-     */
-    public static function getHttpRouter()
-    {
-        return self::getBean('httpRouter');
-    }
-
-    /**
      * 查询一个bean
      *
      * @param string $name 名称

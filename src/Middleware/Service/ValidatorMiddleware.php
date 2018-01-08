@@ -7,7 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Swoft\App;
 use Swoft\Bean\Annotation\Bean;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\ValidatorCollector;
 use Swoft\Middleware\MiddlewareInterface;
 use Swoft\Validator\ServiceValidator;
 use Swoft\Validator\ValidatorInterface;
@@ -38,8 +38,9 @@ class ValidatorMiddleware implements MiddlewareInterface
         $validator      = App::getBean(ServiceValidator::class);
 
         list($className, $validatorKey) = $serviceHandler;
-        if (isset(Collector::$validator[$className][$validatorKey]['validator'])) {
-            $validators = Collector::$validator[$className][$validatorKey]['validator'];
+        $collector = ValidatorCollector::getCollector();
+        if (isset($collector[$className][$validatorKey]['validator'])) {
+            $validators = $collector[$className][$validatorKey]['validator'];
             $validator->validate($validators, $serviceHandler, $serviceData);
         }
 

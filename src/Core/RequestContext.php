@@ -41,7 +41,7 @@ class RequestContext
     /**
      * 请求request
      *
-     * @return \Swoft\Web\Request
+     * @return \Psr\Http\Message\RequestInterface
      */
     public static function getRequest()
     {
@@ -51,7 +51,7 @@ class RequestContext
     /**
      * 请求response
      *
-     * @return \Swoft\Web\Response
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public static function getResponse()
     {
