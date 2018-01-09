@@ -2,9 +2,14 @@
 
 namespace Swoft\Server;
 use Swoft\Bean\BeanFactory;
+use Swoft\Core\ApplicationContext;
 use Swoft\Core\InitApplicationContext;
+use Swoft\Event\AppEvent;
+use Swoft\Event\Events\BeforeTaskEvent;
 use Swoft\Helper\ProcessHelper;
-use Swoole\Server;
+use Swoft\Process\Process;
+use Swoft\Task\Task;
+use Swoole\Http\Server;
 
 /**
  * the trait of Server

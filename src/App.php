@@ -184,16 +184,6 @@ class App
     }
 
     /**
-     * the packer of rpc service
-     *
-     * @return \Swoft\Service\ServicePacker;
-     */
-    public static function getPacker()
-    {
-        return self::getBean('servicePacker');
-    }
-
-    /**
      * the selector of balancer
      *
      * @return \Swoft\Pool\BalancerSelector
@@ -252,7 +242,7 @@ class App
     /**
      * request对象
      *
-     * @return Web\Request
+     * @return \Psr\Http\Message\RequestInterface
      */
     public static function getRequest()
     {
@@ -262,7 +252,7 @@ class App
     /**
      * response对象
      *
-     * @return Web\Response
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public static function getResponse()
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Web;
+namespace Swoft\Core;
 
 use Swoft\App;
 use Swoft\Pool\ConnectPool;

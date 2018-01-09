@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Web;
+namespace Swoft\Core;
 
 /**
  * 数据返回接口

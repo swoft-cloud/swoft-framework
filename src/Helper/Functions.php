@@ -101,3 +101,23 @@ if (!function_exists('bean')) {
         return \Swoft\App::getBean($name);
     }
 }
+
+if (!function_exists('request')) {
+    /**
+     * @return \Psr\Http\Message\RequestInterface
+     */
+    function request()
+    {
+        return \Swoft\Core\RequestContext::getRequest();
+    }
+}
+
+if (!function_exists('response')) {
+    /**
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    function request()
+    {
+        return \Swoft\Core\RequestContext::getResponse();
+    }
+}
