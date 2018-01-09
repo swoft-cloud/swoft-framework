@@ -4,6 +4,8 @@ namespace Swoft\Core;
 
 use Swoft\App;
 use Swoft\Helper\ArrayHelper;
+use Swoft\Http\Server\Http\Request;
+use Swoft\Http\Server\Http\Response;
 use Swoft\Testing\SwooleResponse as TestingSwooleResponse;
 use Swoft\Testing\SwooleRequest as TestingSwooleRequest;
 
@@ -79,7 +81,7 @@ class RequestContext
         if ($request instanceof TestingSwooleRequest) {
             self::$coroutineLocal[$coroutineId][self::COROUTINE_REQUEST] = \Swoft\Testing\Web\Request::loadFromSwooleRequest($request);
         } else {
-            self::$coroutineLocal[$coroutineId][self::COROUTINE_REQUEST] = \Swoft\Web\Request::loadFromSwooleRequest($request);
+            self::$coroutineLocal[$coroutineId][self::COROUTINE_REQUEST] = Request::loadFromSwooleRequest($request);
         }
     }
 
@@ -95,7 +97,7 @@ class RequestContext
             // in test process
             self::$coroutineLocal[$coroutineId][self::COROUTINE_RESPONSE] = new \Swoft\Testing\Web\Response($response);
         } else {
-            self::$coroutineLocal[$coroutineId][self::COROUTINE_RESPONSE] = new \Swoft\Web\Response($response);
+            self::$coroutineLocal[$coroutineId][self::COROUTINE_RESPONSE] = new Response($response);
         }
     }
 

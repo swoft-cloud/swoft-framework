@@ -116,7 +116,7 @@ if (!function_exists('response')) {
     /**
      * @return \Psr\Http\Message\ResponseInterface
      */
-    function request()
+    function response()
     {
         return \Swoft\Core\RequestContext::getResponse();
     }

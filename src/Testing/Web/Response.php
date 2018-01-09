@@ -10,7 +10,7 @@ namespace Swoft\Testing\Web;
 use Swoft\App;
 use Swoft\Testing\Base\ResponseAssertTrait;
 
-class Response extends \Swoft\Web\Response
+class Response extends \Swoft\Http\Server\Http\Response
 {
     use ResponseAssertTrait;
 

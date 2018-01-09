@@ -126,14 +126,6 @@ class App
     }
 
     /**
-     * @return \Swoft\Service\DispatcherService
-     */
-    public static function getDispatcherService()
-    {
-        return ApplicationContext::getBean('dispatcherService');
-    }
-
-    /**
      * 获取config bean
      *
      * @return Config

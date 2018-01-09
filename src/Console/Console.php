@@ -6,6 +6,7 @@ use Swoft\App;
 use Swoft\Console\Input\Input;
 use Swoft\Console\Output\Output;
 use Swoft\Console\Style\Style;
+use Swoft\Helper\ComponentHelper;
 use Swoft\Helper\DirHelper;
 use Swoft\Helper\PhpHelper;
 
@@ -311,35 +312,11 @@ class Console implements IConsole
             if (!is_dir($componentCommandDir)) {
                 continue;
             }
-            $componentNs = $this->getComponentNs($component);
-            if (empty($componentNs)) {
-                continue;
-            }
 
-            if ($component == 'framework') {
-                $componentNs = "";
-            }
+            $componentNs = ComponentHelper::getComponentNs($component);
 
-            $ns                  = "Swoft\\{$componentNs}Console\\Command";
+            $ns = "Swoft{$componentNs}\\Console\\Command";
             $this->scanCmds[$ns] = $componentCommandDir;
         }
-    }
-
-    /**
-     * get the namespace of component
-     *
-     * @param string $component
-     *
-     * @return string
-     */
-    private function getComponentNs(string $component)
-    {
-        $namespace = "";
-        $nsAry     = explode("-", $component);
-        foreach ($nsAry as $ns) {
-            $namespace .= ucfirst($ns) . "\\";
-        }
-
-        return $namespace;
     }
 }

@@ -1,10 +1,10 @@
 <?php
 return [
     'dispatcherService' =>[
-        'class' => \Swoft\Service\DispatcherService::class
+        'class' => \Swoft\Rpc\Server\DispatcherService::class
     ],
     'serviceRouter' => [
-        'class' => \Swoft\Router\Service\HandlerMapping::class,
+        'class' => \Swoft\Rpc\Server\Router\HandlerMapping::class,
         'suffix' => 'Service', // service文件后缀
     ],
 ];

@@ -2,8 +2,6 @@
 
 namespace Swoft\Bean\Wrapper;
 
-use App\Models\Dao\RefInterface;
-use Swoft\Bean\Annotation\Scope;
 use Swoft\Bean\ObjectDefinition;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
 use Swoft\Bean\Parser\AbstractParser;
@@ -320,9 +318,11 @@ abstract class AbstractWrapper implements IWrapper
         $annotationClassName = get_class($objectAnnotation);
         $classNameTmp = str_replace('\\', '/', $annotationClassName);
         $className = basename($classNameTmp);
+        $namespaceDir = dirname($classNameTmp, 2);
+        $namespace = str_replace('/', '\\', $namespaceDir);
 
         // 解析器类名
-        $annotationParserClassName = "Swoft\\Bean\Parser\\" . $className . "Parser";
+        $annotationParserClassName = "{$namespace}\\Parser\\{$className}Parser";
         if (!class_exists($annotationParserClassName)) {
             return null;
         }
