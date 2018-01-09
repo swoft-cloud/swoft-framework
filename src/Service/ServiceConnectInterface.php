@@ -5,13 +5,13 @@ namespace Swoft\Service;
 /**
  *
  *
- * @uses      IServiceConnect
+ * @uses      ServiceConnectInterface
  * @version   2017年10月02日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-interface IServiceConnect
+interface ServiceConnectInterface
 {
     public function reConnect();
 

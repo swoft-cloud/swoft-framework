@@ -61,7 +61,7 @@ class TableCrontab
     private $runTimeStruct = [
         'taskClass'  => [\Swoole\Table::TYPE_STRING, 255],
         'taskMethod' => [\Swoole\Table::TYPE_STRING, 255],
-        'minte'      => [\Swoole\Table::TYPE_STRING, 20],
+        'minute'      => [\Swoole\Table::TYPE_STRING, 20],
         'sec'        => [\Swoole\Table::TYPE_STRING, 20],
         'runStatus'  => [\Swoole\TABLE::TYPE_INT, 4],
     ];

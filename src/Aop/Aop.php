@@ -170,7 +170,7 @@ class Aop implements AopInterface
                 continue;
             }
 
-            // incloude
+            // include
             $pointBeanInclude       = $aspect['point']['bean']['include']?? [];
             $pointAnnotationInclude = $aspect['point']['annotation']['include']?? [];
             $pointExecutionInclude  = $aspect['point']['execution']['include']?? [];

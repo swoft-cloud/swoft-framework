@@ -13,16 +13,16 @@ use Swoft\Bean\Annotation\Bean;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class BeanParser extends AbstractParser
+class BeanParser extends AbstractParserInterface
 {
     /**
      * Bean注解解析
      *
      * @param string $className
-     * @param Bean   $objectAnnotation
+     * @param Bean $objectAnnotation
      * @param string $propertyName
      * @param string $methodName
-     *
+     * @param null $propertyValue
      * @return array
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)

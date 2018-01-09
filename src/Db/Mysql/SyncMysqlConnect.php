@@ -3,7 +3,7 @@
 namespace Swoft\Db\Mysql;
 
 use Swoft\App;
-use Swoft\Db\AbstractDbConnect;
+use Swoft\Db\AbstractDbConnectInterface;
 
 /**
  * 同步Mysql连接
@@ -14,7 +14,7 @@ use Swoft\Db\AbstractDbConnect;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class SyncMysqlConnect extends AbstractDbConnect
+class SyncMysqlConnect extends AbstractDbConnectInterface
 {
     /**
      * Mysql连接

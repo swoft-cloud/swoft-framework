@@ -3,7 +3,7 @@
 namespace Swoft\Bean\Annotation;
 
 /**
- * the annotion of cacheput
+ * the annotation of cache put
  *
  * @Annotation
  * @Target("METHOD")

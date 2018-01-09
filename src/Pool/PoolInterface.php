@@ -11,7 +11,7 @@ namespace Swoft\Pool;
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-interface IPool
+interface PoolInterface
 {
     /**
      * 获取连接

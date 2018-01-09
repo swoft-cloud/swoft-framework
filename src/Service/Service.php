@@ -54,7 +54,7 @@ class Service
         $criuitBreaker = App::getBreaker($serviceName);
         $connectPool = App::getPool($serviceName);
 
-        /* @var $client AbstractServiceConnect */
+        /* @var $client AbstractServiceConnectInterface */
         $client = $connectPool->getConnect();
         $packer = App::getPacker();
 
@@ -99,7 +99,7 @@ class Service
         /* @var $connectPool ServicePool */
         $connectPool = App::getBean($serviceName . 'Pool');
 
-        /* @var $client AbstractServiceConnect */
+        /* @var $client AbstractServiceConnectInterface */
         $client = $connectPool->getConnect();
         $packer = App::getPacker();
         $data = $packer->formatData($func, $params);

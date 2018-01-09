@@ -289,9 +289,9 @@ class Executor
         array_unshift($validates, $validator);
 
         // 循环验证，一个验证不通过，验证失败
-        foreach ($validates as $vald) {
-            $name = $vald['name'];
-            $params = $vald['value'];
+        foreach ($validates as $validate) {
+            $name = $validate['name'];
+            $params = $validate['value'];
             $beanName = 'Validator' . $name;
 
             // 验证器未定义

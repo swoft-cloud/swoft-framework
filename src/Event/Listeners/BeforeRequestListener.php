@@ -25,6 +25,7 @@ class BeforeRequestListener implements EventHandlerInterface
      * 事件回调
      *
      * @param EventInterface $event      事件对象
+     * @return void
      */
     public function handle(EventInterface $event)
     {

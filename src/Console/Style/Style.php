@@ -168,9 +168,9 @@ class Style
         if (DIRECTORY_SEPARATOR === '\\') {
             $term = 'xterm' === getenv('TERM');
             $ansicon = false !== getenv('ANSICON');
-            $conemuansi = 'ON' === getenv('ConEmuANSI');
+            $conEmuAnsi = 'ON' === getenv('ConEmuANSI');
             $windowsVersion = '10.0.10586' === PHP_WINDOWS_VERSION_MAJOR . '.' . PHP_WINDOWS_VERSION_MINOR . '.' . PHP_WINDOWS_VERSION_BUILD;
-            $isSupport = $windowsVersion || $ansicon || $conemuansi || $term;
+            $isSupport = $windowsVersion || $ansicon || $conEmuAnsi || $term;
             return $isSupport;
         }
 
