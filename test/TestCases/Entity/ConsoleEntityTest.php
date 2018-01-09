@@ -19,7 +19,12 @@ use Swoft\Console\Output\Output;
  */
 class ConsoleEntityTest extends AbstractTestCase
 {
-    public function testInitEntityConsole()
+
+    /**
+     * @test
+     * @requires extension pdo
+     */
+    public function initEntityConsole()
     {
         $input = new Input();
         $output = new Output();
