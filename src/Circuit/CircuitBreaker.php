@@ -34,7 +34,7 @@ class CircuitBreaker
     /**
      * 未初始化
      */
-    const UNINIT = "uninit";
+    const PENDING = "pending";
 
     /**
      * @var int 错误请求计数
@@ -229,7 +229,7 @@ class CircuitBreaker
         if ($this->circuitState instanceof OpenState) {
             return self::OPEN;
         }
-        return self::UNINIT;
+        return self::PENDING;
     }
 
     /**

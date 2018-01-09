@@ -3,7 +3,7 @@
 namespace Swoft\Cache\Redis;
 
 use Swoft\Helper\PhpHelper;
-use Swoft\Pool\AbstractConnect;
+use Swoft\Pool\AbstractConnectInterface;
 
 /**
  * 同步redis连接
@@ -14,7 +14,7 @@ use Swoft\Pool\AbstractConnect;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class SyncRedisConnect extends AbstractConnect
+class SyncRedisConnect extends AbstractConnectInterface
 {
     /**
      * redis连接

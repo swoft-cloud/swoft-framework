@@ -76,9 +76,9 @@ class Reload
     }
 
     /**
-     * @param \Swoft\Server\ServerInterface $server
+     * @param ServerInterface $server
      */
-    public function setServer(\Swoft\Server\ServerInterface $server)
+    public function setServer(ServerInterface $server)
     {
         $this->server = $server;
     }

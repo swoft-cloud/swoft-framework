@@ -16,7 +16,7 @@ use Swoft\Validator\FloatsValidator;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class FloatsParser extends AbstractParser
+class FloatsParser extends AbstractParserInterface
 {
     /**
      * @param string      $className

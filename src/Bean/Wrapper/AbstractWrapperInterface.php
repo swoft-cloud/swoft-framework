@@ -6,20 +6,20 @@ use App\Models\Dao\RefInterface;
 use Swoft\Bean\Annotation\Scope;
 use Swoft\Bean\ObjectDefinition;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
-use Swoft\Bean\Parser\AbstractParser;
+use Swoft\Bean\Parser\AbstractParserInterface;
 use Swoft\Bean\Parser\MethodWithoutAnnotationParser;
 use Swoft\Bean\Resource\AnnotationResource;
 
 /**
  * 抽象封装器
  *
- * @uses      AbstractWrapper
+ * @uses      AbstractWrapperInterface
  * @version   2017年09月04日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class AbstractWrapper implements IWrapper
+abstract class AbstractWrapperInterface implements WrapperInterface
 {
     /**
      * 类注解
@@ -313,7 +313,7 @@ abstract class AbstractWrapper implements IWrapper
      *
      * @param $objectAnnotation
      *
-     * @return AbstractParser
+     * @return AbstractParserInterface
      */
     private function getAnnotationParser($objectAnnotation)
     {

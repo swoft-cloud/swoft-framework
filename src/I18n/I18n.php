@@ -76,7 +76,7 @@ class I18n
             throw new \InvalidArgumentException("i18n翻译出错，category=" . $category . " 不存在！language=".$language);
         }
         $message = $this->messages[$language][$categoryFile][$key];
-        return $this->formateMessage($message, $params);
+        return $this->formatMessage($message, $params);
     }
 
     /**
@@ -87,7 +87,7 @@ class I18n
      *
      * @return string
      */
-    private function formateMessage(string $message, array $params)
+    private function formatMessage(string $message, array $params)
     {
         array_unshift($params, $message);
         return sprintf(...$params);

@@ -14,7 +14,7 @@ use Swoft\Bean\Collector;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class MappingParser extends AbstractParser
+class MappingParser extends AbstractParserInterface
 {
     /**
      * Mapping注解解析解析

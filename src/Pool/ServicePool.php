@@ -3,7 +3,7 @@
 namespace Swoft\Pool;
 
 use Swoft\App;
-use Swoft\Service\AbstractServiceConnect;
+use Swoft\Service\AbstractServiceConnectInterface;
 use Swoft\Service\ServiceConnect;
 use Swoft\Service\SyncServiceConnect;
 
@@ -16,12 +16,12 @@ use Swoft\Service\SyncServiceConnect;
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class ServicePool extends ConnectPool
+class ServicePool extends ConnectPoolInterface
 {
     /**
      * 创建连接
      *
-     * @return AbstractServiceConnect
+     * @return AbstractServiceConnectInterface
      */
     public function createConnect()
     {

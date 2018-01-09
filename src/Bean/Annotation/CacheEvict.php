@@ -3,7 +3,7 @@
 namespace Swoft\Bean\Annotation;
 
 /**
- * the annotatioin of cache evict
+ * the annotation of cache evict
  *
  * @Annotation
  * @Target("METHOD")

@@ -2,12 +2,9 @@
 
 namespace Swoft\Bean\Resource;
 
-use App\Controllers\ValidatorController;
-use App\Models\Dao\RefInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use function foo\func;
-use Swoft\Bean\Wrapper\IWrapper;
+use Swoft\Bean\Wrapper\WrapperInterface;
 
 /**
  * 注释解析
@@ -178,7 +175,7 @@ class AnnotationResource extends AbstractResource
                 continue;
             }
 
-            /* @var IWrapper $wrapper */
+            /* @var WrapperInterface $wrapper */
             $wrapper = new $annotationParserClassName($this);
             $objectDefinitionAry = $wrapper->doWrapper($className, $annotation);
             if ($objectDefinitionAry != null) {
@@ -209,9 +206,9 @@ class AnnotationResource extends AbstractResource
             }
 
             $replaces = ["", '\\', "", ""];
-            $searchs = [$dir, '/', '.php', '.PHP'];
+            $searches = [$dir, '/', '.php', '.PHP'];
 
-            $file = str_replace($searchs, $replaces, $file);
+            $file = str_replace($searches, $replaces, $file);
             $phpFiles[] = $namespace . $file;
         }
 

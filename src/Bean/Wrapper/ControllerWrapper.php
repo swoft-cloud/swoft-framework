@@ -28,7 +28,7 @@ use Swoft\Bean\Annotation\View;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class ControllerWrapper extends AbstractWrapper
+class ControllerWrapper extends AbstractWrapperInterface
 {
     /**
      * 类注解

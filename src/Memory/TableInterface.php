@@ -7,13 +7,13 @@ use Swoole\Table;
 /**
  * Table接口
  *
- * @uses      ITable
+ * @uses      TableInterface
  * @version   2017年10月25日
  * @author    caiwh <471113744@qq.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-interface ITable
+interface TableInterface
 {
     /**
      * 一个单位长度的int类型
@@ -54,8 +54,8 @@ interface ITable
      * 内存表增加一列
      *
      * @param string $name 列名
-     * @param string $type 类型
-     * @param string $size 最大长度，单位为字节
+     * @param int $type 类型
+     * @param int $size 最大长度，单位为字节
      */
     public function column(string $name, int $type, int $size = 0);
 

@@ -14,7 +14,7 @@ use Swoole\Process;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class CronExecProcess extends AbstractProcess
+class CronExecProcess extends AbstractProcessInterface
 {
     /**
      * @param Process $process
