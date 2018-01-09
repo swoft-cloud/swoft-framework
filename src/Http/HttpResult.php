@@ -4,7 +4,6 @@ namespace Swoft\Http;
 
 use Psr\Http\Message\ResponseInterface;
 use Swoft\App;
-use Swoft\Core\Coroutine;
 use Swoft\Http\Adapter\AdapterInterface;
 use Swoft\Http\Adapter\CoroutineAdapter;
 use Swoft\Http\Adapter\ResponseTrait;
@@ -12,13 +11,7 @@ use Swoft\Web\AbstractResult;
 use Swoft\Web\Streams\SwooleStream;
 
 /**
- * Http结果
- *
- * @uses      HttpResult
- * @version   2017年07月15日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Http result
  */
 class HttpResult extends AbstractResult
 {
@@ -30,7 +23,7 @@ class HttpResult extends AbstractResult
     protected $adapter;
 
     /**
-     * 返回数据结果
+     * Return result
      *
      * @return ResponseInterface
      */
