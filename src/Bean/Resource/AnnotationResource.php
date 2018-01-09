@@ -92,7 +92,7 @@ class AnnotationResource extends AbstractResource
         $classAnnotations = $reader->getClassAnnotations($reflectionClass);
 
         // 没有类注解不解析其它注解
-        if(empty($classAnnotations)){
+        if (empty($classAnnotations)) {
             return ;
         }
 
@@ -227,8 +227,8 @@ class AnnotationResource extends AbstractResource
     {
         $phpClass = [];
         foreach ($this->scanNamespaces as $namespace => $dir) {
-            AnnotationRegistry::registerLoader(function ($class){
-                if(class_exists($class) || interface_exists($class)){
+            AnnotationRegistry::registerLoader(function ($class) {
+                if (class_exists($class) || interface_exists($class)) {
                     return true;
                 }
                 return false;

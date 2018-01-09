@@ -60,5 +60,4 @@ class JsonHelper
 
         return $json;
     }
-
 }

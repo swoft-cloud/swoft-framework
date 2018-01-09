@@ -4,7 +4,6 @@ namespace Swoft\Pipeline;
 
 use Swoole\Coroutine;
 
-
 /**
  * @uses      FingersCrossedProcessor
  * @version   2017年11月15日

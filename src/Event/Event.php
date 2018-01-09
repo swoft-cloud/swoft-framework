@@ -280,6 +280,4 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
     {
         $this->removeParam($name);
     }
-
 }
-

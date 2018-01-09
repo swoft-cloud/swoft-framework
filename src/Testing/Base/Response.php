@@ -11,9 +11,8 @@ use Swoft\App;
  * @copyright Copyright 2010-2017 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class Response extends \Swoft\Base\Response
+class Response extends \Swoft\Core\Response
 {
-
     use ResponseAssertTrait;
 
     public function __construct()
@@ -22,5 +21,4 @@ class Response extends \Swoft\Base\Response
             throw new \RuntimeException(sprintf('Is not available to use %s in non testing enviroment', __CLASS__));
         }
     }
-
 }

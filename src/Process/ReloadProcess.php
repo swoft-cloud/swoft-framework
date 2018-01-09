@@ -3,7 +3,7 @@
 namespace Swoft\Process;
 
 use Swoft\App;
-use Swoft\Base\Reload;
+use Swoft\Core\Reload;
 use Swoole\Process;
 
 /**
@@ -56,5 +56,4 @@ class ReloadProcess extends AbstractProcess
 
         return true;
     }
-
 }

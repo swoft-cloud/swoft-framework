@@ -28,9 +28,9 @@ class ServerController extends ConsoleCommand
 
     /**
      * 初始化
-     *
-     * @param Input  $input  输入
+     * @param Input $input 输入
      * @param Output $output 输出
+     * @throws \RuntimeException
      */
     public function __construct(Input $input, Output $output)
     {
@@ -58,12 +58,16 @@ class ServerController extends ConsoleCommand
             throw new \RuntimeException('Run the server requires php version >= 7.0');
         }
 
-        if (!extension_loaded('swoole')) {
+        if (!\extension_loaded('swoole')) {
             throw new \RuntimeException("Run the server, extension 'swoole 2.x' is required!");
         }
 
         if (!class_exists('Swoole\Coroutine')) {
             throw new \RuntimeException("The swoole is must enable coroutine by build param '--enable-coroutine'!");
+        }
+
+        if (\extension_loaded('blackfire')) {
+            throw new \RuntimeException('The extension of blackfire must be closed, otherwise swoft will be affected!');
         }
     }
 

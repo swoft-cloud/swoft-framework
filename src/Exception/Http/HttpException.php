@@ -13,5 +13,4 @@ use Swoft\Exception\LoginException;
  */
 class HttpException extends LoginException
 {
-
 }

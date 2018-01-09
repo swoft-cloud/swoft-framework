@@ -246,5 +246,4 @@ trait ResponseAssertTrait
 
         return $decodedResponse;
     }
-
 }

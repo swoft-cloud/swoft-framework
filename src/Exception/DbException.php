@@ -13,5 +13,4 @@ namespace Swoft\Exception;
  */
 class DbException extends \Exception
 {
-
 }

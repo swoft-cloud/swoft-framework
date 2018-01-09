@@ -11,7 +11,5 @@ namespace Swoft\Exception\Http;
  */
 class NotAcceptableException extends HttpException
 {
-
     protected $code = 406;
-
 }

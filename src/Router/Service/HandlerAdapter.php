@@ -4,7 +4,7 @@ namespace Swoft\Router\Service;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Swoft\App;
-use Swoft\Base\Response;
+use Swoft\Core\Response;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Helper\PhpHelper;
 use Swoft\Helper\ResponseHelper;

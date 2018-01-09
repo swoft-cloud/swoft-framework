@@ -12,7 +12,6 @@ use Swoft\Testing\Base\ResponseAssertTrait;
 
 class Response extends \Swoft\Web\Response
 {
-
     use ResponseAssertTrait;
 
     public function __construct(\Swoole\Http\Response $response)
@@ -22,6 +21,4 @@ class Response extends \Swoft\Web\Response
         }
         parent::__construct($response);
     }
-
-
 }

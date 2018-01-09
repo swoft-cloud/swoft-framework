@@ -9,13 +9,11 @@ use Swoft\Http\HttpResult;
 use Swoft\Web\Uri;
 use Swoole\Coroutine\Http\Client as CoHttpClient;
 
-
 /**
  * Swoole coroutine client driver adapter
  */
 class CoroutineAdapter implements AdapterInterface
 {
-
     use ResponseTrait;
 
     /**
@@ -208,7 +206,7 @@ class CoroutineAdapter implements AdapterInterface
         $client->setMethod($request->getMethod());
         switch (strtoupper($request->getMethod())) {
             case 'POST':
-            case 'PUT' :
+            case 'PUT':
             case 'DELETE':
                 $postFields = $this->buildPostFields($options);
                 $client->setData($postFields);
@@ -240,5 +238,4 @@ class CoroutineAdapter implements AdapterInterface
         $defaultAgent .= ' PHP/' . PHP_VERSION;
         return $defaultAgent;
     }
-
 }

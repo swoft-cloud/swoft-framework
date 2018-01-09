@@ -11,7 +11,6 @@ namespace Swoft\Web;
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class Application extends \Swoft\Base\Application
+class Application extends \Swoft\Core\Application
 {
-
 }

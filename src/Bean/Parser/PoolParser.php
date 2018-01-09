@@ -39,5 +39,4 @@ class PoolParser extends AbstractParser
 
         return [$className, Scope::SINGLETON, ""];
     }
-
 }

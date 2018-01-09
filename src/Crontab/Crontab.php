@@ -2,7 +2,7 @@
 
 namespace Swoft\Crontab;
 
-use Swoft\Base\ApplicationContext;
+use Swoft\Core\ApplicationContext;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Collector;
 use Swoft\Memory\Table;
@@ -47,9 +47,9 @@ class Crontab
      */
     public function init(): bool
     {
-         // 非cli命令行
+        // 非cli命令行
         $context = ApplicationContext::getContext();
-        if($context == ApplicationContext::CONSOLE){
+        if ($context == ApplicationContext::CONSOLE) {
             return false;
         }
         $serverSetting = App::$server->getServerSetting();

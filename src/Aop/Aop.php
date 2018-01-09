@@ -93,7 +93,7 @@ class Aop implements AopInterface
             }
         } catch (\Exception $e) {
             if (isset($advice['afterThrowing']) && !empty($advice['afterThrowing'])) {
-                return $this->doPoint($advice['afterThrowing'], $target, $method, $params, $advice, $advices);;
+                return $this->doPoint($advice['afterThrowing'], $target, $method, $params, $advice, $advices);
             }
         }
 

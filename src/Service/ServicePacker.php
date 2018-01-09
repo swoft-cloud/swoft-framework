@@ -3,7 +3,7 @@
 namespace Swoft\Service;
 
 use Swoft\App;
-use Swoft\Base\RequestContext;
+use Swoft\Core\RequestContext;
 use Swoft\Exception\ServiceException;
 use Swoft\Helper\JsonHelper;
 

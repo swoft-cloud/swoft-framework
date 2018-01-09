@@ -15,7 +15,6 @@ use Swoole\Lock;
  */
 class InitWorkerLock implements Bootable
 {
-
     public function bootstrap()
     {
         $server = App::$server;

@@ -11,5 +11,4 @@ namespace Swoft\Exception;
  */
 class RuntimeException extends \RuntimeException
 {
-
 }

@@ -60,7 +60,7 @@ class FileHandler extends AbstractProcessingHandler
         $messageText = implode("\n", $records) . "\n";
 
         // 同步写
-        if($isTask === false){
+        if ($isTask === false) {
             return $this->syncWrite($logFile, $messageText);
         }
         // 异步写

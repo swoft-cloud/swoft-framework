@@ -73,6 +73,5 @@ class ProceedingJoinPoint extends JoinPoint implements ProceedingJoinPointInterf
 
     public function reProceed(array $args = [])
     {
-
     }
 }

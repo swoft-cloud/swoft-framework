@@ -3,7 +3,7 @@
 namespace Swoft\Event\Listeners;
 
 use Swoft\App;
-use Swoft\Base\RequestContext;
+use Swoft\Core\RequestContext;
 use Swoft\Bean\Annotation\Listener;
 use Swoft\Event\EventInterface;
 use Swoft\Event\EventHandlerInterface;
@@ -31,10 +31,10 @@ class BeforeRequestListener implements EventHandlerInterface
         // header获取日志ID和spanid请求跨度ID
         $logid = RequestContext::getRequest()->getHeaderLine('logid');
         $spanid = RequestContext::getRequest()->getHeaderLine('spanid');
-        if(empty($logid)){
+        if (empty($logid)) {
             $logid = uniqid();
         }
-        if(empty($spanid)){
+        if (empty($spanid)) {
             $spanid = 0;
         }
         $uri = RequestContext::getRequest()->getUri();

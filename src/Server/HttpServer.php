@@ -3,8 +3,6 @@
 namespace Swoft\Server;
 
 use Swoft\App;
-use Swoft\Base\RequestContext;
-use Swoft\Exception\Handler\ExceptionHandlerManager;
 use Swoole\Http\Request;
 use Swoole\Http\Response;
 use Swoole\Http\Server;
