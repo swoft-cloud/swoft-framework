@@ -6,7 +6,7 @@ use Swoft\App;
 use Swoft\Bean\BeanFactory;
 use Swoft\Bean\Collector;
 use Swoft\Exception\DbException;
-use Swoft\Pool\ConnectPool;
+use Swoft\Pool\ConnectPoolInterface;
 use Swoft\Pool\DbPool;
 use Swoft\Pool\DbSlavePool;
 
@@ -19,7 +19,7 @@ use Swoft\Pool\DbSlavePool;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class EntityManager implements IEntityManager
+class EntityManager implements EntityManagerInterface
 {
     /**
      * 数据库主节点连接池ID
@@ -48,7 +48,7 @@ class EntityManager implements IEntityManager
     /**
      * 连接池
      *
-     * @var ConnectPool
+     * @var ConnectPoolInterface
      */
     private $pool = null;
 
@@ -62,9 +62,9 @@ class EntityManager implements IEntityManager
     /**
      * EntityManager constructor.
      *
-     * @param ConnectPool $pool
+     * @param ConnectPoolInterface $pool
      */
-    public function __construct(ConnectPool $pool)
+    public function __construct(ConnectPoolInterface $pool)
     {
         // 初始化连接信息
         $this->pool = $pool;
@@ -303,9 +303,9 @@ class EntityManager implements IEntityManager
      *
      * @param bool $isMaster 是否是主节点连接池
      *
-     * @return ConnectPool
+     * @return ConnectPoolInterface
      */
-    private static function getPool(bool $isMaster): ConnectPool
+    private static function getPool(bool $isMaster): ConnectPoolInterface
     {
         $dbPoolId = self::SLAVE;
         if ($isMaster) {

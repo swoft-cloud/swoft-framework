@@ -2,7 +2,7 @@
 
 namespace Swoft\Cache;
 
-use Swoft\Web\AbstractResult;
+use Swoft\Core\AbstractResult;
 
 /**
  * redis延迟收包，返回数据结构

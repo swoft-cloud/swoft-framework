@@ -10,7 +10,7 @@ use Swoft\Bean\Collector;
 use Swoft\Circuit\CircuitBreaker;
 use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
-use Swoft\Pool\ConnectPool;
+use Swoft\Pool\ConnectPoolInterface;
 use Swoft\Pool\RedisPool;
 use Swoft\Server\ServerInterface;
 use Swoft\Web\Application;
@@ -106,16 +106,6 @@ class App
     }
 
     /**
-     * request router
-     *
-     * @return \Swoft\Router\Http\HandlerMapping
-     */
-    public static function getHttpRouter()
-    {
-        return self::getBean('httpRouter');
-    }
-
-    /**
      * 查询一个bean
      *
      * @param string $name 名称
@@ -133,22 +123,6 @@ class App
     public static function getApplication()
     {
         return ApplicationContext::getBean('application');
-    }
-
-    /**
-     * @return \Swoft\Web\DispatcherServer
-     */
-    public static function getDispatcherServer()
-    {
-        return ApplicationContext::getBean('dispatcherServer');
-    }
-
-    /**
-     * @return \Swoft\Service\DispatcherService
-     */
-    public static function getDispatcherService()
-    {
-        return ApplicationContext::getBean('dispatcherService');
     }
 
     /**
@@ -202,16 +176,6 @@ class App
     }
 
     /**
-     * the packer of rpc service
-     *
-     * @return \Swoft\Service\ServicePacker;
-     */
-    public static function getPacker()
-    {
-        return self::getBean('servicePacker');
-    }
-
-    /**
      * the selector of balancer
      *
      * @return \Swoft\Pool\BalancerSelector
@@ -236,7 +200,7 @@ class App
      *
      * @param string $name
      *
-     * @return ConnectPool
+     * @return ConnectPoolInterface
      */
     public static function getPool(string $name)
     {
@@ -270,7 +234,7 @@ class App
     /**
      * request对象
      *
-     * @return Web\Request
+     * @return \Psr\Http\Message\RequestInterface
      */
     public static function getRequest()
     {
@@ -280,7 +244,7 @@ class App
     /**
      * response对象
      *
-     * @return Web\Response
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public static function getResponse()
     {

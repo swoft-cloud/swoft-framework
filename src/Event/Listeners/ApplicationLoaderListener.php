@@ -23,21 +23,11 @@ use Swoft\Event\EventHandlerInterface;
 class ApplicationLoaderListener implements EventHandlerInterface
 {
     /**
-     * @param EventInterface $event      事件对象
+     * @param EventInterface $event 事件对象
+     * @return void
      */
     public function handle(EventInterface $event)
     {
-        /* @var \Swoft\Router\Http\HandlerMapping $httpRouter */
-        $httpRouter = App::getBean('httpRouter');
-        /* @var \Swoft\Router\Service\HandlerMapping $serviceRouter */
-        $serviceRouter = App::getBean('serviceRouter');
-
-        $requestMapping = Collector::$requestMapping;
-        $serviceMapping = Collector::$serviceMapping;
-
-        $httpRouter->registerRoutes($requestMapping);
-        $serviceRouter->register($serviceMapping);
-
         App::setProperties();
     }
 }

@@ -9,11 +9,14 @@ use Swoft\Web\Psr7Request;
 use Swoft\Web\Uri;
 
 /**
- * @uses      Client
- * @version   2017-11-22
- * @author    huangzhhui <huangzhwork@gmail.com>
- * @copyright Copyright 2010-2017 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Http client
+ *
+ * @method HttpResult get(string | UriInterface $uri, array $options = [])
+ * @method HttpResult head(string | UriInterface $uri, array $options = [])
+ * @method HttpResult put(string | UriInterface $uri, array $options = [])
+ * @method HttpResult post(string | UriInterface $uri, array $options = [])
+ * @method HttpResult patch(string | UriInterface $uri, array $options = [])
+ * @method HttpResult delete(string | UriInterface $uri, array $options = [])
  */
 class Client
 {
@@ -65,11 +68,11 @@ class Client
      * Send a Http request
      *
      * @param string $method
-     * @param string $uri
+     * @param string|UriInterface $uri
      * @param array $options
      * @return HttpResult
      */
-    public function request(string $method, string $uri, array $options = []): HttpResult
+    public function request(string $method, $uri, array $options = []): HttpResult
     {
         $options = $this->prepareDefaults($options);
         $headers = isset($options['headers']) ? $options['headers'] : [];
@@ -85,6 +88,22 @@ class Client
         $result = $adapter->request($request, $options);
         App::profileEnd($profileKey);
         return $result;
+    }
+
+    /**
+     * @param string $method
+     * @param array $args
+     * @return HttpResult|void
+     */
+    public function __call($method, $args)
+    {
+        if (count($args) < 1) {
+            throw new \InvalidArgumentException('Magic request methods require a URI and optional options array');
+        }
+
+        $uri = $args[0];
+        $options = isset($args[1]) ? $args[1] : [];
+        return $this->request($method, $uri, $options);
     }
 
     /**

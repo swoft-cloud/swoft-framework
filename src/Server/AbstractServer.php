@@ -91,6 +91,11 @@ abstract class AbstractServer implements ServerInterface
     protected $status;
 
     /**
+     * @var ServerTrait
+     */
+    use ServerTrait;
+
+    /**
      * AbstractServer constructor.
      */
     public function __construct()

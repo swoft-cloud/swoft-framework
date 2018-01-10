@@ -3,8 +3,8 @@
 namespace Swoft\Db;
 
 use Swoft\App;
+use Swoft\Core\AbstractResult;
 use Swoft\Helper\ArrayHelper;
-use Swoft\Web\AbstractResult;
 
 /**
  * 数据库数据结果对象

@@ -5,7 +5,6 @@ namespace Swoft\Bean;
 use Swoft\Aop\Aop;
 use Swoft\Aop\AopInterface;
 use Swoft\App;
-use Swoft\Core\ApplicationContext;
 use Swoft\Bean\Annotation\Scope;
 use Swoft\Bean\ObjectDefinition\ArgsInjection;
 use Swoft\Bean\ObjectDefinition\MethodInjection;
@@ -14,7 +13,6 @@ use Swoft\Bean\Resource\AnnotationResource;
 use Swoft\Bean\Resource\DefinitionResource;
 use Swoft\Proxy\Handler\AopHandler;
 use Swoft\Proxy\Proxy;
-use Swoft\Web\Application;
 
 /**
  * 全局容器
@@ -63,7 +61,7 @@ class Container
      */
     public function get(string $name)
     {
-        if (! is_string($name)) {
+        if (!is_string($name)) {
             throw new \InvalidArgumentException("the name of bean 只能是字符串， name=" . json_encode($name));
         }
 
@@ -73,7 +71,7 @@ class Container
         }
 
         // 未定义
-        if (! isset($this->definitions[$name])) {
+        if (!isset($this->definitions[$name])) {
             throw new \InvalidArgumentException("the name of bean 不存在， name=" . $name);
         }
 
@@ -106,7 +104,7 @@ class Container
     public function addDefinitions(array $definitions)
     {
         // properties.php配置数据
-        if (! isset($definitions['config']['properties'])) {
+        if (!isset($definitions['config']['properties'])) {
             throw new \InvalidArgumentException("config bean properties没有配置");
         }
 
@@ -124,7 +122,7 @@ class Container
     {
         $properties = $this->properties;
 
-        if (! isset($properties['beanScan'])) {
+        if (!isset($properties['beanScan'])) {
             throw new \InvalidArgumentException("缺少扫描命名空间范围，config/properties/app.php未配置beanScan");
         }
         $beanScan = $properties['beanScan'];
@@ -141,7 +139,7 @@ class Container
     public function initBeans()
     {
         $autoInitBeans = $this->properties['autoInitBean'] ?? false;
-        if (! $autoInitBeans) {
+        if (!$autoInitBeans) {
             return;
         }
 
@@ -227,16 +225,16 @@ class Container
         /* @var Aop $aop */
         $aop = App::getBean(Aop::class);
 
-        $rc  = new \ReflectionClass($className);
+        $rc = new \ReflectionClass($className);
         $rms = $rc->getMethods();
         foreach ($rms as $rm) {
-            $method      = $rm->getName();
-            $annotations = Collector::$methodAnnotations[$className][$method]??[];
+            $method = $rm->getName();
+            $annotations = Collector::$methodAnnotations[$className][$method] ?? [];
             $annotations = array_unique($annotations);
             $aop->match($name, $className, $method, $annotations);
         }
 
-        $handler     = new AopHandler($object);
+        $handler = new AopHandler($object);
         $proxyObject = Proxy::newProxyInstance(get_class($object), $handler);
 
         return $proxyObject;
@@ -298,12 +296,12 @@ class Container
             }
 
             $propertyName = $property->getName();
-            if (! isset($propertyInjects[$propertyName])) {
+            if (!isset($propertyInjects[$propertyName])) {
                 continue;
             }
 
             // 设置可用
-            if (! $property->isPublic()) {
+            if (!$property->isPublic()) {
                 $property->setAccessible(true);
             }
 

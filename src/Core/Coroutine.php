@@ -120,7 +120,7 @@ class Coroutine
 
     /**
      * Determine if should create a coroutine when you
-     * want to use a Coroutine Client, and you shoud
+     * want to use a Coroutine Client, and you should
      * always use self::isSupportCoroutine() before
      * call this method.
      *

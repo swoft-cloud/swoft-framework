@@ -3,15 +3,12 @@
 namespace Swoft\Console;
 
 use Swoft\App;
-use Swoft\Core\ApplicationContext;
-use Swoft\Core\RequestContext;
 use Swoft\Bean\BeanFactory;
 use Swoft\Console\Input\Input;
 use Swoft\Console\Output\Output;
+use Swoft\Core\RequestContext;
 use Swoft\Server\Booting\Bootable;
 use Swoft\Server\Booting\InitMbFunsEncoding;
-use Swoft\Server\Booting\InitSwoftConfig;
-use Swoft\Server\Booting\InitWorkerLock;
 use Swoft\Server\Booting\LoadEnv;
 use Swoft\Server\Booting\LoadInitConfiguration;
 
@@ -36,7 +33,7 @@ class ConsoleController extends ConsoleCommand
     /**
      * ConsoleController constructor.
      *
-     * @param Input  $input
+     * @param Input $input
      * @param Output $output
      */
     public function __construct(Input $input, Output $output)
@@ -80,14 +77,14 @@ class ConsoleController extends ConsoleCommand
 
 
         // 初始化
-        $spanid = 0;
-        $logid = uniqid();
+        $spanId = 0;
+        $logId = uniqid();
 
         $uri = static::class . "->" . $command . self::COMMAND_SUFFIX;
         $contextData = [
-            'logid'       => $logid,
-            'spanid'      => $spanid,
-            'uri'         => $uri,
+            'logid' => $logId,
+            'spanid' => $spanId,
+            'uri' => $uri,
             'requestTime' => microtime(true)
         ];
 

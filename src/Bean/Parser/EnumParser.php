@@ -3,9 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Enum;
-use Swoft\Bean\Annotation\ValidatorFrom;
-use Swoft\Bean\Collector;
-use Swoft\Validator\EnumValidator;
+use Swoft\Bean\Collector\ValidatorCollector;
 
 /**
  * Enum注解解析器
@@ -16,7 +14,7 @@ use Swoft\Validator\EnumValidator;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class EnumParser extends AbstractParser
+class EnumParser extends AbstractParserInterface
 {
 
     /**
@@ -32,19 +30,7 @@ class EnumParser extends AbstractParser
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
-        $from    = $objectAnnotation->getFrom();
-        $name    = $objectAnnotation->getName();
-        $values  = $objectAnnotation->getValues();
-        $default = $objectAnnotation->getDefault();
-
-        $params = [$values, $default];
-        $from   = isset(Collector::$serviceMapping[$className]) ? ValidatorFrom::SERVICE : $from;
-
-        Collector::$validator[$className][$methodName]['validator'][$from][$name] = [
-            'validator' => EnumValidator::class,
-            'params'    => $params,
-        ];
-
+        ValidatorCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
         return null;
     }
 }

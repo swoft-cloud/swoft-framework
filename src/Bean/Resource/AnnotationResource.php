@@ -2,12 +2,10 @@
 
 namespace Swoft\Bean\Resource;
 
-use App\Controllers\ValidatorController;
-use App\Models\Dao\RefInterface;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use function foo\func;
-use Swoft\Bean\Wrapper\IWrapper;
+use Swoft\Helper\ComponentHelper;
+use Swoft\Bean\Wrapper\WrapperInterface;
 
 /**
  * 注释解析
@@ -41,12 +39,20 @@ class AnnotationResource extends AbstractResource
     private $definitions = [];
 
 
+    /**
+     * @var array
+     */
     private $annotations = [];
 
+    /**
+     * AnnotationResource constructor.
+     *
+     * @param array $properties
+     */
     public function __construct(array $properties)
     {
         $this->properties = $properties;
-        $this->scanNamespaces['Swoft'] = dirname(__FILE__, 3);
+        $this->autoRegisterNamespaces();
     }
 
     /**
@@ -171,20 +177,45 @@ class AnnotationResource extends AbstractResource
             $annotationClassName = get_class($classAnnotation);
             $classNameTmp = str_replace('\\', '/', $annotationClassName);
             $classFileName = basename($classNameTmp);
+            $namespaceDir = dirname($classNameTmp, 2);
+            $namespace = str_replace('/', '\\', $namespaceDir);
 
             // 封装器
-            $annotationParserClassName = "Swoft\\Bean\Wrapper\\" . $classFileName . "Wrapper";
+            $annotationParserClassName = "{$namespace}\\Wrapper\\{$classFileName}Wrapper";
             if (!class_exists($annotationParserClassName)) {
                 continue;
             }
 
-            /* @var IWrapper $wrapper */
+            /* @var WrapperInterface $wrapper */
             $wrapper = new $annotationParserClassName($this);
             $objectDefinitionAry = $wrapper->doWrapper($className, $annotation);
             if ($objectDefinitionAry != null) {
                 list($beanName, $objectDefinition) = $objectDefinitionAry;
                 $this->definitions[$beanName] = $objectDefinition;
             }
+        }
+    }
+
+    /**
+     * auto register namespaces
+     */
+    private function autoRegisterNamespaces()
+    {
+        $swoftDir      = dirname(__FILE__, 5);
+        $componentDirs = scandir($swoftDir);
+        foreach ($componentDirs as $component) {
+            if ($component == '.' || $component == '..') {
+                continue;
+            }
+
+            $componentCommandDir = $swoftDir . DS . $component . DS . 'src';
+            if (!is_dir($componentCommandDir)) {
+                continue;
+            }
+            $componentNs = ComponentHelper::getComponentNs($component);
+
+            $ns = "Swoft{$componentNs}";
+            $this->scanNamespaces[$ns] = $componentCommandDir;
         }
     }
 
@@ -209,9 +240,9 @@ class AnnotationResource extends AbstractResource
             }
 
             $replaces = ["", '\\', "", ""];
-            $searchs = [$dir, '/', '.php', '.PHP'];
+            $searches = [$dir, '/', '.php', '.PHP'];
 
-            $file = str_replace($searchs, $replaces, $file);
+            $file = str_replace($searches, $replaces, $file);
             $phpFiles[] = $namespace . $file;
         }
 

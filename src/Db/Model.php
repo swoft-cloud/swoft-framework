@@ -3,7 +3,7 @@
 namespace Swoft\Db;
 
 /**
- * 实体模型实现类似ActiverRecord操作
+ * 实体模型实现类似ActiveRecord操作
  *
  * @uses      Model
  * @version   2017年09月08日

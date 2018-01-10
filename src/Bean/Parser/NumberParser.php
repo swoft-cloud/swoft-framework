@@ -2,9 +2,7 @@
 
 namespace Swoft\Bean\Parser;
 
-use Swoft\Bean\Annotation\ValidatorFrom;
-use Swoft\Bean\Collector;
-use Swoft\Validator\NumberValidator;
+use Swoft\Bean\Collector\ValidatorCollector;
 
 /**
  * number parser
@@ -15,7 +13,7 @@ use Swoft\Validator\NumberValidator;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class NumberParser extends AbstractParser
+class NumberParser extends AbstractParserInterface
 {
     /**
      * @param string                        $className
@@ -33,20 +31,7 @@ class NumberParser extends AbstractParser
         string $methodName = "",
         $propertyValue = null
     ) {
-        $from    = $objectAnnotation->getFrom();
-        $name    = $objectAnnotation->getName();
-        $min     = $objectAnnotation->getMin();
-        $max     = $objectAnnotation->getMax();
-        $default = $objectAnnotation->getDefault();
-
-        $params = [$min, $max, $default];
-        $from   = isset(Collector::$serviceMapping[$className]) ? ValidatorFrom::SERVICE : $from;
-
-        Collector::$validator[$className][$methodName]['validator'][$from][$name] = [
-            'validator' => NumberValidator::class,
-            'params'    => $params,
-        ];
-
+        ValidatorCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
         return null;
     }
 }

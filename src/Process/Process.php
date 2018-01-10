@@ -68,9 +68,9 @@ class Process
             throw new \InvalidArgumentException('自定义进程不存在，className=' . $processClassName);
         }
 
-        /* @var AbstractProcess $processClass */
+        /* @var AbstractProcessInterface $processClass */
         $processClass = new $processClassName($server);
-        if (! is_subclass_of($processClass, AbstractProcess::class)) {
+        if (! is_subclass_of($processClass, AbstractProcessInterface::class)) {
             throw new \InvalidArgumentException('自定义进程类，不是AbstractProcess子类，className=' . $processClassName);
         }
 

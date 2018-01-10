@@ -112,7 +112,7 @@ class Logger extends \Monolog\Logger
 
         $ts->setTimezone(static::$timezone);
 
-        $message = $this->formateMessage($message);
+        $message = $this->formatMessage($message);
         $message = $this->getTrace($message);
         $record = $this->formateRecord($message, $context, $level, $levelName, $ts, []);
 
@@ -291,7 +291,7 @@ class Logger extends \Monolog\Logger
      *
      * @return string
      */
-    public function formateMessage($message)
+    public function formatMessage($message)
     {
         if (is_array($message)) {
             return json_encode($message);
@@ -316,8 +316,8 @@ class Logger extends \Monolog\Logger
             $info = $traces[3];
             if (isset($info['file'], $info['line'])) {
                 $filename = basename($info['file']);
-                $linenum = $info['line'];
-                $ex = "$filename:$linenum";
+                $lineNum = $info['line'];
+                $ex = "$filename:$lineNum";
             }
         }
         if ($count >= 5) {

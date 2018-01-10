@@ -252,7 +252,7 @@ class Crontab
             $runTimeTableTasks->set($key, [
                 'taskClass'  => $task['taskClass'],
                 'taskMethod' => $task['taskMethod'],
-                'minte'      => $min,
+                'minute'     => $min,
                 'sec'        => $time + $sec,
                 'runStatus'  => self::NORMAL
             ]);
@@ -303,7 +303,7 @@ class Crontab
         $min = date('YmdHi');
 
         foreach ($runTimeTableTasks as $key => $value) {
-            if ($value['minte'] == $min) {
+            if ($value['minute'] == $min) {
                 if (time() == $value['sec'] && $value['runStatus'] == self::NORMAL) {
                     $data[] = [
                         'key'        => $key,

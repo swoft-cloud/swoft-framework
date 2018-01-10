@@ -65,7 +65,7 @@ class RedisClient
     {
         $profileKey = self::getRedisProfile($method);
 
-        /** @var \Swoft\Pool\ConnectPool $connectPool */
+        /** @var \Swoft\Pool\ConnectPoolInterface $connectPool */
         $connectPool = App::getBean(RedisPool::class);
 
         /* @var RedisConnect $client */
