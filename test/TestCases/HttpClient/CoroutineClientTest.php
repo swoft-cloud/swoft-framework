@@ -296,6 +296,35 @@ class CoroutineClientTest extends AbstractTestCase
     /**
      * @test
      */
+    public function batch()
+    {
+        Coroutine::create(function () {
+            $client = new Client([
+                'base_uri' => 'http://www.swoft.org',
+            ]);
+            $client->setAdapter('coroutine');
+            $request1 = $client->request('GET', '');
+            $request2 = $client->request('GET', '');
+            $request3 = $client->request('GET', '');
+
+            /** @var Response $response1 */
+            $response1 = $request1->getResponse();
+            /** @var Response $response2 */
+            $response2 = $request2->getResponse();
+            /** @var Response $response3 */
+            $response3 = $request3->getResponse();
+
+            $response1->assertSuccessful()->assertSee('Swoft 官网');
+            $response2->assertSuccessful()->assertSee('Swoft 官网');
+            $response3->assertSuccessful()->assertSee('Swoft 官网');
+
+            swoole_event_exit();
+        });
+    }
+
+    /**
+     * @test
+     */
     public function defaultUserAgent()
     {
         Coroutine::create(function () {
