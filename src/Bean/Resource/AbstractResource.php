@@ -13,7 +13,7 @@ use Swoft\I18n\I18n;
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class AbstractResource implements IResource
+abstract class AbstractResource implements ResourceInterface
 {
     /**
      * properties.php配置

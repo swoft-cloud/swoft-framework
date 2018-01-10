@@ -23,7 +23,8 @@ use Swoft\Event\EventHandlerInterface;
 class ApplicationLoaderListener implements EventHandlerInterface
 {
     /**
-     * @param EventInterface $event      事件对象
+     * @param EventInterface $event 事件对象
+     * @return void
      */
     public function handle(EventInterface $event)
     {

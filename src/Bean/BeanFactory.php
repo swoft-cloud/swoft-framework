@@ -56,16 +56,6 @@ class BeanFactory implements BeanFactoryInterface
     }
 
     /**
-     * 创建一个bean
-     *
-     * @param string $beanName
-     * @param array  $definition
-     */
-    public static function createBean(string $beanName, array $definition)
-    {
-    }
-
-    /**
      * bean是否存在
      *
      * @param string $name bean名称

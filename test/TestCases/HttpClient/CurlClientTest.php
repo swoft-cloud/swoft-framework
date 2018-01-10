@@ -33,6 +33,13 @@ class CurlClientTest extends AbstractTestCase
         ])->getResponse();
         $response->assertSuccessful()->assertSee('Swoft 官网');
 
+        // Http - Magic call
+        /** @var Response $response */
+        $response = $client->get('', [
+            'base_uri' => 'http://www.swoft.org',
+        ])->getResponse();
+        $response->assertSuccessful()->assertSee('Swoft 官网');
+
         // Https
         /** @var Response $response */
         $response = $client->request($method, '', [

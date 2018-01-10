@@ -32,7 +32,7 @@ class Aspect
             $this->order = $values['value'];
         }
         if (isset($values['order'])) {
-            $this->order = $values['inclorderude'];
+            $this->order = $values['order'];
         }
     }
 

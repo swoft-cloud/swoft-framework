@@ -39,7 +39,7 @@ class ConsoleCommand
     /**
      * 初始化
      *
-     * @param Input  $input  输入
+     * @param Input $input 输入
      * @param Output $output 输出
      */
     public function __construct(Input $input, Output $output)
@@ -78,9 +78,9 @@ class ConsoleCommand
         // 命令显示结构
         $commandList = [
             'Description:' => [$classDesc],
-            'Usage:'       => ['server:{command} [arguments] [options]'],
-            'Commands:'    => $methodCommands,
-            'Options:'     => [
+            'Usage:' => ['server:{command} [arguments] [options]'],
+            'Commands:' => $methodCommands,
+            'Options:' => [
                 '-h,--help' => 'Show help of the command group or specified command action'
             ]
         ];
@@ -126,7 +126,7 @@ class ConsoleCommand
      * 显示命令组具体某一个命令帮助信息
      *
      * @param string $controllerClass 类名
-     * @param string $commandMethod   命令方法
+     * @param string $commandMethod 命令方法
      */
     private function showCommandHelp(string $controllerClass, string $commandMethod)
     {
@@ -136,37 +136,37 @@ class ConsoleCommand
         $document = $reflectionMethod->getDocComment();
         $docs = DocumentParser::tagList($document);
 
-        $commondList = [];
+        $commands = [];
         // 描述
         if (isset($docs['description'])) {
-            $commondList['Description:'] = explode("\n", $docs['description']);
+            $commands['Description:'] = explode("\n", $docs['description']);
         }
 
         // 使用
         if (isset($docs['usage'])) {
-            $commondList['Usage:'] = explode("\n", $docs['usage']);
+            $commands['Usage:'] = explode("\n", $docs['usage']);
         }
 
         // 参数
         if (isset($docs['arguments'])) {
             $arguments = $this->parserKeyAndDesc($docs['arguments']);
-            $commondList['Arguments:'] = $arguments;
+            $commands['Arguments:'] = $arguments;
         }
 
         // 选项
         if (isset($docs['options'])) {
             $options = $this->parserKeyAndDesc($docs['options']);
-            $commondList['Options:'] = $options;
+            $commands['Options:'] = $options;
         }
 
         /**
          * 实例
          */
         if (isset($docs['example'])) {
-            $commondList['Example:'] = [$docs['example']];
+            $commands['Example:'] = [$docs['example']];
         }
 
-        $this->output->writeList($commondList);
+        $this->output->writeList($commands);
     }
 
     /**

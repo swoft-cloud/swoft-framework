@@ -10,7 +10,7 @@ use Swoft\Bean\Collector;
 use Swoft\Circuit\CircuitBreaker;
 use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
-use Swoft\Pool\ConnectPool;
+use Swoft\Pool\ConnectPoolInterface;
 use Swoft\Pool\RedisPool;
 use Swoft\Server\ServerInterface;
 use Swoft\Web\Application;
@@ -200,7 +200,7 @@ class App
      *
      * @param string $name
      *
-     * @return ConnectPool
+     * @return ConnectPoolInterface
      */
     public static function getPool(string $name)
     {

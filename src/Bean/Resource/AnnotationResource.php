@@ -4,8 +4,8 @@ namespace Swoft\Bean\Resource;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Swoft\Bean\Wrapper\IWrapper;
 use Swoft\Helper\ComponentHelper;
+use Swoft\Bean\Wrapper\WrapperInterface;
 
 /**
  * 注释解析
@@ -186,7 +186,7 @@ class AnnotationResource extends AbstractResource
                 continue;
             }
 
-            /* @var IWrapper $wrapper */
+            /* @var WrapperInterface $wrapper */
             $wrapper = new $annotationParserClassName($this);
             $objectDefinitionAry = $wrapper->doWrapper($className, $annotation);
             if ($objectDefinitionAry != null) {
@@ -240,9 +240,9 @@ class AnnotationResource extends AbstractResource
             }
 
             $replaces = ["", '\\', "", ""];
-            $searchs = [$dir, '/', '.php', '.PHP'];
+            $searches = [$dir, '/', '.php', '.PHP'];
 
-            $file = str_replace($searchs, $replaces, $file);
+            $file = str_replace($searches, $replaces, $file);
             $phpFiles[] = $namespace . $file;
         }
 

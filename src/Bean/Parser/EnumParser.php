@@ -14,7 +14,7 @@ use Swoft\Bean\Collector\ValidatorCollector;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class EnumParser extends AbstractParser
+class EnumParser extends AbstractParserInterface
 {
 
     /**

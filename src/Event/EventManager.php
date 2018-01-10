@@ -649,7 +649,7 @@ class EventManager implements EventManagerInterface
     }
 
     /**
-     * @return EventManager
+     * @return EventManagerInterface
      */
     public function getParent(): EventManagerInterface
     {
