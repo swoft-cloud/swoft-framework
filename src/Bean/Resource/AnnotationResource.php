@@ -45,6 +45,14 @@ class AnnotationResource extends AbstractResource
     private $annotations = [];
 
     /**
+     * @var array
+     */
+    private $serverScan = [
+        'Console',
+        'Bootstrap'
+    ];
+
+    /**
      * AnnotationResource constructor.
      *
      * @param array $properties
@@ -52,7 +60,6 @@ class AnnotationResource extends AbstractResource
     public function __construct(array $properties)
     {
         $this->properties = $properties;
-        $this->autoRegisterNamespaces();
     }
 
     /**
@@ -162,6 +169,8 @@ class AnnotationResource extends AbstractResource
             $nsPath = str_replace('App/', 'app/', $nsPath);
             $this->scanNamespaces[$namespace] = BASE_PATH . "/" . $nsPath;
         }
+
+        $this->autoRegisterNamespaces();
     }
 
     /**
@@ -199,6 +208,38 @@ class AnnotationResource extends AbstractResource
     /**
      * auto register namespaces
      */
+    public function autoRegisterServerNamespaces()
+    {
+        $swoftDir      = dirname(__FILE__, 5);
+        $componentDirs = scandir($swoftDir);
+        foreach ($componentDirs as $component) {
+            if ($component == '.' || $component == '..') {
+                continue;
+            }
+
+            $componentCommandDir = $swoftDir . DS . $component . DS . 'src';
+            if (!is_dir($componentCommandDir)) {
+                continue;
+            }
+
+            $componentNs = ComponentHelper::getComponentNs($component);
+            $ns = "Swoft{$componentNs}";
+
+            foreach ($this->serverScan as $dir){
+                $scanDir = $componentCommandDir . DS . $dir;
+                if(!is_dir($scanDir)){
+                    continue;
+                }
+
+                $scanNs  = $ns . "\\" . $dir;
+                $this->scanNamespaces[$scanNs] = $scanDir;
+            }
+        }
+    }
+
+    /**
+     * auto register namespaces
+     */
     private function autoRegisterNamespaces()
     {
         $swoftDir      = dirname(__FILE__, 5);
@@ -215,7 +256,23 @@ class AnnotationResource extends AbstractResource
             $componentNs = ComponentHelper::getComponentNs($component);
 
             $ns = "Swoft{$componentNs}";
-            $this->scanNamespaces[$ns] = $componentCommandDir;
+
+            $scanDirs = scandir($componentCommandDir);
+            foreach ($scanDirs as $dir) {
+                if ($dir == '.' || $dir == '..') {
+                    continue;
+                }
+                if(in_array($dir, $this->serverScan, true)){
+                    continue;
+                }
+                $scanDir = $componentCommandDir . DS . $dir;
+                if(!is_dir($scanDir)){
+                    continue;
+                }
+                $scanNs  = $ns . "\\" . $dir;
+
+                $this->scanNamespaces[$scanNs] = $scanDir;
+            }
         }
     }
 

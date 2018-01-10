@@ -236,6 +236,7 @@ trait ServerTrait
      */
     protected function reloadBean()
     {
+        BeanFactory::init();
         BeanFactory::reload();
         $initApplicationContext = new InitApplicationContext();
         $initApplicationContext->init();
