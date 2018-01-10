@@ -16,5 +16,4 @@ namespace Swoft\Bean\Annotation;
  */
 class AfterReturning
 {
-
 }

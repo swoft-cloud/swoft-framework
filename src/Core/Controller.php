@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Base;
+namespace Swoft\Core;
 
 use Swoft\App;
 
@@ -109,5 +109,4 @@ abstract class Controller
     {
         return $this->actionPrefix;
     }
-
 }

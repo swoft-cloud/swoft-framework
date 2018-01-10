@@ -9,7 +9,7 @@
 namespace Swoft\Web;
 
 use Swoft\App;
-use Swoft\Base\RequestContext;
+use Swoft\Core\RequestContext;
 
 /**
  * Trait ViewRendererTrait
@@ -79,5 +79,4 @@ trait ViewRendererTrait
         $result = $this->getRenderer()->renderContent($string, $data);
         return RequestContext::getResponse()->withContent($result);
     }
-
 }

@@ -2,7 +2,7 @@
 
 namespace Swoft\Web;
 
-use Swoft\Base\RequestContext;
+use Swoft\Core\RequestContext;
 use Swoft\Bean\Collector;
 use Swoft\Contract\Arrayable;
 use Swoft\Helper\JsonHelper;
@@ -19,9 +19,8 @@ use Swoft\Web\Streams\SwooleStream;
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class Response extends \Swoft\Base\Response
+class Response extends \Swoft\Core\Response
 {
-
     use ViewRendererTrait;
 
     /**
@@ -153,21 +152,25 @@ class Response extends \Swoft\Base\Response
         $controllerAction = RequestContext::getContextDataByKey('controllerAction');
         $template = Collector::$requestMapping[$controllerClass]['view'][$controllerAction]['template'] ?? null;
         $matchViewModel = $this->isMatchAccept($currentAccept, 'text/html') && $controllerClass && $this->isArrayable($data) && $template && ! $this->getException();
-        switch ($currentAccept) {
-            // View
-            case $matchViewModel === true:
-                $response = $this->view($data, $status);
-                break;
-            // Json
-            case $this->isMatchAccept($currentAccept, 'application/json'):
-            case $this->isArrayable($data):
-                ! $this->isArrayable($data) && $data = compact('data');
-                $response = $this->json($data, $status);
-                break;
-            // Raw
-            default:
-                $response = $this->raw((string)$data, $status);
-                break;
+        if ($currentAccept) {
+            switch ($currentAccept) {
+                // View
+                case $matchViewModel === true:
+                    $response = $this->view($data, $status);
+                    break;
+                // Json
+                case $this->isMatchAccept($currentAccept, 'application/json'):
+                case $this->isArrayable($data):
+                    ! $this->isArrayable($data) && $data = compact('data');
+                    $response = $this->json($data, $status);
+                    break;
+                // Raw
+                default:
+                    $response = $this->raw((string)$data, $status);
+                    break;
+            }
+        } else {
+            $response = $this->raw((string)$data, $status);
         }
         return $response;
     }
@@ -270,5 +273,4 @@ class Response extends \Swoft\Base\Response
     {
         return StringHelper::contains($accept, $keyword) === true;
     }
-
 }

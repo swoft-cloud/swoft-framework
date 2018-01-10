@@ -3,9 +3,9 @@
 namespace Swoft\Web;
 
 use Swoft\App;
-use Swoft\Base\DispatcherInterface;
-use Swoft\Base\RequestContext;
-use Swoft\Base\RequestHandler;
+use Swoft\Core\DispatcherInterface;
+use Swoft\Core\RequestContext;
+use Swoft\Core\RequestHandler;
 use Swoft\Event\AppEvent;
 use Swoft\Exception\Handler\ExceptionHandlerManager;
 use Swoft\Middleware\Http\ParserMiddleware;

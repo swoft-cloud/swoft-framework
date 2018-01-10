@@ -7,7 +7,6 @@ use Swoft\Http\Client;
 use Swoft\Test\AbstractTestCase;
 use Swoft\Testing\Base\Response;
 
-
 /**
  * @uses      CoroutineClientTest
  * @version   2017-11-22
@@ -58,7 +57,6 @@ class CurlClientTest extends AbstractTestCase
         $this->assertJson($response->getBody()->getContents());
         $body = json_decode($response->getBody()->getContents(), true);
         $this->assertEquals('a=1', $body['uri']['query']);
-
     }
 
     /**
@@ -287,5 +285,4 @@ class CurlClientTest extends AbstractTestCase
         $expected = sprintf('Swoft/%s curl/%s PHP/%s', App::version(), \curl_version()['version'], PHP_VERSION);
         $this->assertEquals($expected, $client->getDefaultUserAgent());
     }
-
 }

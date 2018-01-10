@@ -11,7 +11,5 @@ namespace Swoft\Exception\Http;
  */
 class BadRequestException extends HttpException
 {
-
     protected $code = 400;
-
 }

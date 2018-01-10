@@ -26,5 +26,4 @@ interface AdapterInterface
      * @return string
      */
     public function getUserAgent(): string;
-
 }

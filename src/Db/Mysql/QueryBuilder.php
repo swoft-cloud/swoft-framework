@@ -114,14 +114,13 @@ class QueryBuilder extends \Swoft\Db\QueryBuilder
      */
     protected function formatParamsKey($key): string
     {
-        if(is_string($key)){
+        if (is_string($key)) {
             return ":" . $key;
         }
-        if(App::isWorkerStatus()){
+        if (App::isWorkerStatus()) {
             return "?" . $key;
         }
 
         return $key;
     }
-
 }

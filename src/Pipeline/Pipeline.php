@@ -2,7 +2,6 @@
 
 namespace Swoft\Pipeline;
 
-
 /**
  * @uses      Pipeline
  * @version   2017年11月15日
@@ -87,5 +86,4 @@ class Pipeline
         $this->processor->stages = $this->stages;
         return $this->processor->$method($traveler);
     }
-
 }

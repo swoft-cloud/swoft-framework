@@ -28,7 +28,8 @@ class AnnotationAspect
     /**
      * @Around()
      */
-    public function around(ProceedingJoinPoint $proceedingJoinPoint){
+    public function around(ProceedingJoinPoint $proceedingJoinPoint)
+    {
         $tag = ' around before ';
         $result = $proceedingJoinPoint->proceed();
         $tag .= ' around after ';

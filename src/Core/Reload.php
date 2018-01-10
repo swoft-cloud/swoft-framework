@@ -1,10 +1,10 @@
 <?php
 
-namespace Swoft\Base;
+namespace Swoft\Core;
 
 use Swoft\App;
 use Swoft\Helper\FileHelper;
-use Swoft\Server\IServer;
+use Swoft\Server\ServerInterface;
 use Swoole\Event;
 use Swoft\Bean\Annotation\Bean;
 
@@ -29,8 +29,7 @@ class Reload
 
     /**
      * server服务器
-     *
-     * @var IServer
+     * @var ServerInterface
      */
     private $server;
 
@@ -63,23 +62,23 @@ class Reload
      */
     public function run()
     {
-        while (true){
+        while (true) {
             sleep($this->interval);
             $md5File = FileHelper::md5File($this->watchDir);
-            if(strcmp($this->md5File, $md5File) !== 0){
-                echo "inotify开始自动reloading...\n";
+            if (strcmp($this->md5File, $md5File) !== 0) {
+                echo "Start reloading...\n";
                 $this->server->isRunning();
                 $this->server->getServer()->reload();
-                echo "inotify自动成功\n";
+                echo "Reloaded\n";
             }
             $this->md5File = $md5File;
         }
     }
 
     /**
-     * @param \Swoft\Server\IServer $server
+     * @param \Swoft\Server\ServerInterface $server
      */
-    public function setServer(\Swoft\Server\IServer $server)
+    public function setServer(\Swoft\Server\ServerInterface $server)
     {
         $this->server = $server;
     }

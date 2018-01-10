@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Base;
+namespace Swoft\Core;
 
 use Swoft\App;
 use Swoft\Console\Console;
@@ -130,5 +130,4 @@ class Coroutine
     {
         return App::isWorkerStatus() && swoole_version() >= '2.0.11';
     }
-    
 }

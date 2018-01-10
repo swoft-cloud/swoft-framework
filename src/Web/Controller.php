@@ -2,7 +2,7 @@
 
 namespace Swoft\Web;
 
-use Swoft\Base\RequestContext;
+use Swoft\Core\RequestContext;
 
 /**
  * Web Controller
@@ -13,7 +13,7 @@ use Swoft\Base\RequestContext;
  * @copyright Copyright 2010-2017 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class Controller extends \Swoft\Base\Controller
+abstract class Controller extends \Swoft\Core\Controller
 {
 
     /**
@@ -48,5 +48,4 @@ abstract class Controller extends \Swoft\Base\Controller
         $response = $this->runAction($actionId, $params);
         return $response;
     }
-
 }

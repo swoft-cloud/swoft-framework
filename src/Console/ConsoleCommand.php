@@ -176,7 +176,6 @@ class ConsoleCommand
      */
     protected function beforeRun(string $command)
     {
-
     }
 
     /**
@@ -184,8 +183,8 @@ class ConsoleCommand
      *
      * @param string $command
      */
-    protected function afterRun(string $command){
-
+    protected function afterRun(string $command)
+    {
     }
 
     /**

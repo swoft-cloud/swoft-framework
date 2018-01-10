@@ -168,5 +168,4 @@ trait InteractsWithInput
         }
         return $this->getUploadedFiles()[$key] ?? $default;
     }
-
 }

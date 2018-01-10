@@ -4,7 +4,6 @@ namespace Swoft\Test\Pipeline\Pipeline;
 
 use Swoft\Pipeline\AbstractProcessor;
 
-
 /**
  * @uses      ExceptionProcessor
  * @version   2017年11月15日

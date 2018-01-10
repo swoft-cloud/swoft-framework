@@ -4,6 +4,7 @@ namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Value;
 use Swoft\Console\DocumentParser;
+use Swoft\Testing\Pool\Config\EnvAndPptFromPptPoolConfig;
 use Swoft\Testing\Pool\Config\PropertyPoolConfig;
 
 /**
@@ -58,10 +59,14 @@ class ValueParser extends AbstractParser
      * @param mixed $value
      * @param bool  $isArray
      *
-     * @return array
+     * @return mixed
      */
     private function getTransferEnvValue($value, bool $isArray)
     {
+        if ($value === null) {
+            return null;
+        }
+
         if ($isArray == false) {
             return $value;
         }

@@ -5,7 +5,7 @@ namespace Swoft\Bean;
 use Swoft\Aop\Aop;
 use Swoft\Aop\AopInterface;
 use Swoft\App;
-use Swoft\Base\ApplicationContext;
+use Swoft\Core\ApplicationContext;
 use Swoft\Bean\Annotation\Scope;
 use Swoft\Bean\ObjectDefinition\ArgsInjection;
 use Swoft\Bean\ObjectDefinition\MethodInjection;
@@ -85,7 +85,6 @@ class Container
 
     public function create(string $beanName, array $definition)
     {
-
     }
 
     /**
@@ -177,7 +176,7 @@ class Container
         $propertyInjects = $objectDefinition->getPropertyInjections();
         $constructorInject = $objectDefinition->getConstructorInjection();
 
-        if(!empty($objectDefinition->getRef())){
+        if (!empty($objectDefinition->getRef())) {
             $refBeanName = $objectDefinition->getRef();
             return $this->get($refBeanName);
         }
@@ -202,7 +201,7 @@ class Container
             $object->{$this->initMethod}();
         }
 
-        if(!($object instanceof AopInterface)){
+        if (!($object instanceof AopInterface)) {
             $object = $this->proxyBean($name, $className, $object);
         }
 
@@ -322,7 +321,7 @@ class Container
                 $injectProperty = $this->get($injectProperty);
             }
 
-            if($injectProperty !== null){
+            if ($injectProperty !== null) {
                 $property->setValue($object, $injectProperty);
             }
         }
@@ -355,7 +354,7 @@ class Container
             }
         }
 
-        if(empty($injectAry)){
+        if (empty($injectAry)) {
             $injectAry = $injectProperty;
         }
 

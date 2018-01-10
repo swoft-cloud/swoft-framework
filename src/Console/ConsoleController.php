@@ -3,8 +3,8 @@
 namespace Swoft\Console;
 
 use Swoft\App;
-use Swoft\Base\ApplicationContext;
-use Swoft\Base\RequestContext;
+use Swoft\Core\ApplicationContext;
+use Swoft\Core\RequestContext;
 use Swoft\Bean\BeanFactory;
 use Swoft\Console\Input\Input;
 use Swoft\Console\Output\Output;
@@ -114,5 +114,4 @@ class ConsoleController extends ConsoleCommand
             }
         }
     }
-
 }

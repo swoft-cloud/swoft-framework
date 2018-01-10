@@ -234,5 +234,4 @@ class DirHelper
         }
         return $files;
     }
-
 }

@@ -157,7 +157,6 @@ class MysqlConnect extends AbstractDbConnect
      */
     public function reConnect()
     {
-
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Swoft\Pool;
 
-
 use Swoft\App;
 use Swoft\Bean\Annotation\Inject;
 use Swoft\Bean\Annotation\Pool;
@@ -51,7 +50,6 @@ class DbPool extends ConnectPool
 
     public function reConnect($client)
     {
-
     }
 
     /**

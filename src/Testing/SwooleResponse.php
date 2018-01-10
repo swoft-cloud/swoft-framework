@@ -7,10 +7,8 @@
 
 namespace Swoft\Testing;
 
-
 class SwooleResponse extends \Swoole\Http\Response
 {
-
     public $fd;
     public $header;
     public $cookie;
@@ -39,7 +37,7 @@ class SwooleResponse extends \Swoole\Http\Response
      * @param      $value
      * @param null $ucwords
      */
-    public function header($key, $value, $ucwords = NULL)
+    public function header($key, $value, $ucwords = null)
     {
     }
 
@@ -54,7 +52,7 @@ class SwooleResponse extends \Swoole\Http\Response
      * @param bool $secure
      * @param bool $httponly
      */
-    public function cookie($name, $value = NULL, $expires = NULL, $path = NULL, $domain = NULL, $secure = NULL, $httponly = NULL)
+    public function cookie($name, $value = null, $expires = null, $path = null, $domain = null, $secure = null, $httponly = null)
     {
     }
 
@@ -64,16 +62,14 @@ class SwooleResponse extends \Swoole\Http\Response
      */
     public function status($code)
     {
-
     }
 
     /**
      * 设置Http压缩格式
      * @param int $level
      */
-    function gzip($level = 1)
+    public function gzip($level = 1)
     {
-
     }
 
     /**
@@ -84,9 +80,7 @@ class SwooleResponse extends \Swoole\Http\Response
      * @param null $length
      * @internal param string $level
      */
-    function sendfile($filename, $offset = NULL, $length = NULL)
+    public function sendfile($filename, $offset = null, $length = null)
     {
-
     }
-
 }

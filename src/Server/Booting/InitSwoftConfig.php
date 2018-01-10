@@ -15,30 +15,30 @@ use Swoft\Server\AbstractServer;
  */
 class InitSwoftConfig implements Bootable
 {
-
     public function bootstrap()
     {
         $server = App::$server;
         if ($server instanceof AbstractServer) {
+            /** @var array[] $settings */
             $settings = App::getAppProperties()->get('server');
             if (! isset($settings['tcp'])) {
-                throw new \InvalidArgumentException("未配置tcp启动参数，settings=" . json_encode($settings));
+                throw new \InvalidArgumentException('未配置tcp启动参数，settings=' . json_encode($settings));
             }
 
             if (! isset($settings['http'])) {
-                throw new \InvalidArgumentException("未配置http启动参数，settings=" . json_encode($settings));
+                throw new \InvalidArgumentException('未配置http启动参数，settings=' . json_encode($settings));
             }
 
             if (! isset($settings['server'])) {
-                throw new \InvalidArgumentException("未配置server启动参数，settings=" . json_encode($settings));
+                throw new \InvalidArgumentException('未配置server启动参数，settings=' . json_encode($settings));
             }
 
             if (! isset($settings['setting'])) {
-                throw new \InvalidArgumentException("未配置setting启动参数，settings=" . json_encode($settings));
+                throw new \InvalidArgumentException('未配置setting启动参数，settings=' . json_encode($settings));
             }
 
             foreach ($settings['setting'] as $key => &$value) {
-                if (is_string($value) && StringHelper::contains($value, ['@'])) {
+                if (\is_string($value) && StringHelper::contains($value, ['@'])) {
                     $value = App::getAlias($value);
                 }
             }

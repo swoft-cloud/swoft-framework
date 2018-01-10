@@ -31,10 +31,11 @@ class ExeByNewParamsAspect
      *
      * @return string
      */
-    public function around(ProceedingJoinPoint $proceedingJoinPoint){
+    public function around(ProceedingJoinPoint $proceedingJoinPoint)
+    {
         $newArgs = [];
         $args = $proceedingJoinPoint->getArgs();
-        foreach ($args as $arg){
+        foreach ($args as $arg) {
             $newArgs[] = $arg."-new";
         }
         $tag = ' regAspect around before ';

@@ -3,7 +3,7 @@
 namespace Swoft\Server\Booting;
 
 use Swoft\App;
-use Swoft\Base\Config;
+use Swoft\Core\Config;
 use Swoft\Helper\DirHelper;
 
 /**
@@ -15,7 +15,6 @@ use Swoft\Helper\DirHelper;
  */
 class LoadInitConfiguration implements Bootable
 {
-
     public function bootstrap()
     {
         $path = App::getAlias('@configs');

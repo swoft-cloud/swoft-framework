@@ -15,7 +15,6 @@ trait ProxyTrait
 {
     public function __construct($c1, $c2)
     {
-
     }
     public function publicFun1Trait($p1, $p2)
     {

@@ -121,7 +121,6 @@ class SyncMysqlConnect extends AbstractDbConnect
      */
     public function reConnect()
     {
-
     }
 
     /**

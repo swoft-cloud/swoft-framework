@@ -30,7 +30,7 @@ class ValidatorEnum implements IValidator
      */
     public function validate(string $cloum, $value, ...$params)
     {
-        if(!isset($params[0][0]) || !in_array($value, $params[0][0])){
+        if (!isset($params[0][0]) || !in_array($value, $params[0][0])) {
             throw new ValidatorException("数据库字段值验证失败，不是在枚举集合的里面，column=" . $cloum." enum=".json_encode($params[0][0]));
         }
         return true;

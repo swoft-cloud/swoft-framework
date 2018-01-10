@@ -103,7 +103,7 @@ abstract class AbstractWrapper implements IWrapper
         $objectDefinition->setScope($scope);
         $objectDefinition->setRef($ref);
 
-        if(!$reflectionClass->isInterface()){
+        if (!$reflectionClass->isInterface()) {
             // 解析属性
             $properties = $reflectionClass->getProperties();
 
@@ -176,7 +176,7 @@ abstract class AbstractWrapper implements IWrapper
             $declaredName = $declaredClass->getName();
 
             // 不是当前类方法
-            if($declaredName != $className){
+            if ($declaredName != $className) {
                 continue;
             }
             $this->parseMethodAnnotations($className, $method, $methodAnnotations);
@@ -202,7 +202,7 @@ abstract class AbstractWrapper implements IWrapper
 
         // 循环方法注解解析
         foreach ($methodAnnotations[$methodName] as $methodAnnotationAry) {
-            foreach ($methodAnnotationAry as $methodAnnotation){
+            foreach ($methodAnnotationAry as $methodAnnotation) {
                 $annotationClass = get_class($methodAnnotation);
                 if (!in_array($annotationClass, $this->methodAnnotations)) {
                     continue;
@@ -255,7 +255,6 @@ abstract class AbstractWrapper implements IWrapper
 
         // 属性注解解析
         foreach ($propertyAnnotations[$propertyName] as $propertyAnnotation) {
-
             $annotationClass = get_class($propertyAnnotation);
             if (!in_array($annotationClass, $this->propertyAnnotations)) {
                 continue;
@@ -301,7 +300,7 @@ abstract class AbstractWrapper implements IWrapper
                 continue;
             }
             $annotationData = $annotationParser->parser($className, $annotation);
-            if($annotationData != null){
+            if ($annotationData != null) {
                 $beanData = $annotationData;
             }
         }
