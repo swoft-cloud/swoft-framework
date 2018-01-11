@@ -49,7 +49,8 @@ class AnnotationResource extends AbstractResource
      */
     private $serverScan = [
         'Console',
-        'Bootstrap'
+        'Bootstrap',
+        'Aop',
     ];
 
     /**
