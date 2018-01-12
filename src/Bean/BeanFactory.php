@@ -28,16 +28,30 @@ class BeanFactory implements BeanFactoryInterface
      */
     private static $container = null;
 
-    /**
-     * BeanFactory constructor.
-     *
-     * @param array $definitions
-     */
-    private function __construct(array $definitions)
+    public static function init()
     {
-        $definitions = self::merge($definitions);
-
         self::$container = new Container();
+        self::$container->autoloadServerAnnotations();
+        self::$container->initBeans();
+    }
+
+    /**
+     * Reload bean definitions
+     *
+     * @param array $definitions append definitions to config loader
+     */
+    public static function reload($definitions = [])
+    {
+        $config = new Config();
+        $config->load(App::getAlias('@beans'), [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
+        $configDefinitions = $config->toArray();
+        $mergeDefinitions = ArrayHelper::merge($configDefinitions, $definitions);
+
+        $definitions = self::merge($mergeDefinitions);
+
+        if(self::$container == null){
+            self::$container = new Container();
+        }
         self::$container->addDefinitions($definitions);
         self::$container->autoloadAnnotations();
         self::$container->initBeans();
@@ -102,19 +116,5 @@ class BeanFactory implements BeanFactoryInterface
         $definitions = ArrayHelper::merge(self::coreBeans(), $definitions);
 
         return $definitions;
-    }
-
-    /**
-     * Reload bean definitions
-     *
-     * @param array $definitions append definitions to config loader
-     */
-    public static function reload($definitions = [])
-    {
-        $config = new Config();
-        $config->load(App::getAlias('@beans'), [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
-        $configDefinitions = $config->toArray();
-        $mergeDefinitions = ArrayHelper::merge($configDefinitions, $definitions);
-        new self($mergeDefinitions);
     }
 }

@@ -10,7 +10,7 @@ use Swoft\Event\Events\BeforeTaskEvent;
 use Swoft\Helper\ProcessHelper;
 use Swoft\Process\Process;
 use Swoft\Task\Task;
-use Swoole\Http\Server;
+use Swoole\Server;
 
 /**
  * the trait of Server

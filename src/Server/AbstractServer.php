@@ -3,6 +3,8 @@
 namespace Swoft\Server;
 
 use Swoft\App;
+use Swoft\Bean\Collector\SwooleListenerCollector;
+use Swoft\Bootstrap\SwooleEvent;
 use Swoole\Lock;
 use Swoole\Server;
 
@@ -132,6 +134,35 @@ abstract class AbstractServer implements ServerInterface
             }
         }
         return $this;
+    }
+
+    /**
+     * register the callback of  swoole server
+     */
+    protected function registerSwooleServerEvents()
+    {
+        $swooleListeners = SwooleListenerCollector::getCollector();
+        if(!isset($swooleListeners[SwooleEvent::TYPE_SERVER]) || empty($swooleListeners[SwooleEvent::TYPE_SERVER])){
+            return ;
+        }
+
+        $swooleServerListeners = $swooleListeners[SwooleEvent::TYPE_SERVER];
+        $this->registerSwooleEvents($this->server, $swooleServerListeners);
+    }
+
+    /**
+     * register swoole server events
+     *
+     * @param Server $handler
+     * @param array $events
+     */
+    protected function registerSwooleEvents(&$handler, array $events)
+    {
+        foreach ($events as $event => $beanName) {
+            $object = App::getBean($beanName);
+            $method = SwooleEvent::getHandlerFunction($event);
+            $handler->on($event, [$object, $method]);
+        }
     }
 
     /**

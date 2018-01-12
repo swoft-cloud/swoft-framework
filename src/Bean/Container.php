@@ -112,7 +112,16 @@ class Container
         $this->properties = $properties;
 
         $resource = new DefinitionResource($definitions);
-        $this->definitions = $resource->getDefinitions();
+        $this->definitions = array_merge($resource->getDefinitions(), $this->definitions);
+    }
+
+    public function autoloadServerAnnotations()
+    {
+        $resource = new AnnotationResource([]);
+        $resource->autoRegisterServerNamespaces();
+        $definitions = $resource->getDefinitions();
+
+        $this->definitions = array_merge($definitions, $this->definitions);
     }
 
     /**
@@ -121,7 +130,6 @@ class Container
     public function autoloadAnnotations()
     {
         $properties = $this->properties;
-
         if (!isset($properties['beanScan'])) {
             throw new \InvalidArgumentException("缺少扫描命名空间范围，config/properties/app.php未配置beanScan");
         }
@@ -129,7 +137,6 @@ class Container
         $resource = new AnnotationResource($properties);
         $resource->addScanNamespaces($beanScan);
         $definitions = $resource->getDefinitions();
-
         $this->definitions = array_merge($definitions, $this->definitions);
     }
 
