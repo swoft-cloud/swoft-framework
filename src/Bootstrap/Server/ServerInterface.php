@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Server;
+namespace Swoft\Bootstrap\Server;
 
 use Swoole\Server;
 

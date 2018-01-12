@@ -7,8 +7,8 @@ use Swoft\Core\InitApplicationContext;
 use Swoft\Bean\BeanFactory;
 use Swoft\Event\AppEvent;
 use Swoft\Helper\PhpHelper;
-use Swoft\Server\AbstractServer;
 use Swoole\Process as SwooleProcess;
+use Swoft\Bootstrap\Server\AbstractServer;
 
 /**
  * 自定义进程

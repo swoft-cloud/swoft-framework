@@ -1,12 +1,14 @@
 <?php
 
-namespace Swoft\Server;
+namespace Swoft\Bootstrap\Server;
 
 use Swoft\App;
 use Swoft\Bean\Collector\SwooleListenerCollector;
+use Swoft\Bootstrap\Bootstrap;
 use Swoft\Bootstrap\SwooleEvent;
 use Swoole\Lock;
 use Swoole\Server;
+use Swoft\Bootstrap\Boots\Bootable;
 
 /**
  * 抽象server
@@ -53,11 +55,6 @@ abstract class AbstractServer implements ServerInterface
      * @var array
      */
     public $crontabSetting = [];
-
-    /**
-     * @var array
-     */
-    public $bootstrapItems = [];
 
     /**
      * swoole启动参数
@@ -110,29 +107,15 @@ abstract class AbstractServer implements ServerInterface
     }
 
     /**
-     * 加载启动项
+     * bootstrap
      *
      * @return $this
      */
     protected function bootstrap()
     {
-        $defaultItems = [
-            Booting\InitMbFunsEncoding::class,
-            Booting\LoadEnv::class,
-            Booting\LoadInitConfiguration::class,
-            Booting\InitWorkerLock::class,
-            Booting\InitSwoftConfig::class,
-        ];
-        $bootstrapItems = $this->bootstrapItems;
-        $bootstrapItems = array_merge($defaultItems, $bootstrapItems);
-        foreach ($bootstrapItems as $bootstrapItem) {
-            if (class_exists($bootstrapItem)) {
-                $itemInstance = new $bootstrapItem();
-                if ($itemInstance instanceof Booting\Bootable) {
-                    $itemInstance->bootstrap();
-                }
-            }
-        }
+        /* @var Bootable $bootstrap*/
+        $bootstrap = App::getBean(Bootstrap::class);
+        $bootstrap->bootstrap();
         return $this;
     }
 

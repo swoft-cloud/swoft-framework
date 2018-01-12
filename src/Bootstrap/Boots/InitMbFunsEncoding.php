@@ -1,8 +1,11 @@
 <?php
 
-namespace Swoft\Server\Booting;
+namespace Swoft\Bootstrap\Boots;
+
+use Swoft\Bean\Annotation\Bootstrap;
 
 /**
+ * @Bootstrap(order=1)
  * @uses      InitMbFunsEncoding
  * @version   2017-11-02
  * @author    huangzhhui <huangzhwork@gmail.com>
@@ -11,6 +14,9 @@ namespace Swoft\Server\Booting;
  */
 class InitMbFunsEncoding implements Bootable
 {
+    /**
+     * bootstrap
+     */
     public function bootstrap()
     {
         mb_internal_encoding("UTF-8");

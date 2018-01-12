@@ -1,11 +1,13 @@
 <?php
 
-namespace Swoft\Server\Booting;
+namespace Swoft\Bootstrap\Boots;
 
 use Dotenv\Dotenv;
 use Swoft\App;
+use Swoft\Bean\Annotation\Bootstrap;
 
 /**
+ * @Bootstrap(order=2)
  * @uses      LoadEnv
  * @version   2017-11-02
  * @author    huangzhhui <huangzhwork@gmail.com>

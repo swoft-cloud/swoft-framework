@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Server;
+namespace Swoft\Bootstrap\Server;
 
 /**
  * 管道消息

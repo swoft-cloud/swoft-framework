@@ -2,9 +2,9 @@
 
 namespace Swoft\Process;
 
-use Swoft\Server\AbstractServer;
 use Swoft\Server\PipeMessage;
 use Swoft\Task\Task;
+use Swoft\Bootstrap\Server\AbstractServer;
 
 /**
  * 抽象进程

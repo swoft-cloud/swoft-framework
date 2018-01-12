@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Server;
+namespace Swoft\Bootstrap\Server;
 use Swoft\Bean\BeanFactory;
 use Swoft\Core\ApplicationContext;
 use Swoft\Core\InitApplicationContext;

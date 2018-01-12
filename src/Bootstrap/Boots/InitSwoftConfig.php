@@ -1,12 +1,14 @@
 <?php
 
-namespace Swoft\Server\Booting;
+namespace Swoft\Bootstrap\Boots;
 
 use Swoft\App;
+use Swoft\Bean\Annotation\Bootstrap;
 use Swoft\Helper\StringHelper;
-use Swoft\Server\AbstractServer;
+use Swoft\Bootstrap\Server\AbstractServer;
 
 /**
+ * @Bootstrap(order=5)
  * @uses      InitSwoftConfig
  * @version   2017-11-02
  * @author    huangzhhui <huangzhwork@gmail.com>

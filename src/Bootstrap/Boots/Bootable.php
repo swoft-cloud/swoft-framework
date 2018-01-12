@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Server\Booting;
+namespace Swoft\Bootstrap\Boots;
 
 /**
  * @uses      Bootable
@@ -11,5 +11,8 @@ namespace Swoft\Server\Booting;
  */
 interface Bootable
 {
+    /**
+     * @return void
+     */
     public function bootstrap();
 }

@@ -1,12 +1,14 @@
 <?php
 
-namespace Swoft\Server\Booting;
+namespace Swoft\Bootstrap\Boots;
 
 use Swoft\App;
-use Swoft\Server\AbstractServer;
+use Swoft\Bean\Annotation\Bootstrap;
 use Swoole\Lock;
+use Swoft\Bootstrap\Server\AbstractServer;
 
 /**
+ * @Bootstrap(order=4)
  * @uses      InitWorkerLock
  * @version   2017-11-02
  * @author    huangzhhui <huangzhwork@gmail.com>

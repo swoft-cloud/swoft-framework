@@ -1,12 +1,14 @@
 <?php
 
-namespace Swoft\Server\Booting;
+namespace Swoft\Bootstrap\Boots;
 
 use Swoft\App;
+use Swoft\Bean\Annotation\Bootstrap;
 use Swoft\Core\Config;
 use Swoft\Helper\DirHelper;
 
 /**
+ * @Bootstrap(order=3)
  * @uses      LoadInitConfiguration
  * @version   2017-11-02
  * @author    huangzhhui <huangzhwork@gmail.com>

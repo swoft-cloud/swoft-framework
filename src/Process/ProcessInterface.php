@@ -2,7 +2,6 @@
 
 namespace Swoft\Process;
 
-use Swoft\Server\AbstractServer;
 use Swoole\Process;
 
 /**
