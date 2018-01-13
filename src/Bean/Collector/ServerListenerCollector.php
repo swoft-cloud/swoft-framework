@@ -36,8 +36,12 @@ class ServerListenerCollector implements CollectorInterface
         }
     }
 
+    /**
+     * @return array
+     */
     public static function getCollector()
     {
+        return self::$listeners;
     }
 
 }

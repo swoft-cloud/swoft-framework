@@ -4,11 +4,11 @@ namespace Swoft\Bootstrap\Server;
 
 use Swoft\App;
 use Swoft\Bean\Collector\SwooleListenerCollector;
+use Swoft\Bootstrap\Boots\Bootable;
 use Swoft\Bootstrap\Bootstrap;
 use Swoft\Bootstrap\SwooleEvent;
 use Swoole\Lock;
 use Swoole\Server;
-use Swoft\Bootstrap\Boots\Bootable;
 
 /**
  * 抽象server
@@ -283,20 +283,5 @@ abstract class AbstractServer implements ServerInterface
     public function getPname()
     {
         return $this->serverSetting['pname'];
-    }
-
-    /**
-     * Tasker进程回调
-     *
-     * @param Server $server   server
-     * @param int    $taskId   taskId
-     * @param int    $workerId workerId
-     * @param mixed  $data     data
-     *
-     * @return mixed
-     */
-    public function onTask(Server $server, int $taskId, int $workerId, $data)
-    {
-        return $data;
     }
 }

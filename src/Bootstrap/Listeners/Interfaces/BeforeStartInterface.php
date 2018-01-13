@@ -2,7 +2,7 @@
 
 namespace Swoft\Bootstrap\Listeners\Interfaces;
 
-use Swoole\Server;
+use Swoft\Bootstrap\Server\AbstractServer;
 
 /**
  *
@@ -15,5 +15,5 @@ use Swoole\Server;
  */
 interface BeforeStartInterface
 {
-    public function onBeforeStart(Server &$server);
+    public function onBeforeStart(AbstractServer &$server);
 }

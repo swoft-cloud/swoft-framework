@@ -91,7 +91,7 @@ trait ServerTrait
         }
 
         $beforeStartListeners = $collector[$event];
-        $this->doServerListener($beforeStartListeners, $event, [$this->server]);
+        $this->doServerListener($beforeStartListeners, $event, [$this]);
     }
 
     /**
