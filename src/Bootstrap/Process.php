@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Process;
+namespace Swoft\Bootstrap;
 
 use Swoft\App;
 use Swoft\Core\InitApplicationContext;
@@ -9,12 +9,13 @@ use Swoft\Event\AppEvent;
 use Swoft\Helper\PhpHelper;
 use Swoole\Process as SwooleProcess;
 use Swoft\Bootstrap\Server\AbstractServer;
+use Swoft\Bootstrap\Process\AbstractProcessInterface;
 
 /**
- * 自定义进程
+ *
  *
  * @uses      Process
- * @version   2017年10月02日
+ * @version   2018年01月12日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
@@ -63,16 +64,10 @@ class Process
         string $processName,
         string $processClassName
     ) {
-        // 不存在
-        if (! class_exists($processClassName)) {
-            throw new \InvalidArgumentException('自定义进程不存在，className=' . $processClassName);
-        }
 
         /* @var AbstractProcessInterface $processClass */
-        $processClass = new $processClassName($server);
-        if (! is_subclass_of($processClass, AbstractProcessInterface::class)) {
-            throw new \InvalidArgumentException('自定义进程类，不是AbstractProcess子类，className=' . $processClassName);
-        }
+        $processClass = App::getBean($processClassName);
+        $processClass->setServer($server);
 
         // 准备工作是否完成
         $isReady = $processClass->isReady();

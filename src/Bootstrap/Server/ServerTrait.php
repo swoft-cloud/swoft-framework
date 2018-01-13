@@ -2,13 +2,14 @@
 
 namespace Swoft\Bootstrap\Server;
 use Swoft\Bean\BeanFactory;
+use Swoft\Bean\Collector\BootProcessCollector;
 use Swoft\Core\ApplicationContext;
 use Swoft\Core\InitApplicationContext;
-use Swoft\Crontab\TableCrontab;
 use Swoft\Event\AppEvent;
 use Swoft\Event\Events\BeforeTaskEvent;
 use Swoft\Helper\ProcessHelper;
-use Swoft\Process\Process;
+use Swoft\Bootstrap\Process;
+use Swoft\Task\Crontab\TableCrontab;
 use Swoft\Task\Task;
 use Swoole\Server;
 
@@ -210,12 +211,21 @@ trait ServerTrait
      */
     private function addUserProcesses()
     {
-        foreach ($this->processSetting as $name => $processClassName) {
-            $userProcess = Process::create($this, $name, $processClassName);
-            if ($userProcess === null) {
-                continue;
+        $processes = BootProcessCollector::getCollector();
+
+        foreach ($processes as $beanName => $processInfo) {
+            $num  = $processInfo['num'];
+            $name = $processInfo['name'];
+
+            while ($num > 0) {
+                $name = sprintf('%s-%s', $name, $num);
+                $userProcess = Process::create($this, $name, $beanName);
+                if ($userProcess === null) {
+                    continue;
+                }
+                $this->server->addProcess($userProcess);
+                $num--;
             }
-            $this->server->addProcess($userProcess);
         }
     }
 

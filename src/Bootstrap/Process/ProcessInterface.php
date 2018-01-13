@@ -1,8 +1,9 @@
 <?php
 
-namespace Swoft\Process;
+namespace Swoft\Bootstrap\Process;
 
 use Swoole\Process;
+
 
 /**
  * 进程接口

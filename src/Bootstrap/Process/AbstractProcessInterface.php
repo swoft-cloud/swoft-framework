@@ -1,10 +1,10 @@
 <?php
 
-namespace Swoft\Process;
+namespace Swoft\Bootstrap\Process;
 
-use Swoft\Server\PipeMessage;
 use Swoft\Task\Task;
 use Swoft\Bootstrap\Server\AbstractServer;
+use Swoft\Bootstrap\Server\PipeMessage;
 
 /**
  * 抽象进程
@@ -37,16 +37,6 @@ abstract class AbstractProcessInterface implements ProcessInterface
      * @var AbstractServer
      */
     protected $server;
-
-    /**
-     *
-     *
-     * @param AbstractServer $server
-     */
-    public function __construct(AbstractServer $server)
-    {
-        $this->server = $server;
-    }
 
     /**
      * 是否启用inout
@@ -98,5 +88,13 @@ abstract class AbstractProcessInterface implements ProcessInterface
 
         $message = PipeMessage::pack(PipeMessage::TYPE_TASK, $data);
         $this->server->getServer()->sendMessage($message, 0);
+    }
+
+    /**
+     * @param AbstractServer $server
+     */
+    public function setServer(AbstractServer $server)
+    {
+        $this->server = $server;
     }
 }

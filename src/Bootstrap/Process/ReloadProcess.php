@@ -1,14 +1,16 @@
 <?php
 
-namespace Swoft\Process;
+namespace Swoft\Bootstrap\Process;
 
 use Swoft\App;
+use Swoft\Bean\Annotation\BootProcess;
 use Swoft\Core\Reload;
 use Swoole\Process;
 
 /**
  * reload进程
  *
+ * @BootProcess("reload")
  * @uses      ReloadProcess
  * @version   2017年10月21日
  * @author    stelin <phpcrazy@126.com>

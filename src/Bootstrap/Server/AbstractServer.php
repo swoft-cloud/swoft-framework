@@ -43,13 +43,6 @@ abstract class AbstractServer implements ServerInterface
     public $serverSetting = [];
 
     /**
-     * 自定义进程配置
-     *
-     * @var array
-     */
-    public $processSetting = [];
-
-    /**
      * 用户自定义任务定时器配置
      *
      * @var array

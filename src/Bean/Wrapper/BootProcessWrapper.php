@@ -2,21 +2,19 @@
 
 namespace Swoft\Bean\Wrapper;
 
+use Swoft\Bean\Annotation\BootProcess;
 use Swoft\Bean\Annotation\Inject;
-use Swoft\Bean\Annotation\Scheduled;
-use Swoft\Bean\Annotation\Task;
-use Swoft\Bean\Annotation\Value;
 
 /**
- * 任务注解封装器
+ * the wrapper of bootstrap process
  *
- * @uses      TaskWrapper
- * @version   2017年09月24日
+ * @uses      BootProcessWrapper
+ * @version   2018年01月12日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class TaskWrapper extends AbstractWrapperInterface
+class BootProcessWrapper extends AbstractWrapperInterface
 {
     /**
      * 类注解
@@ -25,7 +23,7 @@ class TaskWrapper extends AbstractWrapperInterface
      */
     protected $classAnnotations
         = [
-            Task::class
+            BootProcess::class,
         ];
 
     /**
@@ -36,17 +34,6 @@ class TaskWrapper extends AbstractWrapperInterface
     protected $propertyAnnotations
         = [
             Inject::class,
-            Value::class,
-        ];
-
-    /**
-     * 方法注解
-     *
-     * @var array
-     */
-    protected $methodAnnotations
-        = [
-            Scheduled::class
         ];
 
     /**
@@ -58,7 +45,7 @@ class TaskWrapper extends AbstractWrapperInterface
      */
     public function isParseClassAnnotations(array $annotations)
     {
-        return isset($annotations[Task::class]);
+        return isset($annotations[BootProcess::class]);
     }
 
     /**
@@ -70,7 +57,7 @@ class TaskWrapper extends AbstractWrapperInterface
      */
     public function isParsePropertyAnnotations(array $annotations)
     {
-        return isset($annotations[Inject::class]) || isset($annotations[Value::class]);
+        return isset($annotations[Inject::class]);
     }
 
     /**
@@ -82,6 +69,6 @@ class TaskWrapper extends AbstractWrapperInterface
      */
     public function isParseMethodAnnotations(array $annotations)
     {
-        return isset($annotations[Scheduled::class]);
+        return false;
     }
 }

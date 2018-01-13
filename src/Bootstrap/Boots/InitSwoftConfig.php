@@ -48,7 +48,6 @@ class InitSwoftConfig implements Bootable
             $server->tcpSetting = $settings['tcp'];
             $server->httpSetting = $settings['http'];
             $server->serverSetting = $settings['server'];
-            $server->processSetting = $settings['process'];
             $server->crontabSetting = $settings['crontab'];
             $server->setting = $settings['setting'];
         }

@@ -35,7 +35,6 @@ class BootstrapWrapper extends AbstractWrapperInterface
     protected $propertyAnnotations
         = [
             Inject::class,
-            Value::class,
         ];
 
     /**
@@ -59,7 +58,7 @@ class BootstrapWrapper extends AbstractWrapperInterface
      */
     public function isParsePropertyAnnotations(array $annotations)
     {
-        return isset($annotations[Inject::class]) || isset($annotations[Value::class]);
+        return isset($annotations[Inject::class]);
     }
 
     /**
