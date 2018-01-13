@@ -35,13 +35,6 @@ class Collector
     public static $entities = [];
 
     /**
-     * 定时任务列表
-     *
-     * @var array
-     */
-    public static $crontab = [];
-
-    /**
      * pools
      *
      * @var array

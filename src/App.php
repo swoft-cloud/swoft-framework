@@ -12,7 +12,7 @@ use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
 use Swoft\Pool\ConnectPoolInterface;
 use Swoft\Pool\RedisPool;
-use Swoft\Server\ServerInterface;
+use Swoft\Bootstrap\Server\ServerInterface;
 use Swoft\Web\Application;
 
 /**

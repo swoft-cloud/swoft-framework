@@ -48,6 +48,8 @@ class SwooleListenerCollector implements CollectorInterface
             if($type == SwooleEvent::TYPE_PORT){
                 $order = $objectAnnotation->getOrder();
                 self::$listeners[$type][$order][$event] = $className;
+            }elseif ($type == SwooleEvent::TYPE_SERVER){
+                self::$listeners[$type][$event] = $className;
             }
         }
     }

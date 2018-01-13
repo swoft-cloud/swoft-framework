@@ -7,13 +7,13 @@ use Swoole\Server;
 /**
  *
  *
- * @uses      PipeMessageInterface
- * @version   2018年01月10日
+ * @uses      TaskInterface
+ * @version   2018年01月13日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-interface PipeMessageInterface
+interface TaskInterface
 {
-    public function onPipeMessage(Server $server, int $srcWorkerId, string $message);
+    public function onTask(Server $server, int $taskId, int $workerId, $data);
 }

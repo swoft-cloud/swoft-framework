@@ -26,52 +26,54 @@ class SwooleEvent
     /**
      * the event name of start
      */
-    CONST ON_START = 'start';
+    const ON_START = 'start';
 
     /**
      * the event name of workerStart
      */
-    CONST ON_WORKER_START = 'workerStart';
+    const ON_WORKER_START = 'workerStart';
 
     /**
      * the event name of managerStart
      */
-    CONST ON_MANAGER_START = 'managerStart';
+    const ON_MANAGER_START = 'managerStart';
 
     /**
      * the event name of request
      */
-    CONST ON_REQUEST = 'request';
+    const ON_REQUEST = 'request';
 
     /**
      * the event name of task
      */
-    CONST ON_TASK = 'task';
+    const ON_TASK = 'task';
 
     /**
      * the event name of pipeMessage
      */
-    CONST ON_PIPE_MESSAGE = 'pipeMessage';
+    const ON_PIPE_MESSAGE = 'pipeMessage';
 
     /**
      * the event name of finish
      */
-    CONST ON_FINISH = 'finish';
+    const ON_FINISH = 'finish';
 
     /**
      * the event name of connect
      */
-    CONST ON_CONNECT = 'connect';
+    const ON_CONNECT = 'connect';
 
     /**
      * the event name of receive
      */
-    CONST ON_RECEIVE = 'receive';
+    const ON_RECEIVE = 'receive';
 
     /**
      * the event name of close
      */
-    CONST ON_CLOSE = 'close';
+    const ON_CLOSE = 'close';
+
+    const ON_BEFORE_START = "beforeStart";
 
     /**
      * @var array
@@ -88,6 +90,7 @@ class SwooleEvent
             self::ON_CONNECT       => 'onConnect',
             self::ON_RECEIVE       => 'onReceive',
             self::ON_CLOSE         => 'onClose',
+            self::ON_BEFORE_START  => 'onBeforeStart',
         ];
 
     /**
