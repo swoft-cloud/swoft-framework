@@ -43,13 +43,6 @@ abstract class AbstractServer implements ServerInterface
     public $serverSetting = [];
 
     /**
-     * 用户自定义任务定时器配置
-     *
-     * @var array
-     */
-    public $crontabSetting = [];
-
-    /**
      * swoole启动参数
      *
      * @var array

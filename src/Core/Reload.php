@@ -4,7 +4,7 @@ namespace Swoft\Core;
 
 use Swoft\App;
 use Swoft\Helper\FileHelper;
-use Swoft\Server\ServerInterface;
+use Swoft\Bootstrap\Server\ServerInterface;
 use Swoole\Event;
 use Swoft\Bean\Annotation\Bean;
 
