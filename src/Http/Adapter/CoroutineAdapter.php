@@ -6,7 +6,7 @@ use Psr\Http\Message\RequestInterface;
 use Swoft\App;
 use Swoft\Helper\JsonHelper;
 use Swoft\Http\HttpResult;
-use Swoft\Web\Uri;
+use Swoft\Http\Message\Uri\Uri;
 use Swoole\Coroutine\Http\Client as CoHttpClient;
 
 /**

@@ -4,8 +4,8 @@ namespace Swoft\Core;
 
 use Swoft\App;
 use Swoft\Helper\ArrayHelper;
-use Swoft\Http\Server\Http\Request;
-use Swoft\Http\Server\Http\Response;
+use Swoft\Http\Message\Server\Request;
+use Swoft\Http\Message\Server\Response;
 use Swoft\Testing\SwooleResponse as TestingSwooleResponse;
 use Swoft\Testing\SwooleRequest as TestingSwooleRequest;
 

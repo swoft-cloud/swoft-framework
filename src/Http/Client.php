@@ -5,8 +5,8 @@ namespace Swoft\Http;
 use Psr\Http\Message\UriInterface;
 use Swoft\App;
 use Swoft\Core\Coroutine;
-use Swoft\Web\Psr7Request;
-use Swoft\Web\Uri;
+use Swoft\Http\Message\Base\Request;
+use Swoft\Http\Message\Uri\Uri;
 
 /**
  * Http client
@@ -82,7 +82,7 @@ class Client
         $uri = $this->buildUri($uri, $options);
         $profileKey = 'http.' . (string)$uri;
         App::profileStart($profileKey);
-        $request = new Psr7Request($method, $uri, $headers, $body, $version);
+        $request = new Request($method, $uri, $headers, $body, $version);
         $adapter = $this->getAdapter();
         $this->setDefaultUserAgent();
         $result = $adapter->request($request, $options);

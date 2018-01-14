@@ -28,17 +28,7 @@ class PointExecutionParser extends AbstractParserInterface
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
-        if (!isset(Collector::$aspects[$className])) {
-            return null;
-        }
 
-        $include = $objectAnnotation->getInclude();
-        $exclude = $objectAnnotation->getExclude();
-
-        Collector::$aspects[$className]['point']['execution'] = [
-            'include' => $include,
-            'exclude' => $exclude,
-        ];
 
         return null;
     }

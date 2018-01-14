@@ -9,7 +9,7 @@ namespace Swoft\Testing\Web;
 
 use Swoft\App;
 
-class Request extends \Swoft\Http\Server\Http\Request
+class Request extends \Swoft\Http\Message\Server\Request
 {
     public function __construct($method, $uri, array $headers = [], $body = null, $version = '1.1')
     {

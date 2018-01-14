@@ -3,7 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Entity;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\EntityCollector;
 
 /**
  * Entity注解解析器
@@ -29,8 +29,7 @@ class EntityParser extends AbstractParserInterface
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
-        // 表映射收集
-        Collector::$entities[$className] = [];
+        EntityCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
         return null;
     }
 }
