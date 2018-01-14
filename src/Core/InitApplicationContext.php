@@ -3,7 +3,7 @@
 namespace Swoft\Core;
 
 use Swoft\App;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\ListenerCollector;
 use Swoft\Event\AppEvent;
 
 /**
@@ -44,8 +44,7 @@ class InitApplicationContext
     private function registerListeners()
     {
         // 监听器注册
-        $listeners = Collector::$listeners;
-
+        $listeners = ListenerCollector::getCollector();
         ApplicationContext::registerListeners($listeners);
     }
 

@@ -21,41 +21,6 @@ class Collector
     public static $requestMapping = [];
 
     /**
-     * 监听器
-     *
-     * @var array
-     */
-    public static $listeners = [];
-
-    /**
-     * 表结构实体
-     *
-     * @var array
-     */
-    public static $entities = [];
-
-    /**
-     * pools
-     *
-     * @var array
-     */
-    public static $pools = [];
-
-    /**
-     * circuit breakers
-     *
-     * @var array
-     */
-    public static $breakers = [];
-
-    /**
-     * aspects
-     *
-     * @var array
-     */
-    public static $aspects = [];
-
-    /**
      * the annotations of method
      *
      * @var array

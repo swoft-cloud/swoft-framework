@@ -3,7 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Column;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\EntityCollector;
 
 /**
  * Column注解解析
@@ -29,17 +29,7 @@ class ColumnParser extends AbstractParserInterface
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
-        $columnName = $objectAnnotation->getName();
-
-        // 表映射收集
-        $entity =[
-            'type' => $objectAnnotation->getType(),
-            'length' => $objectAnnotation->getLength(),
-            'column' => $columnName,
-            'default' => $propertyValue
-        ];
-        Collector::$entities[$className]['field'][$propertyName]= $entity;
-        Collector::$entities[$className]['column'][$columnName] = $propertyName;
+        EntityCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
         return null;
     }
 }

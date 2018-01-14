@@ -3,7 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Id;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\EntityCollector;
 
 /**
  * Id注解解析器
@@ -29,8 +29,7 @@ class IdParser extends AbstractParserInterface
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
-        // 表映射收集
-        Collector::$entities[$className]['table']['id'] = $propertyName;
+        EntityCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
         return null;
     }
 }

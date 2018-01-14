@@ -4,7 +4,7 @@ namespace Swoft\Db;
 
 use Swoft\App;
 use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\EntityCollector;
 use Swoft\Db\Validator\IValidator;
 use Swoft\Exception\ValidatorException;
 
@@ -340,7 +340,7 @@ class Executor
         }
 
         // 对象实例不是实体
-        $entities = Collector::$entities;
+        $entities = EntityCollector::getCollector();
         $className = is_string($entity) ? $entity : get_class($entity);
         if (!isset($entities[$className]['table']['name'])) {
             throw new \InvalidArgumentException("对象不是实体对象，className=" . $className);
@@ -358,7 +358,7 @@ class Executor
      */
     private function getTable(string $className): array
     {
-        $entities = Collector::$entities;
+        $entities = EntityCollector::getCollector();
         $fields = $entities[$className]['field'];
         $idProperty = $entities[$className]['table']['id'];
         $tableName = $entities[$className]['table']['name'];

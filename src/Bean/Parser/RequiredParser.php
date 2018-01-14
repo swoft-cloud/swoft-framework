@@ -3,7 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Required;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\EntityCollector;
 
 /**
  * Required注解解析器
@@ -28,8 +28,7 @@ class RequiredParser extends AbstractParserInterface
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
-        // 表映射收集
-        Collector::$entities[$className]['field'][$propertyName]['required'] = true;
+        EntityCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
         return null;
     }
 }

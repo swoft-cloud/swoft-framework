@@ -3,7 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Table;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\EntityCollector;
 
 /**
  * Table注解解析器
@@ -29,9 +29,7 @@ class TableParser extends AbstractParserInterface
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
-        // 表映射收集
-        $tableName = $objectAnnotation->getName();
-        Collector::$entities[$className]['table']['name'] = $tableName;
+        EntityCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
         return null;
     }
 }

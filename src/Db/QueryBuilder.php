@@ -3,7 +3,7 @@
 namespace Swoft\Db;
 
 use Swoft\App;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\EntityCollector;
 use Swoft\Exception\DbException;
 use Swoft\Helper\ArrayHelper;
 use Swoft\Pool\ConnectPoolInterface;
@@ -889,7 +889,7 @@ abstract class QueryBuilder implements QueryBuilderInterface
             return $tableName;
         }
 
-        $entities = Collector::$entities;
+        $entities = EntityCollector::getCollector();
         if (!isset($entities[$tableName]['table']['name'])) {
             throw new DbException("类不是实体，className=" . $tableName);
         }
