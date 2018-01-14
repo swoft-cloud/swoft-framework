@@ -8,7 +8,7 @@ use Swoft\Core\AbstractResult;
 use Swoft\Http\Adapter\AdapterInterface;
 use Swoft\Http\Adapter\CoroutineAdapter;
 use Swoft\Http\Adapter\ResponseTrait;
-use Swoft\Http\Streams\SwooleStream;
+use Swoft\Http\Message\Stream\SwooleStream;
 
 /**
  * Http result
