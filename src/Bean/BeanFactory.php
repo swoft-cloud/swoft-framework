@@ -9,7 +9,7 @@ use Swoft\Helper\ArrayHelper;
 use Swoft\Helper\DirHelper;
 use Swoft\Pool\BalancerSelector;
 use Swoft\Pool\ProviderSelector;
-use Swoft\Web\Application;
+use Swoft\Core\Application;
 
 /**
  * bean工厂

@@ -14,13 +14,6 @@ namespace Swoft\Bean;
 class Collector
 {
     /**
-     * 已解析的路由规则
-     *
-     * @var array
-     */
-    public static $requestMapping = [];
-
-    /**
      * the annotations of method
      *
      * @var array
