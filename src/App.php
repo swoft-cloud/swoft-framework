@@ -14,7 +14,7 @@ use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
 use Swoft\Pool\ConnectPoolInterface;
 use Swoft\Pool\RedisPool;
-use Swoft\Web\Application;
+use Swoft\Core\Application;
 use Swoft\Bean\Collector\BreakerCollector;
 
 /**

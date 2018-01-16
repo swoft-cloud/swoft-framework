@@ -11,16 +11,16 @@ return [
         'useProvider' => false,
     ],
     'httpRouter'      => [
-        'class'          => \Swoft\Router\Http\HandlerMapping::class,
+        'class'          => \Swoft\Http\Server\Router\HandlerMapping::class,
         'ignoreLastSep'  => false,
         'tmpCacheNumber' => 1000,
         'matchAll'       => '',
     ],
     'requestParser' =>[
-        'class' => \Swoft\Web\RequestParser::class
+        'class' => \Swoft\Http\Server\Parser\RequestParser::class
     ],
-    'renderer'    => [
-        'class'     => \Swoft\Web\ViewRenderer::class,
+    'view'    => [
+        'class'     => \Swoft\View\Base\View::class,
         'viewsPath' => "@resources/views/",
     ],
     'eventManager'    => [

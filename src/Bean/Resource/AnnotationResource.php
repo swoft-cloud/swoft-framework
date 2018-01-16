@@ -54,6 +54,13 @@ class AnnotationResource extends AbstractResource
     ];
 
     /**
+     * the ns of component
+     *
+     * @var array
+     */
+    private $componentNamespaces = [];
+
+    /**
      * AnnotationResource constructor.
      *
      * @param array $properties
@@ -187,21 +194,21 @@ class AnnotationResource extends AbstractResource
             $annotationClassName = get_class($classAnnotation);
             $classNameTmp = str_replace('\\', '/', $annotationClassName);
             $classFileName = basename($classNameTmp);
-            $namespaceDir = dirname($classNameTmp, 2);
-            $namespace = str_replace('/', '\\', $namespaceDir);
 
-            // 封装器
-            $annotationParserClassName = "{$namespace}\\Wrapper\\{$classFileName}Wrapper";
-            if (!class_exists($annotationParserClassName)) {
-                continue;
-            }
+            // do wrappers
+            foreach ($this->componentNamespaces as $componentNamespace) {
+                $annotationParserClassName = "{$componentNamespace}\\Bean\\Wrapper\\{$classFileName}Wrapper";
+                if (!class_exists($annotationParserClassName)) {
+                    continue;
+                }
 
-            /* @var WrapperInterface $wrapper */
-            $wrapper = new $annotationParserClassName($this);
-            $objectDefinitionAry = $wrapper->doWrapper($className, $annotation);
-            if ($objectDefinitionAry != null) {
-                list($beanName, $objectDefinition) = $objectDefinitionAry;
-                $this->definitions[$beanName] = $objectDefinition;
+                /* @var WrapperInterface $wrapper */
+                $wrapper = new $annotationParserClassName($this);
+                $objectDefinitionAry = $wrapper->doWrapper($className, $annotation);
+                if ($objectDefinitionAry != null) {
+                    list($beanName, $objectDefinition) = $objectDefinitionAry;
+                    $this->definitions[$beanName] = $objectDefinition;
+                }
             }
         }
     }
@@ -224,7 +231,8 @@ class AnnotationResource extends AbstractResource
             }
 
             $componentNs = ComponentHelper::getComponentNs($component);
-            $ns = "Swoft{$componentNs}";
+            $ns          = "Swoft{$componentNs}";
+            $this->componentNamespaces[] = $ns;
 
             foreach ($this->serverScan as $dir){
                 $scanDir = $componentCommandDir . DS . $dir;
@@ -257,6 +265,8 @@ class AnnotationResource extends AbstractResource
             $componentNs = ComponentHelper::getComponentNs($component);
 
             $ns = "Swoft{$componentNs}";
+
+            $this->componentNamespaces[] = $ns;
 
             $scanDirs = scandir($componentCommandDir);
             foreach ($scanDirs as $dir) {
