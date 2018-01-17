@@ -3,6 +3,7 @@
 namespace Swoft\Bean\Annotation;
 
 /**
+ * the annotation of exception handler
  *
  * @Annotation
  * @Target("CLASS")
