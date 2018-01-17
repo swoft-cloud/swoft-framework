@@ -35,7 +35,7 @@ class ErrorHandler
         try {
             $response = $this->doHandler($throwable);
         } catch (\Throwable $e) {
-            $response = $this->handleThrowtable($throwable);
+            $response = $this->handleThrowtable($e);
         }
 
         return $response;
@@ -53,7 +53,6 @@ class ErrorHandler
     {
         $exceptionClass = get_class($throwable);
         $collector      = ExceptionHandlerCollector::getCollector();
-
         $isNotExistHandler = !isset($collector[$exceptionClass]) && !isset($collector[\Exception::class]);
         if (empty($collector) || $isNotExistHandler) {
             return $this->handleThrowtable($throwable);
