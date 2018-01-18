@@ -2,7 +2,7 @@
 
 namespace Swoft\Helper;
 
-use Swoft\Bean\Collector\EntityCollector;
+use Swoft\Db\Bean\Collector\EntityCollector;
 use Swoft\Db\Types;
 
 class ArrayHelper

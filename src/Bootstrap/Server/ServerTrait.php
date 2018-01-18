@@ -3,17 +3,11 @@
 namespace Swoft\Bootstrap\Server;
 use Swoft\App;
 use Swoft\Bean\BeanFactory;
-use Swoft\Bean\Collector\BootProcessCollector;
 use Swoft\Bean\Collector\ServerListenerCollector;
 use Swoft\Bootstrap\SwooleEvent;
 use Swoft\Core\ApplicationContext;
 use Swoft\Core\InitApplicationContext;
-use Swoft\Event\AppEvent;
-use Swoft\Event\Events\BeforeTaskEvent;
 use Swoft\Helper\ProcessHelper;
-use Swoft\Bootstrap\Process;
-use Swoft\Task\Crontab\TableCrontab;
-use Swoft\Task\Task;
 use Swoole\Server;
 
 /**
