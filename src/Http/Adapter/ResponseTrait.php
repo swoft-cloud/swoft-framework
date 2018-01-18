@@ -3,7 +3,7 @@
 namespace Swoft\Http\Adapter;
 
 use Swoft\App;
-use Swoft\Core\Response as BaseResponse;
+use Swoft\Http\Message\Base\Response as BaseResponse;
 use Swoft\Testing\Base\Response as TestingBaseResponse;
 
 trait ResponseTrait

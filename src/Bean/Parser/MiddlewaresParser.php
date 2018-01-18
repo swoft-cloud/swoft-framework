@@ -2,9 +2,8 @@
 
 namespace Swoft\Bean\Parser;
 
-use Swoft\Bean\Annotation\Middleware;
 use Swoft\Bean\Annotation\Middlewares;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\MiddlewareCollector;
 
 /**
  * @uses      MiddlewaresParser
@@ -34,38 +33,7 @@ class MiddlewaresParser extends AbstractParserInterface
         string $methodName = "",
         $propertyValue = null
     ) {
-        $middlewares = [];
-        foreach ($objectAnnotation->getMiddlewares() as $middleware) {
-            if ($middleware instanceof Middleware) {
-                $middlewares[] = $middleware->getClass();
-            }
-        }
-        $middlewares = array_unique($middlewares);
-
-        if (isset(Collector::$requestMapping[$className]) && !empty($methodName)) {
-            $scanMiddlewares = Collector::$requestMapping[$className]['middlewares']['actions'][$methodName]??[];
-            Collector::$requestMapping[$className]['middlewares']['actions'][$methodName] = array_merge($scanMiddlewares, $middlewares);
-            return null;
-        }
-
-        if (isset(Collector::$requestMapping[$className]) && empty($methodName)) {
-            $scanMiddlewares = Collector::$requestMapping[$className]['middlewares']['group']??[];
-            Collector::$requestMapping[$className]['middlewares']['group'] = array_merge($scanMiddlewares, $middlewares);
-            return null;
-        }
-
-        if (isset(Collector::$serviceMapping[$className]) && !empty($methodName)) {
-            $scanMiddlewares = Collector::$serviceMapping[$className]['middlewares']['actions'][$methodName]??[];
-            Collector::$serviceMapping[$className]['middlewares']['actions'][$methodName] = array_merge($scanMiddlewares, $middlewares);
-            return null;
-        }
-
-        if (isset(Collector::$serviceMapping[$className]) && empty($methodName)) {
-            $scanMiddlewares = Collector::$serviceMapping[$className]['middlewares']['group']??[];
-            Collector::$serviceMapping[$className]['middlewares']['group'] = array_merge($scanMiddlewares, $middlewares);
-            return null;
-        }
-
+        MiddlewareCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
         return null;
     }
 }

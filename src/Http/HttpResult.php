@@ -4,11 +4,11 @@ namespace Swoft\Http;
 
 use Psr\Http\Message\ResponseInterface;
 use Swoft\App;
+use Swoft\Core\AbstractResult;
 use Swoft\Http\Adapter\AdapterInterface;
 use Swoft\Http\Adapter\CoroutineAdapter;
 use Swoft\Http\Adapter\ResponseTrait;
-use Swoft\Web\AbstractResult;
-use Swoft\Web\Streams\SwooleStream;
+use Swoft\Http\Message\Stream\SwooleStream;
 
 /**
  * Http result

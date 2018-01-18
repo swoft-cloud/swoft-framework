@@ -6,6 +6,8 @@ use Swoft\App;
 use Swoft\Console\Input\Input;
 use Swoft\Console\Output\Output;
 use Swoft\Console\Style\Style;
+use Swoft\Helper\ComponentHelper;
+use Swoft\Helper\DirHelper;
 use Swoft\Helper\PhpHelper;
 
 /**
@@ -290,7 +292,31 @@ class Console implements ConsoleInterface
      */
     private function registerNamespace()
     {
-        $this->scanCmds['Swoft\Console\Command'] = dirname(__FILE__) . "/Command";
         $this->scanCmds[COMMAND_NS] = App::getAlias("@commands");
+        $this->autoRegisterCommands();
+    }
+
+    /**
+     * auto register commands
+     */
+    private function autoRegisterCommands()
+    {
+        $swoftDir      = dirname(__FILE__, 4);
+        $componentDirs = scandir($swoftDir);
+        foreach ($componentDirs as $component) {
+            if ($component == '.' || $component == '..') {
+                continue;
+            }
+
+            $componentCommandDir = $swoftDir . DS . $component . DS . 'src' . DS . 'Console' . DS . 'Command';
+            if (!is_dir($componentCommandDir)) {
+                continue;
+            }
+
+            $componentNs = ComponentHelper::getComponentNs($component);
+
+            $ns = "Swoft{$componentNs}\\Console\\Command";
+            $this->scanCmds[$ns] = $componentCommandDir;
+        }
     }
 }

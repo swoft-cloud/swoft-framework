@@ -3,9 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Strings;
-use Swoft\Bean\Annotation\ValidatorFrom;
-use Swoft\Bean\Collector;
-use Swoft\Validator\StringsValidator;
+use Swoft\Bean\Collector\ValidatorCollector;
 
 /**
  * the parser of strings
@@ -34,19 +32,7 @@ class StringsParser extends AbstractParserInterface
         string $methodName = "",
         $propertyValue = null
     ) {
-        $from    = $objectAnnotation->getFrom();
-        $name    = $objectAnnotation->getName();
-        $min     = $objectAnnotation->getMin();
-        $max     = $objectAnnotation->getMax();
-        $default = $objectAnnotation->getDefault();
-
-        $params = [$min, $max, $default];
-        $from   = isset(Collector::$serviceMapping[$className]) ? ValidatorFrom::SERVICE : $from;
-        Collector::$validator[$className][$methodName]['validator'][$from][$name] = [
-            'validator' => StringsValidator::class,
-            'params'    => $params,
-        ];
-
+        ValidatorCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
         return null;
     }
 }

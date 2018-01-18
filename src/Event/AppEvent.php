@@ -19,21 +19,6 @@ class AppEvent
     const APPLICATION_LOADER = "applicationLoader";
 
     /**
-     * 请求前事件
-     */
-    const BEFORE_REQUEST = "beforeRequest";
-
-    /**
-     * 请求后事件
-     */
-    const AFTER_REQUEST = "afterRequest";
-
-    /**
-     * rpc前事件
-     */
-    const BEFORE_RECEIVE = "beforeReceive";
-
-    /**
      * 任务前置事件
      */
     const BEFORE_TASK = "beforeTask";

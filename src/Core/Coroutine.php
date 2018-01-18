@@ -5,7 +5,7 @@ namespace Swoft\Core;
 use Swoft\App;
 use Swoft\Console\Console;
 use Swoft\Helper\PhpHelper;
-use Swoft\Process\Process;
+use Swoft\Bootstrap\Process;
 use Swoft\Task\Task;
 use Swoole\Coroutine as SwCoroutine;
 
