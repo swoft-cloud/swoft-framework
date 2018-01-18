@@ -3,6 +3,7 @@
 namespace Swoft\Bean;
 
 use Monolog\Formatter\LineFormatter;
+use Swoft\Aop\Aop;
 use Swoft\App;
 use Swoft\Core\Config;
 use Swoft\Helper\ArrayHelper;
@@ -54,6 +55,11 @@ class BeanFactory implements BeanFactoryInterface
         }
         self::$container->addDefinitions($definitions);
         self::$container->autoloadAnnotations();
+
+        /* @var Aop $aop init reload aop */
+        $aop = App::getBean(Aop::class);
+        $aop->init();
+
         self::$container->initBeans();
     }
 

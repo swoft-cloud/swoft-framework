@@ -4,8 +4,8 @@ namespace Swoft\Bean\Resource;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Swoft\Helper\ComponentHelper;
 use Swoft\Bean\Wrapper\WrapperInterface;
+use Swoft\Helper\ComponentHelper;
 
 /**
  * 注释解析
@@ -24,6 +24,13 @@ class AnnotationResource extends AbstractResource
      * @var array
      */
     private $scanNamespaces = [];
+
+    /**
+     * scan files
+     *
+     * @var array
+     */
+    private $scanFiles = [];
 
     /**
      * 已解析的bean定义
@@ -85,6 +92,9 @@ class AnnotationResource extends AbstractResource
     {
         // 获取扫描的PHP文件
         $classNames = $this->registerLoaderAndScanBean();
+        $fileClassNames = $this->scanFilePhpClass();
+        $classNames = array_merge($classNames, $fileClassNames);
+
         foreach ($classNames as $className) {
             $this->parseBeanAnnotations($className);
         }
@@ -277,7 +287,9 @@ class AnnotationResource extends AbstractResource
                     continue;
                 }
                 $scanDir = $componentCommandDir . DS . $dir;
+
                 if(!is_dir($scanDir)){
+                    $this->scanFiles[$ns][] = $scanDir;
                     continue;
                 }
                 $scanNs  = $ns . "\\" . $dir;
@@ -315,6 +327,25 @@ class AnnotationResource extends AbstractResource
         }
 
         return $phpFiles;
+    }
+
+    /**
+     * scan files
+     */
+    private function scanFilePhpClass()
+    {
+        $phpClass = [];
+        foreach ($this->scanFiles as $ns => $files) {
+            foreach ($files as $file){
+                $pathInfo = pathinfo($file);
+                if (!isset($pathInfo['filename'])) {
+                    continue;
+                }
+                $phpClass[] = $ns . "\\" . $pathInfo['filename'];
+            }
+        }
+
+        return $phpClass;
     }
 
     /**

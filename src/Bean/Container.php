@@ -11,8 +11,11 @@ use Swoft\Bean\ObjectDefinition\MethodInjection;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
 use Swoft\Bean\Resource\AnnotationResource;
 use Swoft\Bean\Resource\DefinitionResource;
+use Swoft\Cache\Cache;
 use Swoft\Proxy\Handler\AopHandler;
 use Swoft\Proxy\Proxy;
+use Swoft\Redis\RedisCache;
+use Swoole\Redis;
 
 /**
  * 全局容器
