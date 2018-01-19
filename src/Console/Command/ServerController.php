@@ -85,14 +85,13 @@ class ServerController extends ConsoleCommand
      */
     public function startCommand()
     {
-        // 是否正在运行
-        if ($this->httpServer->isRunning()) {
-            $serverStatus = $this->httpServer->getServerSetting();
-            $this->output->writeln("<error>The server have been running!(PID: {$serverStatus['masterPid']})</error>", true, true);
-        }
-
         // sever配置参数
         $serverStatus = $this->httpServer->getServerSetting();
+
+        // 是否正在运行
+        if ($this->httpServer->isRunning()) {
+            $this->output->writeln("<error>The server have been running!(PID: {$serverStatus['masterPid']})</error>", true, true);
+        }
 
         // 启动参数
         $this->setStartArgs();
