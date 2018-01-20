@@ -5,7 +5,7 @@ namespace Swoft\Core;
 use Swoft\App;
 use Swoft\Console\Console;
 use Swoft\Helper\PhpHelper;
-use Swoft\Process\Process;
+use Swoft\Bootstrap\Process;
 use Swoft\Task\Task;
 use Swoole\Coroutine as SwCoroutine;
 
@@ -120,7 +120,7 @@ class Coroutine
 
     /**
      * Determine if should create a coroutine when you
-     * want to use a Coroutine Client, and you shoud
+     * want to use a Coroutine Client, and you should
      * always use self::isSupportCoroutine() before
      * call this method.
      *

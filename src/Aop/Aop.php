@@ -4,7 +4,7 @@ namespace Swoft\Aop;
 
 use Swoft\App;
 use Swoft\Bean\Annotation\Bean;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\AspectCollector;
 
 /**
  * the class of aop
@@ -34,7 +34,7 @@ class Aop implements AopInterface
     public function init()
     {
         // register aop
-        $aspects = Collector::$aspects;
+        $aspects = AspectCollector::getCollector();
         $this->register($aspects);
     }
 
@@ -170,7 +170,7 @@ class Aop implements AopInterface
                 continue;
             }
 
-            // incloude
+            // include
             $pointBeanInclude       = $aspect['point']['bean']['include']?? [];
             $pointAnnotationInclude = $aspect['point']['annotation']['include']?? [];
             $pointExecutionInclude  = $aspect['point']['execution']['include']?? [];

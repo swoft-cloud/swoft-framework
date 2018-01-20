@@ -2,7 +2,7 @@
 
 namespace Swoft\Helper;
 
-use Swoft\Bean\Collector;
+use Swoft\Db\Bean\Collector\EntityCollector;
 use Swoft\Db\Types;
 
 class ArrayHelper
@@ -873,7 +873,8 @@ class ArrayHelper
 
     public static function arrayToEntity(array $array, string $className)
     {
-        $entities = Collector::$entities;
+
+        $entities = EntityCollector::getCollector();
         if (!isset($className)) {
             return $array;
         }
@@ -887,7 +888,7 @@ class ArrayHelper
             $field = $entities[$className]['column'][$col];
             $setterMethod = "set" . ucfirst($field);
 
-            $type = Collector::$entities[$className]['field'][$field]['type'];
+            $type = $entities[$className]['field'][$field]['type'];
             $value = self::trasferTypes($type, $value);
 
             if (method_exists($object, $setterMethod)) {

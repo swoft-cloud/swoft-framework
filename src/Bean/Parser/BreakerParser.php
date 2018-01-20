@@ -4,7 +4,7 @@ namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Breaker;
 use Swoft\Bean\Annotation\Scope;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\BreakerCollector;
 
 /**
  * breaker parser
@@ -15,7 +15,7 @@ use Swoft\Bean\Collector;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class BreakerParser extends AbstractParser
+class BreakerParser extends AbstractParserInterface
 {
     /**
      * @param string  $className
@@ -33,10 +33,7 @@ class BreakerParser extends AbstractParser
         string $methodName = "",
         $propertyValue = null
     ) {
-        $breakerName = $objectAnnotation->getName();
-        $breakerName = empty($breakerName) ? $className : $breakerName;
-
-        Collector::$breakers[$breakerName] = $className;
+        BreakerCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
 
         return [$className, Scope::SINGLETON, ""];
     }

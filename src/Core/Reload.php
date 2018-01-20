@@ -4,7 +4,7 @@ namespace Swoft\Core;
 
 use Swoft\App;
 use Swoft\Helper\FileHelper;
-use Swoft\Server\ServerInterface;
+use Swoft\Bootstrap\Server\ServerInterface;
 use Swoole\Event;
 use Swoft\Bean\Annotation\Bean;
 
@@ -76,9 +76,9 @@ class Reload
     }
 
     /**
-     * @param \Swoft\Server\ServerInterface $server
+     * @param ServerInterface $server
      */
-    public function setServer(\Swoft\Server\ServerInterface $server)
+    public function setServer(ServerInterface $server)
     {
         $this->server = $server;
     }

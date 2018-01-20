@@ -3,13 +3,14 @@
 namespace Swoft\Bean;
 
 use Monolog\Formatter\LineFormatter;
+use Swoft\Aop\Aop;
 use Swoft\App;
 use Swoft\Core\Config;
 use Swoft\Helper\ArrayHelper;
 use Swoft\Helper\DirHelper;
 use Swoft\Pool\BalancerSelector;
 use Swoft\Pool\ProviderSelector;
-use Swoft\Web\Application;
+use Swoft\Core\Application;
 
 /**
  * bean工厂
@@ -28,18 +29,37 @@ class BeanFactory implements BeanFactoryInterface
      */
     private static $container = null;
 
-    /**
-     * BeanFactory constructor.
-     *
-     * @param array $definitions
-     */
-    private function __construct(array $definitions)
+    public static function init()
     {
-        $definitions = self::merge($definitions);
-
         self::$container = new Container();
+        self::$container->autoloadServerAnnotations();
+        self::$container->initBeans();
+    }
+
+    /**
+     * Reload bean definitions
+     *
+     * @param array $definitions append definitions to config loader
+     */
+    public static function reload($definitions = [])
+    {
+        $config = new Config();
+        $config->load(App::getAlias('@beans'), [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
+        $configDefinitions = $config->toArray();
+        $mergeDefinitions = ArrayHelper::merge($configDefinitions, $definitions);
+
+        $definitions = self::merge($mergeDefinitions);
+
+        if(self::$container == null){
+            self::$container = new Container();
+        }
         self::$container->addDefinitions($definitions);
         self::$container->autoloadAnnotations();
+
+        /* @var Aop $aop init reload aop */
+        $aop = App::getBean(Aop::class);
+        $aop->init();
+
         self::$container->initBeans();
     }
 
@@ -53,16 +73,6 @@ class BeanFactory implements BeanFactoryInterface
     public static function getBean(string $name)
     {
         return self::$container->get($name);
-    }
-
-    /**
-     * 创建一个bean
-     *
-     * @param string $beanName
-     * @param array  $definition
-     */
-    public static function createBean(string $beanName, array $definition)
-    {
     }
 
     /**
@@ -112,19 +122,5 @@ class BeanFactory implements BeanFactoryInterface
         $definitions = ArrayHelper::merge(self::coreBeans(), $definitions);
 
         return $definitions;
-    }
-
-    /**
-     * Reload bean definitions
-     *
-     * @param array $definitions append definitions to config loader
-     */
-    public static function reload($definitions = [])
-    {
-        $config = new Config();
-        $config->load(App::getAlias('@beans'), [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
-        $configDefinitions = $config->toArray();
-        $mergeDefinitions = ArrayHelper::merge($configDefinitions, $definitions);
-        new self($mergeDefinitions);
     }
 }

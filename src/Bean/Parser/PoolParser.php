@@ -4,7 +4,7 @@ namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Pool;
 use Swoft\Bean\Annotation\Scope;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\PoolCollector;
 
 /**
  * pool parser
@@ -15,7 +15,7 @@ use Swoft\Bean\Collector;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class PoolParser extends AbstractParser
+class PoolParser extends AbstractParserInterface
 {
     /**
      * @param string $className
@@ -33,10 +33,8 @@ class PoolParser extends AbstractParser
         string $methodName = "",
         $propertyValue = null
     ) {
-        $poolName = $objectAnnotation->getName();
-        $poolName = empty($poolName) ? $className : $poolName;
-        Collector::$pools[$poolName] = $className;
 
+        PoolCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
         return [$className, Scope::SINGLETON, ""];
     }
 }

@@ -6,15 +6,11 @@ use Psr\Http\Message\RequestInterface;
 use Swoft\App;
 use Swoft\Helper\JsonHelper;
 use Swoft\Http\HttpResult;
-use Swoft\Web\Uri;
+use Swoft\Http\Message\Uri\Uri;
 use Swoole\Coroutine\Http\Client as CoHttpClient;
 
 /**
- * @uses      CoroutineAdapter
- * @version   2017-11-22
- * @author    huangzhhui <huangzhwork@gmail.com>
- * @copyright Copyright 2010-2017 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Swoole coroutine client driver adapter
  */
 class CoroutineAdapter implements AdapterInterface
 {

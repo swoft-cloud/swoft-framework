@@ -13,7 +13,7 @@ use Swoft\App;
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class Application
+class Application
 {
     /**
      * @var string 应用ID

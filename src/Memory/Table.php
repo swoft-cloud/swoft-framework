@@ -2,7 +2,7 @@
 
 namespace Swoft\Memory;
 
-use Swoole\Table as swTable;
+use Swoole\Table as SwooleTable;
 
 /**
  * Table
@@ -13,10 +13,10 @@ use Swoole\Table as swTable;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class Table implements ITable
+class Table implements TableInterface
 {
     /**
-     * @var swTable $table 内存表实例
+     * @var SwooleTable $table 内存表实例
      */
     private $table = null;
 
@@ -41,7 +41,7 @@ class Table implements ITable
     public function __construct(string $name = '', int $size = 0, array $columns = [])
     {
         $this->setName($name);
-        $this->setTable(new swTable($size));
+        $this->setTable(new SwooleTable($size));
         $this->setSize($size);
         $this->setColumns($columns);
     }
@@ -49,11 +49,11 @@ class Table implements ITable
     /**
      * 设置内存表实例
      *
-     * @param swTable $table 内存表实例
+     * @param SwooleTable $table 内存表实例
      *
      * @return Table
      */
-    public function setTable(swTable $table): Table
+    public function setTable(SwooleTable $table): self
     {
         $this->table = $table;
 
@@ -146,14 +146,15 @@ class Table implements ITable
      * 内存表增加一列
      *
      * @param string $name 列名
-     * @param int    $type 类型
-     * @param int    $size 最大长度，单位为字节
+     * @param int $type 类型
+     * @param int $size 最大长度，单位为字节
      */
     public function column(string $name, int $type, int $size = 0)
     {
         switch ($type) {
             case self::TYPE_INT:
-                if (!in_array($size, [self::ONE_INT_LENGTH, self::TWO_INT_LENGTH, self::FOUR_INT_LENGTH, self::EIGHT_INT_LENGTH])) {
+                if (!in_array($size,
+                    [self::ONE_INT_LENGTH, self::TWO_INT_LENGTH, self::FOUR_INT_LENGTH, self::EIGHT_INT_LENGTH])) {
                     $size = 4;
                 }
                 break;
@@ -188,8 +189,8 @@ class Table implements ITable
     /**
      * 设置行数据
      *
-     * @param string $key   索引键
-     * @param array  $array 数据
+     * @param string $key 索引键
+     * @param array $array 数据
      *
      * @return bool
      */
@@ -201,8 +202,8 @@ class Table implements ITable
     /**
      * 原子自增操作
      *
-     * @param string    $key    索引键
-     * @param string    $column 列名
+     * @param string $key 索引键
+     * @param string $column 列名
      * @param int|float $incrby 增量。如果列为整形，$incrby必须为int型，如果列为浮点型，$incrby必须为float类型
      *
      * @return bool
@@ -215,8 +216,8 @@ class Table implements ITable
     /**
      * 原子自减操作
      *
-     * @param string    $key    索引键
-     * @param string    $column 列名
+     * @param string $key 索引键
+     * @param string $column 列名
      * @param int|float $incrby 增量。如果列为整形，$incrby必须为int型，如果列为浮点型，$incrby必须为float类型
      *
      * @return bool|int 返回false执行失败，成功返回整数结果值
@@ -229,7 +230,7 @@ class Table implements ITable
     /**
      * 获取一行数据
      *
-     * @param string $key   索引键
+     * @param string $key 索引键
      * @param string $field 列名
      *
      * @return array

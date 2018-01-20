@@ -26,7 +26,8 @@ class BeforeProcessListener implements EventHandlerInterface
     /**
      * 事件回调
      *
-     * @param EventInterface $event      事件对象
+     * @param EventInterface $event 事件对象
+     * @return void
      */
     public function handle(EventInterface $event)
     {
@@ -55,7 +56,7 @@ class BeforeProcessListener implements EventHandlerInterface
             'requestTime' => microtime(true)
         ];
 
-        \Swoft\Process\Process::setId($processPid);
+        \Swoft\Bootstrap\Process::setId($processPid);
         App::getLogger()->setFlushInterval($flushInterval);
         RequestContext::setContextData($contextData);
 

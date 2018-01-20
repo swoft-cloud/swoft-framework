@@ -14,69 +14,6 @@ namespace Swoft\Bean;
 class Collector
 {
     /**
-     * 已解析的路由规则
-     *
-     * @var array
-     */
-    public static $requestMapping = [];
-
-    /**
-     * 已解析的Service映射
-     *
-     * @var array
-     */
-    public static $serviceMapping = [];
-
-    /**
-     * 监听器
-     *
-     * @var array
-     */
-    public static $listeners = [];
-
-    /**
-     * 表结构实体
-     *
-     * @var array
-     */
-    public static $entities = [];
-
-    /**
-     * 定时任务列表
-     *
-     * @var array
-     */
-    public static $crontab = [];
-
-    /**
-     * validator
-     *
-     * @var array
-     */
-    public static $validator = [];
-
-    /**
-     * pools
-     *
-     * @var array
-     */
-    public static $pools = [];
-
-    /**
-     * circuit breakers
-     *
-     * @var array
-     */
-    public static $breakers = [];
-
-    /**
-     * aspects
-     *
-     * @var array
-     */
-    public static $aspects = [];
-
-    /**
      * the annotations of method
      *
      * @var array

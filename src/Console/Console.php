@@ -6,6 +6,8 @@ use Swoft\App;
 use Swoft\Console\Input\Input;
 use Swoft\Console\Output\Output;
 use Swoft\Console\Style\Style;
+use Swoft\Helper\ComponentHelper;
+use Swoft\Helper\DirHelper;
 use Swoft\Helper\PhpHelper;
 
 /**
@@ -17,7 +19,7 @@ use Swoft\Helper\PhpHelper;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class Console implements IConsole
+class Console implements ConsoleInterface
 {
     /**
      * 默认命令组
@@ -290,7 +292,31 @@ class Console implements IConsole
      */
     private function registerNamespace()
     {
-        $this->scanCmds['Swoft\Console\Command'] = dirname(__FILE__) . "/Command";
         $this->scanCmds[COMMAND_NS] = App::getAlias("@commands");
+        $this->autoRegisterCommands();
+    }
+
+    /**
+     * auto register commands
+     */
+    private function autoRegisterCommands()
+    {
+        $swoftDir      = dirname(__FILE__, 4);
+        $componentDirs = scandir($swoftDir);
+        foreach ($componentDirs as $component) {
+            if ($component == '.' || $component == '..') {
+                continue;
+            }
+
+            $componentCommandDir = $swoftDir . DS . $component . DS . 'src' . DS . 'Console' . DS . 'Command';
+            if (!is_dir($componentCommandDir)) {
+                continue;
+            }
+
+            $componentNs = ComponentHelper::getComponentNs($component);
+
+            $ns = "Swoft{$componentNs}\\Console\\Command";
+            $this->scanCmds[$ns] = $componentCommandDir;
+        }
     }
 }

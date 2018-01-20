@@ -2,18 +2,20 @@
 
 namespace Swoft;
 
+use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\PoolCollector;
+use Swoft\Bootstrap\Server\ServerInterface;
+use Swoft\Circuit\CircuitBreaker;
 use Swoft\Core\ApplicationContext;
 use Swoft\Core\Config;
 use Swoft\Core\RequestContext;
 use Swoft\Core\Timer;
-use Swoft\Bean\Collector;
-use Swoft\Circuit\CircuitBreaker;
 use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
-use Swoft\Pool\ConnectPool;
+use Swoft\Pool\ConnectPoolInterface;
 use Swoft\Pool\RedisPool;
-use Swoft\Server\ServerInterface;
-use Swoft\Web\Application;
+use Swoft\Core\Application;
+use Swoft\Bean\Collector\BreakerCollector;
 
 /**
  * 应用简写类
@@ -106,16 +108,6 @@ class App
     }
 
     /**
-     * request router
-     *
-     * @return \Swoft\Router\Http\HandlerMapping
-     */
-    public static function getHttpRouter()
-    {
-        return self::getBean('httpRouter');
-    }
-
-    /**
      * 查询一个bean
      *
      * @param string $name 名称
@@ -133,22 +125,6 @@ class App
     public static function getApplication()
     {
         return ApplicationContext::getBean('application');
-    }
-
-    /**
-     * @return \Swoft\Web\DispatcherServer
-     */
-    public static function getDispatcherServer()
-    {
-        return ApplicationContext::getBean('dispatcherServer');
-    }
-
-    /**
-     * @return \Swoft\Service\DispatcherService
-     */
-    public static function getDispatcherService()
-    {
-        return ApplicationContext::getBean('dispatcherService');
     }
 
     /**
@@ -202,16 +178,6 @@ class App
     }
 
     /**
-     * the packer of rpc service
-     *
-     * @return \Swoft\Service\ServicePacker;
-     */
-    public static function getPacker()
-    {
-        return self::getBean('servicePacker');
-    }
-
-    /**
      * the selector of balancer
      *
      * @return \Swoft\Pool\BalancerSelector
@@ -236,15 +202,16 @@ class App
      *
      * @param string $name
      *
-     * @return ConnectPool
+     * @return ConnectPoolInterface
      */
     public static function getPool(string $name)
     {
-        if (!isset(Collector::$pools[$name])) {
+        $collector = PoolCollector::getCollector();
+        if (!isset($collector[$name])) {
             throw new InvalidArgumentException("the pool of $name is not exist!");
         }
 
-        $poolBeanName = Collector::$pools[$name];
+        $poolBeanName = $collector[$name];
 
         return self::getBean($poolBeanName);
     }
@@ -258,11 +225,12 @@ class App
      */
     public static function getBreaker(string $name)
     {
-        if (!isset(Collector::$breakers[$name])) {
+        $collector = BreakerCollector::getCollector();
+        if (!isset($collector[$name])) {
             throw new InvalidArgumentException("the breaker of $name is not exist!");
         }
 
-        $breakerBeanName = Collector::$breakers[$name];
+        $breakerBeanName = $collector[$name];
 
         return self::getBean($breakerBeanName);
     }
@@ -270,7 +238,7 @@ class App
     /**
      * request对象
      *
-     * @return Web\Request
+     * @return \Psr\Http\Message\RequestInterface
      */
     public static function getRequest()
     {
@@ -280,7 +248,7 @@ class App
     /**
      * response对象
      *
-     * @return Web\Response
+     * @return \Psr\Http\Message\ResponseInterface
      */
     public static function getResponse()
     {

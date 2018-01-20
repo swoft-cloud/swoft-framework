@@ -4,7 +4,7 @@ namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Listener;
 use Swoft\Bean\Annotation\Scope;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\ListenerCollector;
 
 /**
  * Listen注解解析器
@@ -15,7 +15,7 @@ use Swoft\Bean\Collector;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class ListenerParser extends AbstractParser
+class ListenerParser extends AbstractParserInterface
 {
     /**
      * Listen注解解析
@@ -31,10 +31,7 @@ class ListenerParser extends AbstractParser
     {
         $beanName = $className;
         $scope = Scope::SINGLETON;
-        $eventName = $objectAnnotation->getEvent();
-
-        // 监听器收集
-        Collector::$listeners[$eventName][] = $beanName;
+        ListenerCollector::collect($className, $objectAnnotation, $propertyName,$methodName, $propertyValue);
         return [$beanName, $scope, ""];
     }
 }

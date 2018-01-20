@@ -13,7 +13,7 @@ use PhpDocReader\PhpDocReader;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class InjectParser extends AbstractParser
+class InjectParser extends AbstractParserInterface
 {
 
     /**
@@ -23,7 +23,7 @@ class InjectParser extends AbstractParser
      * @param object $objectAnnotation
      * @param string $propertyName
      * @param string $methodName
-     *
+     * @param null $propertyValue
      * @return array
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)

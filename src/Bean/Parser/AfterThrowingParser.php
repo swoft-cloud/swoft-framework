@@ -3,7 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\AfterThrowing;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\AspectCollector;
 
 /**
  * the before advice of parser
@@ -14,7 +14,7 @@ use Swoft\Bean\Collector;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class AfterThrowingParser extends AbstractParser
+class AfterThrowingParser extends AbstractParserInterface
 {
     /**
      * afterThrowing parsing
@@ -23,16 +23,13 @@ class AfterThrowingParser extends AbstractParser
      * @param AfterThrowing $objectAnnotation
      * @param string        $propertyName
      * @param string        $methodName
+     * @param null          $propertyValue
      *
      * @return mixed
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
-        if (!isset(Collector::$aspects[$className])) {
-            return null;
-        }
-
-        Collector::$aspects[$className]['advice']['afterThrowing'] = [$className, $methodName];
+        AspectCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
 
         return null;
     }

@@ -37,16 +37,16 @@ class JoinPoint implements JoinPointInterface
      * JoinPoint constructor.
      *
      * @param object $target the object of origin
-     * @param string $mehtod the method of origin
+     * @param string $method the method of origin
      * @param array  $args   the params of method
      * @param mixed  $return the return of executed method
      */
-    public function __construct($target, string $mehtod, array $args, $return = null)
+    public function __construct($target, string $method, array $args, $return = null)
     {
         $this->args   = $args;
         $this->return = $return;
         $this->target = $target;
-        $this->method = $mehtod;
+        $this->method = $method;
     }
 
     /**
