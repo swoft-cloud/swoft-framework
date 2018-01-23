@@ -2,7 +2,7 @@
 
 namespace Swoft\Middleware;
 
-use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -15,7 +15,7 @@ use Psr\Http\Message\ServerRequestInterface;
  * @copyright Copyright 2010-2017 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-interface MiddlewareInterface extends \Interop\Http\Server\MiddlewareInterface
+interface MiddlewareInterface extends \Psr\Http\Server\MiddlewareInterface
 {
 
     /**
@@ -23,7 +23,7 @@ interface MiddlewareInterface extends \Interop\Http\Server\MiddlewareInterface
      * response creation to a handler.
      *
      * @param \Psr\Http\Message\ServerRequestInterface $request
-     * @param \Interop\Http\Server\RequestHandlerInterface $handler
+     * @param \Psr\Http\Server\RequestHandlerInterface $handler
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface;
