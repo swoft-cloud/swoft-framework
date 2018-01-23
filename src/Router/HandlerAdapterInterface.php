@@ -3,6 +3,7 @@
 namespace Swoft\Router;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 /**
  * handler adapter interface
@@ -21,7 +22,7 @@ interface HandlerAdapterInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request
      * @param array                                    $handler
      *
-     * @return \Swoft\Core\Response
+     * @return ResponseInterface|mixed
      */
     public function doHandler(ServerRequestInterface $request, array $handler);
 }
