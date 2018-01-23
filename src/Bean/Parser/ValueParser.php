@@ -3,9 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Value;
-use Swoft\Console\DocumentParser;
-use Swoft\Testing\Pool\Config\EnvAndPptFromPptPoolConfig;
-use Swoft\Testing\Pool\Config\PropertyPoolConfig;
+use Swoft\Helper\DocumentHelper;
 
 /**
  * value注解解析器
@@ -93,7 +91,7 @@ class ValueParser extends AbstractParserInterface
         $rc   = new \ReflectionClass($className);
         $rp   = $rc->getProperty($propertyName);
         $doc  = $rp->getDocComment();
-        $tags = DocumentParser::tagList($doc);
+        $tags = DocumentHelper::tagList($doc);
         if (isset($tags['var']) && $tags['var'] == 'array') {
             return true;
         }

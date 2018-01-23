@@ -108,6 +108,7 @@ class AnnotationResource extends AbstractResource
      */
     public function getDefinitions()
     {
+
         // 获取扫描的PHP文件
         $classNames = $this->registerLoaderAndScanBean();
         $fileClassNames = $this->scanFilePhpClass();
@@ -116,7 +117,6 @@ class AnnotationResource extends AbstractResource
         foreach ($classNames as $className) {
             $this->parseBeanAnnotations($className);
         }
-
         $this->parseAnnotationsData();
 
         return $this->definitions;
