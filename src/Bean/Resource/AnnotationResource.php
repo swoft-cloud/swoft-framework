@@ -4,6 +4,7 @@ namespace Swoft\Bean\Resource;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use Swoft\App;
 use Swoft\Bean\Wrapper\WrapperInterface;
 use Swoft\Helper\ComponentHelper;
 
@@ -55,10 +56,17 @@ class AnnotationResource extends AbstractResource
      * @var array
      */
     private $serverScan = [
-        'Console',
+        'Command',
         'Bootstrap',
         'Aop',
     ];
+
+    /**
+     * the name of console componet
+     *
+     * @var string
+     */
+    private $consoleName = 'console';
 
     /**
      * the ns of component
@@ -66,6 +74,16 @@ class AnnotationResource extends AbstractResource
      * @var array
      */
     private $componentNamespaces = [];
+
+    /**
+     * @var array
+     */
+    private $ignoredNames = [
+        'Usage',
+        'Options',
+        'Arguments',
+        'Example'
+    ];
 
     /**
      * AnnotationResource constructor.
@@ -119,6 +137,7 @@ class AnnotationResource extends AbstractResource
 
         // 注解解析器
         $reader = new AnnotationReader();
+        $reader = $this->addIgnoredNames($reader);
         $reflectionClass = new \ReflectionClass($className);
         $classAnnotations = $reader->getClassAnnotations($reflectionClass);
 
@@ -244,6 +263,12 @@ class AnnotationResource extends AbstractResource
             $ns          = "Swoft{$componentNs}";
             $this->componentNamespaces[] = $ns;
 
+            // console component
+            if($component == $this->consoleName){
+                $this->scanNamespaces[$ns] = $componentCommandDir;
+                continue;
+            }
+
             foreach ($this->serverScan as $dir){
                 $scanDir = $componentCommandDir . DS . $dir;
                 if(!is_dir($scanDir)){
@@ -254,6 +279,8 @@ class AnnotationResource extends AbstractResource
                 $this->scanNamespaces[$scanNs] = $scanDir;
             }
         }
+
+        $this->scanNamespaces['App\\Commands'] = App::getAlias('@commands');
     }
 
     /**
@@ -277,6 +304,11 @@ class AnnotationResource extends AbstractResource
             $ns = "Swoft{$componentNs}";
 
             $this->componentNamespaces[] = $ns;
+
+            // ignore the comoponent of console
+            if($component == $this->consoleName){
+                continue;
+            }
 
             $scanDirs = scandir($componentCommandDir);
             foreach ($scanDirs as $dir) {
@@ -368,5 +400,21 @@ class AnnotationResource extends AbstractResource
         }
 
         return array_unique($phpClass);
+    }
+
+    /**
+     * add ignored names
+     *
+     * @param AnnotationReader $reader
+     *
+     * @return AnnotationReader
+     */
+    private function addIgnoredNames(AnnotationReader $reader)
+    {
+        foreach ($this->ignoredNames as $name) {
+            $reader->addGlobalIgnoredName($name);
+        }
+
+        return $reader;
     }
 }
