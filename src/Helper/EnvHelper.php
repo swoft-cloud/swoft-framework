@@ -34,5 +34,21 @@ class EnvHelper
         if (\extension_loaded('blackfire')) {
             throw new \RuntimeException('The extension of blackfire must be closed, otherwise swoft will be affected!');
         }
+
+        if (\extension_loaded('xdebug')) {
+            throw new \RuntimeException('The extension of xdebug must be closed, otherwise swoft will be affected!');
+        }
+
+        if (\extension_loaded('uopz')) {
+            throw new \RuntimeException('The extension of uopz must be closed, otherwise swoft will be affected!');
+        }
+
+        if (\extension_loaded('xhprof')) {
+            throw new \RuntimeException('The extension of xhprof must be closed, otherwise swoft will be affected!');
+        }
+
+        if (\extension_loaded('zend')) {
+            throw new \RuntimeException('The extension of zend must be closed, otherwise swoft will be affected!');
+        }
     }
 }
