@@ -7,10 +7,6 @@ use Swoft\Pool\ProviderSelector;
 use Swoft\Test\AbstractTestCase;
 use Swoft\Testing\Pool\Config\ConsulEnvConfig;
 use Swoft\Testing\Pool\Config\ConsulPptConfig;
-use Swoft\Testing\Pool\Config\DbEnvPoolConfig;
-use Swoft\Testing\Pool\Config\DbPptPoolConfig;
-use Swoft\Testing\Pool\Config\DbSlaveEnvPoolConfig;
-use Swoft\Testing\Pool\Config\DbSlavePptConfig;
 use Swoft\Testing\Pool\Config\EnvAndPptFromPptPoolConfig;
 use Swoft\Testing\Pool\Config\EnvAndPptPoolConfig;
 use Swoft\Testing\Pool\Config\EnvPoolConfig;
@@ -127,42 +123,6 @@ class PoolTest extends AbstractTestCase
             '127.0.0.1:6378',
         ]);
         $this->assertEquals($pConfig->getBalancer(), 'b2');
-        $this->assertEquals($pConfig->getMaxActive(), 2);
-        $this->assertEquals($pConfig->getMaxIdel(), 2);
-        $this->assertEquals($pConfig->isUseProvider(), true);
-        $this->assertEquals($pConfig->getMaxWait(), 2);
-    }
-
-    public function testRedisPoolPpt()
-    {
-        /* @var \Swoft\Pool\PoolProperties $pConfig */
-        $pConfig = App::getBean(RedisPptPoolConfig::class);
-        $this->assertEquals($pConfig->getName(), 'redis1');
-        $this->assertEquals($pConfig->getProvider(), 'consul1');
-        $this->assertEquals($pConfig->getTimeout(), 1);
-        $this->assertEquals($pConfig->getUri(), [
-            '127.0.0.1:1111',
-            '127.0.0.1:1111',
-        ]);
-        $this->assertEquals($pConfig->getBalancer(), 'random1');
-        $this->assertEquals($pConfig->getMaxActive(), 1);
-        $this->assertEquals($pConfig->getMaxIdel(), 1);
-        $this->assertEquals($pConfig->isUseProvider(), true);
-        $this->assertEquals($pConfig->getMaxWait(), 1);
-    }
-
-    public function testRedisPoolEnv()
-    {
-        /* @var \Swoft\Pool\PoolProperties $pConfig */
-        $pConfig = App::getBean(RedisEnvPoolConfig::class);
-        $this->assertEquals($pConfig->getName(), 'redis2');
-        $this->assertEquals($pConfig->getProvider(), 'consul2');
-        $this->assertEquals($pConfig->getTimeout(), 2);
-        $this->assertEquals($pConfig->getUri(), [
-            '127.0.0.1:2222',
-            '127.0.0.1:2222',
-        ]);
-        $this->assertEquals($pConfig->getBalancer(), 'random2');
         $this->assertEquals($pConfig->getMaxActive(), 2);
         $this->assertEquals($pConfig->getMaxIdel(), 2);
         $this->assertEquals($pConfig->isUseProvider(), true);
