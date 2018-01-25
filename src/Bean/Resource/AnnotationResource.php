@@ -201,7 +201,12 @@ class AnnotationResource extends AbstractResource
      */
     public function addScanNamespaces(array $namespaces)
     {
-        foreach ($namespaces as $namespace) {
+        foreach ($namespaces as $key => $namespace) {
+            if (is_string($key)) {
+                $this->scanNamespaces[$key] = $namespace;
+                continue;
+            }
+
             $nsPath = str_replace("\\", "/", $namespace);
             $nsPath = str_replace('App/', 'app/', $nsPath);
             $this->scanNamespaces[$namespace] = BASE_PATH . "/" . $nsPath;
@@ -341,6 +346,10 @@ class AnnotationResource extends AbstractResource
      */
     private function scanPhpFile(string $dir, string $namespace)
     {
+        if(!is_dir($dir)){
+            return [];
+        }
+
         $iterator = new \RecursiveDirectoryIterator($dir);
         $files = new \RecursiveIteratorIterator($iterator);
 
