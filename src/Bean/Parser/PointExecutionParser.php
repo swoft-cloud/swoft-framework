@@ -3,7 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\PointExecution;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\AspectCollector;
 
 /**
  * the point annotation of parser
@@ -28,8 +28,7 @@ class PointExecutionParser extends AbstractParserInterface
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
-
-
+        AspectCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
         return null;
     }
 }
