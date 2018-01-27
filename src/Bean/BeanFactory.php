@@ -12,6 +12,7 @@ use Swoft\Pool\BalancerSelector;
 use Swoft\Pool\ProviderSelector;
 use Swoft\Core\Application;
 use Swoft\Event\EventManager;
+use Swoft\Log\Logger;
 
 /**
  * Bean Factory
@@ -110,6 +111,13 @@ class BeanFactory implements BeanFactoryInterface
             ],
             'providerSelector' => [
                 'class' => ProviderSelector::class
+            ],
+            'logger'             => [
+                'class'         => Logger::class,
+                'name'          => APP_NAME,
+                'flushInterval' => 100000,
+                'flushRequest'  => false,
+                'handlers'      => []
             ],
             'lineFormatter'    => [
                 'class'      => LineFormatter::class,
