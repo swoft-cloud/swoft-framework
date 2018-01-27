@@ -42,9 +42,13 @@ class BeanFactory implements BeanFactoryInterface
      */
     public static function reload(array $definitions = [])
     {
-        $config = new Config();
-        $config->load(App::getAlias('@beans'), [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
-        $configDefinitions = $config->toArray();
+        $configDefinitions = [];
+        $beansDir = App::getAlias('@beans');
+        if (is_readable($beansDir)) {
+            $config = new Config();
+            $config->load($beansDir, [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
+            $configDefinitions = $config->toArray();
+        }
         $mergeDefinitions = ArrayHelper::merge($configDefinitions, $definitions);
 
         $definitions = self::merge($mergeDefinitions);
@@ -96,8 +100,13 @@ class BeanFactory implements BeanFactoryInterface
                 'class'      => Config::class,
                 'properties' => value(function () {
                     $config = new Config();
-                    $config->load('@properties');
-                    return $config->toArray();
+                    $properties = [];
+                    $dir = App::getAlias('@properties');
+                    if (is_readable($dir)) {
+                        $config->load($dir);
+                        $properties = $config->toArray();
+                    }
+                    return $properties;
                 }),
             ],
             'application'      => [

@@ -135,9 +135,7 @@ class Container
     public function autoloadAnnotations()
     {
         $properties = $this->properties;
-        if (!isset($properties['beanScan'])) {
-            throw new \InvalidArgumentException('缺少扫描命名空间范围，config/properties/app.php未配置beanScan');
-        }
+        !isset($properties['beanScan']) && $properties['beanScan'] = [];
         $beanScan = $properties['beanScan'];
         $resource = new AnnotationResource($properties);
         $resource->addScanNamespaces($beanScan);
