@@ -45,7 +45,7 @@ class ObjectDefinition
     /**
      * Constructor parameter injection.
      *
-     * @var MethodInjection
+     * @var MethodInjection|null
      */
     private $constructorInjection = null;
 
@@ -145,9 +145,9 @@ class ObjectDefinition
     /**
      * 获取构造函数注入对象
      *
-     * @return MethodInjection
+     * @return MethodInjection|null
      */
-    public function getConstructorInjection(): MethodInjection
+    public function getConstructorInjection()
     {
         return $this->constructorInjection;
     }
