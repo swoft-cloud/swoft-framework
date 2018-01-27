@@ -15,7 +15,7 @@ use Swoft\Bean\Annotation\Value;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class ListenerWrapper extends AbstractWrapperInterface
+class ListenerWrapper extends AbstractWrapper
 {
     /**
      * 类注解

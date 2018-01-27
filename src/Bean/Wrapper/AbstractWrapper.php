@@ -11,13 +11,13 @@ use Swoft\Bean\Resource\AnnotationResource;
 /**
  * 抽象封装器
  *
- * @uses      AbstractWrapperInterface
+ * @uses      AbstractWrapper
  * @version   2017年09月04日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class AbstractWrapperInterface implements WrapperInterface
+abstract class AbstractWrapper implements WrapperInterface
 {
     /**
      * 类注解
