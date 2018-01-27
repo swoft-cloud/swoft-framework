@@ -36,7 +36,7 @@ class ObjectDefinition
     private $scope = Scope::SINGLETON;
 
     /**
-     * referenced bean, default is null
+     * Referenced bean, default is null
      *
      * @var string
      */
@@ -86,7 +86,7 @@ class ObjectDefinition
      *
      * @return string
      */
-    public function getClassName()
+    public function getClassName(): string
     {
         return $this->className;
     }
@@ -94,9 +94,9 @@ class ObjectDefinition
     /**
      * 初始化bean类名
      *
-     * @param null|string $className
+     * @param string $className
      */
-    public function setClassName($className)
+    public function setClassName(string $className)
     {
         $this->className = $className;
     }
@@ -117,7 +117,7 @@ class ObjectDefinition
      *
      * @return string
      */
-    public function getRef()
+    public function getRef(): string
     {
         return $this->ref;
     }
@@ -147,7 +147,7 @@ class ObjectDefinition
      *
      * @return MethodInjection
      */
-    public function getConstructorInjection()
+    public function getConstructorInjection(): MethodInjection
     {
         return $this->constructorInjection;
     }

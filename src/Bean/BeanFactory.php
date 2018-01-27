@@ -11,24 +11,22 @@ use Swoft\Helper\DirHelper;
 use Swoft\Pool\BalancerSelector;
 use Swoft\Pool\ProviderSelector;
 use Swoft\Core\Application;
+use Swoft\Event\EventManager;
 
 /**
- * bean工厂
- *
- * @uses      BeanFactory
- * @version   2017年08月18日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Bean Factory
  */
 class BeanFactory implements BeanFactoryInterface
 {
 
     /**
-     * @var Container 容器
+     * @var Container Bean container
      */
     private static $container = null;
 
+    /**
+     * Init beans
+     */
     public static function init()
     {
         self::$container = new Container();
@@ -41,7 +39,7 @@ class BeanFactory implements BeanFactoryInterface
      *
      * @param array $definitions append definitions to config loader
      */
-    public static function reload($definitions = [])
+    public static function reload(array $definitions = [])
     {
         $config = new Config();
         $config->load(App::getAlias('@beans'), [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
@@ -50,13 +48,13 @@ class BeanFactory implements BeanFactoryInterface
 
         $definitions = self::merge($mergeDefinitions);
 
-        if(self::$container == null){
+        if (self::$container === null) {
             self::$container = new Container();
         }
         self::$container->addDefinitions($definitions);
         self::$container->autoloadAnnotations();
 
-        /* @var Aop $aop init reload aop */
+        /* @var Aop $aop Init reload AOP */
         $aop = App::getBean(Aop::class);
         $aop->init();
 
@@ -64,10 +62,9 @@ class BeanFactory implements BeanFactoryInterface
     }
 
     /**
-     * 获取Bean
+     * Get bean from container
      *
-     * @param string $name Bean名称
-     *
+     * @param string $name Bean name
      * @return mixed
      */
     public static function getBean(string $name)
@@ -76,48 +73,59 @@ class BeanFactory implements BeanFactoryInterface
     }
 
     /**
-     * bean是否存在
+     * Determine if bean exist in container
      *
-     * @param string $name bean名称
-     *
+     * @param string $name Bean name
      * @return bool
      */
-    public static function hasBean(string $name)
+    public static function hasBean(string $name): bool
     {
         return self::$container->hasBean($name);
     }
 
-    private static function coreBeans()
+    /**
+     * Framework core beans definitions
+     *
+     * @return array
+     */
+    private static function coreBeans(): array
     {
         return [
-            'config'             => [
+            'config'           => [
                 'class'      => Config::class,
                 'properties' => value(function () {
                     $config = new Config();
-                    $config->load('@properties', []);
-
+                    $config->load('@properties');
                     return $config->toArray();
                 }),
             ],
-            'application'        => ['class' => Application::class],
-            'balancerSelector'    => ['class' => BalancerSelector::class],
-            'providerSelector'    => ['class' => ProviderSelector::class],
-            "lineFormatter"      => [
+            'application'      => [
+                'class' => Application::class
+            ],
+            'eventManager'     => [
+                'class' => EventManager::class
+            ],
+            'balancerSelector' => [
+                'class' => BalancerSelector::class
+            ],
+            'providerSelector' => [
+                'class' => ProviderSelector::class
+            ],
+            'lineFormatter'    => [
                 'class'      => LineFormatter::class,
-                "format"     => '%datetime% [%level_name%] [%channel%] [logid:%logid%] [spanid:%spanid%] %messages%',
+                'format'     => '%datetime% [%level_name%] [%channel%] [logid:%logid%] [spanid:%spanid%] %messages%',
                 'dateFormat' => 'Y/m/d H:i:s',
             ],
         ];
     }
 
     /**
-     * 合并参数及初始化
+     * Merge default bean config and user bean config
      *
      * @param array $definitions
-     *
      * @return array
      */
-    private static function merge(array $definitions)
+    private static function merge(array $definitions): array
     {
         $definitions = ArrayHelper::merge(self::coreBeans(), $definitions);
 

@@ -58,11 +58,13 @@ class Container
      *
      * @param string $name 名称
      * @return mixed
+     * @throws \ReflectionException
+     * @throws \InvalidArgumentException
      */
     public function get(string $name)
     {
-        if (!is_string($name)) {
-            throw new \InvalidArgumentException("the name of bean 只能是字符串， name=" . json_encode($name));
+        if (! \is_string($name)) {
+            throw new \InvalidArgumentException(sprintf('$name must be string, %s given', \gettype($name)));
         }
 
         // 已经创建
@@ -72,7 +74,7 @@ class Container
 
         // 未定义
         if (!isset($this->definitions[$name])) {
-            throw new \InvalidArgumentException("the name of bean 不存在， name=" . $name);
+            throw new \InvalidArgumentException(sprintf('Bean %s not exist', $name));
         }
 
         /* @var ObjectDefinition $objectDefinition */
@@ -100,12 +102,13 @@ class Container
      * 定义配置bean
      *
      * @param array $definitions
+     * @throws \InvalidArgumentException
      */
     public function addDefinitions(array $definitions)
     {
         // properties.php配置数据
         if (!isset($definitions['config']['properties'])) {
-            throw new \InvalidArgumentException("config bean properties没有配置");
+            throw new \InvalidArgumentException('config bean properties没有配置');
         }
 
         $properties = $definitions['config']['properties'];
@@ -126,12 +129,14 @@ class Container
 
     /**
      * 解析注释bean
+     *
+     * @throws \InvalidArgumentException
      */
     public function autoloadAnnotations()
     {
         $properties = $this->properties;
         if (!isset($properties['beanScan'])) {
-            throw new \InvalidArgumentException("缺少扫描命名空间范围，config/properties/app.php未配置beanScan");
+            throw new \InvalidArgumentException('缺少扫描命名空间范围，config/properties/app.php未配置beanScan');
         }
         $beanScan = $properties['beanScan'];
         $resource = new AnnotationResource($properties);
@@ -142,6 +147,8 @@ class Container
 
     /**
      * 初始化已定义的bean
+     *
+     * @throws \InvalidArgumentException
      */
     public function initBeans()
     {
@@ -169,9 +176,11 @@ class Container
     /**
      * 创建bean
      *
-     * @param string $name 名称
+     * @param string           $name             名称
      * @param ObjectDefinition $objectDefinition bean定义
      * @return object
+     * @throws \ReflectionException
+     * @throws \InvalidArgumentException
      */
     private function set(string $name, ObjectDefinition $objectDefinition)
     {
@@ -187,7 +196,7 @@ class Container
         }
         // 构造函数
         $constructorParameters = [];
-        if ($constructorInject != null) {
+        if ($constructorInject !== null) {
             $constructorParameters = $this->injectConstructor($constructorInject);
         }
 
@@ -211,7 +220,7 @@ class Container
         }
 
         // 单例处理
-        if ($scope == Scope::SINGLETON) {
+        if ($scope === Scope::SINGLETON) {
             $this->singletonEntries[$name] = $object;
         }
 
@@ -224,8 +233,8 @@ class Container
      * @param string $name
      * @param string $className
      * @param object $object
-     *
      * @return object
+     * @throws \ReflectionException
      */
     private function proxyBean(string $name, string $className, $object)
     {
@@ -242,7 +251,7 @@ class Container
         }
 
         $handler = new AopHandler($object);
-        $proxyObject = Proxy::newProxyInstance(get_class($object), $handler);
+        $proxyObject = Proxy::newProxyInstance(\get_class($object), $handler);
 
         return $proxyObject;
     }
@@ -252,15 +261,16 @@ class Container
      *
      * @param MethodInjection $constructorInject
      * @return array
+     * @throws \InvalidArgumentException
      */
-    private function injectConstructor(MethodInjection $constructorInject)
+    private function injectConstructor(MethodInjection $constructorInject): array
     {
         $constructorParameters = [];
 
         /* @var ArgsInjection $parameter */
         foreach ($constructorInject->getParameters() as $parameter) {
             $argValue = $parameter->getValue();
-            if (is_array($argValue)) {
+            if (\is_array($argValue)) {
                 $constructorParameters[] = $this->injectArrayArgs($argValue);
                 continue;
             }
@@ -282,7 +292,7 @@ class Container
      */
     private function newBeanInstance(\ReflectionClass $reflectionClass, array $constructorParameters)
     {
-        if ($reflectionClass->hasMethod("__construct")) {
+        if ($reflectionClass->hasMethod('__construct')) {
             return $reflectionClass->newInstanceArgs($constructorParameters);
         }
         return $reflectionClass->newInstance();
@@ -291,9 +301,10 @@ class Container
     /**
      * 注入属性
      *
-     * @param  mixed $object
+     * @param  mixed                $object
      * @param \ReflectionProperty[] $properties $properties
-     * @param  mixed $propertyInjects
+     * @param  mixed                $propertyInjects
+     * @throws \InvalidArgumentException
      */
     private function injectProperties($object, array $properties, $propertyInjects)
     {
@@ -317,7 +328,7 @@ class Container
             $injectProperty = $propertyInject->getValue();
 
             // 属性是数组
-            if (is_array($injectProperty)) {
+            if (\is_array($injectProperty)) {
                 $injectProperty = $this->injectArrayArgs($injectProperty);
             }
 
@@ -337,13 +348,14 @@ class Container
      *
      * @param array $injectProperty
      * @return array
+     * @throws \InvalidArgumentException
      */
-    private function injectArrayArgs(array $injectProperty)
+    private function injectArrayArgs(array $injectProperty): array
     {
         $injectAry = [];
         foreach ($injectProperty as $key => $property) {
             // 递归循环注入
-            if (is_array($property)) {
+            if (\is_array($property)) {
                 $injectAry[$key] = $this->injectArrayArgs($property);
                 continue;
             }
