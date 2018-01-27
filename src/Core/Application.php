@@ -18,12 +18,12 @@ class Application
     /**
      * @var string 应用ID
      */
-    protected $id;
+    protected $id = APP_NAME;
 
     /**
      * @var string 应用名称
      */
-    protected $name;
+    protected $name = APP_NAME;
 
     /**
      * 错误action，统一错误处理
