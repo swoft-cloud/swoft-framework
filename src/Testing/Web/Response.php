@@ -1,10 +1,4 @@
 <?php
-/**
- * User: 黄朝晖
- * Date: 2017-11-13
- * Time: 3:05
- */
-
 namespace Swoft\Testing\Web;
 
 use Swoft\App;

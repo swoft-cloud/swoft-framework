@@ -19,6 +19,13 @@ class InitApplicationContext
 {
 
     /**
+     * Route file path
+     *
+     * @var string
+     */
+    public $routePath = BASE_PATH . '/app/routes.php';
+
+    /**
      * 初始化
      */
     public function init()
@@ -27,6 +34,8 @@ class InitApplicationContext
         $this->registerListeners();
         // 初始化时间
         $this->applicationLoader();
+
+        $this->autoloadRoutes();
     }
 
     /**
@@ -37,6 +46,14 @@ class InitApplicationContext
         // 监听器注册
         $listeners = ListenerCollector::getCollector();
         ApplicationContext::registerListeners($listeners);
+    }
+
+    /**
+     * 重新加载路由
+     */
+    private function autoloadRoutes()
+    {
+        require_once $this->routePath;
     }
 
     /**
