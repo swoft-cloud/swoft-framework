@@ -3,7 +3,7 @@
 namespace Swoft\Bean;
 
 /**
- * Annotaions data collector
+ * Annotaions Data Collector Interface
  */
 interface CollectorInterface
 {
