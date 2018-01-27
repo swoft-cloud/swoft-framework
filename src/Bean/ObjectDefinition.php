@@ -38,7 +38,7 @@ class ObjectDefinition
     /**
      * Referenced bean, default is null
      *
-     * @var string
+     * @var string|null
      */
     private $ref;
 
@@ -51,6 +51,7 @@ class ObjectDefinition
 
     /**
      * Property injections.
+     * @var array
      */
     private $propertyInjections = [];
 
@@ -115,9 +116,9 @@ class ObjectDefinition
     /**
      * get referenced bean
      *
-     * @return string
+     * @return string|null
      */
-    public function getRef(): string
+    public function getRef()
     {
         return $this->ref;
     }
