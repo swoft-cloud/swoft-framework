@@ -22,29 +22,26 @@ class BootstrapWrapper extends AbstractWrapper
      *
      * @var array
      */
-    protected $classAnnotations
-        = [
-            Bootstrap::class,
-        ];
+    protected $classAnnotations = [
+        Bootstrap::class,
+    ];
 
     /**
      * 属性注解
      *
      * @var array
      */
-    protected $propertyAnnotations
-        = [
-            Inject::class,
-        ];
+    protected $propertyAnnotations = [
+        Inject::class,
+    ];
 
     /**
      * 是否解析类注解
      *
      * @param array $annotations
-     *
      * @return bool
      */
-    public function isParseClassAnnotations(array $annotations)
+    public function isParseClassAnnotations(array $annotations): bool
     {
         return isset($annotations[Bootstrap::class]);
     }
@@ -53,10 +50,9 @@ class BootstrapWrapper extends AbstractWrapper
      * 是否解析属性注解
      *
      * @param array $annotations
-     *
      * @return bool
      */
-    public function isParsePropertyAnnotations(array $annotations)
+    public function isParsePropertyAnnotations(array $annotations): bool
     {
         return isset($annotations[Inject::class]);
     }
@@ -65,10 +61,9 @@ class BootstrapWrapper extends AbstractWrapper
      * 是否解析方法注解
      *
      * @param array $annotations
-     *
      * @return bool
      */
-    public function isParseMethodAnnotations(array $annotations)
+    public function isParseMethodAnnotations(array $annotations): bool
     {
         return false;
     }

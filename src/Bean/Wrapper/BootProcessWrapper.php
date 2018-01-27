@@ -21,29 +21,26 @@ class BootProcessWrapper extends AbstractWrapper
      *
      * @var array
      */
-    protected $classAnnotations
-        = [
-            BootProcess::class,
-        ];
+    protected $classAnnotations = [
+        BootProcess::class,
+    ];
 
     /**
      * 属性注解
      *
      * @var array
      */
-    protected $propertyAnnotations
-        = [
-            Inject::class,
-        ];
+    protected $propertyAnnotations = [
+        Inject::class,
+    ];
 
     /**
      * 是否解析类注解
      *
      * @param array $annotations
-     *
      * @return bool
      */
-    public function isParseClassAnnotations(array $annotations)
+    public function isParseClassAnnotations(array $annotations): bool
     {
         return isset($annotations[BootProcess::class]);
     }
@@ -52,10 +49,9 @@ class BootProcessWrapper extends AbstractWrapper
      * 是否解析属性注解
      *
      * @param array $annotations
-     *
      * @return bool
      */
-    public function isParsePropertyAnnotations(array $annotations)
+    public function isParsePropertyAnnotations(array $annotations): bool
     {
         return isset($annotations[Inject::class]);
     }
@@ -64,10 +60,9 @@ class BootProcessWrapper extends AbstractWrapper
      * 是否解析方法注解
      *
      * @param array $annotations
-     *
      * @return bool
      */
-    public function isParseMethodAnnotations(array $annotations)
+    public function isParseMethodAnnotations(array $annotations): bool
     {
         return false;
     }
