@@ -12,7 +12,7 @@ use Swoft\Core\RequestContext;
 use Swoft\Core\Timer;
 use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
-use Swoft\Pool\ConnectPoolInterface;
+use Swoft\Pool\ConnectPool;
 use Swoft\Pool\RedisPool;
 use Swoft\Core\Application;
 use Swoft\Bean\Collector\BreakerCollector;
@@ -202,7 +202,7 @@ class App
      *
      * @param string $name
      *
-     * @return ConnectPoolInterface
+     * @return ConnectPool
      */
     public static function getPool(string $name)
     {

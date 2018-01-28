@@ -15,7 +15,7 @@ use Swoft\Bean\Annotation\SwooleListener;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class SwooleListenerParser extends AbstractParserInterface
+class SwooleListenerParser extends AbstractParser
 {
     /**
      * @param string         $className

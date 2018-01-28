@@ -3,7 +3,7 @@
 namespace Swoft\Core;
 
 use Swoft\App;
-use Swoft\Pool\ConnectPoolInterface;
+use Swoft\Pool\ConnectPool;
 
 /**
  * 基类结果
@@ -17,7 +17,7 @@ use Swoft\Pool\ConnectPoolInterface;
 abstract class AbstractResult implements ResultInterface
 {
     /**
-     * @var ConnectPoolInterface 连接池
+     * @var ConnectPool 连接池
      */
     protected $connectPool;
 
@@ -41,7 +41,7 @@ abstract class AbstractResult implements ResultInterface
     /**
      * AbstractResult constructor.
      *
-     * @param ConnectPoolInterface $connectPool
+     * @param ConnectPool $connectPool
      * @param mixed       $client
      * @param string      $profileKey
      * @param bool        $result
@@ -74,7 +74,7 @@ abstract class AbstractResult implements ResultInterface
             $this->client->setDefer(false);
         }
 
-        if ($this->release && $this->connectPool instanceof ConnectPoolInterface) {
+        if ($this->release && $this->connectPool instanceof ConnectPool) {
             $this->connectPool->release($this->client);
         }
         return $result;

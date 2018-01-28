@@ -13,7 +13,7 @@ use Swoft\Helper\ComponentHelper;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class MethodWithoutAnnotationParser extends AbstractParserInterface
+class MethodWithoutAnnotationParser extends AbstractParser
 {
     /**
      * 方法没有注解解析

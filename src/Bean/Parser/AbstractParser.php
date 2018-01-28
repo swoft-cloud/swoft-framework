@@ -7,13 +7,13 @@ use Swoft\Bean\Resource\AnnotationResource;
 /**
  * 抽象解析器
  *
- * @uses      AbstractParserInterface
+ * @uses      AbstractParser
  * @version   2017年09月03日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class AbstractParserInterface implements ParserInterface
+abstract class AbstractParser implements ParserInterface
 {
     /**
      * 注解解析资源

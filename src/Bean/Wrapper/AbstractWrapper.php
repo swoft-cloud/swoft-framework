@@ -4,7 +4,7 @@ namespace Swoft\Bean\Wrapper;
 
 use Swoft\Bean\ObjectDefinition;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
-use Swoft\Bean\Parser\AbstractParserInterface;
+use Swoft\Bean\Parser\AbstractParser;
 use Swoft\Bean\Parser\MethodWithoutAnnotationParser;
 use Swoft\Bean\Resource\AnnotationResource;
 
@@ -311,7 +311,7 @@ abstract class AbstractWrapper implements WrapperInterface
      *
      * @param $objectAnnotation
      *
-     * @return AbstractParserInterface
+     * @return AbstractParser
      */
     private function getAnnotationParser($objectAnnotation)
     {
