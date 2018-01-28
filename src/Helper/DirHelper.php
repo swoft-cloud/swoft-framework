@@ -89,7 +89,7 @@ class DirHelper
      */
     public static function formatPath(string $path): string
     {
-        if ('/' == substr($path, -1)) {
+        if ('/' === substr($path, -1)) {
             return $path;
         }
 
@@ -233,5 +233,41 @@ class DirHelper
             }
         }
         return $files;
+    }
+
+
+    /**
+     * @param string $dir
+     * @param int $mode
+     * @throws \RuntimeException
+     */
+    public static function mkdir($dir, $mode = 0775)
+    {
+        if (!file_exists($dir) && !mkdir($dir, $mode, true) && !is_dir($dir)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
+        }
+    }
+
+    /**
+     * @param string $srcDir
+     * @param callable $filter
+     * @param int $flags
+     * @return \RecursiveIteratorIterator
+     * @throws \InvalidArgumentException
+     */
+    public static function directoryIterator(
+        string $srcDir,
+        callable $filter,
+        $flags = \FilesystemIterator::KEY_AS_PATHNAME | \FilesystemIterator::CURRENT_AS_FILEINFO
+    ): \RecursiveIteratorIterator
+    {
+        if (!$srcDir || !file_exists($srcDir)) {
+            throw new \InvalidArgumentException('Please provide a exists source directory.');
+        }
+
+        $directory = new \RecursiveDirectoryIterator($srcDir, $flags);
+        $filterIterator = new \RecursiveCallbackFilterIterator($directory, $filter);
+
+        return new \RecursiveIteratorIterator($filterIterator);
     }
 }
