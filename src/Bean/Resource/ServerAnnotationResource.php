@@ -46,5 +46,6 @@ class ServerAnnotationResource extends AnnotationResource
                 $this->scanNamespaces[$scanNs] = $scanDir;
             }
         }
+        var_dump($this->scanNamespaces);
     }
 }
