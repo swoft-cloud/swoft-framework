@@ -3,9 +3,11 @@ return [
     "version"           => '1.0',
     'autoInitBean'      => true,
     'beanScan' => [
+        'Swoft\\Test\\Testing' => BASE_PATH . "/Testing",
+    ],
+    'bootScan' => [
         'Swoft\\Bootstrap'     => BASE_PATH . "/../src/Bootstrap",
         'Swoft\Aop'            => BASE_PATH . "/../src/Aop",
-        'Swoft\\Test\\Testing' => BASE_PATH . "/Testing",
     ],
     'I18n'              => [
         'sourceLanguage' => '@root/resources/messages/',
