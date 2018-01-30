@@ -4,20 +4,13 @@ namespace Swoft\Bootstrap\Server;
 
 use Swoft\App;
 use Swoft\Bean\Collector\SwooleListenerCollector;
-use Swoft\Bootstrap\Boots\Bootable;
-use Swoft\Bootstrap\Bootstrap;
 use Swoft\Bootstrap\SwooleEvent;
+use Swoft\Helper\StringHelper;
 use Swoole\Lock;
 use Swoole\Server;
 
 /**
- * 抽象server
- *
- * @uses      AbstractServer
- * @version   2017年10月14日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Abstract Server
  */
 abstract class AbstractServer implements ServerInterface
 {
@@ -88,21 +81,7 @@ abstract class AbstractServer implements ServerInterface
         // 初始化App
         App::$server = $this;
 
-        // 加载启动项
-        $this->bootstrap();
-    }
-
-    /**
-     * bootstrap
-     *
-     * @return $this
-     */
-    protected function bootstrap()
-    {
-        /* @var Bootable $bootstrap*/
-        $bootstrap = App::getBean(Bootstrap::class);
-        $bootstrap->bootstrap();
-        return $this;
+        $this->initSettings();
     }
 
     /**
@@ -249,6 +228,42 @@ abstract class AbstractServer implements ServerInterface
     public function setWorkerLock(Lock $workerLock)
     {
         $this->workerLock = $workerLock;
+    }
+
+    /**
+     * Init settings
+     */
+    public function initSettings()
+    {
+        /** @var array[] $settings */
+        $settings = App::getAppProperties()->get('server');
+
+        if (! isset($settings['tcp'])) {
+            throw new \InvalidArgumentException('未配置tcp启动参数，settings=' . json_encode($settings));
+        }
+
+        if (! isset($settings['http'])) {
+            throw new \InvalidArgumentException('未配置http启动参数，settings=' . json_encode($settings));
+        }
+
+        if (! isset($settings['server'])) {
+            throw new \InvalidArgumentException('未配置server启动参数，settings=' . json_encode($settings));
+        }
+
+        if (! isset($settings['setting'])) {
+            throw new \InvalidArgumentException('未配置setting启动参数，settings=' . json_encode($settings));
+        }
+
+        foreach ($settings['setting'] as $key => &$value) {
+            if (\is_string($value) && StringHelper::contains($value, ['@'])) {
+                $value = App::getAlias($value);
+            }
+        }
+
+        $this->tcpSetting = $settings['tcp'];
+        $this->httpSetting = $settings['http'];
+        $this->serverSetting = $settings['server'];
+        $this->setting = $settings['setting'];
     }
 
     /**

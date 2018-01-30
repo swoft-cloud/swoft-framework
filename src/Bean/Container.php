@@ -9,8 +9,9 @@ use Swoft\Bean\Annotation\Scope;
 use Swoft\Bean\ObjectDefinition\ArgsInjection;
 use Swoft\Bean\ObjectDefinition\MethodInjection;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
-use Swoft\Bean\Resource\AnnotationResource;
 use Swoft\Bean\Resource\DefinitionResource;
+use Swoft\Bean\Resource\ServerAnnotationResource;
+use Swoft\Bean\Resource\WorkerAnnotationResource;
 use Swoft\Proxy\Handler\AopHandler;
 use Swoft\Proxy\Proxy;
 
@@ -83,10 +84,6 @@ class Container
         return $this->set($name, $objectDefinition);
     }
 
-    public function create(string $beanName, array $definition)
-    {
-    }
-
     /**
      * 是否存在某个bean
      *
@@ -102,44 +99,36 @@ class Container
      * 定义配置bean
      *
      * @param array $definitions
-     * @throws \InvalidArgumentException
      */
     public function addDefinitions(array $definitions)
     {
-        // properties.php配置数据
-        if (!isset($definitions['config']['properties'])) {
-            throw new \InvalidArgumentException('config bean properties没有配置');
-        }
-
-        $properties = $definitions['config']['properties'];
-        $this->properties = $properties;
-
         $resource = new DefinitionResource($definitions);
         $this->definitions = array_merge($resource->getDefinitions(), $this->definitions);
     }
 
-    public function autoloadServerAnnotations()
+    /**
+     * Register the annotation of server
+     */
+    public function autoloadServerAnnotation()
     {
-        $resource = new AnnotationResource([]);
-        $resource->autoRegisterServerNamespaces();
+        $bootScan = $this->getScanNamespaceFromProperties('bootScan');
+        $resource = new ServerAnnotationResource($this->properties);
+        $resource->addScanNamespace($bootScan);
         $definitions = $resource->getDefinitions();
 
         $this->definitions = array_merge($definitions, $this->definitions);
     }
 
     /**
-     * 解析注释bean
-     *
-     * @throws \InvalidArgumentException
+     * Register the annotation of worker
      */
-    public function autoloadAnnotations()
+    public function autoloadWorkerAnnotation()
     {
-        $properties = $this->properties;
-        !isset($properties['beanScan']) && $properties['beanScan'] = [];
-        $beanScan = $properties['beanScan'];
-        $resource = new AnnotationResource($properties);
-        $resource->addScanNamespaces($beanScan);
+        $beanScan = $this->getScanNamespaceFromProperties('beanScan');
+        $resource = new WorkerAnnotationResource($this->properties);
+        $resource->addScanNamespace($beanScan);
         $definitions = $resource->getDefinitions();
+
         $this->definitions = array_merge($definitions, $this->definitions);
     }
 
@@ -169,6 +158,14 @@ class Container
     public function getDefinitions(): array
     {
         return $this->definitions;
+    }
+
+    /**
+     * @param array $properties
+     */
+    public function setProperties(array $properties)
+    {
+        $this->properties = $properties;
     }
 
     /**
@@ -374,5 +371,19 @@ class Container
         }
 
         return $injectAry;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return array
+     */
+    private function getScanNamespaceFromProperties(string $name)
+    {
+        $properties = $this->properties;
+        if(!isset($properties[$name]) || !is_array($properties[$name])){
+            return [];
+        }
+        return $properties[$name];
     }
 }

@@ -4,34 +4,26 @@ namespace Swoft\Bean\Resource;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
-use Swoft\App;
 use Swoft\Bean\Wrapper\WrapperInterface;
-use Swoft\Helper\ComponentHelper;
 
 /**
- * 注释解析
- *
- * @uses      AnnotationResource
- * @version   2017年08月18日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Annotation resource
  */
-class AnnotationResource extends AbstractResource
+abstract class AnnotationResource extends AbstractResource
 {
     /**
      * 自动扫描命令空间
      *
      * @var array
      */
-    private $scanNamespaces = [];
+    protected $scanNamespaces = [];
 
     /**
      * scan files
      *
      * @var array
      */
-    private $scanFiles = [];
+    protected $scanFiles = [];
 
     /**
      * 已解析的bean定义
@@ -44,46 +36,48 @@ class AnnotationResource extends AbstractResource
      * ]
      * </pre>
      */
-    private $definitions = [];
+    protected $definitions = [];
 
 
     /**
      * @var array
      */
-    private $annotations = [];
+    protected $annotations = [];
 
     /**
      * @var array
      */
-    private $serverScan = [
-        'Command',
-        'Bootstrap',
-        'Aop',
-    ];
+    protected $serverScan
+        = [
+            'Command',
+            'Bootstrap',
+            'Aop',
+        ];
 
     /**
      * the name of console componet
      *
      * @var string
      */
-    private $consoleName = 'console';
+    protected $consoleName = 'console';
 
     /**
      * the ns of component
      *
      * @var array
      */
-    private $componentNamespaces = [];
+    protected $componentNamespaces = [];
 
     /**
      * @var array
      */
-    private $ignoredNames = [
-        'Usage',
-        'Options',
-        'Arguments',
-        'Example'
-    ];
+    protected $ignoredNames
+        = [
+            'Usage',
+            'Options',
+            'Arguments',
+            'Example',
+        ];
 
     /**
      * AnnotationResource constructor.
@@ -110,9 +104,9 @@ class AnnotationResource extends AbstractResource
     {
 
         // 获取扫描的PHP文件
-        $classNames = $this->registerLoaderAndScanBean();
+        $classNames     = $this->registerLoaderAndScanBean();
         $fileClassNames = $this->scanFilePhpClass();
-        $classNames = array_merge($classNames, $fileClassNames);
+        $classNames     = array_merge($classNames, $fileClassNames);
 
         foreach ($classNames as $className) {
             $this->parseBeanAnnotations($className);
@@ -136,14 +130,14 @@ class AnnotationResource extends AbstractResource
         }
 
         // 注解解析器
-        $reader = new AnnotationReader();
-        $reader = $this->addIgnoredNames($reader);
-        $reflectionClass = new \ReflectionClass($className);
+        $reader           = new AnnotationReader();
+        $reader           = $this->addIgnoredNames($reader);
+        $reflectionClass  = new \ReflectionClass($className);
         $classAnnotations = $reader->getClassAnnotations($reflectionClass);
 
         // 没有类注解不解析其它注解
         if (empty($classAnnotations)) {
-            return ;
+            return;
         }
 
         foreach ($classAnnotations as $classAnnotation) {
@@ -156,7 +150,7 @@ class AnnotationResource extends AbstractResource
             if ($property->isStatic()) {
                 continue;
             }
-            $propertyName = $property->getName();
+            $propertyName        = $property->getName();
             $propertyAnnotations = $reader->getPropertyAnnotations($property);
 
 
@@ -199,7 +193,7 @@ class AnnotationResource extends AbstractResource
      *
      * @param array $namespaces
      */
-    public function addScanNamespaces(array $namespaces)
+    public function addScanNamespace(array $namespaces)
     {
         foreach ($namespaces as $key => $namespace) {
             if (is_string($key)) {
@@ -207,134 +201,20 @@ class AnnotationResource extends AbstractResource
                 continue;
             }
 
-            $nsPath = str_replace("\\", "/", $namespace);
-            $nsPath = str_replace('App/', 'app/', $nsPath);
+            $nsPath                           = str_replace("\\", "/", $namespace);
+            $nsPath                           = str_replace('App/', 'app/', $nsPath);
             $this->scanNamespaces[$namespace] = BASE_PATH . "/" . $nsPath;
         }
 
-        $this->autoRegisterNamespaces();
+        $this->registerNamespace();
     }
 
     /**
-     * 类注解封装
+     * Register namespace
      *
-     * @param string $className
-     * @param array  $annotation
-     * @param array  $classAnnotations
+     * @return void
      */
-    private function parseClassAnnotations(string $className, array $annotation, array $classAnnotations)
-    {
-        foreach ($classAnnotations as $classAnnotation) {
-            $annotationClassName = get_class($classAnnotation);
-            $classNameTmp = str_replace('\\', '/', $annotationClassName);
-            $classFileName = basename($classNameTmp);
-
-            // do wrappers
-            foreach ($this->componentNamespaces as $componentNamespace) {
-                $annotationParserClassName = "{$componentNamespace}\\Bean\\Wrapper\\{$classFileName}Wrapper";
-                if (!class_exists($annotationParserClassName)) {
-                    continue;
-                }
-
-                /* @var WrapperInterface $wrapper */
-                $wrapper = new $annotationParserClassName($this);
-                $objectDefinitionAry = $wrapper->doWrapper($className, $annotation);
-                if ($objectDefinitionAry != null) {
-                    list($beanName, $objectDefinition) = $objectDefinitionAry;
-                    $this->definitions[$beanName] = $objectDefinition;
-                }
-            }
-        }
-    }
-
-    /**
-     * auto register namespaces
-     */
-    public function autoRegisterServerNamespaces()
-    {
-        $swoftDir      = dirname(__FILE__, 5);
-        $componentDirs = scandir($swoftDir);
-        foreach ($componentDirs as $component) {
-            if ($component == '.' || $component == '..') {
-                continue;
-            }
-
-            $componentCommandDir = $swoftDir . DS . $component . DS . 'src';
-            if (!is_dir($componentCommandDir)) {
-                continue;
-            }
-
-            $componentNs = ComponentHelper::getComponentNs($component);
-            $ns          = "Swoft{$componentNs}";
-            $this->componentNamespaces[] = $ns;
-
-            // console component
-            if($component == $this->consoleName){
-                $this->scanNamespaces[$ns] = $componentCommandDir;
-                continue;
-            }
-
-            foreach ($this->serverScan as $dir){
-                $scanDir = $componentCommandDir . DS . $dir;
-                if(!is_dir($scanDir)){
-                    continue;
-                }
-
-                $scanNs  = $ns . "\\" . $dir;
-                $this->scanNamespaces[$scanNs] = $scanDir;
-            }
-        }
-
-        $this->scanNamespaces['App\\Commands'] = App::getAlias('@commands');
-    }
-
-    /**
-     * auto register namespaces
-     */
-    private function autoRegisterNamespaces()
-    {
-        $swoftDir      = dirname(__FILE__, 5);
-        $componentDirs = scandir($swoftDir);
-        foreach ($componentDirs as $component) {
-            if ($component == '.' || $component == '..') {
-                continue;
-            }
-
-            $componentCommandDir = $swoftDir . DS . $component . DS . 'src';
-            if (!is_dir($componentCommandDir)) {
-                continue;
-            }
-            $componentNs = ComponentHelper::getComponentNs($component);
-
-            $ns = "Swoft{$componentNs}";
-
-            $this->componentNamespaces[] = $ns;
-
-            // ignore the comoponent of console
-            if($component == $this->consoleName){
-                continue;
-            }
-
-            $scanDirs = scandir($componentCommandDir);
-            foreach ($scanDirs as $dir) {
-                if ($dir == '.' || $dir == '..') {
-                    continue;
-                }
-                if(in_array($dir, $this->serverScan, true)){
-                    continue;
-                }
-                $scanDir = $componentCommandDir . DS . $dir;
-
-                if(!is_dir($scanDir)){
-                    $this->scanFiles[$ns][] = $scanDir;
-                    continue;
-                }
-                $scanNs  = $ns . "\\" . $dir;
-
-                $this->scanNamespaces[$scanNs] = $scanDir;
-            }
-        }
-    }
+    public abstract function registerNamespace();
 
     /**
      * 扫描目录下PHP文件
@@ -344,14 +224,14 @@ class AnnotationResource extends AbstractResource
      *
      * @return array
      */
-    private function scanPhpFile(string $dir, string $namespace)
+    protected function scanPhpFile(string $dir, string $namespace)
     {
-        if(!is_dir($dir)){
+        if (!is_dir($dir)) {
             return [];
         }
 
         $iterator = new \RecursiveDirectoryIterator($dir);
-        $files = new \RecursiveIteratorIterator($iterator);
+        $files    = new \RecursiveIteratorIterator($iterator);
 
         $phpFiles = [];
         foreach ($files as $file) {
@@ -363,7 +243,7 @@ class AnnotationResource extends AbstractResource
             $replaces = ["", '\\', "", ""];
             $searches = [$dir, '/', '.php', '.PHP'];
 
-            $file = str_replace($searches, $replaces, $file);
+            $file       = str_replace($searches, $replaces, $file);
             $phpFiles[] = $namespace . $file;
         }
 
@@ -373,11 +253,11 @@ class AnnotationResource extends AbstractResource
     /**
      * scan files
      */
-    private function scanFilePhpClass()
+    protected function scanFilePhpClass()
     {
         $phpClass = [];
         foreach ($this->scanFiles as $ns => $files) {
-            foreach ($files as $file){
+            foreach ($files as $file) {
                 $pathInfo = pathinfo($file);
                 if (!isset($pathInfo['filename'])) {
                     continue;
@@ -394,7 +274,7 @@ class AnnotationResource extends AbstractResource
      *
      * @return array
      */
-    private function registerLoaderAndScanBean()
+    protected function registerLoaderAndScanBean()
     {
         $phpClass = [];
         foreach ($this->scanNamespaces as $namespace => $dir) {
@@ -402,10 +282,11 @@ class AnnotationResource extends AbstractResource
                 if (class_exists($class) || interface_exists($class)) {
                     return true;
                 }
+
                 return false;
             });
             $scanClass = $this->scanPhpFile($dir, $namespace);
-            $phpClass = array_merge($phpClass, $scanClass);
+            $phpClass  = array_merge($phpClass, $scanClass);
         }
 
         return array_unique($phpClass);
@@ -418,12 +299,44 @@ class AnnotationResource extends AbstractResource
      *
      * @return AnnotationReader
      */
-    private function addIgnoredNames(AnnotationReader $reader)
+    protected function addIgnoredNames(AnnotationReader $reader)
     {
         foreach ($this->ignoredNames as $name) {
             $reader->addGlobalIgnoredName($name);
         }
 
         return $reader;
+    }
+
+    /**
+     * 类注解封装
+     *
+     * @param string $className
+     * @param array  $annotation
+     * @param array  $classAnnotations
+     */
+    private function parseClassAnnotations(string $className, array $annotation, array $classAnnotations)
+    {
+        foreach ($classAnnotations as $classAnnotation) {
+            $annotationClassName = get_class($classAnnotation);
+            $classNameTmp        = str_replace('\\', '/', $annotationClassName);
+            $classFileName       = basename($classNameTmp);
+
+            // do wrappers
+            foreach ($this->componentNamespaces as $componentNamespace) {
+                $annotationParserClassName = "{$componentNamespace}\\Bean\\Wrapper\\{$classFileName}Wrapper";
+                if (!class_exists($annotationParserClassName)) {
+                    continue;
+                }
+
+                /* @var WrapperInterface $wrapper */
+                $wrapper             = new $annotationParserClassName($this);
+                $objectDefinitionAry = $wrapper->doWrapper($className, $annotation);
+                if ($objectDefinitionAry != null) {
+                    list($beanName, $objectDefinition) = $objectDefinitionAry;
+                    $this->definitions[$beanName] = $objectDefinition;
+                }
+            }
+        }
     }
 }

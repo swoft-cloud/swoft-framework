@@ -2,17 +2,12 @@
 
 namespace Swoft\Bean;
 
-use Monolog\Formatter\LineFormatter;
 use Swoft\Aop\Aop;
 use Swoft\App;
+use Swoft\Bean\Collector\BootBeanCollector;
 use Swoft\Core\Config;
 use Swoft\Helper\ArrayHelper;
 use Swoft\Helper\DirHelper;
-use Swoft\Pool\BalancerSelector;
-use Swoft\Pool\ProviderSelector;
-use Swoft\Core\Application;
-use Swoft\Event\EventManager;
-use Swoft\Log\Logger;
 
 /**
  * Bean Factory
@@ -30,8 +25,14 @@ class BeanFactory implements BeanFactoryInterface
      */
     public static function init()
     {
+        $properties = self::getProperties();
+
         self::$container = new Container();
-        self::$container->autoloadServerAnnotations();
+        self::$container->setProperties($properties);
+        self::$container->autoloadServerAnnotation();
+
+        $definition  = self::getServerDefinition();
+        self::$container->addDefinitions($definition);
         self::$container->initBeans();
     }
 
@@ -42,22 +43,13 @@ class BeanFactory implements BeanFactoryInterface
      */
     public static function reload(array $definitions = [])
     {
-        $configDefinitions = [];
-        $beansDir = App::getAlias('@beans');
-        if (is_readable($beansDir)) {
-            $config = new Config();
-            $config->load($beansDir, [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
-            $configDefinitions = $config->toArray();
-        }
-        $mergeDefinitions = ArrayHelper::merge($configDefinitions, $definitions);
+        $properties = self::getProperties();
+        $workerDefinitions = self::getWorkerDefinition();
+        $definitions = ArrayHelper::merge($workerDefinitions, $definitions);
 
-        $definitions = self::merge($mergeDefinitions);
-
-        if (self::$container === null) {
-            self::$container = new Container();
-        }
+        self::$container->setProperties($properties);
         self::$container->addDefinitions($definitions);
-        self::$container->autoloadAnnotations();
+        self::$container->autoloadWorkerAnnotation();
 
         /* @var Aop $aop Init reload AOP */
         $aop = App::getBean(Aop::class);
@@ -89,63 +81,76 @@ class BeanFactory implements BeanFactoryInterface
     }
 
     /**
-     * Framework core beans definitions
-     *
      * @return array
      */
-    private static function coreBeans(): array
+    private static function getWorkerDefinition()
     {
-        return [
-            'config'           => [
-                'class'      => Config::class,
-                'properties' => value(function () {
-                    $config = new Config();
-                    $properties = [];
-                    $dir = App::getAlias('@properties');
-                    if (is_readable($dir)) {
-                        $config->load($dir);
-                        $properties = $config->toArray();
-                    }
-                    return $properties;
-                }),
-            ],
-            'application'      => [
-                'class' => Application::class
-            ],
-            'eventManager'     => [
-                'class' => EventManager::class
-            ],
-            'balancerSelector' => [
-                'class' => BalancerSelector::class
-            ],
-            'providerSelector' => [
-                'class' => ProviderSelector::class
-            ],
-            'logger'             => [
-                'class'         => Logger::class,
-                'name'          => APP_NAME,
-                'flushInterval' => 100000,
-                'flushRequest'  => false,
-                'handlers'      => []
-            ],
-            'lineFormatter'    => [
-                'class'      => LineFormatter::class,
-                'format'     => '%datetime% [%level_name%] [%channel%] [logid:%logid%] [spanid:%spanid%] %messages%',
-                'dateFormat' => 'Y/m/d H:i:s',
-            ],
-        ];
+        $configDefinitions = [];
+        $beansDir = App::getAlias('@beans');
+        if (is_readable($beansDir)) {
+            $config = new Config();
+            $config->load($beansDir, [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
+            $configDefinitions = $config->toArray();
+        }
+
+        $coreBeans = self::getCoreBean(BootBeanCollector::TYPE_WORKER);
+        $definitions = ArrayHelper::merge($coreBeans, $configDefinitions);
+        return $definitions;
     }
 
     /**
-     * Merge default bean config and user bean config
-     *
-     * @param array $definitions
      * @return array
      */
-    private static function merge(array $definitions): array
+    private static function getServerDefinition()
     {
-        $definitions = ArrayHelper::merge(self::coreBeans(), $definitions);
+        $file = App::getAlias('@console');
+        $configDefinition = [];
+        if (is_readable($file)) {
+            $configDefinition = require_once $file;
+        }
 
-        return $definitions;
+        $coreBeans = self::getCoreBean(BootBeanCollector::TYPE_SERVER);
+        $definition = ArrayHelper::merge($coreBeans, $configDefinition);
+
+        return $definition;
+    }
+
+    /**
+     * @return array
+     */
+    private static function getProperties()
+    {
+        $properties = [];
+        $config = new Config();
+        $dir = App::getAlias('@properties');
+        if (is_readable($dir)) {
+            $config->load($dir);
+            $properties = $config->toArray();
+        }
+        return $properties;
+    }
+
+    /**
+     * @param string $type
+     *
+     * @return array
+     */
+    private static function getCoreBean(string $type): array
+    {
+        $collector = BootBeanCollector::getCollector();
+        if (!isset($collector[$type])) {
+            return [];
+        }
+
+        $coreBeans = [];
+        $bootBeans = $collector[$type];
+        foreach ($bootBeans as $beanName) {
+            /* @var \Swoft\Core\BootBeanIntereface $bootBean */
+            $bootBean  = App::getBean($beanName);
+            $beans     = $bootBean->beans();
+            $coreBeans = ArrayHelper::merge($coreBeans, $beans);
+        }
+
+        return $coreBeans;
     }
 }
