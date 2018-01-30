@@ -286,6 +286,7 @@ abstract class AnnotationResource extends AbstractResource
                 return false;
             });
             $scanClass = $this->scanPhpFile($dir, $namespace);
+            var_dump($scanClass, $dir, $namespace);
             $phpClass  = array_merge($phpClass, $scanClass);
         }
 
