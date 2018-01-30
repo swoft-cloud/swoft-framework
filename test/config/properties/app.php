@@ -6,8 +6,6 @@ return [
         'Swoft\\Test\\Testing' => BASE_PATH . "/Testing",
     ],
     'bootScan' => [
-        'Swoft\\Bootstrap'     => BASE_PATH . "/../src/Bootstrap",
-        'Swoft\Aop'            => BASE_PATH . "/../src/Aop",
     ],
     'I18n'              => [
         'sourceLanguage' => '@root/resources/messages/',

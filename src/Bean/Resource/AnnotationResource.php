@@ -339,7 +339,6 @@ abstract class AnnotationResource extends AbstractResource
             foreach ($this->componentNamespaces as $componentNamespace) {
                 $annotationParserClassName = "{$componentNamespace}\\Bean\\Wrapper\\{$classFileName}Wrapper";
                 if (!class_exists($annotationParserClassName)) {
-                    var_dump($annotationParserClassName);
                     continue;
                 }
 
