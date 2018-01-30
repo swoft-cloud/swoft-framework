@@ -26,6 +26,7 @@ class WorkerAnnotationResource extends AnnotationResource
                 continue;
             }
             $componentNs = ComponentHelper::getComponentNs($component);
+            $componentNs = $this->handlerFrameworkNamespace($componentNs);
 
             $ns = "Swoft{$componentNs}";
 

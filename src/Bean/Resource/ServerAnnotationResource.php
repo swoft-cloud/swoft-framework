@@ -26,8 +26,10 @@ class ServerAnnotationResource extends AnnotationResource
                 continue;
             }
 
-            $componentNs                 = ComponentHelper::getComponentNs($component);
-            $ns                          = "Swoft{$componentNs}";
+            $componentNs = ComponentHelper::getComponentNs($component);
+            $componentNs = $this->handlerFrameworkNamespace($componentNs);
+            $ns          = "Swoft{$componentNs}";
+
             $this->componentNamespaces[] = $ns;
 
             // console component
