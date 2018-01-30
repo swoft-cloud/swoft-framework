@@ -126,6 +126,7 @@ abstract class AnnotationResource extends AbstractResource
     public function parseBeanAnnotations(string $className)
     {
         if (!class_exists($className) && !interface_exists($className)) {
+            var_dump($className);
             return null;
         }
 
@@ -286,7 +287,6 @@ abstract class AnnotationResource extends AbstractResource
                 return false;
             });
             $scanClass = $this->scanPhpFile($dir, $namespace);
-            var_dump($scanClass, $dir, $namespace);
             $phpClass  = array_merge($phpClass, $scanClass);
         }
 
