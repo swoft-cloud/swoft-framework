@@ -112,9 +112,9 @@ class Logger extends \Monolog\Logger
 
         $ts->setTimezone(static::$timezone);
 
-        $message = $this->formateMessage($message);
+        $message = $this->formatMessage($message);
         $message = $this->getTrace($message);
-        $record = $this->formateRecord($message, $context, $level, $levelName, $ts, []);
+        $record = $this->formatRecord($message, $context, $level, $levelName, $ts, []);
 
         foreach ($this->processors as $processor) {
             $record = \Swoole\Coroutine::call_user_func($processor, $record);
@@ -141,7 +141,7 @@ class Logger extends \Monolog\Logger
      *
      * @return array
      */
-    public function formateRecord($message, $context, $level, $levelName, $ts, $extra)
+    public function formatRecord($message, $context, $level, $levelName, $ts, $extra)
     {
         $record = array(
             "logid"      => RequestContext::getLogid(),
@@ -291,7 +291,7 @@ class Logger extends \Monolog\Logger
      *
      * @return string
      */
-    public function formateMessage($message)
+    public function formatMessage($message)
     {
         if (is_array($message)) {
             return json_encode($message);
@@ -395,7 +395,7 @@ class Logger extends \Monolog\Logger
         unset($this->profileStacks[$cid]);
 
         $levelName = self::$levels[self::NOTICE];
-        $message = $this->formateRecord($message, [], self::NOTICE, $levelName, $ts, []);
+        $message = $this->formatRecord($message, [], self::NOTICE, $levelName, $ts, []);
 
         $this->messages[] = $message;
 
