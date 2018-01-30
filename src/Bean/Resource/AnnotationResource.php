@@ -126,7 +126,6 @@ abstract class AnnotationResource extends AbstractResource
     public function parseBeanAnnotations(string $className)
     {
         if (!class_exists($className) && !interface_exists($className)) {
-            var_dump($className);
             return null;
         }
 
@@ -136,6 +135,7 @@ abstract class AnnotationResource extends AbstractResource
         $reflectionClass  = new \ReflectionClass($className);
         $classAnnotations = $reader->getClassAnnotations($reflectionClass);
 
+        var_dump($className, $classAnnotations);
         // 没有类注解不解析其它注解
         if (empty($classAnnotations)) {
             return;
