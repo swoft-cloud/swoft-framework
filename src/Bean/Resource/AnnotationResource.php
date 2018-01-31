@@ -135,7 +135,6 @@ abstract class AnnotationResource extends AbstractResource
         $reflectionClass  = new \ReflectionClass($className);
         $classAnnotations = $reader->getClassAnnotations($reflectionClass);
 
-        var_dump($className, $classAnnotations);
         // 没有类注解不解析其它注解
         if (empty($classAnnotations)) {
             return;
