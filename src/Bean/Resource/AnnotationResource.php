@@ -309,6 +309,19 @@ abstract class AnnotationResource extends AbstractResource
     }
 
     /**
+     * @param string $componentNs
+     *
+     * @return string
+     */
+    protected function handlerFrameworkNamespace(string  $componentNs):string
+    {
+        if($componentNs = 'Swoft\Framework'){
+            return "";
+        }
+        return $componentNs;
+    }
+
+    /**
      * 类注解封装
      *
      * @param string $className
