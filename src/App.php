@@ -2,10 +2,11 @@
 
 namespace Swoft;
 
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\BreakerCollector;
 use Swoft\Bean\Collector\PoolCollector;
 use Swoft\Bootstrap\Server\ServerInterface;
 use Swoft\Circuit\CircuitBreaker;
+use Swoft\Core\Application;
 use Swoft\Core\ApplicationContext;
 use Swoft\Core\Config;
 use Swoft\Core\RequestContext;
@@ -13,9 +14,7 @@ use Swoft\Core\Timer;
 use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
 use Swoft\Pool\ConnectPool;
-use Swoft\Pool\RedisPool;
-use Swoft\Core\Application;
-use Swoft\Bean\Collector\BreakerCollector;
+use Swoole\Coroutine as SwCoroutine;
 
 /**
  * 应用简写类
@@ -484,6 +483,20 @@ class App
         $server = self::$server->getServer();
 
         if ($server != null && property_exists($server, 'taskworker') && $server->taskworker == false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether it is cor context
+     *
+     * @return bool
+     */
+    public static function isCorContext()
+    {
+        if (SwCoroutine::getuid() > 0) {
             return true;
         }
 

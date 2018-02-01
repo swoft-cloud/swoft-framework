@@ -3,18 +3,14 @@
 namespace Swoft\Core;
 
 /**
- * 数据返回接口
- *
- * @uses      ResultInterface
- * @version   2017年07月15日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * The interface of result
  */
 interface ResultInterface
 {
     /**
+     * @param array ...$params
+     *
      * @return mixed
      */
-    public function getResult();
+    public function getResult(...$params);
 }

@@ -130,6 +130,14 @@ abstract class ConnectPool implements PoolInterface
         return $this->poolConfig->getTimeout();
     }
 
+    /**
+     * @return \Swoft\Pool\PoolConfigInterface
+     */
+    public function getPoolConfig(): PoolConfigInterface
+    {
+        return $this->poolConfig;
+    }
+
     abstract public function createConnect();
 
     abstract public function reConnect($client);
