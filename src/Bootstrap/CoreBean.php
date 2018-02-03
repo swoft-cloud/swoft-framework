@@ -7,7 +7,7 @@ use Swoft\App;
 use Swoft\Bean\Annotation\BootBean;
 use Swoft\Core\Application;
 use Swoft\Core\Config;
-use Swoft\Core\BootBeanIntereface;
+use Swoft\Core\BootBeanInterface;
 use Swoft\Event\EventManager;
 use Swoft\Log\Logger;
 use Swoft\Pool\BalancerSelector;
@@ -18,7 +18,7 @@ use Swoft\Pool\ProviderSelector;
  *
  * @BootBean()
  */
-class CoreBean implements BootBeanIntereface
+class CoreBean implements BootBeanInterface
 {
     public function beans()
     {
