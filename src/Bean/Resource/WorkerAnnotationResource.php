@@ -16,10 +16,7 @@ class WorkerAnnotationResource extends AnnotationResource
     public function registerNamespace()
     {
         $swoftDir = \dirname(__FILE__, 5);
-        // $componentDirs = scandir($swoftDir);
-        $componentDirs = [
-            'http-client'
-        ];
+        $componentDirs = scandir($swoftDir, null);
         foreach ($componentDirs as $component) {
             if ($component === '.' || $component === '..') {
                 continue;
