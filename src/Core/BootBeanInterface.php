@@ -5,7 +5,7 @@ namespace Swoft\Core;
 /**
  * The interface of corebean
  */
-interface BootBeanIntereface
+interface BootBeanInterface
 {
     /**
      * @return array
