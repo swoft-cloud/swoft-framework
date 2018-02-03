@@ -240,7 +240,7 @@ abstract class AnnotationResource extends AbstractResource
                 continue;
             }
 
-            $replaces = ["", '\\', "", ""];
+            $replaces = ['', '\\', '', ''];
             $searches = [$dir, '/', '.php', '.PHP'];
 
             $file       = str_replace($searches, $replaces, $file);
