@@ -315,7 +315,7 @@ abstract class AnnotationResource extends AbstractResource
      */
     protected function handlerFrameworkNamespace(string  $componentNs):string
     {
-        if($componentNs == 'Swoft\Framework'){
+        if($componentNs == '\Swoft\Framework'){
             return "";
         }
         return $componentNs;

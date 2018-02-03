@@ -132,14 +132,18 @@ abstract class AbstractWrapper implements WrapperInterface
     {
         $propertyInjections = [];
 
-        $object = new $className();
         /* @var \ReflectionProperty $property */
         foreach ($properties as $property) {
             if ($property->isStatic()) {
                 continue;
             }
-            $property->setAccessible(true);
             $propertyName = $property->getName();
+            if (!isset($propertyAnnotations[$propertyName]) || !$this->isParsePropertyAnnotations($propertyAnnotations[$propertyName])) {
+                continue;
+            }
+
+            $object = new $className();
+            $property->setAccessible(true);
             $propertyValue = $property->getValue($object);
 
             list($injectProperty, $isRef) = $this->parsePropertyAnnotations($propertyAnnotations, $className, $propertyName, $propertyValue);
