@@ -32,17 +32,17 @@ class ProviderSelector implements SelectorInterface
         ];
 
     /**
-     * get provider from selector
+     * Select a provider by Selector
      *
      * @param string $type
-     *
      * @return ProviderInterface
+     * @throws \Swoft\Exception\InvalidArgumentException
      */
     public function select(string $type)
     {
         $providers = $this->mergeProviders();
-        if (!isset($providers[$type])) {
-            throw new InvalidArgumentException("the provider {$type} is not exist!");
+        if (! isset($providers[$type])) {
+            throw new InvalidArgumentException(sprintf('Provider %s does not exist', $type));
         }
 
         $providerBeanName = $providers[$type];
