@@ -10,18 +10,12 @@ use Swoft\Task\Task;
 use Swoole\Coroutine as SwCoroutine;
 
 /**
- * swoft协程
- *
- * @uses      Coroutine
- * @version   2017年09月25日
- * @author    inhere <in.798@qq.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @uses \Swoft\Core\Coroutine
  */
 class Coroutine
 {
     /**
-     * 协程ID映射表
+     * Coroutine id mapping
      *
      * @var array
      * [
@@ -33,7 +27,7 @@ class Coroutine
     private static $idMap = [];
 
     /**
-     * 当前协程ID
+     * Get the current coroutine ID
      *
      * @return int|string
      */
@@ -42,13 +36,13 @@ class Coroutine
         $cid = SwCoroutine::getuid();
         $context = ApplicationContext::getContext();
 
-        if ($context == ApplicationContext::WORKER || $cid !== -1) {
+        if ($context === ApplicationContext::WORKER || $cid !== -1) {
             return $cid;
         }
-        if ($context == ApplicationContext::TASK) {
+        if ($context === ApplicationContext::TASK) {
             return Task::getId();
         }
-        if ($context == ApplicationContext::CONSOLE) {
+        if ($context === ApplicationContext::CONSOLE) {
             return Console::id();
         }
 
@@ -56,7 +50,7 @@ class Coroutine
     }
 
     /**
-     * 顶层协程ID
+     * Get the top coroutine ID
      *
      * @return int|string
      */
@@ -67,7 +61,7 @@ class Coroutine
     }
 
     /**
-     * 创建子协程
+     * Create a coroutine
      *
      * @param callable $cb
      *
@@ -85,27 +79,28 @@ class Coroutine
     }
 
     /**
-     * 挂起当前协程
+     * Suspend a coroutine
      *
-     * @param string $corId
+     * @param string $corouindId
      */
-    public static function suspend($corId)
+    public static function suspend($corouindId)
     {
-        SwCoroutine::suspend($corId);
+        SwCoroutine::suspend($corouindId);
     }
 
     /**
-     * 恢复某个协程，使其继续运行。
+     * Resume a coroutine
      *
-     * @param string $corId
+     * @param string $coroutineId
      */
-    public static function resume($corId)
+    public static function resume($coroutineId)
     {
-        SwCoroutine::resume($corId);
+        SwCoroutine::resume($coroutineId);
     }
 
     /**
      * Is Support Coroutine
+     * Since swoole v2.0.11, use coroutine client in cli mode is available
      *
      * @return bool
      */
