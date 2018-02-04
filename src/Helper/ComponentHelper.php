@@ -14,20 +14,19 @@ namespace Swoft\Helper;
 class ComponentHelper
 {
     /**
-     * get the namespace of component
+     * Get the default namespace of component
      *
      * @param string $component
-     *
      * @return string
      */
-    public static function getComponentNs(string $component)
+    public static function getComponentNs(string $component): string
     {
         if ($component == 'framework') {
             return '';
         }
 
         $namespace = '';
-        $nsAry     = explode('-', $component);
+        $nsAry = explode('-', $component);
         foreach ($nsAry as $ns) {
             $namespace .= "\\" . ucfirst($ns);
         }
