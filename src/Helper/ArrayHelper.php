@@ -159,7 +159,6 @@ class ArrayHelper
      * @param string|\Closure|array $key     key name of the array element, an array of keys or property name of the object,
      *                                       or an anonymous function returning the value. The anonymous function signature should be:
      *                                       `function($array, $defaultValue)`.
-     *                                       The possibility to pass an array of keys is available since version 2.0.4.
      * @param mixed                 $default the default value to be returned if the specified array key does not exist. Not used when
      *                                       getting value from an object.
      *
@@ -390,7 +389,7 @@ class ArrayHelper
      * @param string|string[]|\Closure[]|null $groups the array of keys, that will be used to group the input array
      *                                                by one or more keys. If the $key attribute or its value for the particular element is null and $groups is not
      *                                                defined, the array element will be discarded. Otherwise, if $groups is specified, array element will be added
-     *                                                to the result array without any key. This parameter is available since version 2.0.8.
+     *                                                to the result array without any key.
      *
      * @return array the indexed and/or grouped array
      */
@@ -764,7 +763,6 @@ class ArrayHelper
      * @return boolean `true` if `$needle` was found in `$haystack`, `false` otherwise.
      * @throws InvalidParamException if `$haystack` is neither traversable nor an array.
      * @see   http://php.net/manual/en/function.in-array.php
-     * @since 2.0.7
      */
     public static function isIn($needle, $haystack, $strict = false)
     {
@@ -793,7 +791,6 @@ class ArrayHelper
      *
      * @return boolean whether $var is array-like
      * @see   http://php.net/manual/en/function.is_array.php
-     * @since 2.0.8
      */
     public static function isTraversable($var)
     {
@@ -812,7 +809,6 @@ class ArrayHelper
      *
      * @throws InvalidParamException if `$haystack` or `$needles` is neither traversable nor an array.
      * @return boolean `true` if `$needles` is a subset of `$haystack`, `false` otherwise.
-     * @since 2.0.7
      */
     public static function isSubset($needles, $haystack, $strict = false)
     {
@@ -871,7 +867,6 @@ class ArrayHelper
      *                       - `!var.key` = `$array['var']['key'] will be removed from result.
      *
      * @return array Filtered array
-     * @since 2.0.9
      */
     public static function filter($array, $filters)
     {
@@ -881,7 +876,7 @@ class ArrayHelper
         foreach ($filters as $var) {
             $keys = explode('.', $var);
             $globalKey = $keys[0];
-            $localKey = isset($keys[1]) ? $keys[1] : null;
+            $localKey = $keys[1] ?? null;
 
             if ($globalKey[0] === '!') {
                 $forbiddenVars[] = [
@@ -947,7 +942,7 @@ class ArrayHelper
             }
 
             $field = $entities[$className]['column'][$col];
-            $setterMethod = "set" . ucfirst($field);
+            $setterMethod = 'set' . ucfirst($field);
 
             $type = $entities[$className]['field'][$field]['type'];
             $value = self::trasferTypes($type, $value);
@@ -965,13 +960,13 @@ class ArrayHelper
 
     public static function trasferTypes($type, $value)
     {
-        if ($type == Types::INT || $type == Types::NUMBER) {
+        if ($type === Types::INT || $type === Types::NUMBER) {
             $value = (int)$value;
-        } elseif ($type == Types::STRING) {
+        } elseif ($type === Types::STRING) {
             $value = (string)$value;
-        } elseif ($type == Types::BOOLEAN) {
+        } elseif ($type === Types::BOOLEAN) {
             $value = (bool)$value;
-        } elseif ($type == Types::FLOAT) {
+        } elseif ($type === Types::FLOAT) {
             $value = (float)$value;
         }
         return $value;
