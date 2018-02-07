@@ -145,7 +145,7 @@ class App
      */
     public static function setProperties($properties = null)
     {
-        if ($properties == null) {
+        if ($properties === null) {
             $properties = self::getProperties();
         }
 
@@ -268,10 +268,12 @@ class App
 
     /**
      * 触发事件
-     * @param string|\Swoft\Event\EventInterface $event 发布的事件名称|对象
-     * @param mixed $target
-     * @param array $params 附加数据信息
+     *
+     * @param string|\Swoft\Event\EventInterface $event  发布的事件名称|对象
+     * @param mixed                              $target
+     * @param array                              $params 附加数据信息
      * @return mixed
+     * @throws \InvalidArgumentException
      */
     public static function trigger($event, $target = null, ...$params)
     {
@@ -466,7 +468,7 @@ class App
     /**
      * @return bool 当前是否是worker状态
      */
-    public static function isWorkerStatus()
+    public static function isWorkerStatus(): bool
     {
         if (self::$server === null) {
             return false;
@@ -481,11 +483,11 @@ class App
     }
 
     /**
-     * Whether it is cor context
+     * Whether it is coroutine context
      *
      * @return bool
      */
-    public static function isCorContext(): bool
+    public static function isCoContext(): bool
     {
         if (SwCoroutine::getuid() > 0) {
             return true;
