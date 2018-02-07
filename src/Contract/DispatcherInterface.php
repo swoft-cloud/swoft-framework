@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Core;
+namespace Swoft\Contract;
 
 /**
  * Dispatcher
