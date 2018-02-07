@@ -280,19 +280,6 @@ class App
     }
 
     /**
-     * 语言翻译
-     *
-     * @param string $category 翻译文件类别，比如xxx.xx/xx
-     * @param array  $params   参数
-     * @param string $language 当前语言环境
-     * @return string
-     */
-    public static function t(string $category, array $params, string $language = 'en')
-    {
-        return ApplicationContext::getBean('I18n')->translate($category, $params, $language);
-    }
-
-    /**
      * 注册多个别名
      *
      * @param array $aliases 别名数组
