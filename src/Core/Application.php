@@ -26,13 +26,6 @@ class Application
     protected $name = APP_NAME;
 
     /**
-     * 错误action，统一错误处理
-     *
-     * @var string
-     */
-    protected $errorAction;
-
-    /**
      * @var bool 是否使用第三方(consul/etcd/zk)注册服务
      */
     protected $useProvider = false;
@@ -45,13 +38,4 @@ class Application
         App::$app = $this;
     }
 
-    /**
-     * 获取errorAction
-     *
-     * @return string
-     */
-    public function getErrorAction(): string
-    {
-        return $this->errorAction;
-    }
 }

@@ -211,7 +211,7 @@ class Container
             $object->{$this->initMethod}();
         }
 
-        if (!($object instanceof AopInterface)) {
+        if (!$object instanceof AopInterface) {
             $object = $this->proxyBean($name, $className, $object);
         }
 

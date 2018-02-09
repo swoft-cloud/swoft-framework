@@ -28,10 +28,11 @@ class DirHelper
     /**
      * 根据规则扫描文件路径
      *
-     * @param string $path 扫描路径
-     * @param null $pattern 扫描匹配规则
+     * @param string $path     扫描路径
+     * @param null   $pattern  扫描匹配规则
      * @param string $strategy 扫描算法
      * @return array
+     * @throws \InvalidArgumentException
      */
     public static function glob(string $path, $pattern = null, $strategy = self::SCAN_DFS): array
     {
@@ -53,10 +54,11 @@ class DirHelper
     /**
      * 扫描路径的所有文件
      *
-     * @param string $path 扫描路径
-     * @param string $strategy 扫描算法
-     * @param bool $excludeDir 是否忽略文件夹
+     * @param string $path       扫描路径
+     * @param string $strategy   扫描算法
+     * @param bool   $excludeDir 是否忽略文件夹
      * @return array
+     * @throws \InvalidArgumentException
      */
     public static function scan(string $path, $strategy = self::SCAN_CURRENT_DIR, $excludeDir = true): array
     {
@@ -196,7 +198,7 @@ class DirHelper
                 foreach ($subFiles as $subFile) {
                     $queue->enqueue($subFile);
                 }
-                if (false === $ignoreDir && $file != $path) {
+                if (false === $ignoreDir && $file !== $path) {
                     $files[] = $file;
                 }
             }

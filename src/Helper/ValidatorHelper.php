@@ -44,7 +44,7 @@ class ValidatorHelper
      * @param int|null $max
      * @param bool     $throws
      *
-     * @throws ValidatorException;
+     * @throws ValidatorException
      * @return mixed
      */
     public static function validateInteger($value, $min = null, $max = null, bool $throws = true)
@@ -73,7 +73,7 @@ class ValidatorHelper
      * @param int|null $max
      * @param bool     $throws
      *
-     * @throws ValidatorException;
+     * @throws ValidatorException
      * @return mixed
      */
     public static function validateNumber($value, $min = null, $max = null, bool $throws = true)
@@ -102,7 +102,7 @@ class ValidatorHelper
      * @param float|null $max
      * @param bool       $throws
      *
-     * @throws ValidatorException;
+     * @throws ValidatorException
      * @return mixed
      */
     public static function validateFloat($value, float $min = null, float $max = null, bool $throws = true)
@@ -131,7 +131,7 @@ class ValidatorHelper
      * @param int|null $max
      * @param bool     $throws
      *
-     * @throws ValidatorException;
+     * @throws ValidatorException
      * @return mixed
      */
     public static function validateString($value, int $min = null, int $max = null, bool $throws = true)

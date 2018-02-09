@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Core;
+namespace Swoft\Contract;
 
 /**
  * Dispatcher
@@ -8,28 +8,28 @@ namespace Swoft\Core;
 interface DispatcherInterface
 {
     /**
-     * do dispatcher
+     * Dispatch
      *
      * @param array ...$params dispatcher params
      */
     public function dispatch(...$params);
 
     /**
-     * request middlewares
+     * Request middleware
      *
      * @return array
      */
     public function requestMiddleware(): array;
 
     /**
-     * the first middleware of request
+     * Pre middleware
      *
      * @return array
      */
     public function preMiddleware(): array;
 
     /**
-     * the last middleware of request
+     * After middleware
      *
      * @return array
      */

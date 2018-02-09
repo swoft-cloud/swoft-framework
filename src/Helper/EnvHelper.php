@@ -13,6 +13,9 @@ namespace Swoft\Helper;
  */
 class EnvHelper
 {
+    /**
+     * @throws \RuntimeException
+     */
     public static function check()
     {
         if (!PhpHelper::isCli()) {
