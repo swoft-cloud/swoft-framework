@@ -2,6 +2,7 @@
 
 namespace Swoft\Bean\Resource;
 
+use App\Controllers\RpcController;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Swoft\Bean\Wrapper\WrapperInterface;
@@ -152,8 +153,6 @@ abstract class AnnotationResource extends AbstractResource
             }
             $propertyName        = $property->getName();
             $propertyAnnotations = $reader->getPropertyAnnotations($property);
-
-
             foreach ($propertyAnnotations as $propertyAnnotation) {
                 $this->annotations[$className]['property'][$propertyName][get_class($propertyAnnotation)] = $propertyAnnotation;
             }

@@ -2,6 +2,7 @@
 
 namespace Swoft\Bean;
 
+use App\Controllers\RpcController;
 use Swoft\Aop\Aop;
 use Swoft\Aop\AopInterface;
 use Swoft\App;
