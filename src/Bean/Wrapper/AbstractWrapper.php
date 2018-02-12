@@ -3,6 +3,7 @@
 namespace Swoft\Bean\Wrapper;
 
 use App\Controllers\RpcController;
+use App\Tasks\SyncTask;
 use Swoft\Bean\ObjectDefinition;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
 use Swoft\Bean\Parser\AbstractParser;
@@ -139,7 +140,6 @@ abstract class AbstractWrapper implements WrapperInterface
                 continue;
             }
             $propertyName = $property->getName();
-
             if (!isset($propertyAnnotations[$propertyName]) || !$this->isParsePropertyAnnotations($propertyAnnotations[$propertyName])) {
                 continue;
             }
@@ -152,6 +152,7 @@ abstract class AbstractWrapper implements WrapperInterface
             if ($injectProperty == null) {
                 continue;
             }
+
             $propertyInjection = new PropertyInjection($propertyName, $injectProperty, (bool)$isRef);
             $propertyInjections[$propertyName] = $propertyInjection;
         }

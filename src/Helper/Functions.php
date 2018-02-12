@@ -70,7 +70,7 @@ if (! function_exists('cache')) {
      *
      * @param string|null $key
      * @param mixed       $default
-     * @return \Swoft\Cache\CacheInterface|mixed
+     * @return \Psr\SimpleCache\CacheInterface|string
      */
     function cache(string $key = null, $default = null)
     {
@@ -78,7 +78,7 @@ if (! function_exists('cache')) {
         $cache = \Swoft\App::getBean('cache');
 
         if ($key === null) {
-            return $cache->getCache();
+            return $cache->getDriver();
         }
 
         return $cache->get($key, value($default));

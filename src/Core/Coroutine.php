@@ -3,10 +3,7 @@
 namespace Swoft\Core;
 
 use Swoft\App;
-use Swoft\Console\Console;
 use Swoft\Helper\PhpHelper;
-use Swoft\Bootstrap\Process;
-use Swoft\Task\Task;
 use Swoole\Coroutine as SwCoroutine;
 
 /**
@@ -14,6 +11,11 @@ use Swoole\Coroutine as SwCoroutine;
  */
 class Coroutine
 {
+    /**
+     * @var int
+     */
+    private static $tid;
+
     /**
      * Coroutine id mapping
      *
@@ -29,34 +31,27 @@ class Coroutine
     /**
      * Get the current coroutine ID
      *
-     * @return int|string
+     * @return int
      */
-    public static function id()
+    public static function id(): int
     {
         $cid = SwCoroutine::getuid();
-        $context = ApplicationContext::getContext();
-
-        if ($context === ApplicationContext::WORKER || $cid !== -1) {
+        if ($cid !== -1) {
             return $cid;
         }
-        if ($context === ApplicationContext::TASK) {
-            return Task::getId();
-        }
-        if ($context === ApplicationContext::CONSOLE) {
-            return Console::id();
-        }
 
-        return Process::getId();
+        return self::$tid;
     }
 
     /**
      * Get the top coroutine ID
      *
-     * @return int|string
+     * @return int
      */
     public static function tid()
     {
         $id = self::id();
+
         return self::$idMap[$id] ?? $id;
     }
 
@@ -124,5 +119,15 @@ class Coroutine
     public static function shouldWrapCoroutine()
     {
         return App::isWorkerStatus() && swoole_version() >= '2.0.11';
+    }
+
+    /**
+     * Init tid
+     */
+    public static function initTid()
+    {
+        $time = time();
+        $rand = mt_rand(1, 100);
+        self::$tid = (int)($time . $rand);
     }
 }

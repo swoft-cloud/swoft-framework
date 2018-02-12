@@ -2,11 +2,8 @@
 
 namespace Swoft;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
 use Swoft\Bean\Collector\BreakerCollector;
 use Swoft\Bean\Collector\PoolCollector;
-use Swoft\Bootstrap\Server\ServerInterface;
 use Swoft\Circuit\CircuitBreaker;
 use Swoft\Core\Application;
 use Swoft\Core\ApplicationContext;
@@ -16,6 +13,7 @@ use Swoft\Core\Timer;
 use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
 use Swoft\Pool\ConnectPool;
+use Swoft\Bootstrap\Server\AbstractServer;
 use Swoole\Coroutine as SwCoroutine;
 
 /**
@@ -39,7 +37,7 @@ class App
 
     /**
      * 服务器对象
-     * @var ServerInterface
+     * @var AbstractServer
      */
     public static $server;
 

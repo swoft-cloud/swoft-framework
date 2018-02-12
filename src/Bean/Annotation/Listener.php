@@ -7,12 +7,6 @@ namespace Swoft\Bean\Annotation;
  *
  * @Annotation
  * @Target("CLASS")
- *
- * @uses      Listener
- * @version   2017年08月30日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class Listener
 {
@@ -21,7 +15,7 @@ class Listener
      *
      * @var string
      */
-    private $event;
+    private $event = "";
 
     /**
      * AutoController constructor.
