@@ -5,51 +5,167 @@ namespace Swoft\Pool\Provider;
 use Swoft\App;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Value;
-use Swoft\Http\HttpClient;
 
 /**
- * the provider of consul
+ * Consul provider
  *
  * @Bean()
- * @uses      ConsulProvider
- * @version   2017年12月16日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class ConsulProvider implements ProviderInterface
 {
     /**
-     * adress
+     * Register path
+     */
+    const REGISTER_PATH = '/v1/agent/service/register';
+
+    /**
+     * Discovery path
+     */
+    const DISCOVERY_PATH = '/v1/health/Service/';
+
+    /**
+     * Specifies the address of the consul
      *
-     * @Value(name="${config.provider.consul.address}", env="${PROVIDER_CONSUL_ADDRESS}")
+     * @Value(name="${config.provider.consul.address}", env="${CONSUL_ADDRESS}")
      * @var string
      */
-    private $address = 'http://127.0.0.1:80';
+    private $address = "http://127.0.0.1";
 
     /**
-     * the tags of register service
+     * Specifies the prot of the consul
      *
-     * @Value(name="${config.provider.consul.tags}", env="${PROVIDER_CONSUL_TAGS}")
+     * @Value(name="${config.provider.consul.port}", env="${CONSUL_PORT}")
+     * @var int
+     */
+    private $port = 8500;
+
+    /**
+     * Specifies a unique ID for this service. This must be unique per agent. This defaults to the Name parameter if not provided.
+     *
+     * @Value(name="${config.provider.consul.register.id}", env="${CONSUL_REGISTER_ID}")
+     * @var string
+     */
+    private $registerId = '';
+
+    /**
+     * Specifies the logical name of the service. Many service instances may share the same logical service name.
+     *
+     * @Value(name="${config.provider.consul.register.name}", env="${CONSUL_REGISTER_NAME}")
+     * @var string
+     */
+    private $registerName = APP_NAME;
+
+    /**
+     * Specifies a list of tags to assign to the service. These tags can be used for later filtering and are exposed via the APIs.
+     *
+     * @Value(name="${config.provider.consul.register.tags}", env="${CONSUL_REGISTER_TAGS}")
      * @var array
      */
-    private $tags = [];
+    private $registerTags = [];
 
     /**
-     * the timeout of consul
+     * Specifies to disable the anti-entropy feature for this service's tags
      *
-     * @Value(name="${config.provider.consul.timeout}", env="${PROVIDER_CONSUL_TIMEOUT}")
-     * @var int
+     * @Value(name="${config.provider.consul.register.eto}", env="${CONSUL_REGISTER_ETO}")
+     * @var bool
      */
-    private $timeout = 300;
+    private $registerEnableTagOverride = false;
 
     /**
-     * the interval of register service
+     * Specifies the address of the service
      *
-     * @Value(name="${config.provider.consul.interval}", env="${PROVIDER_CONSUL_INTERVAL}")
+     * @Value(name="${config.provider.consul.register.service.address}", env="${CONSUL_REGISTER_SERVICE_ADDRESS}")
+     * @var string
+     */
+    private $registerAddress = 'http://127.0.0.1';
+
+    /**
+     * Specifies the port of the service
+     *
+     * @Value(name="${config.provider.consul.register.service.port}", env="${CONSUL_REGISTER_SERVICE_PORT}")
      * @var int
      */
-    private $interval = 3;
+    private $registerPort = 88;
+
+    /**
+     * Specifies the checked ID
+     *
+     * @Value(name="${config.provider.consul.register.check.id}", env="${CONSUL_REGISTER_CHECK_ID}")
+     * @var string
+     */
+    private $registerCheckId = '';
+
+    /**
+     * Specifies the checked name
+     *
+     * @Value(name="${config.provider.consul.register.check.name}", env="${CONSUL_REGISTER_CHECK_NAME}")
+     * @var string
+     */
+    private $registerCheckName = APP_NAME;
+
+    /**
+     * Specifies the checked tcp
+     *
+     * @Value(name="${config.provider.consul.register.check.tcp}", env="${CONSUL_REGISTER_CHECK_TCP}")
+     * @var string
+     */
+    private $registerCheckTcp = '127.0.0.1:8099';
+
+    /**
+     * Specifies the checked interval
+     *
+     * @Value(name="${config.provider.consul.register.check.interval}", env="${CONSUL_REGISTER_CHECK_INTERVAL}")
+     * @var int
+     */
+    private $registerCheckInterval = 10;
+
+    /**
+     * Specifies the checked timeout
+     *
+     * @Value(name="${config.provider.consul.register.check.timeout}", env="${CONSUL_REGISTER_CHECK_TIMEOUT}")
+     * @var int
+     */
+    private $registerCheckTimeout = 1;
+
+    /**
+     * Specifies the service to list services for
+     *
+     * @Value(name="${config.provider.consul.discovery.name}", env="${CONSUL_DISCOVERY_NAME}")
+     * @var string
+     */
+    private $discoveryName = APP_NAME;
+
+    /**
+     * Specifies the datacenter to query. This will default to the datacenter of the agent being queried
+     *
+     * @Value(name="${config.provider.consul.discovery.dc}", env="${CONSUL_DISCOVERY_DC}")
+     * @var string
+     */
+    private $discoveryDc = "";
+
+    /**
+     * Specifies a node name to sort the node list in ascending order based on the estimated round trip time from that node
+     *
+     * @Value(name="${config.provider.consul.discovery.near}", env="${CONSUL_DISCOVERY_NEAR}")
+     * @var string
+     */
+    private $discoveryNear = "";
+
+    /**
+     * Specifies the tag to filter the list. This is specifies as part of the URL as a query parameter.
+     *
+     * @Value(name="${config.provider.consul.discovery.tag}", env="${CONSUL_DISCOVERY_TAG}")
+     * @var string
+     */
+    private $discoveryTag = "";
+
+    /**
+     * Specifies that the server should return only nodes with all checks in the passing state
+     *
+     * @Value(name="${config.provider.consul.discovery.passing}", env="${CONSUL_DISCOVERY_PASSING}")
+     * @var bool
+     */
+    private $discoveryPassing = true;
 
     /**
      * get service list
@@ -61,8 +177,7 @@ class ConsulProvider implements ProviderInterface
      */
     public function getServiceList(string $serviceName, ...$params)
     {
-        // consul获取健康的节点集合
-        $url      = "/v1/health/Service/{$serviceName}?passing";
+        $url      = $this->getDiscoveryUrl($serviceName);
         $result   = HttpClient::call($url, HttpClient::GET);
         $services = json_decode($result, true);
 
@@ -92,33 +207,62 @@ class ConsulProvider implements ProviderInterface
      * register service
      *
      * @param string $serviceName
-     * @param string $host
-     * @param int    $port
      * @param array  ...$params
      *
      * @return bool
      */
-    public function registerService(string $serviceName, string $host, int $port, ...$params)
+    public function registerService(string $serviceName, ...$params)
     {
-        $url      = "http://" . $this->address . "/v1/agent/Service/register";
         $hostName = gethostname();
-        $service  = [
-            'ID'                => $serviceName . "-" . $hostName,
-            'Name'              => 'user',
-            'Tags'              => $this->tags,
-            'Address'           => $host,
-            'Port'              => $port,
-            'EnableTagOverride' => false,
+        if (empty($this->registerId)) {
+            $this->registerId = sprintf('service-%s-%s', $this->registerName, $hostName);
+        }
+
+        if (empty($this->registerCheckId)) {
+            $this->registerCheckId = sprintf('check-%s-%s', $this->registerName, $hostName);
+        }
+
+        $data = [
+            'ID'                => $this->registerId,
+            'Name'              => $this->registerName,
+            'Tags'              => $this->registerTags,
+            'Address'           => $this->registerAddress,
+            'Port'              => $this->registerPort,
+            'EnableTagOverride' => $this->registerEnableTagOverride,
             'Check'             => [
-                'DeregisterCriticalServiceAfter' => '90m',
-                'TCP'                            => $host . ":" . $port,
-                "Interval"                       => $this->interval . "s",
+                'id'       => $this->registerCheckId,
+                'name'     => $this->registerCheckName,
+                'tcp'      => $this->registerCheckTcp,
+                'interval' => sprintf('%ss', $this->registerCheckInterval),
+                'timeout'  => sprintf('%ss', $this->registerCheckTimeout),
             ],
         ];
 
-        $this->putService($service, $url);
+        $url = sprintf('%s:%d%s', $this->address, $this->port, self::REGISTER_PATH);
+        $this->putService($data, $url);
 
         return true;
+    }
+
+    /**
+     * @param string $serviceName
+     *
+     * @return string
+     */
+    private function getDiscoveryUrl(string $serviceName): string
+    {
+        $query = [
+            'passing' => $this->discoveryPassing,
+            'dc'      => $this->discoveryDc,
+            'near'    => $this->discoveryNear,
+            'tag '    => $this->discoveryName,
+        ];
+
+        $queryStr    = http_build_query($query);
+        $serviceName = empty($this->discoveryName) ? $serviceName : $this->discoveryName;
+        $path        = sprintf('%s%s', self::DISCOVERY_PATH, $serviceName);
+
+        return sprintf('%s:%d%s?%s', $this->address, $this->port, $path, $queryStr);
     }
 
     /**

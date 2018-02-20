@@ -2,9 +2,6 @@
 
 namespace Swoft\Helper;
 
-use Swoft\Db\Bean\Collector\EntityCollector;
-use Swoft\Db\Types;
-
 class ArrayHelper
 {
     /**
@@ -13,32 +10,6 @@ class ArrayHelper
      * @param object|array|string $object     the object to be converted into an array
      * @param array               $properties a mapping from object class names to the properties that need to put into the resulting arrays.
      *                                        The properties specified for each class is an array of the following format:
-     *
-     * ```php
-     * [
-     *     'App\Models\Post' => [
-     *         'id',
-     *         'title',
-     *         // the key name in array result => property name
-     *         'createTime' => 'created_at',
-     *         // the key name in array result => anonymous function
-     *         'length' => function ($post) {
-     *             return strlen($post->content);
-     *         },
-     *     ],
-     * ]
-     * ```
-     *
-     * The result of `ArrayHelper::toArray($post, $properties)` could be like the following:
-     *
-     * ```php
-     * [
-     *     'id' => 123,
-     *     'title' => 'test',
-     *     'createTime' => '2013-01-01 12:00AM',
-     *     'length' => 301,
-     * ]
-     * ```
      *
      * @param boolean             $recursive  whether to recursively converts properties which are objects into arrays.
      *
@@ -105,7 +76,7 @@ class ArrayHelper
     public static function merge($a, $b)
     {
         $args = \func_get_args();
-        $res = array_shift($args);
+        $res  = array_shift($args);
         while (!empty($args)) {
             $next = array_shift($args);
             foreach ($next as $k => $v) {
@@ -185,7 +156,7 @@ class ArrayHelper
 
         if (($pos = strrpos($key, '.')) !== false) {
             $array = static::getValue($array, substr($key, 0, $pos), $default);
-            $key = substr($key, $pos + 1);
+            $key   = substr($key, $pos + 1);
         }
 
         if (\is_object($array)) {
@@ -234,15 +205,16 @@ class ArrayHelper
     /**
      * Remove one or many array items from a given array using "dot" notation.
      *
-     * @param  array  $array
-     * @param  array|string  $keys
+     * @param  array        $array
+     * @param  array|string $keys
+     *
      * @return void
      */
     public static function forget(&$array, $keys)
     {
         $original = &$array;
 
-        $keys = (array) $keys;
+        $keys = (array)$keys;
 
         if (\count($keys) === 0) {
             return;
@@ -278,9 +250,10 @@ class ArrayHelper
     /**
      * Get a value from the array, and remove it.
      *
-     * @param  array   $array
-     * @param  string  $key
-     * @param  mixed   $default
+     * @param  array  $array
+     * @param  string $key
+     * @param  mixed  $default
+     *
      * @return mixed
      */
     public static function pull(&$array, $key, $default = null)
@@ -517,7 +490,7 @@ class ArrayHelper
     {
         $result = [];
         foreach ($array as $element) {
-            $key = static::getValue($element, $from);
+            $key   = static::getValue($element, $from);
             $value = static::getValue($element, $to);
             if ($group !== null) {
                 $result[static::getValue($element, $group)][$key] = $value;
@@ -592,7 +565,7 @@ class ArrayHelper
         }
         $args = [];
         foreach ($keys as $i => $key) {
-            $flag = $sortFlag[$i];
+            $flag   = $sortFlag[$i];
             $args[] = static::getColumn($array, $key);
             $args[] = $direction[$i];
             $args[] = $flag;
@@ -606,75 +579,6 @@ class ArrayHelper
 
         $args[] = &$array;
         \call_user_func_array('array_multisort', $args);
-    }
-
-    /**
-     * Encodes special characters in an array of strings into HTML entities.
-     * Only array values will be encoded by default.
-     * If a value is an array, this method will also encode it recursively.
-     * Only string values will be encoded.
-     *
-     * @param array   $data       Data to be encoded
-     * @param boolean $valuesOnly whether to encode array values only. If false,
-     *                            both the array keys and array values will be encoded.
-     * @param string  $charset    the charset that the Data is using. If not set,
-     *                            [[\yii\Base\Application::charset]] will be used.
-     *
-     * @return array the encoded Data
-     * @see http://www.php.net/manual/en/function.htmlspecialchars.php
-     */
-    public static function htmlEncode($data, $valuesOnly = true, $charset = null)
-    {
-        if ($charset === null) {
-            $charset = Yii::$app ? Yii::$app->charset : 'UTF-8';
-        }
-        $d = [];
-        foreach ($data as $key => $value) {
-            if (!$valuesOnly && \is_string($key)) {
-                $key = htmlspecialchars($key, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
-            }
-            if (\is_string($value)) {
-                $d[$key] = htmlspecialchars($value, ENT_QUOTES | ENT_SUBSTITUTE, $charset);
-            } elseif (\is_array($value)) {
-                $d[$key] = static::htmlEncode($value, $valuesOnly, $charset);
-            } else {
-                $d[$key] = $value;
-            }
-        }
-
-        return $d;
-    }
-
-    /**
-     * Decodes HTML entities into the corresponding characters in an array of strings.
-     * Only array values will be decoded by default.
-     * If a value is an array, this method will also decode it recursively.
-     * Only string values will be decoded.
-     *
-     * @param array   $data       Data to be decoded
-     * @param boolean $valuesOnly whether to decode array values only. If false,
-     *                            both the array keys and array values will be decoded.
-     *
-     * @return array the decoded Data
-     * @see http://www.php.net/manual/en/function.htmlspecialchars-decode.php
-     */
-    public static function htmlDecode($data, $valuesOnly = true)
-    {
-        $d = [];
-        foreach ($data as $key => $value) {
-            if (!$valuesOnly && \is_string($key)) {
-                $key = htmlspecialchars_decode($key, ENT_QUOTES);
-            }
-            if (\is_string($value)) {
-                $d[$key] = htmlspecialchars_decode($value, ENT_QUOTES);
-            } elseif (\is_array($value)) {
-                $d[$key] = static::htmlDecode($value);
-            } else {
-                $d[$key] = $value;
-            }
-        }
-
-        return $d;
     }
 
     /**
@@ -693,16 +597,17 @@ class ArrayHelper
      */
     public static function isAssociative($array, $allStrings = true)
     {
-        if (! \is_array($array) || empty($array)) {
+        if (!\is_array($array) || empty($array)) {
             return false;
         }
 
         if ($allStrings) {
             foreach ($array as $key => $value) {
-                if (! \is_string($key)) {
+                if (!\is_string($key)) {
                     return false;
                 }
             }
+
             return true;
         } else {
             foreach ($array as $key => $value) {
@@ -710,6 +615,7 @@ class ArrayHelper
                     return true;
                 }
             }
+
             return false;
         }
     }
@@ -730,7 +636,7 @@ class ArrayHelper
      */
     public static function isIndexed($array, $consecutive = false)
     {
-        if (! \is_array($array)) {
+        if (!\is_array($array)) {
             return false;
         }
 
@@ -742,10 +648,11 @@ class ArrayHelper
             return array_keys($array) === range(0, \count($array) - 1);
         } else {
             foreach ($array as $key => $value) {
-                if (! \is_int($key)) {
+                if (!\is_int($key)) {
                     return false;
                 }
             }
+
             return true;
         }
     }
@@ -818,6 +725,7 @@ class ArrayHelper
                     return false;
                 }
             }
+
             return true;
         } else {
             throw new InvalidParamException('Argument $needles must be an array or implement Traversable');
@@ -870,13 +778,13 @@ class ArrayHelper
      */
     public static function filter($array, $filters)
     {
-        $result = [];
+        $result        = [];
         $forbiddenVars = [];
 
         foreach ($filters as $var) {
-            $keys = explode('.', $var);
+            $keys      = explode('.', $var);
             $globalKey = $keys[0];
-            $localKey = $keys[1] ?? null;
+            $localKey  = $keys[1] ?? null;
 
             if ($globalKey[0] === '!') {
                 $forbiddenVars[] = [
@@ -912,70 +820,11 @@ class ArrayHelper
         return $result;
     }
 
-    public static function resultToEntity(array $result, string $className)
-    {
-        if (!isset($result[0])) {
-            return ArrayHelper::arrayToEntity($result, $className);
-        }
-        $entities = [];
-        foreach ($result as $entityData) {
-            if (! \is_array($entityData)) {
-                continue;
-            }
-            $entities[] = ArrayHelper::arrayToEntity($entityData, $className);
-        }
-        return $entities;
-    }
-
-    public static function arrayToEntity(array $array, string $className)
-    {
-
-        $entities = EntityCollector::getCollector();
-        if (!isset($className)) {
-            return $array;
-        }
-        $attrs = [];
-        $object = new $className();
-        foreach ($array as $col => $value) {
-            if (!isset($entities[$className]['column'][$col])) {
-                continue;
-            }
-
-            $field = $entities[$className]['column'][$col];
-            $setterMethod = 'set' . ucfirst($field);
-
-            $type = $entities[$className]['field'][$field]['type'];
-            $value = self::trasferTypes($type, $value);
-
-            if (method_exists($object, $setterMethod)) {
-                $attrs[$field] = $value;
-                $object->$setterMethod($value);
-            }
-        }
-        if (method_exists($object, 'setAttrs')) {
-            $object->setAttrs($attrs);
-        }
-        return $object;
-    }
-
-    public static function trasferTypes($type, $value)
-    {
-        if ($type === Types::INT || $type === Types::NUMBER) {
-            $value = (int)$value;
-        } elseif ($type === Types::STRING) {
-            $value = (string)$value;
-        } elseif ($type === Types::BOOLEAN) {
-            $value = (bool)$value;
-        } elseif ($type === Types::FLOAT) {
-            $value = (float)$value;
-        }
-        return $value;
-    }
-
     /**
      * Determine whether the given value is array accessible.
      *
      * @param  mixed $value
+     *
      * @return bool
      */
     public static function accessible($value)
@@ -987,7 +836,8 @@ class ArrayHelper
      * Determine if the given key exists in the provided array.
      *
      * @param  \ArrayAccess|array $array
-     * @param  string|int $key
+     * @param  string|int         $key
+     *
      * @return bool
      */
     public static function exists($array, $key)
@@ -1003,8 +853,9 @@ class ArrayHelper
      * Get an item from an array using "dot" notation.
      *
      * @param  \ArrayAccess|array $array
-     * @param  string $key
-     * @param  mixed $default
+     * @param  string             $key
+     * @param  mixed              $default
+     *
      * @return mixed
      */
     public static function get($array, $key, $default = null)
@@ -1032,7 +883,8 @@ class ArrayHelper
      * Check if an item exists in an array using "dot" notation.
      *
      * @param  \ArrayAccess|array $array
-     * @param  string $key
+     * @param  string             $key
+     *
      * @return bool
      */
     public static function has($array, $key)
@@ -1060,9 +912,10 @@ class ArrayHelper
      * Set an array item to a given value using "dot" notation.
      * If no key is given to the method, the entire array will be replaced.
      *
-     * @param  array $array
+     * @param  array  $array
      * @param  string $key
-     * @param  mixed $value
+     * @param  mixed  $value
+     *
      * @return array
      */
     public static function set(&$array, $key, $value)
@@ -1079,7 +932,7 @@ class ArrayHelper
             // If the key doesn't exist at this depth, we will just create an empty array
             // to hold the next value, allowing us to create the arrays to hold final
             // values at the correct depth. Then we'll keep digging into the array.
-            if (! isset($array[$key]) || ! \is_array($array[$key])) {
+            if (!isset($array[$key]) || !\is_array($array[$key])) {
                 $array[$key] = [];
             }
 
