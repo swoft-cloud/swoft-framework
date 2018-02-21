@@ -3,7 +3,7 @@
 namespace Swoft\Test\Testing\Bean;
 
 use Swoft\Core\Config;
-use Swoft\Pool\ProviderSelector;
+use Swoft\Sg\ProviderSelector;
 
 /**
  *

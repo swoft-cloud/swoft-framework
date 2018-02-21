@@ -87,7 +87,7 @@ abstract class ConnectPool implements PoolInterface
     {
         $serviceList  = $this->getServiceList();
         $balancerType = $this->poolConfig->getBalancer();
-        $balancer     = App::getBalancerSelector()->select($balancerType);
+        $balancer     = balancer()->select($balancerType);
 
         return $balancer->select($serviceList);
     }
@@ -105,12 +105,11 @@ abstract class ConnectPool implements PoolInterface
      */
     protected function getServiceList()
     {
-        $providerSelector = App::getProviderSelector();
-        $name             = $this->poolConfig->getName();
+        $name = $this->poolConfig->getName();
         if ($this->poolConfig->isUseProvider()) {
             $type = $this->poolConfig->getProvider();
 
-            return $providerSelector->select($type)->getServiceList($name);
+            return provider()->select($type)->getServiceList($name);
         }
 
         $uri = $this->poolConfig->getUri();

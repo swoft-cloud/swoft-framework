@@ -2,18 +2,15 @@
 
 namespace Swoft;
 
-use Swoft\Bean\Collector\BreakerCollector;
 use Swoft\Bean\Collector\PoolCollector;
-use Swoft\Circuit\CircuitBreaker;
+use Swoft\Bootstrap\Server\AbstractServer;
 use Swoft\Core\Application;
 use Swoft\Core\ApplicationContext;
 use Swoft\Core\Config;
-use Swoft\Core\RequestContext;
 use Swoft\Core\Timer;
 use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
 use Swoft\Pool\ConnectPool;
-use Swoft\Bootstrap\Server\AbstractServer;
 use Swoole\Coroutine as SwCoroutine;
 
 /**
@@ -177,26 +174,6 @@ class App
     }
 
     /**
-     * the selector of balancer
-     *
-     * @return \Swoft\Pool\BalancerSelector
-     */
-    public static function getBalancerSelector(): Pool\BalancerSelector
-    {
-        return self::getBean('balancerSelector');
-    }
-
-    /**
-     * the selector of provider
-     *
-     * @return \Swoft\Pool\ProviderSelector
-     */
-    public static function getProviderSelector(): Pool\ProviderSelector
-    {
-        return self::getBean('providerSelector');
-    }
-
-    /**
      * get pool by name
      *
      * @param string $name
@@ -213,45 +190,6 @@ class App
         $poolBeanName = $collector[$name];
 
         return self::getBean($poolBeanName);
-    }
-
-    /**
-     * get breaker by name
-     *
-     * @param string $name
-     * @return CircuitBreaker
-     * @throws \Swoft\Exception\InvalidArgumentException
-     */
-    public static function getBreaker(string $name): CircuitBreaker
-    {
-        $collector = BreakerCollector::getCollector();
-        if (!isset($collector[$name])) {
-            throw new InvalidArgumentException("the breaker of $name is not exist!");
-        }
-
-        $breakerBeanName = $collector[$name];
-
-        return self::getBean($breakerBeanName);
-    }
-
-    /**
-     * request对象
-     *
-     * @return \Psr\Http\Message\RequestInterface
-     */
-    public static function getRequest(): RequestInterface
-    {
-        return RequestContext::getRequest();
-    }
-
-    /**
-     * response对象
-     *
-     * @return \Psr\Http\Message\ResponseInterface
-     */
-    public static function getResponse(): ResponseInterface
-    {
-        return RequestContext::getResponse();
     }
 
     /**

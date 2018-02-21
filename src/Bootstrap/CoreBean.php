@@ -6,12 +6,10 @@ use Monolog\Formatter\LineFormatter;
 use Swoft\App;
 use Swoft\Bean\Annotation\BootBean;
 use Swoft\Core\Application;
-use Swoft\Core\Config;
 use Swoft\Core\BootBeanInterface;
+use Swoft\Core\Config;
 use Swoft\Event\EventManager;
 use Swoft\Log\Logger;
-use Swoft\Pool\BalancerSelector;
-use Swoft\Pool\ProviderSelector;
 
 /**
  * The corebean of swoft
@@ -42,12 +40,6 @@ class CoreBean implements BootBeanInterface
             ],
             'eventManager'     => [
                 'class' => EventManager::class,
-            ],
-            'balancerSelector' => [
-                'class' => BalancerSelector::class,
-            ],
-            'providerSelector' => [
-                'class' => ProviderSelector::class,
             ],
             'logger'           => [
                 'class'         => Logger::class,

@@ -4,7 +4,7 @@ namespace Swoft\Test\Testing\Pool;
 
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Value;
-use Swoft\Pool\BalancerSelector;
+use Swoft\Sg\BalancerSelector;
 use Swoft\Pool\PoolProperties;
 
 /**

@@ -4,7 +4,7 @@ namespace Swoft\Test\Cases;
 
 use PHPUnit\Framework\TestCase;
 use Swoft\App;
-use Swoft\Pool\ProviderSelector;
+use Swoft\Sg\ProviderSelector;
 use Swoft\Test\Testing\Pool\ConsulEnvConfig;
 use Swoft\Test\Testing\Pool\ConsulPptConfig;
 use Swoft\Test\Testing\Pool\EnvAndPptFromPptPoolConfig;
