@@ -19,11 +19,11 @@ class CacheableParser extends AbstractParser
     /**
      * RequestMapping注解解析
      *
-     * @param string    $className
+     * @param string $className
      * @param Cacheable $objectAnnotation
-     * @param string    $propertyName
-     * @param string    $methodName
-     *
+     * @param string $propertyName
+     * @param string $methodName
+     * @param null $propertyValue
      * @return mixed
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)

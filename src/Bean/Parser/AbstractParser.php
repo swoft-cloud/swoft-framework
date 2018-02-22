@@ -13,7 +13,7 @@ use Swoft\Bean\Resource\AnnotationResource;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class AbstractParser implements IParser
+abstract class AbstractParser implements ParserInterface
 {
     /**
      * 注解解析资源

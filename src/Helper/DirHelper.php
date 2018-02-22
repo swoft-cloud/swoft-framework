@@ -28,10 +28,11 @@ class DirHelper
     /**
      * 根据规则扫描文件路径
      *
-     * @param string $path 扫描路径
-     * @param null $pattern 扫描匹配规则
+     * @param string $path     扫描路径
+     * @param null   $pattern  扫描匹配规则
      * @param string $strategy 扫描算法
      * @return array
+     * @throws \InvalidArgumentException
      */
     public static function glob(string $path, $pattern = null, $strategy = self::SCAN_DFS): array
     {
@@ -53,10 +54,11 @@ class DirHelper
     /**
      * 扫描路径的所有文件
      *
-     * @param string $path 扫描路径
-     * @param string $strategy 扫描算法
-     * @param bool $excludeDir 是否忽略文件夹
+     * @param string $path       扫描路径
+     * @param string $strategy   扫描算法
+     * @param bool   $excludeDir 是否忽略文件夹
      * @return array
+     * @throws \InvalidArgumentException
      */
     public static function scan(string $path, $strategy = self::SCAN_CURRENT_DIR, $excludeDir = true): array
     {
@@ -89,7 +91,7 @@ class DirHelper
      */
     public static function formatPath(string $path): string
     {
-        if ('/' == substr($path, -1)) {
+        if ('/' === substr($path, -1)) {
             return $path;
         }
 
@@ -196,7 +198,7 @@ class DirHelper
                 foreach ($subFiles as $subFile) {
                     $queue->enqueue($subFile);
                 }
-                if (false === $ignoreDir && $file != $path) {
+                if (false === $ignoreDir && $file !== $path) {
                     $files[] = $file;
                 }
             }
@@ -233,5 +235,41 @@ class DirHelper
             }
         }
         return $files;
+    }
+
+
+    /**
+     * @param string $dir
+     * @param int $mode
+     * @throws \RuntimeException
+     */
+    public static function mkdir($dir, $mode = 0775)
+    {
+        if (!file_exists($dir) && !mkdir($dir, $mode, true) && !is_dir($dir)) {
+            throw new \RuntimeException(sprintf('Directory "%s" was not created', $dir));
+        }
+    }
+
+    /**
+     * @param string $srcDir
+     * @param callable $filter
+     * @param int $flags
+     * @return \RecursiveIteratorIterator
+     * @throws \InvalidArgumentException
+     */
+    public static function directoryIterator(
+        string $srcDir,
+        callable $filter,
+        $flags = \FilesystemIterator::KEY_AS_PATHNAME | \FilesystemIterator::CURRENT_AS_FILEINFO
+    ): \RecursiveIteratorIterator
+    {
+        if (!$srcDir || !file_exists($srcDir)) {
+            throw new \InvalidArgumentException('Please provide a exists source directory.');
+        }
+
+        $directory = new \RecursiveDirectoryIterator($srcDir, $flags);
+        $filterIterator = new \RecursiveCallbackFilterIterator($directory, $filter);
+
+        return new \RecursiveIteratorIterator($filterIterator);
     }
 }

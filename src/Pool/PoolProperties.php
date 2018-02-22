@@ -1,6 +1,8 @@
 <?php
 
 namespace Swoft\Pool;
+use Swoft\Sg\BalancerSelector;
+use Swoft\Sg\ProviderSelector;
 
 /**
  * the properties of pool

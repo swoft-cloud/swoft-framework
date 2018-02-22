@@ -7,12 +7,11 @@
  */
 
 
-if (!function_exists('value')) {
+if (! function_exists('value')) {
     /**
-     * 返回闭包内的值
+     * Return the callback value
      *
      * @param mixed $value
-     *
      * @return mixed
      */
     function value($value)
@@ -21,13 +20,12 @@ if (!function_exists('value')) {
     }
 }
 
-if (!function_exists('env')) {
+if (! function_exists('env')) {
     /**
      * Gets the value of an environment variable.
      *
      * @param  string $key
      * @param  mixed  $default
-     *
      * @return mixed
      */
     function env($key, $default = null)
@@ -65,39 +63,61 @@ if (!function_exists('env')) {
     }
 }
 
-if (!function_exists('cache')) {
+if (! function_exists('cache')) {
 
     /**
-     * the function of cache
+     * Get the cache by $key value, return $default when cache not exist
      *
      * @param string|null $key
      * @param mixed       $default
-     *
-     * @return \Swoft\Cache\CacheInterface|mixed
+     * @return \Psr\SimpleCache\CacheInterface|string
      */
     function cache(string $key = null, $default = null)
     {
-        /* @var Swoft\Cache\Cache  $cache */
+        /* @var Swoft\Cache\Cache $cache */
         $cache = \Swoft\App::getBean('cache');
 
         if ($key === null) {
-            return $cache->getCache();
+            return $cache->getDriver();
         }
 
-        return $cache->get($key, $default);
+        return $cache->get($key, value($default));
     }
 }
 
-if (!function_exists('bean')) {
+if (! function_exists('bean')) {
     /**
-     * the function of bean
+     * Get bean from container
      *
      * @param $name
-     *
      * @return object
      */
     function bean($name)
     {
         return \Swoft\App::getBean($name);
+    }
+}
+
+if (! function_exists('request')) {
+    /**
+     * Get the current Request object from RequestContext
+     *
+     * @return \Psr\Http\Message\RequestInterface
+     */
+    function request(): \Psr\Http\Message\RequestInterface
+    {
+        return \Swoft\Core\RequestContext::getRequest();
+    }
+}
+
+if (! function_exists('response')) {
+    /**
+     * Get the current Response object from RequestContext
+     *
+     * @return \Psr\Http\Message\ResponseInterface
+     */
+    function response(): \Psr\Http\Message\ResponseInterface
+    {
+        return \Swoft\Core\RequestContext::getResponse();
     }
 }

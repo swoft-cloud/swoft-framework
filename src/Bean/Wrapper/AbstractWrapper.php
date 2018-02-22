@@ -2,8 +2,8 @@
 
 namespace Swoft\Bean\Wrapper;
 
-use App\Models\Dao\RefInterface;
-use Swoft\Bean\Annotation\Scope;
+use App\Controllers\RpcController;
+use App\Tasks\SyncTask;
 use Swoft\Bean\ObjectDefinition;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
 use Swoft\Bean\Parser\AbstractParser;
@@ -19,7 +19,7 @@ use Swoft\Bean\Resource\AnnotationResource;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class AbstractWrapper implements IWrapper
+abstract class AbstractWrapper implements WrapperInterface
 {
     /**
      * 类注解
@@ -134,20 +134,25 @@ abstract class AbstractWrapper implements IWrapper
     {
         $propertyInjections = [];
 
-        $object = new $className();
         /* @var \ReflectionProperty $property */
         foreach ($properties as $property) {
             if ($property->isStatic()) {
                 continue;
             }
-            $property->setAccessible(true);
             $propertyName = $property->getName();
+            if (!isset($propertyAnnotations[$propertyName]) || !$this->isParsePropertyAnnotations($propertyAnnotations[$propertyName])) {
+                continue;
+            }
+
+            $object = new $className();
+            $property->setAccessible(true);
             $propertyValue = $property->getValue($object);
 
             list($injectProperty, $isRef) = $this->parsePropertyAnnotations($propertyAnnotations, $className, $propertyName, $propertyValue);
             if ($injectProperty == null) {
                 continue;
             }
+
             $propertyInjection = new PropertyInjection($propertyName, $injectProperty, (bool)$isRef);
             $propertyInjections[$propertyName] = $propertyInjection;
         }
@@ -320,9 +325,11 @@ abstract class AbstractWrapper implements IWrapper
         $annotationClassName = get_class($objectAnnotation);
         $classNameTmp = str_replace('\\', '/', $annotationClassName);
         $className = basename($classNameTmp);
+        $namespaceDir = dirname($classNameTmp, 2);
+        $namespace = str_replace('/', '\\', $namespaceDir);
 
         // 解析器类名
-        $annotationParserClassName = "Swoft\\Bean\Parser\\" . $className . "Parser";
+        $annotationParserClassName = "{$namespace}\\Parser\\{$className}Parser";
         if (!class_exists($annotationParserClassName)) {
             return null;
         }

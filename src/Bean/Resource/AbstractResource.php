@@ -2,18 +2,10 @@
 
 namespace Swoft\Bean\Resource;
 
-use Swoft\I18n\I18n;
-
 /**
- * 抽象bean资源
- *
- * @uses      AbstractResource
- * @version   2017年08月21日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Abstract resource
  */
-abstract class AbstractResource implements IResource
+abstract class AbstractResource implements ResourceInterface
 {
     /**
      * properties.php配置

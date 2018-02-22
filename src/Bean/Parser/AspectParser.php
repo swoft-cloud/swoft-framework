@@ -4,7 +4,7 @@ namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Aspect;
 use Swoft\Bean\Annotation\Scope;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\AspectCollector;
 
 /**
  * the aspect of parser
@@ -24,6 +24,7 @@ class AspectParser extends AbstractParser
      * @param Aspect $objectAnnotation
      * @param string $propertyName
      * @param string $methodName
+     * @param null   $propertyValue
      *
      * @return mixed
      */
@@ -31,9 +32,7 @@ class AspectParser extends AbstractParser
     {
         $beanName = $className;
         $scope    = Scope::SINGLETON;
-
-        $order = $objectAnnotation->getOrder();
-        Collector::$aspects[$className]['order'] = $order;
+        AspectCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
 
         return [$beanName, $scope, ""];
     }

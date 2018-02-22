@@ -2,19 +2,19 @@
 
 namespace Swoft\Bean;
 
+use App\Controllers\RpcController;
 use Swoft\Aop\Aop;
 use Swoft\Aop\AopInterface;
 use Swoft\App;
-use Swoft\Core\ApplicationContext;
 use Swoft\Bean\Annotation\Scope;
 use Swoft\Bean\ObjectDefinition\ArgsInjection;
 use Swoft\Bean\ObjectDefinition\MethodInjection;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
-use Swoft\Bean\Resource\AnnotationResource;
 use Swoft\Bean\Resource\DefinitionResource;
+use Swoft\Bean\Resource\ServerAnnotationResource;
+use Swoft\Bean\Resource\WorkerAnnotationResource;
 use Swoft\Proxy\Handler\AopHandler;
 use Swoft\Proxy\Proxy;
-use Swoft\Web\Application;
 
 /**
  * 全局容器
@@ -60,11 +60,13 @@ class Container
      *
      * @param string $name 名称
      * @return mixed
+     * @throws \ReflectionException
+     * @throws \InvalidArgumentException
      */
     public function get(string $name)
     {
-        if (! is_string($name)) {
-            throw new \InvalidArgumentException("the name of bean 只能是字符串， name=" . json_encode($name));
+        if (! \is_string($name)) {
+            throw new \InvalidArgumentException(sprintf('$name must be string, %s given', \gettype($name)));
         }
 
         // 已经创建
@@ -73,18 +75,14 @@ class Container
         }
 
         // 未定义
-        if (! isset($this->definitions[$name])) {
-            throw new \InvalidArgumentException("the name of bean 不存在， name=" . $name);
+        if (!isset($this->definitions[$name])) {
+            throw new \InvalidArgumentException(sprintf('Bean %s not exist', $name));
         }
 
         /* @var ObjectDefinition $objectDefinition */
         $objectDefinition = $this->definitions[$name];
 
         return $this->set($name, $objectDefinition);
-    }
-
-    public function create(string $beanName, array $definition)
-    {
     }
 
     /**
@@ -105,31 +103,31 @@ class Container
      */
     public function addDefinitions(array $definitions)
     {
-        // properties.php配置数据
-        if (! isset($definitions['config']['properties'])) {
-            throw new \InvalidArgumentException("config bean properties没有配置");
-        }
-
-        $properties = $definitions['config']['properties'];
-        $this->properties = $properties;
-
         $resource = new DefinitionResource($definitions);
-        $this->definitions = $resource->getDefinitions();
+        $this->definitions = array_merge($resource->getDefinitions(), $this->definitions);
     }
 
     /**
-     * 解析注释bean
+     * Register the annotation of server
      */
-    public function autoloadAnnotations()
+    public function autoloadServerAnnotation()
     {
-        $properties = $this->properties;
+        $bootScan = $this->getScanNamespaceFromProperties('bootScan');
+        $resource = new ServerAnnotationResource($this->properties);
+        $resource->addScanNamespace($bootScan);
+        $definitions = $resource->getDefinitions();
 
-        if (! isset($properties['beanScan'])) {
-            throw new \InvalidArgumentException("缺少扫描命名空间范围，config/properties/app.php未配置beanScan");
-        }
-        $beanScan = $properties['beanScan'];
-        $resource = new AnnotationResource($properties);
-        $resource->addScanNamespaces($beanScan);
+        $this->definitions = array_merge($definitions, $this->definitions);
+    }
+
+    /**
+     * Register the annotation of worker
+     */
+    public function autoloadWorkerAnnotation()
+    {
+        $beanScan = $this->getScanNamespaceFromProperties('beanScan');
+        $resource = new WorkerAnnotationResource($this->properties);
+        $resource->addScanNamespace($beanScan);
         $definitions = $resource->getDefinitions();
 
         $this->definitions = array_merge($definitions, $this->definitions);
@@ -137,11 +135,13 @@ class Container
 
     /**
      * 初始化已定义的bean
+     *
+     * @throws \InvalidArgumentException
      */
     public function initBeans()
     {
         $autoInitBeans = $this->properties['autoInitBean'] ?? false;
-        if (! $autoInitBeans) {
+        if (!$autoInitBeans) {
             return;
         }
 
@@ -162,11 +162,21 @@ class Container
     }
 
     /**
+     * @param array $properties
+     */
+    public function setProperties(array $properties)
+    {
+        $this->properties = $properties;
+    }
+
+    /**
      * 创建bean
      *
-     * @param string $name 名称
+     * @param string           $name             名称
      * @param ObjectDefinition $objectDefinition bean定义
      * @return object
+     * @throws \ReflectionException
+     * @throws \InvalidArgumentException
      */
     private function set(string $name, ObjectDefinition $objectDefinition)
     {
@@ -182,7 +192,7 @@ class Container
         }
         // 构造函数
         $constructorParameters = [];
-        if ($constructorInject != null) {
+        if ($constructorInject !== null) {
             $constructorParameters = $this->injectConstructor($constructorInject);
         }
 
@@ -201,12 +211,12 @@ class Container
             $object->{$this->initMethod}();
         }
 
-        if (!($object instanceof AopInterface)) {
+        if (!$object instanceof AopInterface) {
             $object = $this->proxyBean($name, $className, $object);
         }
 
         // 单例处理
-        if ($scope == Scope::SINGLETON) {
+        if ($scope === Scope::SINGLETON) {
             $this->singletonEntries[$name] = $object;
         }
 
@@ -219,25 +229,25 @@ class Container
      * @param string $name
      * @param string $className
      * @param object $object
-     *
      * @return object
+     * @throws \ReflectionException
      */
     private function proxyBean(string $name, string $className, $object)
     {
         /* @var Aop $aop */
         $aop = App::getBean(Aop::class);
 
-        $rc  = new \ReflectionClass($className);
+        $rc = new \ReflectionClass($className);
         $rms = $rc->getMethods();
         foreach ($rms as $rm) {
-            $method      = $rm->getName();
-            $annotations = Collector::$methodAnnotations[$className][$method]??[];
+            $method = $rm->getName();
+            $annotations = Collector::$methodAnnotations[$className][$method] ?? [];
             $annotations = array_unique($annotations);
             $aop->match($name, $className, $method, $annotations);
         }
 
-        $handler     = new AopHandler($object);
-        $proxyObject = Proxy::newProxyInstance(get_class($object), $handler);
+        $handler = new AopHandler($object);
+        $proxyObject = Proxy::newProxyInstance(\get_class($object), $handler);
 
         return $proxyObject;
     }
@@ -247,15 +257,16 @@ class Container
      *
      * @param MethodInjection $constructorInject
      * @return array
+     * @throws \InvalidArgumentException
      */
-    private function injectConstructor(MethodInjection $constructorInject)
+    private function injectConstructor(MethodInjection $constructorInject): array
     {
         $constructorParameters = [];
 
         /* @var ArgsInjection $parameter */
         foreach ($constructorInject->getParameters() as $parameter) {
             $argValue = $parameter->getValue();
-            if (is_array($argValue)) {
+            if (\is_array($argValue)) {
                 $constructorParameters[] = $this->injectArrayArgs($argValue);
                 continue;
             }
@@ -277,7 +288,7 @@ class Container
      */
     private function newBeanInstance(\ReflectionClass $reflectionClass, array $constructorParameters)
     {
-        if ($reflectionClass->hasMethod("__construct")) {
+        if ($reflectionClass->hasMethod('__construct')) {
             return $reflectionClass->newInstanceArgs($constructorParameters);
         }
         return $reflectionClass->newInstance();
@@ -286,9 +297,10 @@ class Container
     /**
      * 注入属性
      *
-     * @param  mixed $object
+     * @param  mixed                $object
      * @param \ReflectionProperty[] $properties $properties
-     * @param  mixed $propertyInjects
+     * @param  mixed                $propertyInjects
+     * @throws \InvalidArgumentException
      */
     private function injectProperties($object, array $properties, $propertyInjects)
     {
@@ -298,12 +310,12 @@ class Container
             }
 
             $propertyName = $property->getName();
-            if (! isset($propertyInjects[$propertyName])) {
+            if (!isset($propertyInjects[$propertyName])) {
                 continue;
             }
 
             // 设置可用
-            if (! $property->isPublic()) {
+            if (!$property->isPublic()) {
                 $property->setAccessible(true);
             }
 
@@ -312,7 +324,7 @@ class Container
             $injectProperty = $propertyInject->getValue();
 
             // 属性是数组
-            if (is_array($injectProperty)) {
+            if (\is_array($injectProperty)) {
                 $injectProperty = $this->injectArrayArgs($injectProperty);
             }
 
@@ -332,13 +344,14 @@ class Container
      *
      * @param array $injectProperty
      * @return array
+     * @throws \InvalidArgumentException
      */
-    private function injectArrayArgs(array $injectProperty)
+    private function injectArrayArgs(array $injectProperty): array
     {
         $injectAry = [];
         foreach ($injectProperty as $key => $property) {
             // 递归循环注入
-            if (is_array($property)) {
+            if (\is_array($property)) {
                 $injectAry[$key] = $this->injectArrayArgs($property);
                 continue;
             }
@@ -359,5 +372,19 @@ class Container
         }
 
         return $injectAry;
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return array
+     */
+    private function getScanNamespaceFromProperties(string $name)
+    {
+        $properties = $this->properties;
+        if(!isset($properties[$name]) || !is_array($properties[$name])){
+            return [];
+        }
+        return $properties[$name];
     }
 }

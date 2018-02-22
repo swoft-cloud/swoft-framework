@@ -13,24 +13,17 @@ use Swoft\App;
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class Application
+class Application
 {
     /**
      * @var string 应用ID
      */
-    protected $id;
+    protected $id = APP_NAME;
 
     /**
      * @var string 应用名称
      */
-    protected $name;
-
-    /**
-     * 错误action，统一错误处理
-     *
-     * @var string
-     */
-    protected $errorAction;
+    protected $name = APP_NAME;
 
     /**
      * @var bool 是否使用第三方(consul/etcd/zk)注册服务
@@ -45,13 +38,4 @@ abstract class Application
         App::$app = $this;
     }
 
-    /**
-     * 获取errorAction
-     *
-     * @return string
-     */
-    public function getErrorAction(): string
-    {
-        return $this->errorAction;
-    }
 }

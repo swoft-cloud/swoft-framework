@@ -3,7 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\AfterReturning;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\AspectCollector;
 
 /**
  * the before advice of parser
@@ -23,16 +23,13 @@ class AfterReturningParser extends AbstractParser
      * @param AfterReturning $objectAnnotation
      * @param string         $propertyName
      * @param string         $methodName
+     * @param null           $propertyValue
      *
      * @return null
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
-        if (!isset(Collector::$aspects[$className])) {
-            return null;
-        }
-
-        Collector::$aspects[$className]['advice']['afterReturning'] = [$className, $methodName];
+        AspectCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);
 
         return null;
     }

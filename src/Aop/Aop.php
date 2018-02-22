@@ -4,17 +4,10 @@ namespace Swoft\Aop;
 
 use Swoft\App;
 use Swoft\Bean\Annotation\Bean;
-use Swoft\Bean\Collector;
+use Swoft\Bean\Collector\AspectCollector;
 
 /**
- * the class of aop
- *
  * @Bean()
- * @uses      Aop
- * @version   2017年12月24日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class Aop implements AopInterface
 {
@@ -29,45 +22,43 @@ class Aop implements AopInterface
     private $aspects = [];
 
     /**
-     * init
+     * @return void
      */
     public function init()
     {
-        // register aop
-        $aspects = Collector::$aspects;
-        $this->register($aspects);
+        // Register aspects by aspect annotation collector
+        $this->register(AspectCollector::getCollector());
     }
 
     /**
-     * execute origin method by aop
+     * Execute origin method by aop
      *
-     * @param object $target the object of origin
-     * @param string $method the method of object
-     * @param array  $params the params of method
-     *
+     * @param object $target Origin object
+     * @param string $method The execution method
+     * @param array  $params The parameters of execution method
      * @return mixed
+     * @throws \ReflectionException
      */
     public function execute($target, string $method, array $params)
     {
-        $class = get_class($target);
-        if (!isset($this->map[$class][$method]) || empty($this->map[$class][$method])) {
+        $class = \get_class($target);
+        // If doesn't have any advices, then execute the origin method
+        if (! isset($this->map[$class][$method]) || empty($this->map[$class][$method])) {
             return $target->$method(...$params);
         }
 
+        // Apply advices's functionality
         $advices = $this->map[$class][$method];
-
         return $this->doAdvice($target, $method, $params, $advices);
     }
 
     /**
-     * do advice
-     *
-     * @param object $target  the object of origin
-     * @param string $method  the method of object
-     * @param array  $params  the params of method
-     * @param array  $advices the advices of aop
-     *
+     * @param object $target  Origin object
+     * @param string $method  The execution method
+     * @param array  $params  The parameters of execution method
+     * @param array  $advices The advices of this object method
      * @return mixed
+     * @throws \ReflectionException
      */
     public function doAdvice($target, string $method, array $params, array $advices)
     {
@@ -76,29 +67,30 @@ class Aop implements AopInterface
 
         try {
 
-            // around
-            if (isset($advice['around']) && !empty($advice['around'])) {
+            // Around
+            if (isset($advice['around']) && ! empty($advice['around'])) {
                 $result = $this->doPoint($advice['around'], $target, $method, $params, $advice, $advices);
             } else {
-                // before
-                if ($advice['before'] && !empty($advice['before'])) {
-                    $result = $this->doPoint($advice['before'], $target, $method, $params, $advice, $advices);
+                // Before
+                if ($advice['before'] && ! empty($advice['before'])) {
+                    // The result of before point will not effect origin object method
+                    $this->doPoint($advice['before'], $target, $method, $params, $advice, $advices);
                 }
                 $result = $target->$method(...$params);
             }
 
-            // after
-            if (isset($advice['after']) && !empty($advice['after'])) {
+            // After
+            if (isset($advice['after']) && ! empty($advice['after'])) {
                 $this->doPoint($advice['after'], $target, $method, $params, $advice, $advices, $result);
             }
         } catch (\Exception $e) {
-            if (isset($advice['afterThrowing']) && !empty($advice['afterThrowing'])) {
+            if (isset($advice['afterThrowing']) && ! empty($advice['afterThrowing'])) {
                 return $this->doPoint($advice['afterThrowing'], $target, $method, $params, $advice, $advices);
             }
         }
 
         // afterReturning
-        if (isset($advice['afterReturning']) && !empty($advice['afterReturning'])) {
+        if (isset($advice['afterReturning']) && ! empty($advice['afterReturning'])) {
             return $this->doPoint($advice['afterReturning'], $target, $method, $params, $advice, $advices, $result);
         }
 
@@ -106,44 +98,51 @@ class Aop implements AopInterface
     }
 
     /**
-     * do pointcut
+     * Do pointcut
      *
      * @param array  $pointAdvice the pointcut advice
-     * @param object $target      the object of origin
-     * @param string $method      the method of object
-     * @param array  $args        the params of method
+     * @param object $target      Origin object
+     * @param string $method      The execution method
+     * @param array  $args        The parameters of execution method
      * @param array  $advice      the advice of pointcut
-     * @param array  $advices     the advices of aop
+     * @param array  $advices     The advices of this object method
      * @param mixed  $return
-     *
      * @return mixed
+     * @throws \ReflectionException
      */
-    private function doPoint(array $pointAdvice, $target, string $method, array $args, array $advice, array $advices, $return = null)
-    {
+    private function doPoint(
+        array $pointAdvice,
+        $target,
+        string $method,
+        array $args,
+        array $advice,
+        array $advices,
+        $return = null
+    ) {
         list($aspectClass, $aspectMethod) = $pointAdvice;
 
-        $rc   = new \ReflectionClass($aspectClass);
-        $rm   = $rc->getMethod($aspectMethod);
-        $rmps = $rm->getParameters();
+        $reflectionClass = new \ReflectionClass($aspectClass);
+        $reflectionMethod = $reflectionClass->getMethod($aspectMethod);
+        $reflectionParameters = $reflectionMethod->getParameters();
 
-        // bind the param of method
+        // Bind the param of method
         $aspectArgs = [];
-        foreach ($rmps as $rmp) {
-            $paramType = $rmp->getType();
-            if ($paramType === null) {
+        foreach ($reflectionParameters as $reflectionParameter) {
+            $parameterType = $reflectionParameter->getType();
+            if ($parameterType === null) {
                 $aspectArgs[] = null;
                 continue;
             }
 
             // JoinPoint object
-            $type = $paramType->__toString();
+            $type = $parameterType->__toString();
             if ($type === JoinPoint::class) {
                 $aspectArgs[] = new JoinPoint($target, $method, $args, $return);
                 continue;
             }
 
             // ProceedingJoinPoint object
-            if ($type == ProceedingJoinPoint::class) {
+            if ($type === ProceedingJoinPoint::class) {
                 $aspectArgs[] = new ProceedingJoinPoint($target, $method, $args, $advice, $advices, $return);
                 continue;
             }
@@ -156,46 +155,42 @@ class Aop implements AopInterface
     }
 
     /**
-     * match aop
+     * Match aop
      *
-     * @param string $beanName    the name of bean
-     * @param string $class       class name
-     * @param string $method      method
-     * @param array  $annotations the annotations of method
+     * @param string $beanName    Bean name
+     * @param string $class       Class name
+     * @param string $method      Method name
+     * @param array  $annotations The annotations of method
      */
     public function match(string $beanName, string $class, string $method, array $annotations)
     {
         foreach ($this->aspects as $aspectClass => $aspect) {
-            if (!isset($aspect['point']) || !isset($aspect['advice'])) {
+            if (! isset($aspect['point']) || ! isset($aspect['advice'])) {
                 continue;
             }
 
-            // incloude
-            $pointBeanInclude       = $aspect['point']['bean']['include']?? [];
-            $pointAnnotationInclude = $aspect['point']['annotation']['include']?? [];
-            $pointExecutionInclude  = $aspect['point']['execution']['include']?? [];
+            // Include
+            $pointBeanInclude = $aspect['point']['bean']['include'] ?? [];
+            $pointAnnotationInclude = $aspect['point']['annotation']['include'] ?? [];
+            $pointExecutionInclude = $aspect['point']['execution']['include'] ?? [];
 
-            // exclude
-            $pointBeanExclude       = $aspect['point']['bean']['exclude']?? [];
-            $pointAnnotationExclude = $aspect['point']['annotation']['exclude']?? [];
-            $pointExecutionExclude  = $aspect['point']['execution']['exclude']?? [];
+            // Exclude
+            $pointBeanExclude = $aspect['point']['bean']['exclude'] ?? [];
+            $pointAnnotationExclude = $aspect['point']['annotation']['exclude'] ?? [];
+            $pointExecutionExclude = $aspect['point']['execution']['exclude'] ?? [];
 
-            $includeMath = $this->matchBeanAndAnnotation([$beanName], $pointBeanInclude)
-                || $this->matchBeanAndAnnotation($annotations, $pointAnnotationInclude)
-                || $this->matchExecution($class, $method, $pointExecutionInclude);
+            $includeMath = $this->matchBeanAndAnnotation([$beanName], $pointBeanInclude) || $this->matchBeanAndAnnotation($annotations, $pointAnnotationInclude) || $this->matchExecution($class, $method, $pointExecutionInclude);
 
-            $excludeMath = $this->matchBeanAndAnnotation([$beanName], $pointBeanExclude)
-                || $this->matchBeanAndAnnotation($annotations, $pointAnnotationExclude)
-                || $this->matchExecution($class, $method, $pointExecutionExclude);
+            $excludeMath = $this->matchBeanAndAnnotation([$beanName], $pointBeanExclude) || $this->matchBeanAndAnnotation($annotations, $pointAnnotationExclude) || $this->matchExecution($class, $method, $pointExecutionExclude);
 
-            if ($includeMath && !$excludeMath) {
+            if ($includeMath && ! $excludeMath) {
                 $this->map[$class][$method][] = $aspect['advice'];
             }
         }
     }
 
     /**
-     * register aop
+     * Register aspects
      *
      * @param array $aspects
      */
@@ -206,11 +201,10 @@ class Aop implements AopInterface
     }
 
     /**
-     * match bean and annotation
+     * Match bean and annotation
      *
      * @param array $pointAry
      * @param array $classAry
-     *
      * @return bool
      */
     private function matchBeanAndAnnotation(array $pointAry, array $classAry): bool
@@ -224,29 +218,28 @@ class Aop implements AopInterface
     }
 
     /**
-     * match execution
+     * Match execution
      *
      * @param string $class
      * @param string $method
      * @param array  $executions
-     *
      * @return bool
      */
     private function matchExecution(string $class, string $method, array $executions): bool
     {
         foreach ($executions as $execution) {
-            $executionAry = explode("::", $execution);
-            if (count($executionAry) < 2) {
+            $executionAry = explode('::', $execution);
+            if (\count($executionAry) < 2) {
                 continue;
             }
 
-            // class
+            // Class
             list($executionClass, $executionMethod) = $executionAry;
-            if ($executionClass != $class) {
+            if ($executionClass !== $class) {
                 continue;
             }
 
-            // method
+            // Method
             $reg = '/^' . $executionMethod . '$/';
             if (preg_match($reg, $method)) {
                 return true;

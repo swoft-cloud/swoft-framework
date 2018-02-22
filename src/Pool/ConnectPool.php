@@ -13,7 +13,7 @@ use Swoft\App;
  * @copyright Copyright 2010-2016 Swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-abstract class ConnectPool implements IPool
+abstract class ConnectPool implements PoolInterface
 {
     /**
      * the nubmer of current connections
@@ -87,7 +87,7 @@ abstract class ConnectPool implements IPool
     {
         $serviceList  = $this->getServiceList();
         $balancerType = $this->poolConfig->getBalancer();
-        $balancer     = App::getBalancerSelector()->select($balancerType);
+        $balancer     = balancer()->select($balancerType);
 
         return $balancer->select($serviceList);
     }
@@ -105,12 +105,11 @@ abstract class ConnectPool implements IPool
      */
     protected function getServiceList()
     {
-        $providerSelector = App::getProviderSelector();
-        $name             = $this->poolConfig->getName();
+        $name = $this->poolConfig->getName();
         if ($this->poolConfig->isUseProvider()) {
             $type = $this->poolConfig->getProvider();
 
-            return $providerSelector->select($type)->getServiceList($name);
+            return provider()->select($type)->getServiceList($name);
         }
 
         $uri = $this->poolConfig->getUri();
@@ -128,6 +127,14 @@ abstract class ConnectPool implements IPool
     public function getTimeout(): int
     {
         return $this->poolConfig->getTimeout();
+    }
+
+    /**
+     * @return \Swoft\Pool\PoolConfigInterface
+     */
+    public function getPoolConfig(): PoolConfigInterface
+    {
+        return $this->poolConfig;
     }
 
     abstract public function createConnect();

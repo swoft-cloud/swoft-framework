@@ -2,18 +2,16 @@
 
 namespace Swoft;
 
+use Swoft\Bean\Collector\PoolCollector;
+use Swoft\Bootstrap\Server\AbstractServer;
+use Swoft\Core\Application;
 use Swoft\Core\ApplicationContext;
 use Swoft\Core\Config;
-use Swoft\Core\RequestContext;
 use Swoft\Core\Timer;
-use Swoft\Bean\Collector;
-use Swoft\Circuit\CircuitBreaker;
 use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
 use Swoft\Pool\ConnectPool;
-use Swoft\Pool\RedisPool;
-use Swoft\Server\ServerInterface;
-use Swoft\Web\Application;
+use Swoole\Coroutine as SwCoroutine;
 
 /**
  * 应用简写类
@@ -36,7 +34,7 @@ class App
 
     /**
      * 服务器对象
-     * @var ServerInterface
+     * @var AbstractServer
      */
     public static $server;
 
@@ -90,7 +88,7 @@ class App
      *
      * @return string
      */
-    public static function version()
+    public static function version(): string
     {
         return '0.2.2';
     }
@@ -100,19 +98,9 @@ class App
      *
      * @return RedisPool
      */
-    public static function getRedisPool()
+    public static function getRedisPool(): RedisPool
     {
         return self::getBean('redisPool');
-    }
-
-    /**
-     * request router
-     *
-     * @return \Swoft\Router\Http\HandlerMapping
-     */
-    public static function getHttpRouter()
-    {
-        return self::getBean('httpRouter');
     }
 
     /**
@@ -130,25 +118,9 @@ class App
     /**
      * @return Application
      */
-    public static function getApplication()
+    public static function getApplication(): Application
     {
         return ApplicationContext::getBean('application');
-    }
-
-    /**
-     * @return \Swoft\Web\DispatcherServer
-     */
-    public static function getDispatcherServer()
-    {
-        return ApplicationContext::getBean('dispatcherServer');
-    }
-
-    /**
-     * @return \Swoft\Service\DispatcherService
-     */
-    public static function getDispatcherService()
-    {
-        return ApplicationContext::getBean('dispatcherService');
     }
 
     /**
@@ -156,7 +128,7 @@ class App
      *
      * @return Config
      */
-    public static function getProperties()
+    public static function getProperties(): Config
     {
         return ApplicationContext::getBean('config');
     }
@@ -168,7 +140,7 @@ class App
      */
     public static function setProperties($properties = null)
     {
-        if ($properties == null) {
+        if ($properties === null) {
             $properties = self::getProperties();
         }
 
@@ -196,95 +168,28 @@ class App
      *
      * @return Logger
      */
-    public static function getLogger()
+    public static function getLogger(): Logger
     {
         return ApplicationContext::getBean('logger');
-    }
-
-    /**
-     * the packer of rpc service
-     *
-     * @return \Swoft\Service\ServicePacker;
-     */
-    public static function getPacker()
-    {
-        return self::getBean('servicePacker');
-    }
-
-    /**
-     * the selector of balancer
-     *
-     * @return \Swoft\Pool\BalancerSelector
-     */
-    public static function getBalancerSelector()
-    {
-        return self::getBean('balancerSelector');
-    }
-
-    /**
-     * the selector of provider
-     *
-     * @return \Swoft\Pool\ProviderSelector
-     */
-    public static function getProviderSelector()
-    {
-        return self::getBean('providerSelector');
     }
 
     /**
      * get pool by name
      *
      * @param string $name
-     *
      * @return ConnectPool
+     * @throws \Swoft\Exception\InvalidArgumentException
      */
-    public static function getPool(string $name)
+    public static function getPool(string $name): ConnectPool
     {
-        if (!isset(Collector::$pools[$name])) {
+        $collector = PoolCollector::getCollector();
+        if (!isset($collector[$name])) {
             throw new InvalidArgumentException("the pool of $name is not exist!");
         }
 
-        $poolBeanName = Collector::$pools[$name];
+        $poolBeanName = $collector[$name];
 
         return self::getBean($poolBeanName);
-    }
-
-    /**
-     * get breaker by name
-     *
-     * @param string $name
-     *
-     * @return CircuitBreaker
-     */
-    public static function getBreaker(string $name)
-    {
-        if (!isset(Collector::$breakers[$name])) {
-            throw new InvalidArgumentException("the breaker of $name is not exist!");
-        }
-
-        $breakerBeanName = Collector::$breakers[$name];
-
-        return self::getBean($breakerBeanName);
-    }
-
-    /**
-     * request对象
-     *
-     * @return Web\Request
-     */
-    public static function getRequest()
-    {
-        return RequestContext::getRequest();
-    }
-
-    /**
-     * response对象
-     *
-     * @return Web\Response
-     */
-    public static function getResponse()
-    {
-        return RequestContext::getResponse();
     }
 
     /**
@@ -292,17 +197,19 @@ class App
      *
      * @return Timer
      */
-    public static function getTimer()
+    public static function getTimer(): Timer
     {
         return ApplicationContext::getBean('timer');
     }
 
     /**
      * 触发事件
-     * @param string|\Swoft\Event\EventInterface $event 发布的事件名称|对象
-     * @param mixed $target
-     * @param array $params 附加数据信息
+     *
+     * @param string|\Swoft\Event\EventInterface $event  发布的事件名称|对象
+     * @param mixed                              $target
+     * @param array                              $params 附加数据信息
      * @return mixed
+     * @throws \InvalidArgumentException
      */
     public static function trigger($event, $target = null, ...$params)
     {
@@ -310,19 +217,6 @@ class App
         $em = ApplicationContext::getBean('eventManager');
 
         return $em->trigger($event, $target, $params);
-    }
-
-    /**
-     * 语言翻译
-     *
-     * @param string $category 翻译文件类别，比如xxx.xx/xx
-     * @param array  $params   参数
-     * @param string $language 当前语言环境
-     * @return string
-     */
-    public static function t(string $category, array $params, string $language = 'en')
-    {
-        return ApplicationContext::getBean('I18n')->translate($category, $params, $language);
     }
 
     /**
@@ -335,6 +229,7 @@ class App
      *                       ......
      *                       ]
      *                       </pre>
+     * @throws \InvalidArgumentException
      */
     public static function setAliases(array $aliases)
     {
@@ -348,6 +243,7 @@ class App
      *
      * @param string $alias 别名
      * @param string $path  路径
+     * @throws \InvalidArgumentException
      */
     public static function setAlias(string $alias, string $path = null)
     {
@@ -379,11 +275,11 @@ class App
 
         list($root) = explode('/', $path);
         if (!isset(self::$aliases[$root])) {
-            throw new \InvalidArgumentException("设置的根别名不存在，alias=" . $root);
+            throw new \InvalidArgumentException('设置的根别名不存在，alias=' . $root);
         }
 
         $rootPath  = self::$aliases[$root];
-        $aliasPath = str_replace($root, "", $path);
+        $aliasPath = str_replace($root, '', $path);
 
         self::$aliases[$alias] = $rootPath . $aliasPath;
     }
@@ -392,10 +288,10 @@ class App
      * 获取别名路径
      *
      * @param string $alias
-     *
      * @return string
+     * @throws \InvalidArgumentException
      */
-    public static function getAlias($alias)
+    public static function getAlias($alias): string
     {
         if (isset(self::$aliases[$alias])) {
             return self::$aliases[$alias];
@@ -409,11 +305,11 @@ class App
 
         list($root) = explode('/', $alias);
         if (!isset(self::$aliases[$root])) {
-            throw new \InvalidArgumentException("设置的根别名不存在，alias=" . $root);
+            throw new \InvalidArgumentException('设置的根别名不存在，alias=' . $root);
         }
 
         $rootPath  = self::$aliases[$root];
-        $aliasPath = str_replace($root, "", $alias);
+        $aliasPath = str_replace($root, '', $alias);
         $path      = $rootPath . $aliasPath;
 
         return $path;
@@ -508,14 +404,28 @@ class App
     /**
      * @return bool 当前是否是worker状态
      */
-    public static function isWorkerStatus()
+    public static function isWorkerStatus(): bool
     {
-        if (self::$server == null) {
+        if (self::$server === null) {
             return false;
         }
         $server = self::$server->getServer();
 
-        if ($server != null && property_exists($server, 'taskworker') && $server->taskworker == false) {
+        if ($server !== null && property_exists($server, 'taskworker') && $server->taskworker === false) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Whether it is coroutine context
+     *
+     * @return bool
+     */
+    public static function isCoContext(): bool
+    {
+        if (SwCoroutine::getuid() > 0) {
             return true;
         }
 

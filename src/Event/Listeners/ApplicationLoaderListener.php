@@ -2,13 +2,11 @@
 
 namespace Swoft\Event\Listeners;
 
-use Swoft\Aop\Aop;
 use Swoft\App;
 use Swoft\Bean\Annotation\Listener;
-use Swoft\Bean\Collector;
-use Swoft\Event\EventInterface;
 use Swoft\Event\AppEvent;
 use Swoft\Event\EventHandlerInterface;
+use Swoft\Event\EventInterface;
 
 /**
  * 应用加载事件
@@ -23,21 +21,11 @@ use Swoft\Event\EventHandlerInterface;
 class ApplicationLoaderListener implements EventHandlerInterface
 {
     /**
-     * @param EventInterface $event      事件对象
+     * @param EventInterface $event 事件对象
+     * @return void
      */
     public function handle(EventInterface $event)
     {
-        /* @var \Swoft\Router\Http\HandlerMapping $httpRouter */
-        $httpRouter = App::getBean('httpRouter');
-        /* @var \Swoft\Router\Service\HandlerMapping $serviceRouter */
-        $serviceRouter = App::getBean('serviceRouter');
-
-        $requestMapping = Collector::$requestMapping;
-        $serviceMapping = Collector::$serviceMapping;
-
-        $httpRouter->registerRoutes($requestMapping);
-        $serviceRouter->register($serviceMapping);
-
         App::setProperties();
     }
 }

@@ -3,9 +3,7 @@
 namespace Swoft\Bean\Parser;
 
 use Swoft\Bean\Annotation\Value;
-use Swoft\Console\DocumentParser;
-use Swoft\Testing\Pool\Config\EnvAndPptFromPptPoolConfig;
-use Swoft\Testing\Pool\Config\PropertyPoolConfig;
+use Swoft\Helper\DocumentHelper;
 
 /**
  * value注解解析器
@@ -22,10 +20,10 @@ class ValueParser extends AbstractParser
      * Inject注解解析
      *
      * @param string $className
-     * @param Value  $objectAnnotation
+     * @param Value $objectAnnotation
      * @param string $propertyName
      * @param string $methodName
-     *
+     * @param null $propertyValue
      * @return array
      */
     public function parser(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
@@ -93,7 +91,7 @@ class ValueParser extends AbstractParser
         $rc   = new \ReflectionClass($className);
         $rp   = $rc->getProperty($propertyName);
         $doc  = $rp->getDocComment();
-        $tags = DocumentParser::tagList($doc);
+        $tags = DocumentHelper::tagList($doc);
         if (isset($tags['var']) && $tags['var'] == 'array') {
             return true;
         }

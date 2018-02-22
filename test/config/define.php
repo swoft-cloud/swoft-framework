@@ -21,6 +21,6 @@ $aliases = [
     '@resources'  => '@root/resources',
     '@beans'      => '@configs/beans',
     '@properties' => '@configs/properties',
-    '@commands'   => '@app/Commands'
+    '@console'    => '@beans/console.php',
 ];
 App::setAliases($aliases);
