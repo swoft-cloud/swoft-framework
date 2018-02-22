@@ -2,13 +2,11 @@
 
 namespace Swoft\Event\Listeners;
 
-use Swoft\Aop\Aop;
 use Swoft\App;
 use Swoft\Bean\Annotation\Listener;
-use Swoft\Bean\Collector;
-use Swoft\Event\EventInterface;
 use Swoft\Event\AppEvent;
 use Swoft\Event\EventHandlerInterface;
+use Swoft\Event\EventInterface;
 
 /**
  * 应用加载事件

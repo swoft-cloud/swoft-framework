@@ -26,7 +26,6 @@ class Bootstrap implements Bootable
     {
         $bootstraps = BootstrapCollector::getCollector();
         array_multisort(array_column($bootstraps, 'order'), SORT_ASC, $bootstraps);
-
         foreach ($bootstraps as $bootstrapBeanName => $name){
             /* @var Bootable $bootstrap*/
             $bootstrap = App::getBean($bootstrapBeanName);

@@ -17,14 +17,6 @@ use Swoft\Event\AppEvent;
  */
 class InitApplicationContext
 {
-
-    /**
-     * Route file path
-     *
-     * @var string
-     */
-    public $routePath = BASE_PATH . '/app/routes.php';
-
     /**
      * 初始化
      */
@@ -34,8 +26,6 @@ class InitApplicationContext
         $this->registerListeners();
         // 初始化时间
         $this->applicationLoader();
-        // 路由加载
-        $this->autoloadRoutes();
     }
 
     /**
@@ -55,13 +45,5 @@ class InitApplicationContext
     {
         // 应用初始化加载事件
         App::trigger(AppEvent::APPLICATION_LOADER, null);
-    }
-
-    /**
-     * 重新加载路由
-     */
-    private function autoloadRoutes()
-    {
-        require_once $this->routePath;
     }
 }

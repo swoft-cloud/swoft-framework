@@ -36,7 +36,7 @@ class AspectCollector implements CollectorInterface
      * @param string $methodName
      * @param null   $propertyValue
      */
-    public static function collect(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
+    public static function collect(string $className, $objectAnnotation = null, string $propertyName = '', string $methodName = '', $propertyValue = null)
     {
         if ($objectAnnotation instanceof AfterReturning) {
             self::collectAfterReturning($className, $methodName);
@@ -210,7 +210,7 @@ class AspectCollector implements CollectorInterface
     /**
      * @return array
      */
-    public static function getCollector()
+    public static function getCollector(): array
     {
         return self::$aspects;
     }

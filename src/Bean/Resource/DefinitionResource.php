@@ -33,7 +33,7 @@ class DefinitionResource extends AbstractResource
     public function __construct($definitions)
     {
         $this->definitions = $definitions;
-        $this->properties = $definitions['config']['properties'];
+        $this->properties = $definitions['config']['properties']??[];
     }
 
     /**

@@ -2,6 +2,8 @@
 
 namespace Swoft\Core;
 
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Swoft\App;
 use Swoft\Helper\ArrayHelper;
 use Swoft\Http\Message\Server\Request;
@@ -71,34 +73,25 @@ class RequestContext
     }
 
     /**
-     * 初始化request
+     * Set the object of request
      *
-     * @param \Swoole\Http\Request $request
+     * @param RequestInterface $request
      */
-    public static function setRequest(\Swoole\Http\Request $request)
+    public static function setRequest(RequestInterface $request)
     {
         $coroutineId = self::getCoroutineId();
-        if ($request instanceof TestingSwooleRequest) {
-            self::$coroutineLocal[$coroutineId][self::COROUTINE_REQUEST] = \Swoft\Testing\Web\Request::loadFromSwooleRequest($request);
-        } else {
-            self::$coroutineLocal[$coroutineId][self::COROUTINE_REQUEST] = Request::loadFromSwooleRequest($request);
-        }
+        self::$coroutineLocal[$coroutineId][self::COROUTINE_REQUEST] = $request;
     }
 
     /**
-     * 初始化response
+     * Set the object of response
      *
-     * @param \Swoole\Http\Response $response
+     * @param ResponseInterface $response
      */
-    public static function setResponse(\Swoole\Http\Response $response)
+    public static function setResponse(ResponseInterface $response)
     {
         $coroutineId = self::getCoroutineId();
-        if ($response instanceof TestingSwooleResponse) {
-            // in test process
-            self::$coroutineLocal[$coroutineId][self::COROUTINE_RESPONSE] = new \Swoft\Testing\Web\Response($response);
-        } else {
-            self::$coroutineLocal[$coroutineId][self::COROUTINE_RESPONSE] = new Response($response);
-        }
+        self::$coroutineLocal[$coroutineId][self::COROUTINE_RESPONSE] = $response;
     }
 
     /**

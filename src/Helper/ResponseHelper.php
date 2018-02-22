@@ -22,7 +22,7 @@ class ResponseHelper
      *
      * @return array
      */
-    public static function formatData($data = "", $message = "", $status = 200)
+    public static function formatData($data = '', $message = '', $status = 200)
     {
         return [
             'data'   => $data,

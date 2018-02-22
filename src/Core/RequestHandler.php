@@ -2,10 +2,10 @@
 
 namespace Swoft\Core;
 
-use Interop\Http\Server\RequestHandlerInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Swoft\Middleware\MiddlewareInterface;
+use Swoft\Http\Message\Middleware\MiddlewareInterface;
 use Swoft\App;
 
 /**

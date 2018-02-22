@@ -110,6 +110,7 @@ class ErrorHandler
         $request       = RequestContext::getRequest();
 
         // binding params
+        $bindParams = [];
         foreach ($reflectParams as $key => $reflectParam) {
             $reflectType = $reflectParam->getType();
 

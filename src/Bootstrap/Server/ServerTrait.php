@@ -7,17 +7,14 @@ use Swoft\Bean\Collector\ServerListenerCollector;
 use Swoft\Bootstrap\SwooleEvent;
 use Swoft\Core\ApplicationContext;
 use Swoft\Core\InitApplicationContext;
+use Swoft\Event\AppEvent;
 use Swoft\Helper\ProcessHelper;
+use Swoft\Pipe\PipeMessage;
+use Swoft\Pipe\PipeMessageInterface;
 use Swoole\Server;
 
 /**
- * the trait of Server
- *
- * @uses      ServerTrait
- * @version   2018年01月07日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Server trait
  */
 trait ServerTrait
 {
@@ -64,6 +61,22 @@ trait ServerTrait
         // reload重新加载文件
         $this->beforeOnWorkerStart($server, $workerId);
     }
+
+    /**
+     * @param \Swoole\Server $server
+     * @param int            $srcWorkerId
+     * @param string         $message
+     * @return void
+     */
+    public function onPipeMessage(Server $server, int $srcWorkerId, string $message)
+    {
+        /* @var PipeMessageInterface $pipeMessage */
+        $pipeMessage = App::getBean(PipeMessage::class);
+        list($type, $data) = $pipeMessage->unpack($message);
+
+        App::trigger(AppEvent::PIPE_MESSAGE, null, $type, $data, $srcWorkerId);
+    }
+
 
     /**
      * @param string $scriptFile

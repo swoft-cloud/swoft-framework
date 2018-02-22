@@ -17,7 +17,7 @@ use Swoft\Bean\Annotation\Value;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class BeanWrapper extends AbstractWrapperInterface
+class BeanWrapper extends AbstractWrapper
 {
     /**
      * 类注解
@@ -57,7 +57,7 @@ class BeanWrapper extends AbstractWrapperInterface
      *
      * @return bool
      */
-    public function isParseClassAnnotations(array $annotations)
+    public function isParseClassAnnotations(array $annotations): bool
     {
         return isset($annotations[Bean::class]);
     }
@@ -69,7 +69,7 @@ class BeanWrapper extends AbstractWrapperInterface
      *
      * @return bool
      */
-    public function isParsePropertyAnnotations(array $annotations)
+    public function isParsePropertyAnnotations(array $annotations): bool
     {
         return isset($annotations[Inject::class]) || isset($annotations[Value::class]);
     }
@@ -81,7 +81,7 @@ class BeanWrapper extends AbstractWrapperInterface
      *
      * @return bool
      */
-    public function isParseMethodAnnotations(array $annotations)
+    public function isParseMethodAnnotations(array $annotations): bool
     {
         return isset($annotations[Cacheable::class]) || isset($annotations[CachePut::class]);
     }

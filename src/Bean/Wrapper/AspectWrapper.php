@@ -22,53 +22,49 @@ use Swoft\Bean\Annotation\PointExecution;
  * @copyright Copyright 2010-2016 swoft software
  * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class AspectWrapper extends AbstractWrapperInterface
+class AspectWrapper extends AbstractWrapper
 {
     /**
      * 类注解
      *
      * @var array
      */
-    protected $classAnnotations
-        = [
-            Aspect::class,
-            PointBean::class,
-            PointAnnotation::class,
-            PointExecution::class,
-        ];
+    protected $classAnnotations = [
+        Aspect::class,
+        PointBean::class,
+        PointAnnotation::class,
+        PointExecution::class,
+    ];
 
     /**
      * 属性注解
      *
      * @var array
      */
-    protected $propertyAnnotations
-        = [
-            Inject::class,
-        ];
+    protected $propertyAnnotations = [
+        Inject::class,
+    ];
 
     /**
      * 方法注解
      *
      * @var array
      */
-    protected $methodAnnotations
-        = [
-            Before::class,
-            After::class,
-            AfterReturning::class,
-            AfterThrowing::class,
-            Around::class,
-        ];
+    protected $methodAnnotations = [
+        Before::class,
+        After::class,
+        AfterReturning::class,
+        AfterThrowing::class,
+        Around::class,
+    ];
 
     /**
      * 是否解析类注解
      *
      * @param array $annotations
-     *
      * @return bool
      */
-    public function isParseClassAnnotations(array $annotations)
+    public function isParseClassAnnotations(array $annotations): bool
     {
         return isset($annotations[Aspect::class]);
     }
@@ -77,10 +73,9 @@ class AspectWrapper extends AbstractWrapperInterface
      * 是否解析属性注解
      *
      * @param array $annotations
-     *
      * @return bool
      */
-    public function isParsePropertyAnnotations(array $annotations)
+    public function isParsePropertyAnnotations(array $annotations): bool
     {
         return isset($annotations[Inject::class]);
     }
@@ -89,10 +84,9 @@ class AspectWrapper extends AbstractWrapperInterface
      * 是否解析方法注解
      *
      * @param array $annotations
-     *
      * @return bool
      */
-    public function isParseMethodAnnotations(array $annotations)
+    public function isParseMethodAnnotations(array $annotations): bool
     {
         $after = isset($annotations[After::class]) || isset($annotations[AfterThrowing::class]) || isset($annotations[AfterReturning::class]);
 

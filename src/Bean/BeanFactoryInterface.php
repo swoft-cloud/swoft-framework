@@ -18,7 +18,7 @@ interface BeanFactoryInterface
 
     /**
      * @param string $name
-     * @return mixed
+     * @return bool
      */
-    public static function hasBean(string $name);
+    public static function hasBean(string $name): bool;
 }
