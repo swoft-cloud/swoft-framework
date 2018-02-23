@@ -29,11 +29,12 @@ class Coroutine
     private static $idMap = [];
 
     /**
-     * Get the current coroutine ID
+     * Get the current coroutine ID,
+     * Return null when running in non-coroutine context
      *
-     * @return int
+     * @return int|null
      */
-    public static function id(): int
+    public static function id()
     {
         $cid = SwCoroutine::getuid();
         if ($cid !== -1) {
@@ -44,9 +45,10 @@ class Coroutine
     }
 
     /**
-     * Get the top coroutine ID
+     * Get the top coroutine ID,
+     * Return null when running in non-coroutine context
      *
-     * @return int
+     * @return int|null
      */
     public static function tid()
     {
