@@ -26,10 +26,8 @@ class ServerAnnotationResource extends AnnotationResource
             if (! is_dir($componentCommandDir)) {
                 continue;
             }
-            $composerFile = $componentDir . DS . 'composer.json';
-            $namespaceMapping = $this->parseAutoloadFromComposerFile($composerFile);
-            $ns = $namespaceMapping['src/'] ?? $this->getDefaultNamespace($component);
 
+            $ns = ComponentHelper::getComponentNamespace($component, $componentDir);
             $this->componentNamespaces[] = $ns;
 
             // console component

@@ -2,7 +2,6 @@
 
 namespace Swoft\Bean\Resource;
 
-use App\Controllers\RpcController;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use Swoft\Bean\Wrapper\WrapperInterface;
@@ -310,56 +309,6 @@ abstract class AnnotationResource extends AbstractResource
     }
 
     /**
-     * @param string $componentNs
-     *
-     * @return string
-     */
-    protected function handlerFrameworkNamespace(string  $componentNs):string
-    {
-        if($componentNs == '\Swoft\Framework'){
-            return "";
-        }
-        return $componentNs;
-    }
-
-    /**
-     * @param string $filename
-     * @return array
-     */
-    protected function parseAutoloadFromComposerFile($filename): array
-    {
-        $json = file_get_contents($filename);
-        try {
-            $content = JsonHelper::decode($json, true);
-        } catch (\InvalidArgumentException $e) {
-            $content = [];
-        }
-        // only compatible with psr-4 now
-        //TODO compatible with the another autoload standard
-        if (isset($content['autoload']['psr-4'])) {
-            $mapping = $content['autoload']['psr-4'];
-            $mapping = array_flip($mapping);
-            foreach ($mapping as $key => $value) {
-                $valueLength = \strlen($value);
-                $mapping[$key] = $value[$valueLength - 1] === '\\' ? substr($value, 0, $valueLength - 1) : $value;
-            }
-        }
-        return \is_array($mapping) ? $mapping : [];
-    }
-
-    /**
-     * @param $component
-     * @return string
-     */
-    protected function getDefaultNamespace($component): string
-    {
-        $componentNs = ComponentHelper::getComponentNs($component);
-        $componentNs = $this->handlerFrameworkNamespace($componentNs);
-        $namespace = "Swoft{$componentNs}";
-        return $namespace;
-    }
-
-    /**
      * 类注解封装
      *
      * @param string $className
@@ -372,21 +321,32 @@ abstract class AnnotationResource extends AbstractResource
             $annotationClassName = get_class($classAnnotation);
             $classNameTmp        = str_replace('\\', '/', $annotationClassName);
             $classFileName       = basename($classNameTmp);
+            $beanNamespaceTmp    = dirname($classNameTmp, 2);
+            $beanNamespace       = str_replace('/', '\\', $beanNamespaceTmp);
 
-            // do wrappers
+            $annotationWrapperClassName = "{$beanNamespace}\\Wrapper\\{$classFileName}Wrapper";
+
+            if (!class_exists($annotationWrapperClassName)) {
+                continue;
+            }
+
+            /* @var WrapperInterface $wrapper */
+            $wrapper = new $annotationWrapperClassName($this);
+
+            // wrapper extend
             foreach ($this->componentNamespaces as $componentNamespace) {
-                $annotationParserClassName = "{$componentNamespace}\\Bean\\Wrapper\\{$classFileName}Wrapper";
-                if (!class_exists($annotationParserClassName)) {
+                $annotationWrapperExtendClassName = "{$componentNamespace}\\Bean\\Wrapper\\Extend\\{$classFileName}Extend";
+                if (!class_exists($annotationWrapperExtendClassName)) {
                     continue;
                 }
+                $extend = new $annotationWrapperExtendClassName();
+                $wrapper->addExtends($extend);
+            }
 
-                /* @var WrapperInterface $wrapper */
-                $wrapper             = new $annotationParserClassName($this);
-                $objectDefinitionAry = $wrapper->doWrapper($className, $annotation);
-                if ($objectDefinitionAry != null) {
-                    list($beanName, $objectDefinition) = $objectDefinitionAry;
-                    $this->definitions[$beanName] = $objectDefinition;
-                }
+            $objectDefinitionAry = $wrapper->doWrapper($className, $annotation);
+            if ($objectDefinitionAry != null) {
+                list($beanName, $objectDefinition) = $objectDefinitionAry;
+                $this->definitions[$beanName] = $objectDefinition;
             }
         }
     }

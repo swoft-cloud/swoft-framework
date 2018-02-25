@@ -2,6 +2,8 @@
 
 namespace Swoft\Bean\Resource;
 
+use Swoft\Helper\ComponentHelper;
+
 /**
  *  The annotation resource of worker
  */
@@ -24,10 +26,8 @@ class WorkerAnnotationResource extends AnnotationResource
             if (! is_dir($componentCommandDir)) {
                 continue;
             }
-            $composerFile = $componentDir . DS . 'composer.json';
-            $namespaceMapping = $this->parseAutoloadFromComposerFile($composerFile);
-            $ns = $namespaceMapping['src/'] ?? $this->getDefaultNamespace($component);
 
+            $ns = ComponentHelper::getComponentNamespace($component, $componentDir);
             $this->componentNamespaces[] = $ns;
 
             // ignore the comoponent of console
