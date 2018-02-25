@@ -45,5 +45,5 @@ interface WrapperInterface
     /**
      * @param WrapperExtendInterface $extend
      */
-    public function addExtends(WrapperExtendInterface $extend):void;
+    public function addExtends(WrapperExtendInterface $extend);
 }

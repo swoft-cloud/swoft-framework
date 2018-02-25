@@ -315,7 +315,7 @@ abstract class AbstractWrapper implements WrapperInterface
     /**
      * @param WrapperExtendInterface $extend
      */
-    public function addExtends(WrapperExtendInterface $extend): void
+    public function addExtends(WrapperExtendInterface $extend)
     {
         $extendClass = get_class($extend);
         $this->extends[$extendClass] = $extend;
