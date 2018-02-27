@@ -20,11 +20,6 @@ abstract class AbstractCoResult implements ResultInterface
     protected $connectPool;
 
     /**
-     * @var bool
-     */
-    protected $release = true;
-
-    /**
      * @var string
      */
     protected $profileKey;

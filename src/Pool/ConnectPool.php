@@ -53,7 +53,6 @@ abstract class ConnectPool implements PoolInterface
         }
         if (!$this->queue->isEmpty()) {
             $connect = $this->queue->shift();
-
             return $connect;
         }
 
