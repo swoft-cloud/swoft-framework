@@ -16,4 +16,9 @@ class AppEvent
      * Pipe message event
      */
     const PIPE_MESSAGE = 'pipeMessage';
+
+    /**
+     * Resource release event behind application
+     */
+    const RESOURCE_RELEASE = 'resourceRelease';
 }

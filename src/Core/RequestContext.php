@@ -6,19 +6,9 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swoft\App;
 use Swoft\Helper\ArrayHelper;
-use Swoft\Http\Message\Server\Request;
-use Swoft\Http\Message\Server\Response;
-use Swoft\Testing\SwooleResponse as TestingSwooleResponse;
-use Swoft\Testing\SwooleRequest as TestingSwooleRequest;
 
 /**
- * 请求上下文
- *
- * @uses      RequestContext
- * @version   2017年04月29日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Request context
  */
 class RequestContext
 {
