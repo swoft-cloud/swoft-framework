@@ -14,84 +14,79 @@ use Swoole\Server;
  */
 abstract class AbstractServer implements ServerInterface
 {
+
+    use ServerTrait;
+
     /**
-     * tcp配置信息
+     * TCP Setting
      *
      * @var array
      */
     public $tcpSetting = [];
 
     /**
-     *  http配置信息
+     *  HTTP Setting
      *
      * @var array
      */
     public $httpSetting = [];
 
     /**
-     * server配置信息
+     * Server Setting
      *
      * @var array
      */
     public $serverSetting = [];
 
     /**
-     * swoole启动参数
+     * Swoole Setting
      *
      * @var array
      */
     public $setting = [];
 
     /**
-     * server服务器
+     * Swoole server
      *
      * @var Server
      */
     protected $server;
 
     /**
-     * 启动入口文件
+     * Swoft entry file
      *
      * @var string
      */
     protected $scriptFile;
 
     /**
-     * worker加载锁
+     * Worker lock
      *
      * @var Lock;
      */
     protected $workerLock;
 
     /**
-     * @var
-     */
-    protected $status;
-
-    /**
-     * @var ServerTrait
-     */
-    use ServerTrait;
-
-    /**
      * AbstractServer constructor.
+     *
+     * @throws \InvalidArgumentException When any core server setting not exist, will throw this exception
      */
     public function __construct()
     {
-        // 初始化App
+        // Init App
         App::$server = $this;
 
         $this->initSettings();
     }
 
     /**
-     * register the callback of  swoole server
+     * Register the event callback of swoole server
      */
     protected function registerSwooleServerEvents()
     {
         $swooleListeners = SwooleListenerCollector::getCollector();
-        if(!isset($swooleListeners[SwooleEvent::TYPE_SERVER]) || empty($swooleListeners[SwooleEvent::TYPE_SERVER])){
-            return ;
+        if (! isset($swooleListeners[SwooleEvent::TYPE_SERVER]) || empty($swooleListeners[SwooleEvent::TYPE_SERVER])) {
+            return;
         }
 
         $swooleServerListeners = $swooleListeners[SwooleEvent::TYPE_SERVER];
@@ -99,24 +94,24 @@ abstract class AbstractServer implements ServerInterface
     }
 
     /**
-     * register swoole server events
+     * Register swoole server events
      *
      * @param Server $handler
-     * @param array $events
+     * @param array  $events
      */
     protected function registerSwooleEvents(&$handler, array $events)
     {
         foreach ($events as $event => $beanName) {
-            $object = App::getBean($beanName);
+            $object = bean($beanName);
             $method = SwooleEvent::getHandlerFunction($event);
             $handler->on($event, [$object, $method]);
         }
     }
 
     /**
-     * reload服务
+     * Reload workers
      *
-     * @param bool $onlyTask 是否只重载任务
+     * @param bool $onlyTask Only reload TaskWorkers
      */
     public function reload($onlyTask = false)
     {
@@ -125,9 +120,9 @@ abstract class AbstractServer implements ServerInterface
     }
 
     /**
-     * stop服务
+     * Stop server
      */
-    public function stop()
+    public function stop(): bool
     {
         $timeout = 60;
         $startTime = time();
@@ -151,18 +146,18 @@ abstract class AbstractServer implements ServerInterface
     }
 
     /**
-     * 服务是否已启动
+     * Is server running ?
      *
      * @return bool
      */
-    public function isRunning()
+    public function isRunning(): bool
     {
         $masterIsLive = false;
         $pFile = $this->serverSetting['pfile'];
 
-        // pid 文件是否存在
+        // Is pid file exist ?
         if (file_exists($pFile)) {
-            // 文件内容解析
+            // Get pid file content and parse the content
             $pidFile = file_get_contents($pFile);
             $pids = explode(',', $pidFile);
 
@@ -175,41 +170,41 @@ abstract class AbstractServer implements ServerInterface
     }
 
     /**
-     * 获取http server
+     * Get server
      *
      * @return Server
      */
-    public function getServer()
+    public function getServer(): Server
     {
         return $this->server;
     }
 
     /**
-     * 获取tcp启动参数
+     * Get TCP setting
      *
      * @return array
      */
-    public function getTcpSetting()
+    public function getTcpSetting(): array
     {
         return $this->tcpSetting;
     }
 
     /**
-     * 获取http启动参数
+     * Get HTTP setting
      *
      * @return array
      */
-    public function getHttpSetting()
+    public function getHttpSetting(): array
     {
         return $this->httpSetting;
     }
 
     /**
-     * 获取启动server状态
+     * Get Server setting
      *
      * @return array
      */
-    public function getServerSetting()
+    public function getServerSetting(): array
     {
         return $this->serverSetting;
     }
@@ -232,6 +227,8 @@ abstract class AbstractServer implements ServerInterface
 
     /**
      * Init settings
+     *
+     * @throws \InvalidArgumentException
      */
     public function initSettings()
     {
@@ -267,35 +264,34 @@ abstract class AbstractServer implements ServerInterface
     }
 
     /**
-     * listen tcp配置
+     * Get TCP listen setting
      *
      * @return array
      */
-    protected function getListenTcpSetting()
+    protected function getListenTcpSetting(): array
     {
         $listenTcpSetting = $this->tcpSetting;
-        unset($listenTcpSetting['host']);
-        unset($listenTcpSetting['port']);
-        unset($listenTcpSetting['model']);
-        unset($listenTcpSetting['type']);
-
+        unset($listenTcpSetting['host'], $listenTcpSetting['port'], $listenTcpSetting['model'], $listenTcpSetting['type']);
         return $listenTcpSetting;
     }
 
     /**
-     * 设置守护进程启动
+     * Set server to Daemonize
+     *
+     * @return $this
      */
     public function setDaemonize()
     {
         $this->setting['daemonize'] = 1;
+        return $this;
     }
 
     /**
-     * pname名称
+     * Get pname
      *
      * @return string
      */
-    public function getPname()
+    public function getPname(): string
     {
         return $this->serverSetting['pname'];
     }

@@ -5,71 +5,68 @@ namespace Swoft\Bootstrap\Server;
 use Swoole\Server;
 
 /**
- * server接口
- * @uses      ServerInterface
- * @version   2017年10月14日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Interface ServerInterface
+ *
+ * @package Swoft\Bootstrap\Server
  */
 interface ServerInterface
 {
     /**
-     * 启动
+     * Start
      */
     public function start();
 
     /**
-     * 停止
+     * Stop server
      *
      * @return bool
      */
-    public function stop();
+    public function stop(): bool;
 
     /**
-     * 重载
+     * Reload workers
      *
-     * @param bool $onlyTask    是否只reload任务
+     * @param bool $onlyTask Only reload TaskWorkers
      */
     public function reload($onlyTask = false);
 
     /**
-     * 是否已经运行
+     * Is server running ?
      *
      * @return bool
      */
-    public function isRunning();
+    public function isRunning(): bool;
 
     /**
-     * 获取server
+     * Get server
      *
      * @return Server
      */
-    public function getServer();
+    public function getServer(): Server;
 
     /**
-     * tcp配置
+     * Get TCP setting
      *
      * @return array
      */
-    public function getTcpSetting();
+    public function getTcpSetting(): array;
 
     /**
-     * http配置
+     * Get HTTP setting
      *
      * @return array
      */
-    public function getHttpSetting();
+    public function getHttpSetting(): array;
 
     /**
-     * server配置
+     * Get Server setting
      *
      * @return array
      */
-    public function getServerSetting();
+    public function getServerSetting(): array;
 
     /**
-     * 设置守护进程
+     * Set server to Daemonize
      */
     public function setDaemonize();
 }
