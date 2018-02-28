@@ -38,7 +38,6 @@ class PoolTest extends TestCase
         ]);
         $this->assertEquals($pConfig->getBalancer(), 'b');
         $this->assertEquals($pConfig->getMaxActive(), 1);
-        $this->assertEquals($pConfig->getMaxIdel(), 1);
         $this->assertEquals($pConfig->isUseProvider(), true);
         $this->assertEquals($pConfig->getMaxWait(), 1);
     }
@@ -53,7 +52,6 @@ class PoolTest extends TestCase
         $this->assertEquals($pConfig->getUri(), []);
         $this->assertEquals($pConfig->getBalancer(), 'b');
         $this->assertEquals($pConfig->getMaxActive(), 1);
-        $this->assertEquals($pConfig->getMaxIdel(), 1);
         $this->assertEquals($pConfig->isUseProvider(), false);
         $this->assertEquals($pConfig->getMaxWait(), 1);
     }
@@ -70,7 +68,6 @@ class PoolTest extends TestCase
         ]);
         $this->assertEquals($pConfig->getBalancer(), 'r1');
         $this->assertEquals($pConfig->getMaxActive(), 2);
-        $this->assertEquals($pConfig->getMaxIdel(), 2);
         $this->assertEquals($pConfig->isUseProvider(), true);
         $this->assertEquals($pConfig->getMaxWait(), 2);
     }
@@ -87,7 +84,6 @@ class PoolTest extends TestCase
         ]);
         $this->assertEquals($pConfig->getBalancer(), 'random');
         $this->assertEquals($pConfig->getMaxActive(), 2);
-        $this->assertEquals($pConfig->getMaxIdel(), 6);
         $this->assertEquals($pConfig->isUseProvider(), false);
         $this->assertEquals($pConfig->getMaxWait(), 100);
     }
@@ -104,7 +100,6 @@ class PoolTest extends TestCase
         ]);
         $this->assertEquals($pConfig->getBalancer(), 'r1');
         $this->assertEquals($pConfig->getMaxActive(), 2);
-        $this->assertEquals($pConfig->getMaxIdel(), 2);
         $this->assertEquals($pConfig->isUseProvider(), true);
         $this->assertEquals($pConfig->getMaxWait(), 2);
     }
@@ -122,7 +117,6 @@ class PoolTest extends TestCase
         ]);
         $this->assertEquals($pConfig->getBalancer(), 'b2');
         $this->assertEquals($pConfig->getMaxActive(), 2);
-        $this->assertEquals($pConfig->getMaxIdel(), 2);
         $this->assertEquals($pConfig->isUseProvider(), true);
         $this->assertEquals($pConfig->getMaxWait(), 2);
     }

@@ -21,11 +21,6 @@ interface PoolConfigInterface
     /**
      * @return int
      */
-    public function getMaxIdel(): int;
-
-    /**
-     * @return int
-     */
     public function getMaxActive(): int;
 
     /**
@@ -57,4 +52,19 @@ interface PoolConfigInterface
      * @return string
      */
     public function getProvider(): string;
+
+    /**
+     * @return int
+     */
+    public function getMinActive(): int;
+
+    /**
+     * @return int
+     */
+    public function getMaxWaitTime(): int;
+
+    /**
+     * @return int
+     */
+    public function getMaxIdleTime(): int;
 }
