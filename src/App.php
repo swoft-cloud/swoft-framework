@@ -419,6 +419,23 @@ class App
     }
 
     /**
+     * Get workerId
+     */
+    public static function getWorkerId():int
+    {
+        if (self::$server === null) {
+            return 0;
+        }
+        $server = self::$server->getServer();
+
+        if ($server !== null && property_exists($server, 'worker_id') && $server->worker_id > 0) {
+            return $server->worker_id;
+        }
+
+        return 0;
+    }
+
+    /**
      * Whether it is coroutine context
      *
      * @return bool

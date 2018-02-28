@@ -5,13 +5,7 @@ use Swoft\Sg\BalancerSelector;
 use Swoft\Sg\ProviderSelector;
 
 /**
- * the properties of pool
- *
- * @uses      PoolProperties
- * @version   2017年12月16日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Pool properties
  */
 class PoolProperties implements PoolConfigInterface
 {
@@ -23,32 +17,46 @@ class PoolProperties implements PoolConfigInterface
     protected $name = "";
 
     /**
-     * the maximum number of idle connections
+     * Minimum active number of connections
      *
      * @var int
      */
-    protected $maxIdel = 6;
+    protected $minActive = 5;
 
     /**
-     * the maximum number of active connections
+     * Maximum active number of connections
      *
      * @var int
      */
-    protected $maxActive = 50;
+    protected $maxActive = 10;
 
     /**
-     * the maximum number of wait connections
+     * Maximum waiting for the number of connections, if there is no limit to 0
      *
      * @var int
      */
-    protected $maxWait = 100;
+    protected $maxWait = 20;
+
+    /**
+     * Maximum waiting time
+     *
+     * @var int
+     */
+    protected $maxWaitTime = 3;
+
+    /**
+     * Maximum idle time
+     *
+     * @var int
+     */
+    protected $maxIdleTime = 60;
 
     /**
      * the time of connect timeout
      *
      * @var int
      */
-    protected $timeout = 200;
+    protected $timeout = 3;
 
     /**
      * the addresses of connection
@@ -86,19 +94,21 @@ class PoolProperties implements PoolConfigInterface
     protected $provider = ProviderSelector::TYPE_CONSUL;
 
     /**
+     * Initialize
+     */
+    public function init()
+    {
+        if (empty($this->name)) {
+            $this->name = uniqid();
+        }
+    }
+
+    /**
      * @return string
      */
     public function getName(): string
     {
         return $this->name;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaxIdel(): int
-    {
-        return $this->maxIdel;
     }
 
     /**
@@ -158,12 +168,26 @@ class PoolProperties implements PoolConfigInterface
     }
 
     /**
-     * init
+     * @return int
      */
-    public function init()
+    public function getMinActive(): int
     {
-        if (empty($this->name)) {
-            $this->name = uniqid();
-        }
+        return $this->minActive;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxWaitTime(): int
+    {
+        return $this->maxWaitTime;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxIdleTime(): int
+    {
+        return $this->maxIdleTime;
     }
 }
