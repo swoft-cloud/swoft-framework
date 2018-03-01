@@ -1,6 +1,7 @@
 <?php
 
 namespace Swoft\Bootstrap\Server;
+
 use Swoft\App;
 use Swoft\Bean\BeanFactory;
 use Swoft\Bean\Collector\ServerListenerCollector;
@@ -19,7 +20,7 @@ use Swoole\Server;
 trait ServerTrait
 {
     /**
-     * master进程启动前初始化
+     * onStart event callback
      *
      * @param Server $server
      */
@@ -27,46 +28,49 @@ trait ServerTrait
     {
         file_put_contents($this->serverSetting['pfile'], $server->master_pid);
         file_put_contents($this->serverSetting['pfile'], ',' . $server->manager_pid, FILE_APPEND);
-        ProcessHelper::setProcessTitle($this->serverSetting['pname'] . " master process (" . $this->scriptFile . ")");
+        ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' master process (' . $this->scriptFile . ')');
     }
 
     /**
-     * mananger进程启动前初始化
+     * onManagerStart event callback
      *
      * @param Server $server
      */
     public function onManagerStart(Server $server)
     {
-        ProcessHelper::setProcessTitle($this->serverSetting['pname'] . " manager process");
+        ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' manager process');
     }
 
     /**
-     * worker进程启动前初始化
+     * OnWorkerStart event callback
      *
      * @param Server $server   server
      * @param int    $workerId workerId
      */
     public function onWorkerStart(Server $server, int $workerId)
     {
-        // worker和task进程初始化
+        // Init Worker and TaskWorker
         $setting = $server->setting;
         if ($workerId >= $setting['worker_num']) {
+            // TaskWorker
             ApplicationContext::setContext(ApplicationContext::TASK);
-            ProcessHelper::setProcessTitle($this->serverSetting['pname'] . " task process");
+            ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' task process');
         } else {
+            // Worker
             ApplicationContext::setContext(ApplicationContext::WORKER);
-            ProcessHelper::setProcessTitle($this->serverSetting['pname'] . " worker process");
+            ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' worker process');
         }
-
-        // reload重新加载文件
-        $this->beforeOnWorkerStart($server, $workerId);
+        $this->beforeWorkerStart($server, $workerId);
     }
 
     /**
+     * onPipeMessage event callback
+     *
      * @param \Swoole\Server $server
      * @param int            $srcWorkerId
      * @param string         $message
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function onPipeMessage(Server $server, int $srcWorkerId, string $message)
     {
@@ -87,30 +91,15 @@ trait ServerTrait
     }
 
     /**
-     * swoole server start之前运行
-     */
-    protected function beforeStart()
-    {
-        $collector = ServerListenerCollector::getCollector();
-        $event = SwooleEvent::ON_BEFORE_START;
-        if(!isset($collector[$event]) || empty($collector[$event])){
-            return ;
-        }
-
-        $beforeStartListeners = $collector[$event];
-        $this->doServerListener($beforeStartListeners, $event, [$this]);
-    }
-
-    /**
-     * do listener
+     * Bind server listeners
      *
      * @param array  $listeners
      * @param string $event
      * @param array  $params
      */
-    private function doServerListener(array $listeners, string $event, array $params)
+    private function bindServerListener(array $listeners, string $event, array $params)
     {
-        foreach ($listeners as $listenerBeanName){
+        foreach ($listeners as $listenerBeanName) {
             $listener = App::getBean($listenerBeanName);
             $method = SwooleEvent::getHandlerFunction($event);
             $listener->$method(...$params);
@@ -118,19 +107,34 @@ trait ServerTrait
     }
 
     /**
-     * worker start之前运行
+     * Before swoole server start
+     */
+    protected function beforeServerStart()
+    {
+        $collector = ServerListenerCollector::getCollector();
+        $event = SwooleEvent::ON_BEFORE_START;
+        if (! isset($collector[$event]) || empty($collector[$event])) {
+            return;
+        }
+
+        $beforeStartListeners = $collector[$event];
+        $this->bindServerListener($beforeStartListeners, $event, [$this]);
+    }
+
+    /**
+     * Before worker start
      *
      * @param Server $server   server
      * @param int    $workerId workerId
      */
-    private function beforeOnWorkerStart(Server $server, int $workerId)
+    private function beforeWorkerStart(Server $server, int $workerId)
     {
-        // 加载bean
+        // Load bean
         $this->reloadBean();
     }
 
     /**
-     * reload bean
+     * Reload bean
      */
     protected function reloadBean()
     {
