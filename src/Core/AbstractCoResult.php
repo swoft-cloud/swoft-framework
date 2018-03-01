@@ -31,7 +31,7 @@ abstract class AbstractCoResult implements ResultInterface
      * @param string      $profileKey
      * @param ConnectPool $connectPool
      */
-    public function __construct($client, string $profileKey, ConnectPool $connectPool = null)
+    public function __construct($client = null, string $profileKey = '', ConnectPool $connectPool = null)
     {
         $this->client      = $client;
         $this->profileKey  = $profileKey;
