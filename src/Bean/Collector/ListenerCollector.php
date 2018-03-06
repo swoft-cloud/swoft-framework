@@ -6,13 +6,7 @@ use Swoft\Bean\Annotation\Listener;
 use Swoft\Bean\CollectorInterface;
 
 /**
- * the collector of listener
- *
- * @uses      ListenerCollector
- * @version   2018年01月14日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Collector listener
  */
 class ListenerCollector implements CollectorInterface
 {
@@ -27,6 +21,7 @@ class ListenerCollector implements CollectorInterface
      * @param string $propertyName
      * @param string $methodName
      * @param null   $propertyValue
+     * @return void
      */
     public static function collect(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {

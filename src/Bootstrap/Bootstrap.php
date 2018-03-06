@@ -8,14 +8,9 @@ use Swoft\Bean\Collector\BootstrapCollector;
 use Swoft\Bootstrap\Boots\Bootable;
 
 /**
- * the bootstrap of application
+ * Bootstrap
  *
  * @Bean()
- * @uses      Bootstrap
- * @version   2018年01月12日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class Bootstrap implements Bootable
 {

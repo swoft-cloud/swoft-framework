@@ -7,6 +7,7 @@ use Swoft\Bean\BeanFactory;
 use Swoft\Bean\Collector\ServerListenerCollector;
 use Swoft\Bootstrap\SwooleEvent;
 use Swoft\Core\ApplicationContext;
+use Swoft\Core\Coroutine;
 use Swoft\Core\InitApplicationContext;
 use Swoft\Event\AppEvent;
 use Swoft\Helper\ProcessHelper;
@@ -51,16 +52,18 @@ trait ServerTrait
     {
         // Init Worker and TaskWorker
         $setting = $server->setting;
+        $isWorker = false;
         if ($workerId >= $setting['worker_num']) {
             // TaskWorker
             ApplicationContext::setContext(ApplicationContext::TASK);
             ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' task process');
         } else {
             // Worker
+            $isWorker = true;
             ApplicationContext::setContext(ApplicationContext::WORKER);
             ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' worker process');
         }
-        $this->beforeWorkerStart($server, $workerId);
+        $this->beforeWorkerStart($server, $workerId, $isWorker);
     }
 
     /**
@@ -122,24 +125,27 @@ trait ServerTrait
     }
 
     /**
-     * Before worker start
-     *
-     * @param Server $server   server
-     * @param int    $workerId workerId
+     * @param \Swoole\Server $server
+     * @param int            $workerId
+     * @param bool           $isWorker
      */
-    private function beforeWorkerStart(Server $server, int $workerId)
+    private function beforeWorkerStart(Server $server, int $workerId, bool $isWorker)
     {
         // Load bean
-        $this->reloadBean();
+        $this->reloadBean($isWorker);
     }
 
     /**
-     * Reload bean
+     * @param bool $isWorker
      */
-    protected function reloadBean()
+    protected function reloadBean(bool $isWorker)
     {
         BeanFactory::reload();
         $initApplicationContext = new InitApplicationContext();
         $initApplicationContext->init();
+
+        if($isWorker && $this->workerLock->trylock() && env('AUTO_REGISTER', false)){
+            App::trigger(AppEvent::WORKER_START);
+        }
     }
 }

@@ -121,7 +121,6 @@ class RequestContext
             return self::$context[$coroutineId][self::DATA_KEY][$key];
         }
 
-        App::warning(sprintf('Key %s does not exist', $key));
         return $default;
     }
 
