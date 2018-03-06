@@ -271,7 +271,7 @@ abstract class AbstractServer implements ServerInterface
     protected function getListenTcpSetting(): array
     {
         $listenTcpSetting = $this->tcpSetting;
-        unset($listenTcpSetting['host'], $listenTcpSetting['port'], $listenTcpSetting['model'], $listenTcpSetting['type']);
+        unset($listenTcpSetting['host'], $listenTcpSetting['port'], $listenTcpSetting['mode'], $listenTcpSetting['type']);
         return $listenTcpSetting;
     }
 
