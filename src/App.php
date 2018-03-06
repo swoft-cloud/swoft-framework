@@ -90,7 +90,7 @@ class App
      */
     public static function version(): string
     {
-        return '0.2.2';
+        return '1.0.0';
     }
 
     /**
