@@ -4,7 +4,7 @@ namespace Swoft\Test\Testing\Pool;
 
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Value;
-use Swoft\Pool\Provider\ProviderInterface;
+use Swoft\Sg\Provider\ProviderInterface;
 
 /**
  * the properties of config
