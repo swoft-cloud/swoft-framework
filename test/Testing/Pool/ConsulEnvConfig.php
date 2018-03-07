@@ -57,7 +57,7 @@ class ConsulEnvConfig implements ProviderInterface
         // TODO: Implement getServiceList() method.
     }
 
-    public function registerService(string $serviceName, string $host, int $port, ...$params)
+    public function registerService(...$params)
     {
         // TODO: Implement registerService() method.
     }

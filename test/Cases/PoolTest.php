@@ -48,7 +48,7 @@ class PoolTest extends TestCase
         $pConfig = App::getBean(PartPoolConfig::class);
         $this->assertEquals($pConfig->getName(), 'test');
         $this->assertEquals($pConfig->getProvider(), ProviderSelector::TYPE_CONSUL);
-        $this->assertEquals($pConfig->getTimeout(), 200);
+        $this->assertEquals($pConfig->getTimeout(), 3);
         $this->assertEquals($pConfig->getUri(), []);
         $this->assertEquals($pConfig->getBalancer(), 'b');
         $this->assertEquals($pConfig->getMaxActive(), 1);
@@ -85,7 +85,7 @@ class PoolTest extends TestCase
         $this->assertEquals($pConfig->getBalancer(), 'random');
         $this->assertEquals($pConfig->getMaxActive(), 2);
         $this->assertEquals($pConfig->isUseProvider(), false);
-        $this->assertEquals($pConfig->getMaxWait(), 100);
+        $this->assertEquals($pConfig->getMaxWait(), 20);
     }
 
     public function testPoolConfigEnvAndEnv()
@@ -123,7 +123,7 @@ class PoolTest extends TestCase
 
     public function testConsulPpt()
     {
-        /* @var \Swoft\Testing\Pool\Config\ConsulPptConfig $pConfig */
+        /* @var ConsulPptConfig $pConfig */
         $pConfig = App::getBean(ConsulPptConfig::class);
         $this->assertEquals('http://127.0.0.1:81', $pConfig->getAddress());
         $this->assertEquals(1, $pConfig->getTimeout());
@@ -133,7 +133,7 @@ class PoolTest extends TestCase
 
     public function testConsulEnv()
     {
-        /* @var \Swoft\Testing\Pool\Config\ConsulPptConfig $pConfig */
+        /* @var ConsulPptConfig $pConfig */
         $pConfig = App::getBean(ConsulEnvConfig::class);
         $this->assertEquals('http://127.0.0.1:82', $pConfig->getAddress());
         $this->assertEquals(2, $pConfig->getTimeout());
