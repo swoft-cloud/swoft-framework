@@ -45,6 +45,7 @@ class Config implements \ArrayAccess, \Iterator
     public function next()
     {
         next($this->properties);
+        return $this;
     }
 
     /**
