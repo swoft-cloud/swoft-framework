@@ -5,13 +5,9 @@ namespace Swoft\Pool;
 use Swoft\App;
 
 /**
- * the pool of connection
+ * Class ConnectPool
  *
- * @uses      ConnectPool
- * @version   2017年06月15日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Pool
  */
 abstract class ConnectPool implements PoolInterface
 {
@@ -43,7 +39,7 @@ abstract class ConnectPool implements PoolInterface
      */
     public function getConnect()
     {
-        if ($this->queue == null) {
+        if ($this->queue === null) {
             $this->queue = new \SplQueue();
         }
 
@@ -51,7 +47,7 @@ abstract class ConnectPool implements PoolInterface
         if ($this->currentCount > $this->poolConfig->getMaxActive()) {
             return null;
         }
-        if (!$this->queue->isEmpty()) {
+        if (! $this->queue->isEmpty()) {
             $connect = $this->queue->shift();
             return $connect;
         }
@@ -84,9 +80,9 @@ abstract class ConnectPool implements PoolInterface
      */
     public function getConnectAddress()
     {
-        $serviceList  = $this->getServiceList();
+        $serviceList = $this->getServiceList();
         $balancerType = $this->poolConfig->getBalancer();
-        $balancer     = balancer()->select($balancerType);
+        $balancer = balancer()->select($balancerType);
 
         return $balancer->select($serviceList);
     }
