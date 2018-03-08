@@ -50,6 +50,7 @@ trait ServerTrait
      */
     public function onWorkerStart(Server $server, int $workerId)
     {
+        $workerId === 0 && printf('Server starting ...' . PHP_EOL);
         // Init Worker and TaskWorker
         $setting = $server->setting;
         $isWorker = false;
@@ -64,6 +65,7 @@ trait ServerTrait
             ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' worker process');
         }
         $this->beforeWorkerStart($server, $workerId, $isWorker);
+        $workerId === 0 && printf('Server started.' . PHP_EOL, $workerId);
     }
 
     /**
