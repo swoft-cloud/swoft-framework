@@ -1,8 +1,6 @@
 <?php
 
 namespace Swoft\Pool;
-use Swoft\Sg\BalancerSelector;
-use Swoft\Sg\ProviderSelector;
 
 /**
  * Pool properties
@@ -10,11 +8,11 @@ use Swoft\Sg\ProviderSelector;
 class PoolProperties implements PoolConfigInterface
 {
     /**
-     * the name of pool
+     * Pool name
      *
      * @var string
      */
-    protected $name = "";
+    protected $name = '';
 
     /**
      * Minimum active number of connections
@@ -52,15 +50,14 @@ class PoolProperties implements PoolConfigInterface
     protected $maxIdleTime = 60;
 
     /**
-     * the time of connect timeout
+     * Connection timeout
      *
      * @var int
      */
     protected $timeout = 3;
 
     /**
-     * the addresses of connection
-     *
+     * Connection addresses
      * <pre>
      * [
      *  '127.0.0.1:88',
@@ -73,25 +70,25 @@ class PoolProperties implements PoolConfigInterface
     protected $uri = [];
 
     /**
-     * whether to user provider(consul/etcd/zookeeper)
+     * Whether to user provider(consul/etcd/zookeeper)
      *
      * @var bool
      */
     protected $useProvider = false;
 
     /**
-     * the default balancer is random balancer
+     * Default balancer
      *
      * @var string
      */
-    protected $balancer = BalancerSelector::TYPE_RANDOM;
+    protected $balancer = 'random';
 
     /**
-     * the default provider is consul provider
+     * Default provider
      *
      * @var string
      */
-    protected $provider = ProviderSelector::TYPE_CONSUL;
+    protected $provider = 'consul';
 
     /**
      * Initialize

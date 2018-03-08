@@ -5,13 +5,9 @@ namespace Swoft\Pool;
 use Swoft\App;
 
 /**
- * the pool of connection
+ * Class ConnectPool
  *
- * @uses      ConnectPool
- * @version   2017年06月15日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Pool
  */
 abstract class ConnectPool implements PoolInterface
 {

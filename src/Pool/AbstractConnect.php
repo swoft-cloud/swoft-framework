@@ -3,13 +3,9 @@
 namespace Swoft\Pool;
 
 /**
+ * Class AbstractConnect
  *
- *
- * @uses      AbstractConnect
- * @version   2017年09月28日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Pool
  */
 abstract class AbstractConnect implements ConnectInterface
 {
