@@ -4,14 +4,13 @@ namespace Swoft\Test\Testing\Pool;
 
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Value;
-use Swoft\Sg\Provider\ProviderInterface;
 
 /**
  * the properties of config
  *
  * @Bean()
  */
-class ConsulEnvConfig implements ProviderInterface
+class ConsulEnvConfig
 {
 
     /**

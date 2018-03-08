@@ -4,7 +4,6 @@ namespace Swoft\Test\Cases;
 
 use PHPUnit\Framework\TestCase;
 use Swoft\App;
-use Swoft\Sg\ProviderSelector;
 use Swoft\Test\Testing\Pool\ConsulEnvConfig;
 use Swoft\Test\Testing\Pool\ConsulPptConfig;
 use Swoft\Test\Testing\Pool\EnvAndPptFromPptPoolConfig;
@@ -43,7 +42,7 @@ class PoolTest extends TestCase
         /* @var \Swoft\Pool\PoolProperties $pConfig */
         $pConfig = App::getBean(PartPoolConfig::class);
         $this->assertEquals($pConfig->getName(), 'test');
-        $this->assertEquals($pConfig->getProvider(), ProviderSelector::TYPE_CONSUL);
+        $this->assertEquals($pConfig->getProvider(), 'consul');
         $this->assertEquals($pConfig->getTimeout(), 3);
         $this->assertEquals($pConfig->getUri(), []);
         $this->assertEquals($pConfig->getBalancer(), 'b');

@@ -3,7 +3,6 @@
 namespace Swoft\Test\Testing\Bean;
 
 use Swoft\Core\Config;
-use Swoft\Sg\ProviderSelector;
 
 /**
  *
@@ -44,22 +43,22 @@ class ProxyTest extends ProxyBase
         return $p;
     }
 
-    public function publicReturnObject2($p, $strategy = ProviderSelector::TYPE_CONSUL):Config
+    public function publicReturnObject2($p, $strategy = 'consul'):Config
     {
         return $p;
     }
 
-    public function publicReturnObject($p, $strategy = ProviderSelector::TYPE_CONSUL):self
+    public function publicReturnObject($p, $strategy = 'consul'):self
     {
         return $p;
     }
 
-    public function publicReturnObject3($p, $strategy = ProviderSelector::TYPE_CONSUL):ProxyTest
+    public function publicReturnObject3($p, $strategy = 'consul'):ProxyTest
     {
         return $p;
     }
 
-    public function publicConst3($p, $strategy = ProviderSelector::TYPE_CONSUL)
+    public function publicConst3($p, $strategy = 'consul')
     {
         return $p;
     }

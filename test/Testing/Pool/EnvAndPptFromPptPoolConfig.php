@@ -4,9 +4,7 @@ namespace Swoft\Test\Testing\Pool;
 
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Value;
-use Swoft\Sg\BalancerSelector;
 use Swoft\Pool\PoolProperties;
-use Swoft\Sg\ProviderSelector;
 
 /**
  * properties and env
@@ -84,7 +82,7 @@ class EnvAndPptFromPptPoolConfig extends PoolProperties
      * @Value(name="${config.test.test2.balancer}", env="${TEST2_BALANCER}")
      * @var string
      */
-    protected $balancer = BalancerSelector::TYPE_RANDOM;
+    protected $balancer = 'random';
 
     /**
      * the default provider is consul provider
@@ -92,5 +90,5 @@ class EnvAndPptFromPptPoolConfig extends PoolProperties
      * @Value(name="${config.test.test2.provider}", env="${TEST2_PROVIDER}")
      * @var string
      */
-    protected $provider = ProviderSelector::TYPE_CONSUL;
+    protected $provider = 'consul';
 }
