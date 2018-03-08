@@ -15,13 +15,9 @@ use Swoft\Validator\NumberValidator;
 use Swoft\Validator\StringsValidator;
 
 /**
- * the collector of validator
+ * Class ValidatorCollector
  *
- * @uses      ValidatorCollector
- * @version   2018年01月08日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Bean\Collector
  */
 class ValidatorCollector implements CollectorInterface
 {
@@ -36,14 +32,20 @@ class ValidatorCollector implements CollectorInterface
      * @param string $propertyName
      * @param string $methodName
      * @param null   $propertyValue
+     * @return mixed|void
      */
-    public static function collect(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
-    {
+    public static function collect(
+        string $className,
+        $objectAnnotation = null,
+        string $propertyName = '',
+        string $methodName = '',
+        $propertyValue = null
+    ) {
         if ($objectAnnotation instanceof Strings) {
-            $from    = $objectAnnotation->getFrom();
-            $name    = $objectAnnotation->getName();
-            $min     = $objectAnnotation->getMin();
-            $max     = $objectAnnotation->getMax();
+            $from = $objectAnnotation->getFrom();
+            $name = $objectAnnotation->getName();
+            $min = $objectAnnotation->getMin();
+            $max = $objectAnnotation->getMax();
             $default = $objectAnnotation->getDefault();
 
             $params = [$min, $max, $default];
@@ -52,14 +54,14 @@ class ValidatorCollector implements CollectorInterface
                 'params'    => $params,
             ];
 
-            return ;
+            return;
         }
 
-        if($objectAnnotation instanceof Floats){
-            $from    = $objectAnnotation->getFrom();
-            $name    = $objectAnnotation->getName();
-            $min     = $objectAnnotation->getMin();
-            $max     = $objectAnnotation->getMax();
+        if ($objectAnnotation instanceof Floats) {
+            $from = $objectAnnotation->getFrom();
+            $name = $objectAnnotation->getName();
+            $min = $objectAnnotation->getMin();
+            $max = $objectAnnotation->getMax();
             $default = $objectAnnotation->getDefault();
 
             $params = [$min, $max, $default];
@@ -67,13 +69,13 @@ class ValidatorCollector implements CollectorInterface
                 'validator' => FloatsValidator::class,
                 'params'    => $params,
             ];
-            return ;
+            return;
         }
-        if($objectAnnotation instanceof Number){
-            $from    = $objectAnnotation->getFrom();
-            $name    = $objectAnnotation->getName();
-            $min     = $objectAnnotation->getMin();
-            $max     = $objectAnnotation->getMax();
+        if ($objectAnnotation instanceof Number) {
+            $from = $objectAnnotation->getFrom();
+            $name = $objectAnnotation->getName();
+            $min = $objectAnnotation->getMin();
+            $max = $objectAnnotation->getMax();
             $default = $objectAnnotation->getDefault();
 
             $params = [$min, $max, $default];
@@ -82,14 +84,14 @@ class ValidatorCollector implements CollectorInterface
                 'validator' => NumberValidator::class,
                 'params'    => $params,
             ];
-            return ;
+            return;
         }
 
-        if($objectAnnotation instanceof Integer){
-            $from    = $objectAnnotation->getFrom();
-            $name    = $objectAnnotation->getName();
-            $min     = $objectAnnotation->getMin();
-            $max     = $objectAnnotation->getMax();
+        if ($objectAnnotation instanceof Integer) {
+            $from = $objectAnnotation->getFrom();
+            $name = $objectAnnotation->getName();
+            $min = $objectAnnotation->getMin();
+            $max = $objectAnnotation->getMax();
             $default = $objectAnnotation->getDefault();
 
             $params = [$min, $max, $default];
@@ -97,13 +99,13 @@ class ValidatorCollector implements CollectorInterface
                 'validator' => IntegerValidator::class,
                 'params'    => $params,
             ];
-            return ;
+            return;
         }
 
-        if($objectAnnotation instanceof Enum){
-            $from    = $objectAnnotation->getFrom();
-            $name    = $objectAnnotation->getName();
-            $values  = $objectAnnotation->getValues();
+        if ($objectAnnotation instanceof Enum) {
+            $from = $objectAnnotation->getFrom();
+            $name = $objectAnnotation->getName();
+            $values = $objectAnnotation->getValues();
             $default = $objectAnnotation->getDefault();
 
             $params = [$values, $default];
@@ -111,14 +113,14 @@ class ValidatorCollector implements CollectorInterface
                 'validator' => EnumValidator::class,
                 'params'    => $params,
             ];
-            return ;
+            return;
         }
     }
 
     /**
      * @return array
      */
-    public static function getCollector()
+    public static function getCollector(): array
     {
         return self::$validator;
     }

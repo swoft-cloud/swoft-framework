@@ -28,8 +28,8 @@ class StringsParser extends AbstractParser
     public function parser(
         string $className,
         $objectAnnotation = null,
-        string $propertyName = "",
-        string $methodName = "",
+        string $propertyName = '',
+        string $methodName = '',
         $propertyValue = null
     ) {
         ValidatorCollector::collect($className, $objectAnnotation, $propertyName, $methodName, $propertyValue);

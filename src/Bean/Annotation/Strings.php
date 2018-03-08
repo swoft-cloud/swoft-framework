@@ -3,16 +3,10 @@
 namespace Swoft\Bean\Annotation;
 
 /**
- * 字符串验证器
+ * String validator
  *
  * @Annotation
  * @Target("METHOD")
- *
- * @uses      Strings
- * @version   2017年11月13日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class Strings
 {
@@ -22,21 +16,21 @@ class Strings
     private $from = ValidatorFrom::POST;
 
     /**
-     * 字段名称
+     * Parameter name
      *
      * @var string
      */
     private $name;
 
     /**
-     * 最小值
+     * Min value
      *
      * @var int
      */
     private $min = PHP_INT_MIN;
 
     /**
-     * 最小值
+     * Max value
      *
      * @var int
      */
@@ -50,7 +44,7 @@ class Strings
     private $default = null;
 
     /**
-     * Integer constructor.
+     * Strings constructor.
      *
      * @param array $values
      */
@@ -76,9 +70,37 @@ class Strings
     /**
      * @return string
      */
+    public function getFrom(): string
+    {
+        return $this->from;
+    }
+
+    /**
+     * @param string $from
+     * @return Strings
+     */
+    public function setFrom(string $from): Strings
+    {
+        $this->from = $from;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
     public function getName(): string
     {
         return $this->name;
+    }
+
+    /**
+     * @param string $name
+     * @return Strings
+     */
+    public function setName(string $name): Strings
+    {
+        $this->name = $name;
+        return $this;
     }
 
     /**
@@ -90,11 +112,31 @@ class Strings
     }
 
     /**
+     * @param int $min
+     * @return Strings
+     */
+    public function setMin(int $min): Strings
+    {
+        $this->min = $min;
+        return $this;
+    }
+
+    /**
      * @return int
      */
     public function getMax(): int
     {
         return $this->max;
+    }
+
+    /**
+     * @param int $max
+     * @return Strings
+     */
+    public function setMax(int $max): Strings
+    {
+        $this->max = $max;
+        return $this;
     }
 
     /**
@@ -106,10 +148,12 @@ class Strings
     }
 
     /**
-     * @return string
+     * @param null|string $default
+     * @return Strings
      */
-    public function getFrom(): string
+    public function setDefault($default): Strings
     {
-        return $this->from;
+        $this->default = $default;
+        return $this;
     }
 }
