@@ -47,8 +47,9 @@ abstract class ConnectPool implements PoolInterface
         if ($this->currentCount > $this->poolConfig->getMaxActive()) {
             return null;
         }
-        if (! $this->queue->isEmpty()) {
+        if (!$this->queue->isEmpty()) {
             $connect = $this->queue->shift();
+
             return $connect;
         }
 
@@ -82,8 +83,10 @@ abstract class ConnectPool implements PoolInterface
     {
         $serviceList = $this->getServiceList();
         $balancerType = $this->poolConfig->getBalancer();
+        if (! \function_exists('balancer')) {
+            return $serviceList[array_rand($serviceList)];
+        }
         $balancer = balancer()->select($balancerType);
-
         return $balancer->select($serviceList);
     }
 
