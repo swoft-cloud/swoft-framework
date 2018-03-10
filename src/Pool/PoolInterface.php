@@ -4,22 +4,25 @@ namespace Swoft\Pool;
 
 /**
  * Interface PoolInterface
- *
- * @package Swoft\Pool
  */
 interface PoolInterface
 {
     /**
+     * @return ConnectionInterface
+     */
+    public function createConnection(): ConnectionInterface;
+
+    /**
      * Get a connection
      *
-     * @return mixed
+     * @return ConnectionInterface
      */
-    public function getConnect();
+    public function getConnection(): ConnectionInterface;
 
     /**
      * Relesea the connection
      *
-     * @param object $connect
+     * @param ConnectionInterface $connection
      */
-    public function release($connect);
+    public function release(ConnectionInterface $connection);
 }

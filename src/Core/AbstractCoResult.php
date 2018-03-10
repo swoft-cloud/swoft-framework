@@ -2,7 +2,8 @@
 
 namespace Swoft\Core;
 
-use Swoft\Pool\ConnectPool;
+use Swoft\Pool\ConnectionInterface;
+use Swoft\Pool\PoolInterface;
 
 /**
  * The result of cor
@@ -10,14 +11,14 @@ use Swoft\Pool\ConnectPool;
 abstract class AbstractCoResult implements ResultInterface
 {
     /**
-     * @var object
+     * @var ConnectionInterface
      */
-    protected $client;
+    protected $connection;
 
     /**
-     * @var ConnectPool
+     * @var PoolInterface
      */
-    protected $connectPool;
+    protected $pool;
 
     /**
      * @var string
@@ -27,15 +28,15 @@ abstract class AbstractCoResult implements ResultInterface
     /**
      * AbstractCorResult constructor.
      *
-     * @param mixed       $client
-     * @param string      $profileKey
-     * @param ConnectPool $connectPool
+     * @param mixed         $connection
+     * @param string        $profileKey
+     * @param PoolInterface $pool
      */
-    public function __construct($client = null, string $profileKey = '', ConnectPool $connectPool = null)
+    public function __construct(ConnectionInterface $connection = null, string $profileKey = '', PoolInterface $pool = null)
     {
-        $this->client      = $client;
-        $this->profileKey  = $profileKey;
-        $this->connectPool = $connectPool;
+        $this->pool       = $pool;
+        $this->connection = $connection;
+        $this->profileKey = $profileKey;
     }
 
     /**
@@ -47,15 +48,15 @@ abstract class AbstractCoResult implements ResultInterface
      */
     public function recv($defer = false)
     {
-        $result = $this->client->recv();
+        $result = $this->connection->recv();
 
         // 重置延迟设置
         if ($defer) {
-            $this->client->setDefer(false);
+            $this->connection->setDefer(false);
         }
 
-        if ($this->connectPool !== null) {
-            $this->connectPool->release($this->client);
+        if ($this->pool !== null) {
+            $this->pool->release($this->connection);
         }
 
         return $result;
