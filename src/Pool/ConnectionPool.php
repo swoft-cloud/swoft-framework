@@ -62,7 +62,6 @@ abstract class ConnectionPool implements PoolInterface
         }
 
         if ($connection->check() == false) {
-            var_dump('reconnect');
             $connection->reconnect();
         }
 
