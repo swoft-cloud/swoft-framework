@@ -55,7 +55,7 @@ abstract class ConnectionPool implements PoolInterface
      */
     public function getConnection():ConnectionInterface
     {
-        if (App::isWorkerStatus()) {
+        if (App::isCoContext()) {
             $connection = $this->getConnectionByChannel();
         } else {
             $connection = $this->getConnectionByQueue();
@@ -75,7 +75,7 @@ abstract class ConnectionPool implements PoolInterface
      */
     public function release(ConnectionInterface $connection)
     {
-        if (App::isWorkerStatus()) {
+        if (App::isCoContext()) {
             $this->releaseToChannel($connection);
         } else {
             $this->releaseToQueue($connection);
@@ -200,6 +200,10 @@ abstract class ConnectionPool implements PoolInterface
      */
     private function getConnectionByChannel(): ConnectionInterface
     {
+        if($this->channel === null){
+            $this->channel = new Channel($this->poolConfig->getMaxActive());
+        }
+
         $stats = $this->channel->stats();
         if ($stats['queue_num'] > 0) {
             return $this->getEffectiveConnection($stats['queue_num']);
@@ -225,7 +229,7 @@ abstract class ConnectionPool implements PoolInterface
         $result      = $this->channel->select($reads, $writes, $maxWaitTime);
 
         if ($result === false || empty($reads)) {
-            throw new ConnectionException('Connection pool waiting queue timeout');
+            throw new ConnectionException('Connection pool waiting queue timeout, timeout='.$maxWaitTime);
         }
 
         $readChannel = $reads[0];
