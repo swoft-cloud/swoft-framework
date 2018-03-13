@@ -3,7 +3,6 @@
 namespace Swoft\Core;
 
 use Swoft\Pool\ConnectionInterface;
-use Swoft\Pool\PoolInterface;
 
 /**
  * Sync result
@@ -11,14 +10,9 @@ use Swoft\Pool\PoolInterface;
 abstract class AbstractDataResult implements ResultInterface
 {
     /**
-     * @var ConnectionInterface
+     * @var mixed
      */
     protected $connection;
-
-    /**
-     * @var PoolInterface
-     */
-    protected $pool;
 
     /**
      * @var mixed
@@ -28,14 +22,25 @@ abstract class AbstractDataResult implements ResultInterface
     /**
      * AbstractDataResult constructor.
      *
-     * @param mixed               $data
-     * @param ConnectionInterface $connection
-     * @param PoolInterface       $pool
+     * @param mixed $data
+     * @param mixed $connection
      */
-    public function __construct($data, ConnectionInterface $connection = null, PoolInterface $pool = null)
+    public function __construct($data, $connection = null)
     {
         $this->data       = $data;
-        $this->pool       = $pool;
         $this->connection = $connection;
     }
+
+    /**
+     * @return void
+     */
+    protected function release()
+    {
+        if ($this->connection instanceof ConnectionInterface) {
+            $this->connection->release();
+        }
+
+        return;
+    }
+
 }

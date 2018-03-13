@@ -3,7 +3,9 @@
 namespace Swoft\Pool;
 
 use Swoft\App;
+use Swoft\Core\RequestContext;
 use Swoft\Exception\ConnectionException;
+use Swoft\Helper\PoolHelper;
 use Swoole\Coroutine\Channel;
 
 /**
@@ -65,6 +67,7 @@ abstract class ConnectionPool implements PoolInterface
             $connection->reconnect();
         }
 
+        $this->addContextConnection($connection);
         return $connection;
     }
 
@@ -75,11 +78,18 @@ abstract class ConnectionPool implements PoolInterface
      */
     public function release(ConnectionInterface $connection)
     {
+        $connectionId = $connection->getConnectionId();
+        $connection->updateLastTime();
+        $connection->setRecv(false);
+        $connection->setAutoRelease(true);
+
         if (App::isCoContext()) {
             $this->releaseToChannel($connection);
         } else {
             $this->releaseToQueue($connection);
         }
+
+        $this->removeContextConnection($connectionId);
     }
 
     /**
@@ -87,7 +97,7 @@ abstract class ConnectionPool implements PoolInterface
      *
      * @return string "127.0.0.1:88"
      */
-    public function getConnectionAddress()
+    public function getConnectionAddress():string
     {
         $serviceList  = $this->getServiceList();
         $balancerType = $this->poolConfig->getBalancer();
@@ -150,7 +160,6 @@ abstract class ConnectionPool implements PoolInterface
     private function releaseToQueue(ConnectionInterface $connection)
     {
         if ($this->queue->count() < $this->poolConfig->getMaxActive()) {
-            $connection->updateLastTime();
             $this->queue->push($connection);
         }
     }
@@ -165,7 +174,6 @@ abstract class ConnectionPool implements PoolInterface
         $stats     = $this->channel->stats();
         $maxActive = $this->poolConfig->getMaxActive();
         if ($stats['queue_num'] < $maxActive) {
-            $connection->updateLastTime();
             $this->channel->push($connection);
         }
     }
@@ -282,5 +290,24 @@ abstract class ConnectionPool implements PoolInterface
         }
 
         return $this->queue->shift();
+    }
+
+    /**
+     * @param \Swoft\Pool\ConnectionInterface $connection
+     */
+    private function addContextConnection(ConnectionInterface $connection)
+    {
+        $connectionId  = $connection->getConnectionId();
+        $connectionKey = PoolHelper::getContextCntKey();
+        RequestContext::setContextDataByChildKey($connectionKey, $connectionId, $connection);
+    }
+
+    /**
+     * @param string $connectionId
+     */
+    private function removeContextConnection(string $connectionId)
+    {
+        $connectionKey = PoolHelper::getContextCntKey();
+        RequestContext::removeContextDataByChildKey($connectionKey, $connectionId);
     }
 }

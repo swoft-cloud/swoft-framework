@@ -25,4 +25,19 @@ interface PoolInterface
      * @param ConnectionInterface $connection
      */
     public function release(ConnectionInterface $connection);
+
+    /**
+     * @return string
+     */
+    public function getConnectionAddress(): string;
+
+    /**
+     * @return PoolConfigInterface
+     */
+    public function getPoolConfig(): PoolConfigInterface;
+
+    /**
+     * @return int
+     */
+    public function getTimeout(): int;
 }

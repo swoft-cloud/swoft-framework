@@ -3,7 +3,6 @@
 namespace Swoft\Core;
 
 use Swoft\Pool\ConnectionInterface;
-use Swoft\Pool\PoolInterface;
 
 /**
  * The result of cor
@@ -16,11 +15,6 @@ abstract class AbstractCoResult implements ResultInterface
     protected $connection;
 
     /**
-     * @var PoolInterface
-     */
-    protected $pool;
-
-    /**
      * @var string
      */
     protected $profileKey;
@@ -28,13 +22,11 @@ abstract class AbstractCoResult implements ResultInterface
     /**
      * AbstractCorResult constructor.
      *
-     * @param mixed         $connection
-     * @param string        $profileKey
-     * @param PoolInterface $pool
+     * @param mixed  $connection
+     * @param string $profileKey
      */
-    public function __construct(ConnectionInterface $connection = null, string $profileKey = '', PoolInterface $pool = null)
+    public function __construct($connection = null, string $profileKey = '')
     {
-        $this->pool       = $pool;
         $this->connection = $connection;
         $this->profileKey = $profileKey;
     }
@@ -48,15 +40,16 @@ abstract class AbstractCoResult implements ResultInterface
      */
     public function recv($defer = false)
     {
-        $result = $this->connection->recv();
+        if ($this->connection instanceof ConnectionInterface) {
+            $result = $this->connection->receive();
+            $this->connection->release();
 
-        // 重置延迟设置
-        if ($defer) {
-            $this->connection->setDefer(false);
+            return $result;
         }
 
-        if ($this->pool !== null) {
-            $this->pool->release($this->connection);
+        $result = $this->connection->recv();
+        if ($defer) {
+            $this->connection->setDefer(false);
         }
 
         return $result;
