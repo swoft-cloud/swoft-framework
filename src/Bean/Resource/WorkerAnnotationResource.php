@@ -3,7 +3,6 @@
 namespace Swoft\Bean\Resource;
 
 use Swoft\Helper\ComponentHelper;
-use Swoft\Helper\JsonHelper;
 
 /**
  *  The annotation resource of worker
@@ -27,10 +26,8 @@ class WorkerAnnotationResource extends AnnotationResource
             if (! is_dir($componentCommandDir)) {
                 continue;
             }
-            $composerFile = $componentDir . DS . 'composer.json';
-            $namespaceMapping = $this->parseAutoloadFromComposerFile($composerFile);
-            $ns = $namespaceMapping['src/'] ?? $this->getDefaultNamespace($component);
 
+            $ns = ComponentHelper::getComponentNamespace($component, $componentDir);
             $this->componentNamespaces[] = $ns;
 
             // ignore the comoponent of console
@@ -57,42 +54,5 @@ class WorkerAnnotationResource extends AnnotationResource
                 $this->scanNamespaces[$scanNs] = $scanDir;
             }
         }
-    }
-
-    /**
-     * @param string $filename
-     * @return array
-     */
-    protected function parseAutoloadFromComposerFile($filename): array
-    {
-        $json = file_get_contents($filename);
-        try {
-            $content = JsonHelper::decode($json, true);
-        } catch (\InvalidArgumentException $e) {
-            $content = [];
-        }
-        // only compatible with psr-4 now
-        //TODO compatible with the another autoload standard
-        if (isset($content['autoload']['psr-4'])) {
-            $mapping = $content['autoload']['psr-4'];
-            $mapping = array_flip($mapping);
-            foreach ($mapping as $key => $value) {
-                $valueLength = \strlen($value);
-                $mapping[$key] = $value[$valueLength - 1] === '\\' ? substr($value, 0, $valueLength - 1) : $value;
-            }
-        }
-        return \is_array($mapping) ? $mapping : [];
-    }
-
-    /**
-     * @param $component
-     * @return string
-     */
-    protected function getDefaultNamespace($component): string
-    {
-        $componentNs = ComponentHelper::getComponentNs($component);
-        $componentNs = $this->handlerFrameworkNamespace($componentNs);
-        $namespace = "Swoft{$componentNs}";
-        return $namespace;
     }
 }

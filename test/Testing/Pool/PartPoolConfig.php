@@ -4,18 +4,12 @@ namespace Swoft\Test\Testing\Pool;
 
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Value;
-use Swoft\Sg\BalancerSelector;
 use Swoft\Pool\PoolProperties;
 
 /**
  * the part properties of default
  *
  * @Bean()
- * @uses      PartPoolConfig
- * @version   2017年12月16日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class PartPoolConfig extends PoolProperties
 {
@@ -58,5 +52,5 @@ class PartPoolConfig extends PoolProperties
      * @Value(name="${config.test.test.balancer}")
      * @var string
      */
-    protected $balancer = BalancerSelector::TYPE_RANDOM;
+    protected $balancer = 'random';
 }

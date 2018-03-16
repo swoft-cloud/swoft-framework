@@ -4,19 +4,12 @@ namespace Swoft\Test\Testing\Pool;
 
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Value;
-use Swoft\Sg\BalancerSelector;
 use Swoft\Pool\PoolProperties;
-use Swoft\Sg\ProviderSelector;
 
 /**
  * the config of env
  *
  * @Bean()
- * @uses      EnvPoolConfig
- * @version   2017年12月17日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class EnvPoolConfig extends PoolProperties
 {
@@ -89,7 +82,7 @@ class EnvPoolConfig extends PoolProperties
      * @Value(env="${TEST_BALANCER}")
      * @var string
      */
-    protected $balancer = BalancerSelector::TYPE_RANDOM;
+    protected $balancer = 'random';
 
     /**
      * the default provider is consul provider
@@ -97,5 +90,5 @@ class EnvPoolConfig extends PoolProperties
      * @Value(env="${TEST_PROVIDER}")
      * @var string
      */
-    protected $provider = ProviderSelector::TYPE_CONSUL;
+    protected $provider = 'consul';
 }

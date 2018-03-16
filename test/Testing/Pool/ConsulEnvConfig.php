@@ -4,19 +4,13 @@ namespace Swoft\Test\Testing\Pool;
 
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Value;
-use Swoft\Pool\Provider\ProviderInterface;
 
 /**
  * the properties of config
  *
  * @Bean()
- * @uses      ConsulEnvConfig
- * @version   2017年12月19日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
-class ConsulEnvConfig implements ProviderInterface
+class ConsulEnvConfig
 {
 
     /**
@@ -57,7 +51,7 @@ class ConsulEnvConfig implements ProviderInterface
         // TODO: Implement getServiceList() method.
     }
 
-    public function registerService(string $serviceName, string $host, int $port, ...$params)
+    public function registerService(...$params)
     {
         // TODO: Implement registerService() method.
     }

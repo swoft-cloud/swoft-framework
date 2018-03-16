@@ -21,15 +21,13 @@ class ServerAnnotationResource extends AnnotationResource
                 continue;
             }
 
-            $componentCommandDir = $swoftDir . DS . $component . DS . 'src';
-            if (!is_dir($componentCommandDir)) {
+            $componentDir = $swoftDir . DS . $component;
+            $componentCommandDir = $componentDir . DS . 'src';
+            if (! is_dir($componentCommandDir)) {
                 continue;
             }
 
-            $componentNs = ComponentHelper::getComponentNs($component);
-            $componentNs = $this->handlerFrameworkNamespace($componentNs);
-            $ns          = "Swoft{$componentNs}";
-
+            $ns = ComponentHelper::getComponentNamespace($component, $componentDir);
             $this->componentNamespaces[] = $ns;
 
             // console component

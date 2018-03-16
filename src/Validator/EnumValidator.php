@@ -6,27 +6,20 @@ use Swoft\Bean\Annotation\Bean;
 use Swoft\Helper\ValidatorHelper;
 
 /**
- * enum float validator
- *
+ * Enum validator
  * @Bean()
- * @uses      EnumValidator
- * @version   2017年12月04日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class EnumValidator implements ValidatorInterface
 {
     /**
-     * @param mixed $value
      * @param array ...$params
-     *
      * @return mixed
+     * @throws \Swoft\Exception\ValidatorException
      */
-    public function validate($value, ...$params)
+    public function validate(...$params)
     {
-        list($validValues) = $params;
+        list($name, $value, $validValues) = $params;
 
-        return ValidatorHelper::validateEnum($value, $validValues);
+        return ValidatorHelper::validateEnum($name, $value, $validValues);
     }
 }

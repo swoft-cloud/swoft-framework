@@ -10,7 +10,7 @@ use Swoft\Core\Config;
 use Swoft\Core\Timer;
 use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
-use Swoft\Pool\ConnectPool;
+use Swoft\Pool\PoolInterface;
 use Swoole\Coroutine as SwCoroutine;
 
 /**
@@ -34,6 +34,7 @@ class App
 
     /**
      * 服务器对象
+     *
      * @var AbstractServer
      */
     public static $server;
@@ -71,9 +72,10 @@ class App
      *
      * @var array
      */
-    private static $aliases = [
-        '@swoft' => __DIR__
-    ];
+    private static $aliases
+        = [
+            '@swoft' => __DIR__,
+        ];
 
     /**
      * 获取mysqlBean对象
@@ -90,7 +92,7 @@ class App
      */
     public static function version(): string
     {
-        return '0.2.2';
+        return '1.0.0';
     }
 
     /**
@@ -177,10 +179,11 @@ class App
      * get pool by name
      *
      * @param string $name
-     * @return ConnectPool
+     *
+     * @return PoolInterface
      * @throws \Swoft\Exception\InvalidArgumentException
      */
-    public static function getPool(string $name): ConnectPool
+    public static function getPool(string $name): PoolInterface
     {
         $collector = PoolCollector::getCollector();
         if (!isset($collector[$name])) {
@@ -208,6 +211,7 @@ class App
      * @param string|\Swoft\Event\EventInterface $event  发布的事件名称|对象
      * @param mixed                              $target
      * @param array                              $params 附加数据信息
+     *
      * @return mixed
      * @throws \InvalidArgumentException
      */
@@ -229,6 +233,7 @@ class App
      *                       ......
      *                       ]
      *                       </pre>
+     *
      * @throws \InvalidArgumentException
      */
     public static function setAliases(array $aliases)
@@ -243,6 +248,7 @@ class App
      *
      * @param string $alias 别名
      * @param string $path  路径
+     *
      * @throws \InvalidArgumentException
      */
     public static function setAlias(string $alias, string $path = null)
@@ -288,6 +294,7 @@ class App
      * 获取别名路径
      *
      * @param string $alias
+     *
      * @return string
      * @throws \InvalidArgumentException
      */
@@ -416,6 +423,23 @@ class App
         }
 
         return false;
+    }
+
+    /**
+     * Get workerId
+     */
+    public static function getWorkerId(): int
+    {
+        if (self::$server === null) {
+            return 0;
+        }
+        $server = self::$server->getServer();
+
+        if ($server !== null && property_exists($server, 'worker_id') && $server->worker_id > 0) {
+            return $server->worker_id;
+        }
+
+        return 0;
     }
 
     /**

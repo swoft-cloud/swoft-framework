@@ -3,13 +3,9 @@
 namespace Swoft\Helper;
 
 /**
+ * Class EnvHelper
  *
- *
- * @uses      EnvHelper
- * @version   2018年01月07日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Helper
  */
 class EnvHelper
 {
@@ -23,7 +19,7 @@ class EnvHelper
         }
 
         if (!version_compare(PHP_VERSION, '7.0')) {
-            throw new \RuntimeException('Run the server requires php version >= 7.0');
+            throw new \RuntimeException('Run the server requires PHP version >= 7.0');
         }
 
         if (!\extension_loaded('swoole')) {
@@ -42,7 +38,7 @@ class EnvHelper
             throw new \RuntimeException('The extension of xdebug must be closed, otherwise swoft will be affected!');
         }
 
-        if (\extension_loaded('uopz')) {
+        if (\extension_loaded('uopz') && !ini_get('uopz.disable')) {
             throw new \RuntimeException('The extension of uopz must be closed, otherwise swoft will be affected!');
         }
 

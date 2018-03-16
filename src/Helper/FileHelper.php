@@ -67,7 +67,7 @@ class FileHelper
             if ($entry != '.' && $entry != '..') {
                 if (is_dir($dir . '/' . $entry)) {
                     $md5File[] = self::md5File($dir . '/' . $entry);
-                } else {
+                } elseif (substr($entry, -4) === '.php') {
                     $md5File[] = md5_file($dir . '/' . $entry);
                 }
                 $md5File[] = $entry;
