@@ -196,6 +196,18 @@ class App
     }
 
     /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public static function hasPool(string $name): bool
+    {
+        $collector = PoolCollector::getCollector();
+
+        return isset($collector[$name]);
+    }
+
+    /**
      * 获取定时器bean
      *
      * @return Timer
