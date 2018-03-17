@@ -1,10 +1,10 @@
 <p align="center">
     <a href="https://github.com/swoft-cloud/swoft" target="_blank">
-        <img src="http://www.stelin.me/assets/img/swoft.png" alt="swoft" />
+        <img src="http://qiniu.daydaygo.top/swoft-logo.png?imageView2/2/w/300" alt="swoft" />
     </a>
 </p>
 
-[![Latest Version](https://img.shields.io/badge/beta-v1.0.6-green.svg?maxAge=2592000)](https://github.com/swoft-cloud/swoft-framework/releases)
+[![Latest Version](https://img.shields.io/badge/beta-v1.0.7-green.svg?maxAge=2592000)](https://github.com/swoft-cloud/swoft-framework/releases)
 [![Build Status](https://travis-ci.org/swoft-cloud/swoft-framework.svg?branch=master)](https://travis-ci.org/swoft-cloud/swoft-framework)
 [![Php Version](https://img.shields.io/badge/php-%3E=7.0-brightgreen.svg?maxAge=2592000)](https://secure.php.net/)
 [![Swoole Version](https://img.shields.io/badge/swoole-%3E=2.1.1-brightgreen.svg?maxAge=2592000)](https://github.com/swoole/swoole-src)
@@ -46,11 +46,10 @@
 QQ交流群:548173319
 
 # 环境要求
-1. PHP 7.X
-2. [Swoole 2.x](https://github.com/swoole/swoole-src/releases), 需开启协程和异步Redis
+1. PHP 7.0 +
+2. [Swoole 2.0.12](https://github.com/swoole/swoole-src/releases) +, 需开启协程和异步Redis
 3. [Hiredis](https://github.com/redis/hiredis/releases)
 4. [Composer](https://getcomposer.org/)
-5. [Inotify](https://pecl.php.net/package/inotify) (可选)
 
 # 协议
 Swoft的开源协议为apache 2.0，详情参见[LICENSE](LICENSE)。
