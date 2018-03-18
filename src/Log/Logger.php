@@ -62,8 +62,15 @@ class Logger extends \Monolog\Logger
      */
     protected $messages = [];
 
-
+    /**
+     * @var array
+     */
     protected $processors = [];
+
+    /**
+     * @var bool
+     */
+    protected $enable = false;
 
 
     /**
@@ -97,6 +104,10 @@ class Logger extends \Monolog\Logger
      */
     public function addRecord($level, $message, array $context = array())
     {
+        if (!$this->enable) {
+            return true;
+        }
+
         $levelName = static::getLevelName($level);
 
         if (!static::$timezone) {
@@ -166,7 +177,7 @@ class Logger extends \Monolog\Logger
      */
     public function pushLog($key, $val)
     {
-        if (!(is_string($key) || is_numeric($key))) {
+        if (!$this->enable || !(is_string($key) || is_numeric($key))) {
             return;
         }
 
@@ -190,7 +201,7 @@ class Logger extends \Monolog\Logger
      */
     public function profileStart($name)
     {
-        if (is_string($name) == false || empty($name)) {
+        if (!$this->enable || is_string($name) == false || empty($name)) {
             return;
         }
         $cid = Coroutine::tid();
@@ -204,7 +215,7 @@ class Logger extends \Monolog\Logger
      */
     public function profileEnd($name)
     {
-        if (is_string($name) == false || empty($name)) {
+        if (!$this->enable || is_string($name) == false || empty($name)) {
             return;
         }
 
@@ -212,11 +223,11 @@ class Logger extends \Monolog\Logger
         if (!isset($this->profiles[$cid][$name])) {
             $this->profiles[$cid][$name] = [
                 'cost'  => 0,
-                'total' => 0
+                'total' => 0,
             ];
         }
 
-        $this->profiles[$cid][$name]['cost'] += microtime(true) - $this->profileStacks[$cid][$name]['start'];
+        $this->profiles[$cid][$name]['cost']  += microtime(true) - $this->profileStacks[$cid][$name]['start'];
         $this->profiles[$cid][$name]['total'] = $this->profiles[$cid][$name]['total'] + 1;
     }
 
@@ -310,18 +321,17 @@ class Logger extends \Monolog\Logger
     {
         $traces = debug_backtrace();
         $count = count($traces);
-
         $ex = '';
-        if ($count >= 4) {
-            $info = $traces[3];
+        if ($count >= 7) {
+            $info = $traces[6];
             if (isset($info['file'], $info['line'])) {
                 $filename = basename($info['file']);
                 $lineNum = $info['line'];
                 $ex = "$filename:$lineNum";
             }
         }
-        if ($count >= 5) {
-            $info = $traces[4];
+        if ($count >= 8) {
+            $info = $traces[7];
             if (isset($info['class'], $info['type'], $info['function'])) {
                 $ex .= ',' . $info['class'] . $info['type'] . $info['function'];
             } elseif (isset($info['function'])) {
@@ -364,6 +374,9 @@ class Logger extends \Monolog\Logger
      */
     public function appendNoticeLog($flush = false)
     {
+        if (!$this->enable) {
+            return;
+        }
         $cid = Coroutine::tid();
         $ts = $this->getLoggerTime();
 
