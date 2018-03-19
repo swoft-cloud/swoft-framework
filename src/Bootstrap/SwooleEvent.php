@@ -73,25 +73,35 @@ class SwooleEvent
      */
     const ON_CLOSE = 'close';
 
-    const ON_BEFORE_START = "beforeStart";
+    const ON_BEFORE_START = 'beforeStart';
+
+    /**
+     * for websocket
+     */
+    const ON_OPEN = 'open';
+    const ON_HAND_SHAKE = 'handshake';
+    const ON_MESSAGE = 'message';
 
     /**
      * @var array
      */
-    private static $handlerFuntions
-        = [
-            self::ON_START         => 'onStart',
-            self::ON_WORKER_START  => 'onWorkerStart',
-            self::ON_MANAGER_START => 'onManagerStart',
-            self::ON_REQUEST       => 'onRequest',
-            self::ON_TASK          => 'onTask',
-            self::ON_PIPE_MESSAGE  => 'onPipeMessage',
-            self::ON_FINISH        => 'onFinish',
-            self::ON_CONNECT       => 'onConnect',
-            self::ON_RECEIVE       => 'onReceive',
-            self::ON_CLOSE         => 'onClose',
-            self::ON_BEFORE_START  => 'onBeforeStart',
-        ];
+    private static $handlerFunctions = [
+        self::ON_START         => 'onStart',
+        self::ON_WORKER_START  => 'onWorkerStart',
+        self::ON_MANAGER_START => 'onManagerStart',
+        self::ON_REQUEST       => 'onRequest',
+        self::ON_TASK          => 'onTask',
+        self::ON_PIPE_MESSAGE  => 'onPipeMessage',
+        self::ON_FINISH        => 'onFinish',
+        self::ON_CONNECT       => 'onConnect',
+        self::ON_RECEIVE       => 'onReceive',
+        self::ON_CLOSE         => 'onClose',
+        self::ON_BEFORE_START  => 'onBeforeStart',
+        // for ws
+        self::ON_OPEN  => 'onOpen',
+        self::ON_MESSAGE  => 'onMessage',
+        self::ON_HAND_SHAKE  => 'onHandshake',
+    ];
 
     /**
      * get handler function of event
@@ -100,9 +110,9 @@ class SwooleEvent
      *
      * @return string
      */
-    public static function getHandlerFunction(string $event)
+    public static function getHandlerFunction(string $event): string
     {
-        return self::$handlerFuntions[$event];
+        return self::$handlerFunctions[$event];
     }
 
     /**
@@ -110,8 +120,8 @@ class SwooleEvent
      *
      * @return bool
      */
-    public static function isSwooleEvent(string $event)
+    public static function isSwooleEvent(string $event): bool
     {
-        return isset(self::$handlerFuntions[$event]);
+        return isset(self::$handlerFunctions[$event]);
     }
 }

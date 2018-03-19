@@ -15,7 +15,7 @@ class Listener
      *
      * @var string
      */
-    private $event = "";
+    private $event = '';
 
     /**
      * AutoController constructor.
