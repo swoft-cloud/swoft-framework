@@ -28,7 +28,7 @@ class PhpHelper
      *
      * @return bool
      */
-    public static function isMac()
+    public static function isMac(): bool
     {
         return stripos(PHP_OS, 'Darwin') !== false;
     }
@@ -43,11 +43,11 @@ class PhpHelper
      */
     public static function call($cb, array $args = [])
     {
-        if (is_object($cb) || (is_string($cb) && function_exists($cb))) {
+        if (\is_object($cb) || (\is_string($cb) && \function_exists($cb))) {
             $ret = $cb(...$args);
-        } elseif (is_array($cb)) {
+        } elseif (\is_array($cb)) {
             list($obj, $mhd) = $cb;
-            $ret = is_object($obj) ? $obj->$mhd(...$args) : $obj::$mhd(...$args);
+            $ret = \is_object($obj) ? $obj->$mhd(...$args) : $obj::$mhd(...$args);
         } else {
             $ret = \Swoole\Coroutine::call_user_func_array($cb, $args);
         }

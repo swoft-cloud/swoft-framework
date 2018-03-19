@@ -25,7 +25,7 @@ trait ServerTrait
      */
     protected function beforeServerStart()
     {
-        $this->fireServerListener(SwooleEvent::ON_BEFORE_START, [$this]);
+        $this->fireServerEvent(SwooleEvent::ON_BEFORE_START, [$this]);
     }
 
     /**
@@ -41,7 +41,7 @@ trait ServerTrait
 
         ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' master process (' . $this->scriptFile . ')');
 
-        $this->fireServerListener(SwooleEvent::ON_START, [$server]);
+        $this->fireServerEvent(SwooleEvent::ON_START, [$server]);
     }
 
     /**
@@ -52,7 +52,7 @@ trait ServerTrait
      */
     public function onManagerStart(Server $server)
     {
-        $this->fireServerListener(SwooleEvent::ON_MANAGER_START, [$server]);
+        $this->fireServerEvent(SwooleEvent::ON_MANAGER_START, [$server]);
 
         ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' manager process');
     }
@@ -81,7 +81,7 @@ trait ServerTrait
             ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' worker process');
         }
 
-        $this->fireServerListener(SwooleEvent::ON_WORKER_START, [$server, $workerId, $isWorker]);
+        $this->fireServerEvent(SwooleEvent::ON_WORKER_START, [$server, $workerId, $isWorker]);
         $this->beforeWorkerStart($server, $workerId, $isWorker);
     }
 
@@ -144,7 +144,7 @@ trait ServerTrait
      * @param string $event
      * @param array  $params
      */
-    protected function fireServerListener(string $event, array $params)
+    protected function fireServerEvent(string $event, array $params)
     {
         /** @var array[] $collector */
         $collector = ServerListenerCollector::getCollector();
@@ -153,31 +153,10 @@ trait ServerTrait
             return;
         }
 
-        foreach ($collector[$event] as $listenerBeanName) {
-            $listener = App::getBean($listenerBeanName);
+        foreach ($collector[$event] as $beanClass) {
+            $listener = App::getBean($beanClass);
             $method = SwooleEvent::getHandlerFunction($event);
             $listener->$method(...$params);
         }
-    }
-
-    /**
-     * fire swoole event listeners
-     *
-     * @param string $event
-     * @param array $params
-     * @param string $type
-     */
-    protected function fireSwooleListener(string $event, array $params, string $type = SwooleEvent::TYPE_SERVER)
-    {
-        $collector = SwooleListenerCollector::getCollector();
-
-        if (!isset($collector[$type][$event]) || empty($collector[$type][$event])) {
-            return;
-        }
-
-        $beanClass = $collector[$type][$event];
-        $listener = App::getBean($beanClass);
-        $method = SwooleEvent::getHandlerFunction($event);
-        $listener->$method(...$params);
     }
 }
