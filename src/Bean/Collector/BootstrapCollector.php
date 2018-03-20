@@ -21,7 +21,6 @@ class BootstrapCollector implements CollectorInterface
      */
     private static $bootstraps = [];
 
-
     /**
      * collect
      *
@@ -32,7 +31,7 @@ class BootstrapCollector implements CollectorInterface
      * @param null      $propertyValue
      * @return void
      */
-    public static function collect(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
+    public static function collect(string $className, $objectAnnotation = null, string $propertyName = '', string $methodName = '', $propertyValue = null)
     {
         if ($objectAnnotation instanceof Bootstrap) {
 

@@ -20,6 +20,7 @@ class BeforeStartListener implements BeforeStartInterface
 {
     /**
      * @param AbstractServer $server
+     * @throws \Swoft\Exception\InvalidArgumentException
      */
     public function onBeforeStart(AbstractServer &$server)
     {
@@ -32,10 +33,11 @@ class BeforeStartListener implements BeforeStartInterface
 
     /**
      * check task
+     * @throws \Swoft\Exception\InvalidArgumentException
      */
     private function checkTask()
     {
-        $settings  = App::getAppProperties()->get("server");
+        $settings  = App::getAppProperties()->get('server');
         $settings  = $settings['setting'];
         $collector = SwooleListenerCollector::getCollector();
 
@@ -47,7 +49,7 @@ class BeforeStartListener implements BeforeStartInterface
         }
 
         if (!$isConfigTask && $isInstallTask) {
-            throw new InvalidArgumentException("Please set task_worker_num > 0 !");
+            throw new InvalidArgumentException('Please set task_worker_num > 0 !');
         }
     }
 }

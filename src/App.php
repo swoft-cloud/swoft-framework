@@ -72,10 +72,9 @@ class App
      *
      * @var array
      */
-    private static $aliases
-        = [
-            '@swoft' => __DIR__,
-        ];
+    private static $aliases = [
+        '@swoft' => __DIR__,
+    ];
 
     /**
      * 获取mysqlBean对象

@@ -21,7 +21,7 @@ class ResourceReleaseListener implements EventHandlerInterface
 {
     /**
      * @param \Swoft\Event\EventInterface $event
-     * @throws \Swoft\Redis\Exception\RedisException
+     * @throws \InvalidArgumentException
      */
     public function handle(EventInterface $event)
     {

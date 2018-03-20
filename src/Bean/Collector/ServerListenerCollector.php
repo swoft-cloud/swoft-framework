@@ -3,6 +3,7 @@
 namespace Swoft\Bean\Collector;
 
 use Swoft\Bean\Annotation\BeforeStart;
+use Swoft\Bean\Annotation\ServerListener;
 use Swoft\Bean\CollectorInterface;
 use Swoft\Bootstrap\SwooleEvent;
 
@@ -28,6 +29,12 @@ class ServerListenerCollector implements CollectorInterface
     {
         if($objectAnnotation instanceof BeforeStart){
             self::$listeners[SwooleEvent::ON_BEFORE_START][] = $className;
+        } elseif($objectAnnotation instanceof ServerListener){
+            $events = $objectAnnotation->getEvent();
+
+            foreach ($events as $event) {
+                self::$listeners[$event][] = $className;
+            }
         }
     }
 
