@@ -1,6 +1,13 @@
 <?php
-
-namespace Swoft\Test\Testing\Pool;
+/**
+ * This file is part of Swoft.
+ *
+ * @link https://swoft.org
+ * @document https://doc.swoft.org
+ * @contact group@swoft.org
+ * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
+namespace SwoftTest\Pool;
 
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Value;
@@ -11,20 +18,20 @@ use Swoft\Pool\PoolProperties;
  *
  * @Bean()
  */
-class EnvAndPptPoolConfig extends PoolProperties
+class EnvAndPptFromPptPoolConfig extends PoolProperties
 {
     /**
      * the name of pool
      *
-     * @Value(name="${config.test.test.name}", env="${TEST_NAME}")
+     * @Value(name="${config.test.test2.name}", env="${TEST2_NAME}")
      * @var string
      */
-    protected $name = "";
+    protected $name = '';
 
     /**
      * the maximum number of idle connections
      *
-     * @Value(name="${config.test.test.maxIdel}", env="${TEST_MAX_IDEL}")
+     * @Value(name="${config.test.test2.maxIdel}", env="${TEST2_MAX_IDEL}")
      * @var int
      */
     protected $maxIdel = 6;
@@ -32,7 +39,7 @@ class EnvAndPptPoolConfig extends PoolProperties
     /**
      * the maximum number of active connections
      *
-     * @Value(name="${config.test.test.maxActive}", env="${TEST_MAX_ACTIVE}")
+     * @Value(name="${config.test.test2.maxActive}", env="${TEST2_MAX_ACTIVE}")
      * @var int
      */
     protected $maxActive = 50;
@@ -40,7 +47,7 @@ class EnvAndPptPoolConfig extends PoolProperties
     /**
      * the maximum number of wait connections
      *
-     * @Value(name="${config.test.test.maxWait}", env="${TEST_MAX_WAIT}")
+     * @Value(name="${config.test.test2.maxWait}", env="${TEST2_MAX_WAIT}")
      * @var int
      */
     protected $maxWait = 100;
@@ -48,7 +55,7 @@ class EnvAndPptPoolConfig extends PoolProperties
     /**
      * the time of connect timeout
      *
-     * @Value(name="${config.test.test.timeout}", env="${TEST_TIMEOUT}")
+     * @Value(name="${config.test.test2.timeout}", env="${TEST2_TIMEOUT}")
      * @var int
      */
     protected $timeout = 200;
@@ -63,7 +70,7 @@ class EnvAndPptPoolConfig extends PoolProperties
      * ]
      * </pre>
      *
-     * @Value(name="${config.test.test.uri}", env="${TEST_URI}")
+     * @Value(name="${config.test.test2.uri}", env="${TEST2_URI}")
      * @var array
      */
     protected $uri = [];
@@ -71,7 +78,7 @@ class EnvAndPptPoolConfig extends PoolProperties
     /**
      * whether to user provider(consul/etcd/zookeeper)
      *
-     * @Value(name="${config.test.test.useProvider}", env="${TEST_USE_PROVIDER}")
+     * @Value(name="${config.test.test2.useProvider}", env="${TEST2_USE_PROVIDER}")
      * @var bool
      */
     protected $useProvider = false;
@@ -79,7 +86,7 @@ class EnvAndPptPoolConfig extends PoolProperties
     /**
      * the default balancer is random balancer
      *
-     * @Value(name="${config.test.test.balancer}", env="${TEST_BALANCER}")
+     * @Value(name="${config.test.test2.balancer}", env="${TEST2_BALANCER}")
      * @var string
      */
     protected $balancer = 'random';
@@ -87,7 +94,7 @@ class EnvAndPptPoolConfig extends PoolProperties
     /**
      * the default provider is consul provider
      *
-     * @Value(name="${config.test.test.provider}", env="${TEST_PROVIDER}")
+     * @Value(name="${config.test.test2.provider}", env="${TEST2_PROVIDER}")
      * @var string
      */
     protected $provider = 'consul';

@@ -2,7 +2,7 @@ version: '2'
 services:
     swoft-unittest:
         build: ./
-        container_name: swoft-unittest
+        container_name: swoft-framework-unittest
         volumes:
             - ../:/var/www/swoft
         working_dir: /var/www/swoft/test

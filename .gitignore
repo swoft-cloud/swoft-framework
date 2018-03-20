@@ -11,3 +11,4 @@ temp/
 .phpintel/
 .DS_Store
 /.php_cs.cache
+test/runtime

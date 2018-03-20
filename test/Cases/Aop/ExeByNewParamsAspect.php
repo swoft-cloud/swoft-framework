@@ -1,6 +1,13 @@
 <?php
-
-namespace Swoft\Test\Testing\Aop;
+/**
+ * This file is part of Swoft.
+ *
+ * @link https://swoft.org
+ * @document https://doc.swoft.org
+ * @contact group@swoft.org
+ * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
+namespace SwoftTest\Aop;
 
 use Swoft\Aop\ProceedingJoinPoint;
 use Swoft\Bean\Annotation\Around;
@@ -13,7 +20,7 @@ use Swoft\Bean\Annotation\PointExecution;
  * @Aspect()
  * @PointExecution(
  *     include={
- *      "Swoft\Test\Testing\Aop\RegBean::methodParams",
+ *      "SwoftTest\Aop\RegBean::methodParams",
  *     }
  * )
  * @uses      ExeByNewParamsAspect
@@ -36,7 +43,7 @@ class ExeByNewParamsAspect
         $newArgs = [];
         $args = $proceedingJoinPoint->getArgs();
         foreach ($args as $arg) {
-            $newArgs[] = $arg."-new";
+            $newArgs[] = $arg.'-new';
         }
         $tag = ' regAspect around before ';
         $result = $proceedingJoinPoint->proceed($newArgs);

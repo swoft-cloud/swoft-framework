@@ -1,6 +1,13 @@
 <?php
-
-namespace Swoft\Test\Testing\Aop;
+/**
+ * This file is part of Swoft.
+ *
+ * @link https://swoft.org
+ * @document https://doc.swoft.org
+ * @contact group@swoft.org
+ * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
+namespace SwoftTest\Aop;
 
 use Swoft\Aop\JoinPoint;
 use Swoft\Aop\ProceedingJoinPoint;
