@@ -1,6 +1,13 @@
 <?php
-
-namespace Swoft\Test\Testing\Aop;
+/**
+ * This file is part of Swoft.
+ *
+ * @link https://swoft.org
+ * @document https://doc.swoft.org
+ * @contact group@swoft.org
+ * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
+namespace SwoftTest\Aop;
 
 use Swoft\Aop\ProceedingJoinPoint;
 use Swoft\Bean\Annotation\Around;
@@ -11,7 +18,7 @@ use Swoft\Bean\Annotation\PointExecution;
  * @Aspect()
  * @PointExecution(
  *     include={
- *      "Swoft\Test\Testing\Aop\RegBean::reg.*",
+ *      "SwoftTest\Aop\RegBean::reg.*",
  *     }
  * )
  *

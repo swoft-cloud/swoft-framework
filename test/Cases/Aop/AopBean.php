@@ -1,6 +1,13 @@
 <?php
-
-namespace Swoft\Test\Testing\Aop;
+/**
+ * This file is part of Swoft.
+ *
+ * @link https://swoft.org
+ * @document https://doc.swoft.org
+ * @contact group@swoft.org
+ * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
+namespace SwoftTest\Aop;
 
 use Swoft\Bean\Annotation\Bean;
 
@@ -17,11 +24,11 @@ class AopBean
 {
     public function doAop()
     {
-        return "do aop";
+        return 'do aop';
     }
 
     public function doAop2()
     {
-        return "do aop";
+        return 'do aop';
     }
 }
