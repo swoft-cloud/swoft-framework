@@ -3,7 +3,7 @@
 namespace Swoft\Bean\Annotation;
 
 /**
- * the annotation of value
+ * Value annotation
  *
  * 1. 注入值
  * 2. 注入property配置文件值
@@ -11,28 +11,22 @@ namespace Swoft\Bean\Annotation;
  *
  * @Annotation
  * @Target({"PROPERTY"})
- *
- * @uses      Value
- * @version   2017年11月14日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class Value
 {
     /**
-     * the key of properties
+     * Property name
      *
      * @var string
      */
-    private $name = "";
+    private $name = '';
 
     /**
-     * the key of env config
+     * Env name
      *
      * @var string
      */
-    private $env = "";
+    private $env = '';
 
     /**
      * Value constructor.

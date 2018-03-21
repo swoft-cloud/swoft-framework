@@ -28,7 +28,7 @@ class ComponentHelper
      */
     public static function getComponentNs(string $component): string
     {
-        if ($component == 'framework') {
+        if ($component === 'framework') {
             return '';
         }
 
@@ -48,11 +48,14 @@ class ComponentHelper
     private static function parseAutoloadFromComposerFile($filename): array
     {
         $json = file_get_contents($filename);
+        $mapping = [];
+
         try {
             $content = JsonHelper::decode($json, true);
         } catch (\InvalidArgumentException $e) {
             $content = [];
         }
+
         // only compatible with psr-4 now
         //TODO compatible with the another autoload standard
         if (isset($content['autoload']['psr-4'])) {
@@ -63,6 +66,7 @@ class ComponentHelper
                 $mapping[$key] = $value[$valueLength - 1] === '\\' ? substr($value, 0, $valueLength - 1) : $value;
             }
         }
+
         return \is_array($mapping) ? $mapping : [];
     }
 
@@ -75,6 +79,7 @@ class ComponentHelper
         $componentNs = ComponentHelper::getComponentNs($component);
         $componentNs = self::handlerFrameworkNamespace($componentNs);
         $namespace = "Swoft{$componentNs}";
+
         return $namespace;
     }
 
@@ -85,9 +90,10 @@ class ComponentHelper
      */
     private static function handlerFrameworkNamespace(string  $componentNs):string
     {
-        if($componentNs == '\Swoft\Framework'){
-            return "";
+        if($componentNs === '\Swoft\Framework'){
+            return '';
         }
+
         return $componentNs;
     }
 }

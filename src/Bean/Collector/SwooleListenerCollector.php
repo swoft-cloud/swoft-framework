@@ -36,7 +36,7 @@ class SwooleListenerCollector implements CollectorInterface
         }
 
         $events = $objectAnnotation->getEvent();
-        if (empty($events) || !is_array($events)) {
+        if (empty($events) || !\is_array($events)) {
             return;
         }
 
@@ -45,10 +45,10 @@ class SwooleListenerCollector implements CollectorInterface
             if(!SwooleEvent::isSwooleEvent($event)){
                 continue;
             }
-            if($type == SwooleEvent::TYPE_PORT){
+            if($type === SwooleEvent::TYPE_PORT){
                 $order = $objectAnnotation->getOrder();
                 self::$listeners[$type][$order][$event] = $className;
-            }elseif ($type == SwooleEvent::TYPE_SERVER){
+            } elseif ($type === SwooleEvent::TYPE_SERVER){
                 self::$listeners[$type][$event] = $className;
             }
         }

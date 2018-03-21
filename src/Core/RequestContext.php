@@ -121,8 +121,50 @@ class RequestContext
             return self::$context[$coroutineId][self::DATA_KEY][$key];
         }
 
-        App::warning(sprintf('Key %s does not exist', $key));
         return $default;
+    }
+
+    /**
+     * Update context data by child key
+     *
+     * @param string $key
+     * @param string $child
+     * @param mixed  $val
+     */
+    public static function setContextDataByChildKey(string $key, string $child, $val)
+    {
+        $coroutineId = self::getCoroutineId();
+        self::$context[$coroutineId][self::DATA_KEY][$key][$child] = $val;
+    }
+
+    /**
+     * Get context data by child key
+     *
+     * @param string $key
+     * @param string $child
+     * @param mixed  $default
+     * @return mixed
+     */
+    public static function getContextDataByChildKey(string $key, string $child, $default = null)
+    {
+        $coroutineId = self::getCoroutineId();
+        if (isset(self::$context[$coroutineId][self::DATA_KEY][$key][$child])) {
+            return self::$context[$coroutineId][self::DATA_KEY][$key][$child];
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get context data by child key
+     *
+     * @param string $key
+     * @param string $child
+     */
+    public static function removeContextDataByChildKey(string $key, string $child)
+    {
+        $coroutineId = self::getCoroutineId();
+        unset(self::$context[$coroutineId][self::DATA_KEY][$key][$child]);
     }
 
     /**

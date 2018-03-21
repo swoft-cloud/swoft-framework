@@ -1,29 +1,30 @@
 <?php
+/**
+ * This file is part of Swoft.
+ *
+ * @link https://swoft.org
+ * @document https://doc.swoft.org
+ * @contact group@swoft.org
+ * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
+namespace SwoftTest;
 
-namespace Swoft\Test\Cases;
-
-use PHPUnit\Framework\TestCase;
 use Swoft\App;
-use Swoft\Sg\ProviderSelector;
-use Swoft\Test\Testing\Pool\ConsulEnvConfig;
-use Swoft\Test\Testing\Pool\ConsulPptConfig;
-use Swoft\Test\Testing\Pool\EnvAndPptFromPptPoolConfig;
-use Swoft\Test\Testing\Pool\EnvAndPptPoolConfig;
-use Swoft\Test\Testing\Pool\EnvPoolConfig;
-use Swoft\Test\Testing\Pool\PartEnvPoolConfig;
-use Swoft\Test\Testing\Pool\PartPoolConfig;
-use Swoft\Test\Testing\Pool\PropertyPoolConfig;
+use SwoftTest\Pool\ConsulEnvConfig;
+use SwoftTest\Pool\ConsulPptConfig;
+use SwoftTest\Pool\EnvAndPptFromPptPoolConfig;
+use SwoftTest\Pool\EnvAndPptPoolConfig;
+use SwoftTest\Pool\EnvPoolConfig;
+use SwoftTest\Pool\PartEnvPoolConfig;
+use SwoftTest\Pool\PartPoolConfig;
+use SwoftTest\Pool\PropertyPoolConfig;
 
 /**
+ * Class PoolTest
  *
- *
- * @uses      PoolTest
- * @version   2018年01月25日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Test\Cases
  */
-class PoolTest extends TestCase
+class PoolTest extends AbstractTestCase
 {
     public function testPoolConfigByProperties()
     {
@@ -47,8 +48,8 @@ class PoolTest extends TestCase
         /* @var \Swoft\Pool\PoolProperties $pConfig */
         $pConfig = App::getBean(PartPoolConfig::class);
         $this->assertEquals($pConfig->getName(), 'test');
-        $this->assertEquals($pConfig->getProvider(), ProviderSelector::TYPE_CONSUL);
-        $this->assertEquals($pConfig->getTimeout(), 200);
+        $this->assertEquals($pConfig->getProvider(), 'consul');
+        $this->assertEquals($pConfig->getTimeout(), 3);
         $this->assertEquals($pConfig->getUri(), []);
         $this->assertEquals($pConfig->getBalancer(), 'b');
         $this->assertEquals($pConfig->getMaxActive(), 1);
@@ -85,7 +86,7 @@ class PoolTest extends TestCase
         $this->assertEquals($pConfig->getBalancer(), 'random');
         $this->assertEquals($pConfig->getMaxActive(), 2);
         $this->assertEquals($pConfig->isUseProvider(), false);
-        $this->assertEquals($pConfig->getMaxWait(), 100);
+        $this->assertEquals($pConfig->getMaxWait(), 20);
     }
 
     public function testPoolConfigEnvAndEnv()
@@ -123,7 +124,7 @@ class PoolTest extends TestCase
 
     public function testConsulPpt()
     {
-        /* @var \Swoft\Testing\Pool\Config\ConsulPptConfig $pConfig */
+        /* @var ConsulPptConfig $pConfig */
         $pConfig = App::getBean(ConsulPptConfig::class);
         $this->assertEquals('http://127.0.0.1:81', $pConfig->getAddress());
         $this->assertEquals(1, $pConfig->getTimeout());
@@ -133,11 +134,11 @@ class PoolTest extends TestCase
 
     public function testConsulEnv()
     {
-        /* @var \Swoft\Testing\Pool\Config\ConsulPptConfig $pConfig */
+        /* @var ConsulPptConfig $pConfig */
         $pConfig = App::getBean(ConsulEnvConfig::class);
         $this->assertEquals('http://127.0.0.1:82', $pConfig->getAddress());
         $this->assertEquals(2, $pConfig->getTimeout());
         $this->assertEquals(2, $pConfig->getInterval());
-        $this->assertEquals([1,2], $pConfig->getTags());
+        $this->assertEquals([1, 2], $pConfig->getTags());
     }
 }

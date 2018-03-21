@@ -21,4 +21,14 @@ class AppEvent
      * Resource release event behind application
      */
     const RESOURCE_RELEASE = 'resourceRelease';
+
+    /**
+     * Resource transaction event behind application
+     */
+    const TRANSACTION_RELEASE = 'transactionRelease';
+
+    /**
+     * Worker start event
+     */
+    const WORKER_START = 'workerStart';
 }

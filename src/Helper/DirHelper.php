@@ -272,4 +272,31 @@ class DirHelper
 
         return new \RecursiveIteratorIterator($filterIterator);
     }
+
+    /**
+     * @param string $path
+     * @return bool
+     */
+    public static function deleteDirectory($path): bool
+    {
+        try {
+            $directoryIterator = new \DirectoryIterator($path);
+            foreach ($directoryIterator as $fileInfo) {
+                if ($fileInfo->valid() && $fileInfo->isExecutable()) {
+                    if ($fileInfo->isDot()) {
+                        continue;
+                    } elseif ($fileInfo->isDir()) {
+                        if (self::deleteDirectory($fileInfo->getPathname())) {
+                            rmdir($fileInfo->getPathname());
+                        }
+                    } elseif ($fileInfo->isFile()) {
+                        unlink($fileInfo->getPathname());
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
+            return false;
+        }
+        return true;
+    }
 }

@@ -5,7 +5,6 @@ namespace Swoft\Event;
 /**
  * Class Event
  * @package Swoft\Event
- * @link windwalker https://github.com/ventoviro/windwalker
  * @version   2017年08月30日
  * @author    inhere <in.798@qq.com>
  * @copyright Copyright 2010-2016 Swoft software

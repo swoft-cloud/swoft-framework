@@ -1,22 +1,22 @@
 <?php
+/**
+ * This file is part of Swoft.
+ *
+ * @link https://swoft.org
+ * @document https://doc.swoft.org
+ * @contact group@swoft.org
+ * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 return [
-    "version"           => '1.0',
-    'autoInitBean'      => true,
-    'beanScan' => [
-        'Swoft\\Test\\Testing' => BASE_PATH . "/Testing",
+    'version'      => '1.0',
+    'autoInitBean' => true,
+    'beanScan'     => [
+        'SwoftTest\\Aop'  => BASE_PATH . '/Cases/Aop',
+        'SwoftTest\\Bean' => BASE_PATH . '/Cases/Bean',
+        'SwoftTest\\Pool' => BASE_PATH . '/Cases/Pool',
     ],
-    'bootScan' => [
-    ],
-    'I18n'              => [
-        'sourceLanguage' => '@root/resources/messages/',
-    ],
-    'env'               => 'Base',
-    'user.stelin.steln' => 'fafafa',
-    'Service'           => [
-        'user' => [
-            'timeout' => 3000
-        ]
-    ],
-    'provider'  => require dirname(__FILE__).DS."provider.php",
-    'test'  => require dirname(__FILE__).DS."test.php",
+    'bootScan'     => [],
+    'env'          => 'Base',
+    'provider'     => require __DIR__ . DS . 'provider.php',
+    'test'         => require __DIR__ . DS . 'test.php',
 ];

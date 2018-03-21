@@ -7,7 +7,7 @@ use Swoole\Server;
 /**
  *
  *
- * @uses      ConnectInterface
+ * @uses      ConnectionInterface
  * @version   2018年01月10日
  * @author    stelin <phpcrazy@126.com>
  * @copyright Copyright 2010-2016 swoft software

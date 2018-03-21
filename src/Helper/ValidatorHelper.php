@@ -5,13 +5,9 @@ namespace Swoft\Helper;
 use Swoft\Exception\ValidatorException;
 
 /**
- * the tool of validator
+ * Class ValidatorHelper
  *
- * @uses      ValidatorHelper
- * @version   2017年12月02日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Helper
  */
 class ValidatorHelper
 {
@@ -37,140 +33,170 @@ class ValidatorHelper
     private static $floatPattern = '/^(-?\d+)(\.\d+)+$/';
 
     /**
-     * the validator of integer
+     * Validate integer
      *
-     * @param mixed    $value
-     * @param int|null $min
-     * @param int|null $max
-     * @param bool     $throws
+     * @param string   $name   Parameter name
+     * @param mixed    $value  Parameter value
+     * @param int|null $min    Parameter minimun value
+     * @param int|null $max    Parameter maximum value
+     * @param bool     $throws Determine if throw an ValidatorException when invalid
      *
-     * @throws ValidatorException
      * @return mixed
+     * @throws \Swoft\Exception\ValidatorException
      */
-    public static function validateInteger($value, $min = null, $max = null, bool $throws = true)
+    public static function validateInteger(string $name, $value, $min = null, $max = null, bool $throws = true)
     {
-        if (!preg_match(self::$integerPattern, "$value")) {
-            return self::validateError("$value is not integer", $throws);
+        if ($value === null) {
+            return self::validateError(sprintf('Parameter %s must be passed', $name), $throws);
+        }
+
+        if (!preg_match(self::$integerPattern, (string)$value)) {
+            return self::validateError(sprintf('Parameter %s is not integer type', $name), $throws);
         }
 
         $value = (int)$value;
         if ($min !== null && $value < $min) {
-            return self::validateError("$value is too small (minimum is $min)", $throws);
+            return self::validateError(sprintf('Parameter %s is too small (minimum is %d)', $name, $min), $throws);
         }
 
         if ($max !== null && $value > $max) {
-            return self::validateError("$value is too big (maximum is $max)", $throws);
+            return self::validateError(sprintf('Parameter %s is too big (maximum is %d)', $name, $max), $throws);
         }
 
-        return $value;
+        return (int)$value;
     }
 
     /**
-     * the validator of number
+     * Validate number
      *
-     * @param mixed    $value
-     * @param int|null $min
-     * @param int|null $max
-     * @param bool     $throws
+     * @param string   $name   Parameter name
+     * @param mixed    $value  Parameter value
+     * @param int|null $min    Parameter minimun value
+     * @param int|null $max    Parameter maximum value
+     * @param bool     $throws Determine if throw an ValidatorException when invalid
      *
-     * @throws ValidatorException
      * @return mixed
+     * @throws \Swoft\Exception\ValidatorException
      */
-    public static function validateNumber($value, $min = null, $max = null, bool $throws = true)
+    public static function validateNumber(string $name, $value, $min = null, $max = null, bool $throws = true)
     {
-        if (!preg_match(self::$numberPattern, "$value")) {
-            return self::validateError("$value is not number", $throws);
+        if ($value === null) {
+            return self::validateError(sprintf('Parameter %s must be passed', $name), $throws);
+        }
+
+        if (!preg_match(self::$numberPattern, (string)$value)) {
+            return self::validateError(sprintf('Parameter %s is not a number', $name), $throws);
         }
 
         $value = (int)$value;
         if ($min !== null && $value < $min) {
-            return self::validateError("$value is too small (minimum is $min)", $throws);
+            return self::validateError(sprintf('Parameter %s is too small (minimum is %d)', $name, $min), $throws);
         }
 
         if ($max !== null && $value > $max) {
-            return self::validateError("$value is too big (maximum is $max)", $throws);
+            return self::validateError(sprintf('Parameter %s is too big (maximum is %d)', $name, $max), $throws);
         }
 
-        return $value;
+        return (int)$value;
     }
 
     /**
-     * the validator of float
+     * Validate float
      *
-     * @param mixed      $value
-     * @param float|null $min
-     * @param float|null $max
-     * @param bool       $throws
+     * @param string     $name   Parameter name
+     * @param mixed      $value  Parameter value
+     * @param float|null $min    Parameter minimun value
+     * @param float|null $max    Parameter maximum value
+     * @param bool       $throws Determine if throw an ValidatorException when invalid
      *
      * @throws ValidatorException
      * @return mixed
      */
-    public static function validateFloat($value, float $min = null, float $max = null, bool $throws = true)
-    {
-        if (!preg_match(self::$floatPattern, "$value")) {
-            return self::validateError("$value is not float", $throws);
+    public static function validateFloat(
+        string $name,
+        $value,
+        float $min = null,
+        float $max = null,
+        bool $throws = true
+    ) {
+        if ($value === null) {
+            return self::validateError(sprintf('Parameter %s must be passed', $name), $throws);
+        }
+
+        if (!preg_match(self::$floatPattern, (string)$value)) {
+            return self::validateError(sprintf('Parameter %s is not float type', $name), $throws);
         }
 
         $value = (float)$value;
         if ($min !== null && $value < $min) {
-            return self::validateError("$value is too small (minimum is $min)", $throws);
+            return self::validateError(sprintf('Parameter %s is too small (minimum is %d)', $name, $min), $throws);
         }
 
         if ($max !== null && $value > $max) {
-            return self::validateError("$value is too big (maximum is $max)", $throws);
+            return self::validateError(sprintf('Parameter %s is too big (maximum is %d)', $name, $max), $throws);
         }
 
-        return $value;
+        return (float)$value;
     }
 
     /**
-     * the validator of string
+     * Validate string
      *
-     * @param mixed    $value
-     * @param int|null $min
-     * @param int|null $max
-     * @param bool     $throws
+     * @param string   $name   Parameter name
+     * @param mixed    $value  Parameter value
+     * @param int|null $min    Parameter length minimun value
+     * @param int|null $max    Parameter length maximum value
+     * @param bool     $throws Determine if throw an ValidatorException when invalid
      *
-     * @throws ValidatorException
      * @return mixed
+     * @throws \Swoft\Exception\ValidatorException
      */
-    public static function validateString($value, int $min = null, int $max = null, bool $throws = true)
+    public static function validateString(string $name, $value, int $min = null, int $max = null, bool $throws = true)
     {
-        if (!is_string($value)) {
-            return self::validateError("$value is not string", $throws);
+        if ($value === null) {
+            return self::validateError(sprintf('Parameter %s must be passed', $name), $throws);
+        }
+
+        if (!\is_string($value)) {
+            return self::validateError(sprintf('Parameter %s is not string type', $name), $throws);
         }
         $length = mb_strlen($value);
         if ($min !== null && $length < $min) {
-            return self::validateError("$value is too small (minimum is $min)", $throws);
+            return self::validateError(sprintf('Parameter %s length is too short (minimum is %d)', $name, $min), $throws);
         }
 
         if ($max !== null && $length > $max) {
-            return self::validateError("$value is too big (maximum is $max)", $throws);
+            return self::validateError(sprintf('Parameter %s length is too long (maximum is %d)', $name, $max), $throws);
         }
 
-        return $value;
+        return (string)$value;
     }
 
     /**
-     * the validator of enum
+     * Validate enum
      *
-     * @param mixed $value
-     * @param array $validValues
-     * @param bool  $throws
+     * @param string $name        Parameter name
+     * @param mixed  $value       Parameter value
+     * @param array  $validValues Enum values
+     * @param bool   $throws      Determine if throw an ValidatorException when invalid
      *
-     * @return bool
+     * @return mixed
+     * @throws \Swoft\Exception\ValidatorException
      */
-    public static function validateEnum($value, array $validValues, bool $throws = true)
+    public static function validateEnum(string $name, $value, array $validValues, bool $throws = true)
     {
-        if (!in_array($value, $validValues)) {
-            return self::validateError("$value is not valid enum!", $throws);
+        if ($value === null) {
+            return self::validateError(sprintf('Parameter %s must be passed', $name), $throws);
+        }
+        if (!\in_array($value, $validValues, false)) {
+            return self::validateError(sprintf('Parameter %s is an invalid enum value', $name), $throws);
         }
 
         return $value;
     }
 
     /**
-     * do error
+     * Throw a ValidatorException
      *
      * @param string $message
      * @param bool   $throws
@@ -178,7 +204,7 @@ class ValidatorHelper
      * @return bool
      * @throws \Swoft\Exception\ValidatorException
      */
-    private static function validateError(string $message, bool $throws)
+    private static function validateError(string $message, bool $throws): bool
     {
         if ($throws) {
             throw new ValidatorException($message);

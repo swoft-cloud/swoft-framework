@@ -48,7 +48,7 @@ class JsonHelper
      * @throws \InvalidArgumentException if the JSON cannot be encoded.
      * @link http://www.php.net/manual/en/function.json-encode.php
      */
-    public static function encode($value, $options = 0, $depth = 512)
+    public static function encode($value, $options = 0, $depth = 512): string
     {
         if ($value instanceof Arrayable) {
             $value = $value->toArray();
