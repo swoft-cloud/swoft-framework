@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Db\Test\Testing\Entity;
+namespace SwoftTest\Db\Entity;
 
 use Swoft\Db\Bean\Annotation\Id;
 use Swoft\Db\Bean\Annotation\Required;

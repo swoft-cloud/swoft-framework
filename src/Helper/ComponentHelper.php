@@ -47,6 +47,9 @@ class ComponentHelper
      */
     private static function parseAutoloadFromComposerFile($filename): array
     {
+		if (!file_exists($filename)) {
+			return [];
+		}
         $json = file_get_contents($filename);
         $mapping = [];
 

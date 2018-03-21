@@ -1,13 +1,13 @@
 <?php
 
-namespace Swoft\Db\Test\Cases;
+namespace SwoftTest\Db;
 
 use PHPUnit\Framework\TestCase;
 use Swoft\App;
-use Swoft\Db\Test\Testing\Pool\DbEnvPoolConfig;
-use Swoft\Db\Test\Testing\Pool\DbPptPoolConfig;
-use Swoft\Db\Test\Testing\Pool\DbSlaveEnvPoolConfig;
-use Swoft\Db\Test\Testing\Pool\DbSlavePptConfig;
+use SwoftTest\Db\Pool\DbEnvPoolConfig;
+use SwoftTest\Db\Pool\DbPptPoolConfig;
+use SwoftTest\Db\Pool\DbSlaveEnvPoolConfig;
+use SwoftTest\Db\Pool\DbSlavePptConfig;
 
 /**
  * PoolTest

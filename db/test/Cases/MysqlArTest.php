@@ -1,6 +1,6 @@
 <?php
 
-namespace Swoft\Db\Test\Cases;
+namespace SwoftTest\Db;
 
 /**
  * SyncMysqlArTest

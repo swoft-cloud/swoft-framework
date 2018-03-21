@@ -1,13 +1,13 @@
 <?php
 
-namespace Swoft\Db\Test\Cases;
+namespace SwoftTest\Db;
 
 use PHPUnit\Framework\TestCase;
 use Swoft\Db\EntityManager;
 use Swoft\Db\Pool;
 use Swoft\Db\QueryBuilder;
-use Swoft\Db\Test\Testing\Entity\User;
 use Swoft\Db\Types;
+use SwoftTest\Db\Entity\User;
 
 /**
  * DbTestCache

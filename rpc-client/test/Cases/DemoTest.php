@@ -1,6 +1,6 @@
 <?php
 
-namespace SwoftTest\Rpc\Client;
+namespace SwoftTest\RpcClient;
 
 class DemoTest extends AbstractTestCase
 {

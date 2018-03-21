@@ -1,20 +1,20 @@
 <?php
 
-namespace Swoft\Db\Test\Testing\Pool;
+namespace SwoftTest\Db\Pool;
 
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Value;
 use Swoft\Pool\PoolProperties;
 
 /**
- * db properties pool config
+ * db slave  env pool config
  * @Bean()
  */
-class DbPptPoolConfig extends PoolProperties
+class DbSlaveEnvPoolConfig extends PoolProperties
 {
     /**
      * the name of pool
-     * @Value(name="${config.db.master.name}")
+     * @Value(env="${DB_SLAVE_NAME}")
      *
      * @var string
      */
@@ -22,7 +22,7 @@ class DbPptPoolConfig extends PoolProperties
 
     /**
      * the maximum number of idle connections
-     * @Value(name="${config.db.master.maxIdel}")
+     * @Value(env="${DB_SLAVE_MAX_IDEL}")
      *
      * @var int
      */
@@ -30,7 +30,7 @@ class DbPptPoolConfig extends PoolProperties
 
     /**
      * the maximum number of active connections
-     * @Value(name="${config.db.master.maxActive}")
+     * @Value(env="${DB_SLAVE_MAX_ACTIVE}")
      *
      * @var int
      */
@@ -38,7 +38,7 @@ class DbPptPoolConfig extends PoolProperties
 
     /**
      * the maximum number of wait connections
-     * @Value(name="${config.db.master.maxWait}")
+     * @Value(env="${DB_SLAVE_MAX_WAIT}")
      *
      * @var int
      */
@@ -46,7 +46,7 @@ class DbPptPoolConfig extends PoolProperties
 
     /**
      * the time of connect timeout
-     * @Value(name="${config.db.master.timeout}")
+     * @Value(env="${DB_SLAVE_TIMEOUT}")
      *
      * @var int
      */
@@ -60,7 +60,7 @@ class DbPptPoolConfig extends PoolProperties
      *  '127.0.0.1:88'
      * ]
      * </pre>
-     * @Value(name="${config.db.master.uri}")
+     * @Value(env="${DB_SLAVE_URI}")
      *
      * @var array
      */
@@ -68,7 +68,7 @@ class DbPptPoolConfig extends PoolProperties
 
     /**
      * whether to user provider(consul/etcd/zookeeper)
-     * @Value(name="${config.db.master.useProvider}")
+     * @Value(env="${DB_SLAVE_USE_PROVIDER}")
      *
      * @var bool
      */
@@ -76,7 +76,7 @@ class DbPptPoolConfig extends PoolProperties
 
     /**
      * the default balancer is random balancer
-     * @Value(name="${config.db.master.balancer}")
+     * @Value(env="${DB_SLAVE_BALANCER}")
      *
      * @var string
      */
@@ -84,7 +84,7 @@ class DbPptPoolConfig extends PoolProperties
 
     /**
      * the default provider is consul provider
-     * @Value(name="${config.db.master.provider}")
+     * @Value(env="${DB_SLAVE_PROVIDER}")
      *
      * @var string
      */
@@ -97,6 +97,4 @@ class DbPptPoolConfig extends PoolProperties
     {
         return $this->maxIdel;
     }
-
-
 }

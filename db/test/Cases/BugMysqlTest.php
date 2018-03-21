@@ -1,8 +1,8 @@
 <?php
 
-namespace Swoft\Db\Test\Cases;
+namespace SwoftTest\Db;
 
-use Swoft\Db\Test\Testing\Entity\User;
+use SwoftTest\Db\Entity\User;
 
 /**
  * BugMysqlTest

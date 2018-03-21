@@ -1,6 +1,6 @@
 <?php
 
-namespace SwoftTest\Memory;
+namespace SwoftTest\Sg;
 
 use PHPUnit\Framework\TestCase;
 

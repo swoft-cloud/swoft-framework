@@ -1,10 +1,10 @@
 <?php
 
-namespace Swoft\Db\Test\Cases;
+namespace SwoftTest\Db;
 
 use Swoft\Db\Db;
 use Swoft\Db\EntityManager;
-use Swoft\Db\Test\Testing\Entity\User;
+use SwoftTest\Db\Entity\User;
 
 class TsTest extends DbTestCase
 {

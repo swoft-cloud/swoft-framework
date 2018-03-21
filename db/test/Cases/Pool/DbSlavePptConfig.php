@@ -1,20 +1,20 @@
 <?php
 
-namespace Swoft\Db\Test\Testing\Pool;
+namespace SwoftTest\Db\Pool;
 
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Annotation\Value;
 use Swoft\Pool\PoolProperties;
 
 /**
- * db slave  env pool config
+ * db salve properties pool config
  * @Bean()
  */
-class DbSlaveEnvPoolConfig extends PoolProperties
+class DbSlavePptConfig extends PoolProperties
 {
     /**
      * the name of pool
-     * @Value(env="${DB_SLAVE_NAME}")
+     * @Value(name="${config.db.slave.name}")
      *
      * @var string
      */
@@ -22,7 +22,7 @@ class DbSlaveEnvPoolConfig extends PoolProperties
 
     /**
      * the maximum number of idle connections
-     * @Value(env="${DB_SLAVE_MAX_IDEL}")
+     * @Value(name="${config.db.slave.maxIdel}")
      *
      * @var int
      */
@@ -30,7 +30,7 @@ class DbSlaveEnvPoolConfig extends PoolProperties
 
     /**
      * the maximum number of active connections
-     * @Value(env="${DB_SLAVE_MAX_ACTIVE}")
+     * @Value(name="${config.db.slave.maxActive}")
      *
      * @var int
      */
@@ -38,7 +38,7 @@ class DbSlaveEnvPoolConfig extends PoolProperties
 
     /**
      * the maximum number of wait connections
-     * @Value(env="${DB_SLAVE_MAX_WAIT}")
+     * @Value(name="${config.db.slave.maxWait}")
      *
      * @var int
      */
@@ -46,7 +46,7 @@ class DbSlaveEnvPoolConfig extends PoolProperties
 
     /**
      * the time of connect timeout
-     * @Value(env="${DB_SLAVE_TIMEOUT}")
+     * @Value(name="${config.db.slave.timeout}")
      *
      * @var int
      */
@@ -60,7 +60,7 @@ class DbSlaveEnvPoolConfig extends PoolProperties
      *  '127.0.0.1:88'
      * ]
      * </pre>
-     * @Value(env="${DB_SLAVE_URI}")
+     * @Value(name="${config.db.slave.uri}")
      *
      * @var array
      */
@@ -68,7 +68,7 @@ class DbSlaveEnvPoolConfig extends PoolProperties
 
     /**
      * whether to user provider(consul/etcd/zookeeper)
-     * @Value(env="${DB_SLAVE_USE_PROVIDER}")
+     * @Value(name="${config.db.slave.useProvider}")
      *
      * @var bool
      */
@@ -76,7 +76,7 @@ class DbSlaveEnvPoolConfig extends PoolProperties
 
     /**
      * the default balancer is random balancer
-     * @Value(env="${DB_SLAVE_BALANCER}")
+     * @Value(name="${config.db.slave.balancer}")
      *
      * @var string
      */
@@ -84,7 +84,7 @@ class DbSlaveEnvPoolConfig extends PoolProperties
 
     /**
      * the default provider is consul provider
-     * @Value(env="${DB_SLAVE_PROVIDER}")
+     * @Value(name="${config.db.slave.provider}")
      *
      * @var string
      */

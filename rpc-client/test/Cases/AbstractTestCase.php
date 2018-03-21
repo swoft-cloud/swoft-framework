@@ -1,6 +1,6 @@
 <?php
 
-namespace SwoftTest\Rpc\Client;
+namespace SwoftTest\RpcClient;
 
 use PHPUnit\Framework\TestCase;
 

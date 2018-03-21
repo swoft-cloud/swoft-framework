@@ -1,6 +1,6 @@
 <?php
 
-namespace SwoftTest\I18n;
+namespace SwoftTest\Process;
 
 use Swoft\App;
 use Swoft\I18n\Translator;
