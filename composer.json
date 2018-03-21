@@ -15,6 +15,11 @@
     "psr/http-server-middleware": "^1.0",
     "zendframework/zend-mime": "^2.7"
   },
+  "require-dev": {
+    "eaglewu/swoole-ide-helper": "dev-master",
+    "phpunit/phpunit": "^5.7",
+    "friendsofphp/php-cs-fixer": "^2.10"
+  },
   "replace": {
     "swoft/rpc": "self.version",
     "swoft/rpc-server": "self.version",
@@ -36,8 +41,6 @@
     "swoft/service-governance": "self.version"
   },
   "autoload": {
-    "classmap": [
-    ],
     "psr-4": {
       "Swoft\\":"src/",
       "Swoft\\Rpc\\": "rpc/src",
@@ -105,11 +108,8 @@
       "url": "https://packagist.phpcomposer.com"
     }
   },
-  "require-dev": {
-    "eaglewu/swoole-ide-helper": "self.version",
-    "phpunit/phpunit": "^5.7"
-  },
   "scripts": {
-    "test": "./vendor/bin/phpunit -c phpunit.xml"
+    "test": "./vendor/bin/phpunit -c phpunit.xml",
+    "cs-fix": "./vendor/bin/php-cs-fixer fix $1"
   }
 }
