@@ -1,0 +1,21 @@
+language: php
+
+php:
+  - 7.0
+  - 7.1
+
+services:
+    - mysql
+
+before_install:
+    - mysql -e 'CREATE DATABASE IF NOT EXISTS test;use test;CREATE TABLE IF NOT EXISTS `user` (`id` int(11) NOT NULL AUTO_INCREMENT,`name` varchar(20) DEFAULT NULL,`sex` int(1) NOT NULL DEFAULT '0',`age` int(1) NOT NULL DEFAULT '0',`description` varchar(240) DEFAULT NULL,PRIMARY KEY (`id`)) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8;'
+
+install:
+  - wget https://github.com/redis/hiredis/archive/v0.13.3.tar.gz -O hiredis.tar.gz && mkdir -p hiredis && tar -xf hiredis.tar.gz -C hiredis --strip-components=1 && cd hiredis && sudo make -j$(nproc) && sudo make install && sudo ldconfig && cd ..
+  - pecl install -f swoole-2.1.1
+
+before_script:
+  - composer config -g process-timeout 900 && composer update
+  - phpenv config-rm xdebug.ini
+
+script: composer test
