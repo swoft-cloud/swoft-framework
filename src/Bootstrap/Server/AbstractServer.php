@@ -262,6 +262,14 @@ abstract class AbstractServer implements ServerInterface
         $this->httpSetting = $settings['http'];
         $this->serverSetting = $settings['server'];
         $this->setting = $settings['setting'];
+
+        // fix bug must to int
+        if (isset($this->setting['task_ipc_mode'])) {
+            $this->setting['task_ipc_mode'] = intval($this->setting['task_ipc_mode']);
+        }
+        if (isset($this->setting['message_queue_key'])) {
+            $this->setting['message_queue_key'] = intval($this->setting['message_queue_key']);
+        }
     }
 
     /**

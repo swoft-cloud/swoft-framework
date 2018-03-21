@@ -191,6 +191,9 @@ abstract class ConnectionPool implements PoolInterface
      */
     private function getConnectionByQueue(): ConnectionInterface
     {
+        if($this->queue == null){
+            $this->queue = new \SplQueue();
+        }
         if (!$this->queue->isEmpty()) {
             return $this->getEffectiveConnection($this->queue->count(), false);
         }

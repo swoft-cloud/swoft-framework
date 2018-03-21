@@ -40,12 +40,17 @@ class ValidatorHelper
      * @param int|null $min    Parameter minimun value
      * @param int|null $max    Parameter maximum value
      * @param bool     $throws Determine if throw an ValidatorException when invalid
+     *
      * @return mixed
      * @throws \Swoft\Exception\ValidatorException
      */
     public static function validateInteger(string $name, $value, $min = null, $max = null, bool $throws = true)
     {
-        if (! preg_match(self::$integerPattern, (string)$value)) {
+        if ($value === null) {
+            return self::validateError(sprintf('Parameter %s must be passed', $name), $throws);
+        }
+
+        if (!preg_match(self::$integerPattern, (string)$value)) {
             return self::validateError(sprintf('Parameter %s is not integer type', $name), $throws);
         }
 
@@ -58,7 +63,7 @@ class ValidatorHelper
             return self::validateError(sprintf('Parameter %s is too big (maximum is %d)', $name, $max), $throws);
         }
 
-        return $value;
+        return (int)$value;
     }
 
     /**
@@ -69,12 +74,17 @@ class ValidatorHelper
      * @param int|null $min    Parameter minimun value
      * @param int|null $max    Parameter maximum value
      * @param bool     $throws Determine if throw an ValidatorException when invalid
+     *
      * @return mixed
      * @throws \Swoft\Exception\ValidatorException
      */
     public static function validateNumber(string $name, $value, $min = null, $max = null, bool $throws = true)
     {
-        if (! preg_match(self::$numberPattern, (string)$value)) {
+        if ($value === null) {
+            return self::validateError(sprintf('Parameter %s must be passed', $name), $throws);
+        }
+
+        if (!preg_match(self::$numberPattern, (string)$value)) {
             return self::validateError(sprintf('Parameter %s is not a number', $name), $throws);
         }
 
@@ -87,7 +97,7 @@ class ValidatorHelper
             return self::validateError(sprintf('Parameter %s is too big (maximum is %d)', $name, $max), $throws);
         }
 
-        return $value;
+        return (int)$value;
     }
 
     /**
@@ -98,6 +108,7 @@ class ValidatorHelper
      * @param float|null $min    Parameter minimun value
      * @param float|null $max    Parameter maximum value
      * @param bool       $throws Determine if throw an ValidatorException when invalid
+     *
      * @throws ValidatorException
      * @return mixed
      */
@@ -108,7 +119,11 @@ class ValidatorHelper
         float $max = null,
         bool $throws = true
     ) {
-        if (! preg_match(self::$floatPattern, (string)$value)) {
+        if ($value === null) {
+            return self::validateError(sprintf('Parameter %s must be passed', $name), $throws);
+        }
+
+        if (!preg_match(self::$floatPattern, (string)$value)) {
             return self::validateError(sprintf('Parameter %s is not float type', $name), $throws);
         }
 
@@ -121,7 +136,7 @@ class ValidatorHelper
             return self::validateError(sprintf('Parameter %s is too big (maximum is %d)', $name, $max), $throws);
         }
 
-        return $value;
+        return (float)$value;
     }
 
     /**
@@ -132,12 +147,17 @@ class ValidatorHelper
      * @param int|null $min    Parameter length minimun value
      * @param int|null $max    Parameter length maximum value
      * @param bool     $throws Determine if throw an ValidatorException when invalid
+     *
      * @return mixed
      * @throws \Swoft\Exception\ValidatorException
      */
     public static function validateString(string $name, $value, int $min = null, int $max = null, bool $throws = true)
     {
-        if (! \is_string($value)) {
+        if ($value === null) {
+            return self::validateError(sprintf('Parameter %s must be passed', $name), $throws);
+        }
+
+        if (!\is_string($value)) {
             return self::validateError(sprintf('Parameter %s is not string type', $name), $throws);
         }
         $length = mb_strlen($value);
@@ -149,7 +169,7 @@ class ValidatorHelper
             return self::validateError(sprintf('Parameter %s length is too long (maximum is %d)', $name, $max), $throws);
         }
 
-        return $value;
+        return (string)$value;
     }
 
     /**
@@ -159,12 +179,16 @@ class ValidatorHelper
      * @param mixed  $value       Parameter value
      * @param array  $validValues Enum values
      * @param bool   $throws      Determine if throw an ValidatorException when invalid
+     *
      * @return mixed
      * @throws \Swoft\Exception\ValidatorException
      */
     public static function validateEnum(string $name, $value, array $validValues, bool $throws = true)
     {
-        if (! \in_array($value, $validValues, false)) {
+        if ($value === null) {
+            return self::validateError(sprintf('Parameter %s must be passed', $name), $throws);
+        }
+        if (!\in_array($value, $validValues, false)) {
             return self::validateError(sprintf('Parameter %s is an invalid enum value', $name), $throws);
         }
 
@@ -176,6 +200,7 @@ class ValidatorHelper
      *
      * @param string $message
      * @param bool   $throws
+     *
      * @return bool
      * @throws \Swoft\Exception\ValidatorException
      */
