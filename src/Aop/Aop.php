@@ -2,7 +2,6 @@
 
 namespace Swoft\Aop;
 
-use Swoft\App;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Collector\AspectCollector;
 
@@ -149,7 +148,7 @@ class Aop implements AopInterface
             $aspectArgs[] = null;
         }
 
-        $aspect = App::getBean($aspectClass);
+        $aspect = \bean($aspectClass);
 
         return $aspect->$aspectMethod(...$aspectArgs);
     }
