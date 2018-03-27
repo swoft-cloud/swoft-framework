@@ -12,6 +12,7 @@ namespace SwoftTest;
 use Swoft\App;
 use SwoftTest\Aop\AnnotationAop;
 use SwoftTest\Aop\AopBean;
+use SwoftTest\Aop\AopBean2;
 use SwoftTest\Aop\RegBean;
 
 /**
@@ -33,6 +34,24 @@ class AopTest extends AbstractTestCase
         $this->assertEquals('do aop around-before2  before2  around-after2  afterReturn2  around-before1  before1  around-after1  afterReturn1 ', $result);
     }
 
+
+    /**
+     * 验证问题:当切面不包含Around型通知时，不支持多层切面
+     * @author Jiankang maijiankang@foxmail.com
+     */
+    public function testNestWithourRound()
+    {
+        /* @var \SwoftTest\Aop\AopBean2 $aopBean*/
+        $aopBean = App::getBean(AopBean2::class);
+        
+        ob_start();
+        $aopBean->doAop();
+        $echoContent=ob_get_contents();
+        ob_end_clean();
+        
+        $this->assertEquals(' around-before1  before1  around-before2  before2 do aop around-after2  after2  afterReturn2  around-after1  after1  afterReturn1 ', $echoContent);
+    }
+    
     public function testAnnotationAop()
     {
         /* @var AnnotationAop $annotationBean*/
