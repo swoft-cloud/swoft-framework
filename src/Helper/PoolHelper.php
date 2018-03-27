@@ -30,10 +30,8 @@ class PoolHelper
      *
      * @return string
      */
-    public static function getGroupKey(string $group):string
+    public static function getTsInstanceKey(string $group): string
     {
-        $cid = Coroutine::id();
-
-        return sprintf('%d-%s', $cid, $group);
+        return $group;
     }
 }
