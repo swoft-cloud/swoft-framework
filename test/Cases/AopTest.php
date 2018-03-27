@@ -49,7 +49,7 @@ class AopTest extends AbstractTestCase
         $echoContent=ob_get_contents();
         ob_end_clean();
         
-        $this->assertEquals(' before1withoutatound  before2withoutatound do aop after2withoutatound  afterReturn2withoutatound  after1withoutatound  afterReturn1withoutatound ', $echoContent);
+        $this->assertEquals(' before1withoutaround  before2withoutaround do aop after2withoutaround  afterReturn2withoutaround  after1withoutaround  afterReturn1withoutaround ', $echoContent);
     }
     
     public function testAnnotationAop()

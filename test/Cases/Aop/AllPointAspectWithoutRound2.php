@@ -39,7 +39,7 @@ class AllPointAspectWithoutRound2
      */
     public function before()
     {
-        echo ' before2withoutatound ';
+        echo ' before2withoutaround ';
     }
 
     /**
@@ -47,7 +47,7 @@ class AllPointAspectWithoutRound2
      */
     public function after()
     {
-        echo ' after2withoutatound ';
+        echo ' after2withoutaround ';
     }
 
     /**
@@ -55,7 +55,7 @@ class AllPointAspectWithoutRound2
      */
     public function afterReturn()
     {
-        echo ' afterReturn2withoutatound ';
+        echo ' afterReturn2withoutaround ';
     }
 
 
