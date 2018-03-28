@@ -8,7 +8,6 @@ use Swoft\Core\RequestContext;
 use Swoft\Event\AppEvent;
 use Swoft\Event\EventHandlerInterface;
 use Swoft\Event\EventInterface;
-use Swoft\Event\Events\TransactionReleaseEvent;
 use Swoft\Helper\PoolHelper;
 use Swoft\Log\Log;
 
@@ -25,9 +24,10 @@ class ResourceReleaseListener implements EventHandlerInterface
      */
     public function handle(EventInterface $event)
     {
-        $contextTsKey = PoolHelper::getContextTsKey();
+        // Release system resources
+        App::trigger(AppEvent::RESOURCE_RELEASE_BEFORE);
+
         $connectionKey = PoolHelper::getContextCntKey();
-        $tsStacks     = RequestContext::getContextDataByKey($contextTsKey, []);
         $connections   = RequestContext::getContextDataByKey($connectionKey, []);
 
         if (empty($connections)) {
@@ -35,20 +35,12 @@ class ResourceReleaseListener implements EventHandlerInterface
         }
 
         /* @var \Swoft\Pool\ConnectionInterface $connection */
-        foreach ($connections as $connection){
+        foreach ($connections as $connectionId => $connection) {
             if (App::isCoContext() && !$connection->isRecv()) {
+                Log::error(sprintf('%s connection is not received ，forget to getResult()', get_class($connection)));
                 $connection->receive();
             }
-        }
-
-        if (!empty($tsStacks)) {
-            $event = new TransactionReleaseEvent(AppEvent::TRANSACTION_RELEASE, $tsStacks, $connections);
-            App::trigger($event);
-        }
-
-        /* @var \Swoft\Pool\ConnectionInterface $connection */
-        foreach ($connections as $connectionId => $connection) {
-            Log::error(sprintf('%s connection is not released ，forget to getResult() or em->close', get_class($connection)));
+            Log::error(sprintf('%s connection is not released ，forget to getResult()', get_class($connection)));
             $connection->release(true);
         }
     }

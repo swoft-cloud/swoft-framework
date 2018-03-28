@@ -28,9 +28,11 @@ abstract class AbstractConnection implements ConnectionInterface
     protected $autoRelease = true;
 
     /**
+     * Whether or not the package has been recv,default true
+     *
      * @var bool
      */
-    protected $recv = false;
+    protected $recv = true;
 
     /**
      * AbstractConnection constructor.
