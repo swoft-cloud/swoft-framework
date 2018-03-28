@@ -75,7 +75,11 @@ class Aop implements AopInterface
                     // The result of before point will not effect origin object method
                     $this->doPoint($advice['before'], $target, $method, $params, $advice, $advices);
                 }
-                $result = $target->$method(...$params);
+                if(0 === count($advices)) {
+                    $result = $target->$method(...$params);
+                } else {
+                    $this->doAdvice($target, $method, $params, $advices);
+                }
             }
 
             // After
