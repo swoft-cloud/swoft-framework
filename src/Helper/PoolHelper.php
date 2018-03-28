@@ -30,8 +30,8 @@ class PoolHelper
      *
      * @return string
      */
-    public static function getTsInstanceKey(string $group): string
+    public static function getTsInstanceKey(string $instance): string
     {
-        return $group;
+        return $instance;
     }
 }
