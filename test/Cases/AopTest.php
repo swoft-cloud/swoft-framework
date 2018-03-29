@@ -93,11 +93,12 @@ class AopTest extends AbstractTestCase
         /* @var \SwoftTest\Aop\AopBean2 $aopBean*/
         $aopBean = App::getBean(AopBean2::class);
         AllPointAspectWithoutRound1::$catch=null;
-
         $exception=new \LogicException('Bomb!');
+        ob_start();
 
         $aopBean->throwSth($exception);
 
+        ob_end_clean();
         $this->assertEquals($exception,AllPointAspectWithoutRound1::$catch);
 
     }
@@ -110,11 +111,12 @@ class AopTest extends AbstractTestCase
         /* @var \SwoftTest\Aop\AopBean2 $aopBean*/
         $aopBean = App::getBean(AopBean2::class);
         AllPointAspectWithoutRound2::$catch=null;
-
         $exception=new \LogicException('Bomb!');
+        ob_start();
 
         $aopBean->throwSth($exception);
 
+        ob_end_clean();
         $this->assertEquals($exception,AllPointAspectWithoutRound2::$catch);
 
     }

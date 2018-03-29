@@ -68,9 +68,11 @@ class AllPointAspectWithoutRound2
     /**
      * @param \Exception $e
      * @AfterThrowing
+     * @throws 
      */
     public function afterThrowing(\Exception $e=null){
         static::$catch=$e;
+        throw $e;
     }
     
 }
