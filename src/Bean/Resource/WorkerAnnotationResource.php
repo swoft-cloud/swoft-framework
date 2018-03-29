@@ -1,5 +1,12 @@
 <?php
-
+/**
+ * This file is part of Swoft.
+ *
+ * @link https://swoft.org
+ * @document https://doc.swoft.org
+ * @contact group@swoft.org
+ * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 namespace Swoft\Bean\Resource;
 
 use Swoft\Helper\ComponentHelper;
@@ -14,14 +21,20 @@ class WorkerAnnotationResource extends AnnotationResource
      */
     public function registerNamespace()
     {
-        $swoftDir = \dirname(__FILE__, 5);
-        $componentDirs = scandir($swoftDir, null);
+        $hostDir = \dirname(__FILE__, 5);
+        if ('swoft' === \basename($hostDir)) {
+            //install by composer
+            $componentDirs = scandir($hostDir, null);
+        } else {
+            //independent
+            $componentDirs = ['swoft-framework'];
+        }
         foreach ($componentDirs as $component) {
             if ($component === '.' || $component === '..') {
                 continue;
             }
 
-            $componentDir = $swoftDir . DS . $component;
+            $componentDir = $hostDir . DS . $component;
             $componentCommandDir = $componentDir . DS . 'src';
             if (! is_dir($componentCommandDir)) {
                 continue;
@@ -49,7 +62,7 @@ class WorkerAnnotationResource extends AnnotationResource
                     $this->scanFiles[$ns][] = $scanDir;
                     continue;
                 }
-                $scanNs = $ns . "\\" . $dir;
+                $scanNs = $ns . '\\' . $dir;
 
                 $this->scanNamespaces[$scanNs] = $scanDir;
             }
