@@ -42,14 +42,15 @@ abstract class AbstractResult implements ResultInterface
      * Receive by defer
      *
      * @param bool $defer
+     * @param bool $release
      *
      * @return mixed
      */
-    protected function recv($defer = false)
+    protected function recv(bool $defer = false, bool $release = true)
     {
         if ($this->connection instanceof ConnectionInterface) {
             $result = $this->connection->receive();
-            $this->release();
+            $this->release($release);
 
             return $result;
         }
@@ -63,11 +64,11 @@ abstract class AbstractResult implements ResultInterface
     }
 
     /**
-     * @return void
+     * @param bool $release
      */
-    protected function release()
+    protected function release(bool $release = true)
     {
-        if ($this->connection instanceof ConnectionInterface) {
+        if ($this->connection instanceof ConnectionInterface && $release) {
             $this->connection->release();
         }
     }

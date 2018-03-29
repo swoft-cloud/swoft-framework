@@ -40,6 +40,7 @@ class ResourceReleaseListener implements EventHandlerInterface
                 Log::error(sprintf('%s connection is not received ，forget to getResult()', get_class($connection)));
                 $connection->receive();
             }
+
             Log::error(sprintf('%s connection is not released ，forget to getResult()', get_class($connection)));
             $connection->release(true);
         }
