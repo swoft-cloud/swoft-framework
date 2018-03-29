@@ -10,6 +10,8 @@
 namespace SwoftTest;
 
 use Swoft\App;
+use SwoftTest\Aop\AllPointAspectWithoutRound1;
+use SwoftTest\Aop\AllPointAspectWithoutRound2;
 use SwoftTest\Aop\AnnotationAop;
 use SwoftTest\Aop\AopBean;
 use SwoftTest\Aop\AopBean2;
@@ -81,4 +83,40 @@ class AopTest extends AbstractTestCase
         $result = $annotationBean->methodParams('a', 'b');
         $this->assertEquals('methodParams-a-new-b-new regAspect around before  regAspect around after ', $result);
     }
+
+
+    /**
+     * 测试AfterThrowing切面 能否从JoinPoint获取异常
+     * @author Jiankang maijiankang@foxmail.com
+     */
+    public function testThrowableInjectByJoinPoint(){
+        /* @var \SwoftTest\Aop\AopBean2 $aopBean*/
+        $aopBean = App::getBean(AopBean2::class);
+        AllPointAspectWithoutRound1::$catch=null;
+
+        $exception=new \LogicException('Bomb!');
+
+        $aopBean->throwSth($exception);
+
+        $this->assertEquals($exception,AllPointAspectWithoutRound1::$catch);
+
+    }
+
+    /**
+     * 测试AfterThrowing切面 能否直接注入异常
+     * @author Jiankang maijiankang@foxmail.com
+     */
+    public function testThrowableInject(){
+        /* @var \SwoftTest\Aop\AopBean2 $aopBean*/
+        $aopBean = App::getBean(AopBean2::class);
+        AllPointAspectWithoutRound2::$catch=null;
+
+        $exception=new \LogicException('Bomb!');
+
+        $aopBean->throwSth($exception);
+
+        $this->assertEquals($exception,AllPointAspectWithoutRound2::$catch);
+
+    }
+    
 }

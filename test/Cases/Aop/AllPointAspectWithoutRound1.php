@@ -36,6 +36,10 @@ use Swoft\Bean\Annotation\PointBean;
 class AllPointAspectWithoutRound1
 {
 
+    /**
+     * @var \Throwable
+     */
+    public static $catch;
 
     /**
      * @Before()
@@ -61,6 +65,15 @@ class AllPointAspectWithoutRound1
         echo ' afterReturn1withoutaround ';
     }
 
+    /**
+     * @param JoinPoint $joinPoint
+     * @throws 
+     * @AfterThrowing
+     */
+    public function afterThrowing(JoinPoint $joinPoint){
+        static::$catch=$joinPoint->getCatch();
+        throw $joinPoint->getCatch();
+    }
 
     
 }

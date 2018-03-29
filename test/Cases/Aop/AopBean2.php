@@ -27,4 +27,9 @@ class AopBean2
         echo 'do aop';
     }
     
+    
+    public function throwSth(\Throwable $t){
+        throw $t;
+    }
+    
 }

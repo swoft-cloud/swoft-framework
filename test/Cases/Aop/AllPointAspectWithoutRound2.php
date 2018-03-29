@@ -35,6 +35,12 @@ use Swoft\Bean\Annotation\PointBean;
 class AllPointAspectWithoutRound2
 {
     /**
+     * @var \Exception
+     */
+    public static $catch;
+
+    
+    /**
      * @Before()
      */
     public function before()
@@ -59,4 +65,12 @@ class AllPointAspectWithoutRound2
     }
 
 
+    /**
+     * @param \Exception $e
+     * @AfterThrowing
+     */
+    public function afterThrowing(\Exception $e=null){
+        static::$catch=$e;
+    }
+    
 }
