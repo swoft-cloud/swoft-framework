@@ -7,6 +7,7 @@
  * @contact group@swoft.org
  * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
  */
+
 namespace Swoft\Aop;
 
 use Swoft\Bean\Annotation\Bean;
@@ -83,7 +84,7 @@ class Aop implements AopInterface
                     // The result of before point will not effect origin object method
                     $this->doPoint($advice['before'], $target, $method, $params, $advice, $advices);
                 }
-                if(0 === count($advices)) {
+                if(0 === \count($advices)) {
                     $result = $target->$method(...$params);
                 } else {
                     $this->doAdvice($target, $method, $params, $advices);
@@ -96,7 +97,7 @@ class Aop implements AopInterface
             }
         } catch (Throwable $t) {
             if (isset($advice['afterThrowing']) && ! empty($advice['afterThrowing'])) {
-                return $this->doPoint($advice['afterThrowing'], $target, $method, $params, $advice, $advices,null,$t);
+                return $this->doPoint($advice['afterThrowing'], $target, $method, $params, $advice, $advices, null, $t);
             }else{
                 throw $t;
             }
@@ -132,7 +133,7 @@ class Aop implements AopInterface
         array $advice,
         array $advices,
         $return = null,
-        Throwable $catch=null
+        Throwable $catch = null
     ) {
         list($aspectClass, $aspectMethod) = $pointAdvice;
 
@@ -152,7 +153,7 @@ class Aop implements AopInterface
             // JoinPoint object
             $type = $parameterType->__toString();
             if ($type === JoinPoint::class) {
-                $aspectArgs[] = new JoinPoint($target, $method, $args, $return,$catch);
+                $aspectArgs[] = new JoinPoint($target, $method, $args, $return, $catch);
                 continue;
             }
 
@@ -163,7 +164,7 @@ class Aop implements AopInterface
             }
             
             //Throwable object
-            if (isset($catch) && $catch instanceof  $type){
+            if (isset($catch) && $catch instanceof $type){
                 $aspectArgs[] = $catch;
                 continue;
             }
@@ -261,7 +262,7 @@ class Aop implements AopInterface
             }
 
             // Method
-            $reg = '/^' . $executionMethod . '$/';
+            $reg = '/^(?:' . $executionMethod . ')$/';
             if (preg_match($reg, $method)) {
                 return true;
             }
