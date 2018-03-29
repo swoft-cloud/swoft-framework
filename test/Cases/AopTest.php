@@ -2,10 +2,10 @@
 /**
  * This file is part of Swoft.
  *
- * @link https://swoft.org
+ * @link     https://swoft.org
  * @document https://doc.swoft.org
- * @contact group@swoft.org
- * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
  */
 namespace SwoftTest;
 
@@ -35,7 +35,6 @@ class AopTest extends AbstractTestCase
         $result = $aopBean->doAop();
         $this->assertEquals('do aop around-before2  before2  around-after2  afterReturn2  around-before1  before1  around-after1  afterReturn1 ', $result);
     }
-
 
     /**
      * 验证问题:当切面不包含Around型通知时，不支持多层切面
@@ -84,12 +83,12 @@ class AopTest extends AbstractTestCase
         $this->assertEquals('methodParams-a-new-b-new regAspect around before  regAspect around after ', $result);
     }
 
-
     /**
      * 测试AfterThrowing切面 能否从JoinPoint获取异常
      * @author Jiankang maijiankang@foxmail.com
      */
-    public function testThrowableInjectByJoinPoint(){
+    public function testThrowableInjectByJoinPoint()
+    {
         /* @var \SwoftTest\Aop\AopBean2 $aopBean*/
         $aopBean = App::getBean(AopBean2::class);
         AllPointAspectWithoutRound1::$catch=null;
@@ -99,15 +98,15 @@ class AopTest extends AbstractTestCase
         $aopBean->throwSth($exception);
 
         ob_end_clean();
-        $this->assertEquals($exception,AllPointAspectWithoutRound1::$catch);
-
+        $this->assertEquals($exception, AllPointAspectWithoutRound1::$catch);
     }
 
     /**
      * 测试AfterThrowing切面 能否直接注入异常
      * @author Jiankang maijiankang@foxmail.com
      */
-    public function testThrowableInject(){
+    public function testThrowableInject()
+    {
         /* @var \SwoftTest\Aop\AopBean2 $aopBean*/
         $aopBean = App::getBean(AopBean2::class);
         AllPointAspectWithoutRound2::$catch=null;
@@ -117,8 +116,6 @@ class AopTest extends AbstractTestCase
         $aopBean->throwSth($exception);
 
         ob_end_clean();
-        $this->assertEquals($exception,AllPointAspectWithoutRound2::$catch);
-
+        $this->assertEquals($exception, AllPointAspectWithoutRound2::$catch);
     }
-    
 }

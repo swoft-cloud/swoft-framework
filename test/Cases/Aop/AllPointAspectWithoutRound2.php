@@ -2,19 +2,16 @@
 /**
  * This file is part of Swoft.
  *
- * @link https://swoft.org
+ * @link     https://swoft.org
  * @document https://doc.swoft.org
- * @contact group@swoft.org
- * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
  */
 namespace SwoftTest\Aop;
 
-use Swoft\Aop\JoinPoint;
-use Swoft\Aop\ProceedingJoinPoint;
 use Swoft\Bean\Annotation\After;
 use Swoft\Bean\Annotation\AfterReturning;
 use Swoft\Bean\Annotation\AfterThrowing;
-use Swoft\Bean\Annotation\Around;
 use Swoft\Bean\Annotation\Aspect;
 use Swoft\Bean\Annotation\Before;
 use Swoft\Bean\Annotation\PointBean;
@@ -38,7 +35,6 @@ class AllPointAspectWithoutRound2
      * @var \Exception
      */
     public static $catch;
-
     
     /**
      * @Before()
@@ -64,15 +60,14 @@ class AllPointAspectWithoutRound2
         echo ' afterReturn2withoutaround ';
     }
 
-
     /**
      * @param \Exception $e
      * @AfterThrowing
-     * @throws 
+     * @throws
      */
-    public function afterThrowing(\Exception $e=null){
+    public function afterThrowing(\Exception $e=null)
+    {
         static::$catch=$e;
         throw $e;
     }
-    
 }

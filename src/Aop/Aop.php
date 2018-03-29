@@ -2,10 +2,10 @@
 /**
  * This file is part of Swoft.
  *
- * @link https://swoft.org
+ * @link     https://swoft.org
  * @document https://doc.swoft.org
- * @contact group@swoft.org
- * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
  */
 
 namespace Swoft\Aop;
@@ -84,7 +84,7 @@ class Aop implements AopInterface
                     // The result of before point will not effect origin object method
                     $this->doPoint($advice['before'], $target, $method, $params, $advice, $advices);
                 }
-                if(0 === \count($advices)) {
+                if (0 === \count($advices)) {
                     $result = $target->$method(...$params);
                 } else {
                     $this->doAdvice($target, $method, $params, $advices);
@@ -98,7 +98,7 @@ class Aop implements AopInterface
         } catch (Throwable $t) {
             if (isset($advice['afterThrowing']) && ! empty($advice['afterThrowing'])) {
                 return $this->doPoint($advice['afterThrowing'], $target, $method, $params, $advice, $advices, null, $t);
-            }else{
+            } else {
                 throw $t;
             }
         }
@@ -159,12 +159,12 @@ class Aop implements AopInterface
 
             // ProceedingJoinPoint object
             if ($type === ProceedingJoinPoint::class) {
-                $aspectArgs[] = new ProceedingJoinPoint  ($target, $method, $args, $advice, $advices);
+                $aspectArgs[] = new ProceedingJoinPoint($target, $method, $args, $advice, $advices);
                 continue;
             }
             
             //Throwable object
-            if (isset($catch) && $catch instanceof $type){
+            if (isset($catch) && $catch instanceof $type) {
                 $aspectArgs[] = $catch;
                 continue;
             }
