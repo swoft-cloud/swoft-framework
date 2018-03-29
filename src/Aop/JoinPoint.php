@@ -7,7 +7,9 @@
  * @contact group@swoft.org
  * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
  */
+
 namespace Swoft\Aop;
+
 use \Throwable;
 
 /**
@@ -55,7 +57,7 @@ class JoinPoint implements JoinPointInterface
      * @param mixed  $return the return of executed method
      * @param Throwable $catch the throwable caught of the origin
      */
-    public function __construct($target, string $method, array $args, $return = null,$catch=null)
+    public function __construct($target, string $method, array $args, $return = null, $catch = null)
     {
         $this->args   = $args;
         $this->return = $return;
@@ -99,7 +101,8 @@ class JoinPoint implements JoinPointInterface
     /**
      * @return null|Throwable
      */
-    public function getCatch(){
+    public function getCatch()
+    {
         return $this->catch;
     }
 }
