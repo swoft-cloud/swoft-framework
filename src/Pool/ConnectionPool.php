@@ -5,6 +5,7 @@ namespace Swoft\Pool;
 use Swoft\App;
 use Swoft\Core\RequestContext;
 use Swoft\Exception\ConnectionException;
+use Swoft\Exception\PoolException;
 use Swoft\Helper\PoolHelper;
 use Swoole\Coroutine\Channel;
 
@@ -42,6 +43,10 @@ abstract class ConnectionPool implements PoolInterface
      */
     public function init()
     {
+        if (empty($this->poolConfig)) {
+            throw new PoolException('You must to set poolConfig by @Inject!');
+        }
+
         if (App::isWorkerStatus()) {
             $this->channel = new Channel($this->poolConfig->getMaxActive());
         } else {
@@ -186,6 +191,9 @@ abstract class ConnectionPool implements PoolInterface
      */
     private function getConnectionByQueue(): ConnectionInterface
     {
+        if($this->queue == null){
+            $this->queue = new \SplQueue();
+        }
         if (!$this->queue->isEmpty()) {
             return $this->getEffectiveConnection($this->queue->count(), false);
         }

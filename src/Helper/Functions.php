@@ -98,6 +98,20 @@ if (! function_exists('bean')) {
     }
 }
 
+if (! function_exists('alias')) {
+    /**
+     * Get alias
+     *
+     * @param string $alias
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    function alias($alias): string
+    {
+        return \Swoft\App::getAlias($alias);
+    }
+}
+
 if (! function_exists('request')) {
     /**
      * Get the current Request object from RequestContext

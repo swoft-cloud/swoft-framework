@@ -72,10 +72,9 @@ class App
      *
      * @var array
      */
-    private static $aliases
-        = [
-            '@swoft' => __DIR__,
-        ];
+    private static $aliases = [
+        '@swoft' => __DIR__,
+    ];
 
     /**
      * 获取mysqlBean对象
@@ -193,6 +192,18 @@ class App
         $poolBeanName = $collector[$name];
 
         return self::getBean($poolBeanName);
+    }
+
+    /**
+     * @param string $name
+     *
+     * @return bool
+     */
+    public static function hasPool(string $name): bool
+    {
+        $collector = PoolCollector::getCollector();
+
+        return isset($collector[$name]);
     }
 
     /**

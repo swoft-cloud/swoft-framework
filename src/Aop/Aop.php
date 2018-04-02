@@ -1,10 +1,18 @@
 <?php
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://doc.swoft.org
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
 
 namespace Swoft\Aop;
 
-use Swoft\App;
 use Swoft\Bean\Annotation\Bean;
 use Swoft\Bean\Collector\AspectCollector;
+use \Throwable;
 
 /**
  * @Bean()
@@ -58,7 +66,7 @@ class Aop implements AopInterface
      * @param array  $params  The parameters of execution method
      * @param array  $advices The advices of this object method
      * @return mixed
-     * @throws \ReflectionException
+     * @throws \ReflectionException|Throwable
      */
     public function doAdvice($target, string $method, array $params, array $advices)
     {
@@ -76,16 +84,22 @@ class Aop implements AopInterface
                     // The result of before point will not effect origin object method
                     $this->doPoint($advice['before'], $target, $method, $params, $advice, $advices);
                 }
-                $result = $target->$method(...$params);
+                if (0 === \count($advices)) {
+                    $result = $target->$method(...$params);
+                } else {
+                    $this->doAdvice($target, $method, $params, $advices);
+                }
             }
 
             // After
             if (isset($advice['after']) && ! empty($advice['after'])) {
                 $this->doPoint($advice['after'], $target, $method, $params, $advice, $advices, $result);
             }
-        } catch (\Exception $e) {
+        } catch (Throwable $t) {
             if (isset($advice['afterThrowing']) && ! empty($advice['afterThrowing'])) {
-                return $this->doPoint($advice['afterThrowing'], $target, $method, $params, $advice, $advices);
+                return $this->doPoint($advice['afterThrowing'], $target, $method, $params, $advice, $advices, null, $t);
+            } else {
+                throw $t;
             }
         }
 
@@ -107,6 +121,7 @@ class Aop implements AopInterface
      * @param array  $advice      the advice of pointcut
      * @param array  $advices     The advices of this object method
      * @param mixed  $return
+     * @param Throwable $catch    The  Throwable object caught
      * @return mixed
      * @throws \ReflectionException
      */
@@ -117,7 +132,8 @@ class Aop implements AopInterface
         array $args,
         array $advice,
         array $advices,
-        $return = null
+        $return = null,
+        Throwable $catch = null
     ) {
         list($aspectClass, $aspectMethod) = $pointAdvice;
 
@@ -137,19 +153,25 @@ class Aop implements AopInterface
             // JoinPoint object
             $type = $parameterType->__toString();
             if ($type === JoinPoint::class) {
-                $aspectArgs[] = new JoinPoint($target, $method, $args, $return);
+                $aspectArgs[] = new JoinPoint($target, $method, $args, $return, $catch);
                 continue;
             }
 
             // ProceedingJoinPoint object
             if ($type === ProceedingJoinPoint::class) {
-                $aspectArgs[] = new ProceedingJoinPoint($target, $method, $args, $advice, $advices, $return);
+                $aspectArgs[] = new ProceedingJoinPoint($target, $method, $args, $advice, $advices);
+                continue;
+            }
+            
+            //Throwable object
+            if (isset($catch) && $catch instanceof $type) {
+                $aspectArgs[] = $catch;
                 continue;
             }
             $aspectArgs[] = null;
         }
 
-        $aspect = App::getBean($aspectClass);
+        $aspect = \bean($aspectClass);
 
         return $aspect->$aspectMethod(...$aspectArgs);
     }
@@ -240,7 +262,7 @@ class Aop implements AopInterface
             }
 
             // Method
-            $reg = '/^' . $executionMethod . '$/';
+            $reg = '/^(?:' . $executionMethod . ')$/';
             if (preg_match($reg, $method)) {
                 return true;
             }

@@ -3,16 +3,11 @@
 namespace Swoft\Proxy\Handler;
 
 use Swoft\Aop\Aop;
-use Swoft\App;
 
 /**
- * the handler of aop
+ * Class AopHandler
  *
- * @uses      AopHandler
- * @version   2017年12月24日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Proxy\Handler
  */
 class AopHandler implements HandlerInterface
 {
@@ -21,6 +16,11 @@ class AopHandler implements HandlerInterface
      */
     private $target;
 
+    /**
+     * AopHandler constructor.
+     *
+     * @param object $target
+     */
     public function __construct($target)
     {
         $this->target = $target;
@@ -28,17 +28,16 @@ class AopHandler implements HandlerInterface
 
     /**
      * ProceedingJoinPoint
-     * JoinPoint
      *
      * @param $method
      * @param $parameters
-     *
      * @return mixed
+     * @throws \ReflectionException
      */
     public function invoke($method, $parameters)
     {
-        /* @var Aop $aop*/
-        $aop = App::getBean(Aop::class);
+        /* @var Aop $aop */
+        $aop = bean(Aop::class);
         return $aop->execute($this->target, $method, $parameters);
     }
 }

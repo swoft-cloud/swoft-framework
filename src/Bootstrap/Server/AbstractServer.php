@@ -14,7 +14,6 @@ use Swoole\Server;
  */
 abstract class AbstractServer implements ServerInterface
 {
-
     use ServerTrait;
 
     /**
@@ -76,7 +75,10 @@ abstract class AbstractServer implements ServerInterface
         // Init App
         App::$server = $this;
 
-        $this->initSettings();
+        /** @var array[] $settings */
+        $settings = App::getAppProperties()->get('server');
+
+        $this->initSettings($settings);
     }
 
     /**
@@ -85,7 +87,8 @@ abstract class AbstractServer implements ServerInterface
     protected function registerSwooleServerEvents()
     {
         $swooleListeners = SwooleListenerCollector::getCollector();
-        if (! isset($swooleListeners[SwooleEvent::TYPE_SERVER]) || empty($swooleListeners[SwooleEvent::TYPE_SERVER])) {
+
+        if (!isset($swooleListeners[SwooleEvent::TYPE_SERVER]) || empty($swooleListeners[SwooleEvent::TYPE_SERVER])) {
             return;
         }
 
@@ -99,7 +102,7 @@ abstract class AbstractServer implements ServerInterface
      * @param Server $handler
      * @param array  $events
      */
-    protected function registerSwooleEvents(&$handler, array $events)
+    protected function registerSwooleEvents($handler, array $events)
     {
         foreach ($events as $event => $beanName) {
             $object = bean($beanName);
@@ -228,13 +231,11 @@ abstract class AbstractServer implements ServerInterface
     /**
      * Init settings
      *
+     * @param array[] $settings
      * @throws \InvalidArgumentException
      */
-    public function initSettings()
+    public function initSettings(array $settings)
     {
-        /** @var array[] $settings */
-        $settings = App::getAppProperties()->get('server');
-
         if (! isset($settings['tcp'])) {
             throw new \InvalidArgumentException('未配置tcp启动参数，settings=' . json_encode($settings));
         }
@@ -261,6 +262,14 @@ abstract class AbstractServer implements ServerInterface
         $this->httpSetting = $settings['http'];
         $this->serverSetting = $settings['server'];
         $this->setting = $settings['setting'];
+
+        // fix bug must to int
+        if (isset($this->setting['task_ipc_mode'])) {
+            $this->setting['task_ipc_mode'] = intval($this->setting['task_ipc_mode']);
+        }
+        if (isset($this->setting['message_queue_key'])) {
+            $this->setting['message_queue_key'] = intval($this->setting['message_queue_key']);
+        }
     }
 
     /**
@@ -283,7 +292,16 @@ abstract class AbstractServer implements ServerInterface
     public function setDaemonize()
     {
         $this->setting['daemonize'] = 1;
+
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isDaemonize(): bool
+    {
+        return (int)$this->setting['daemonize'] === 1;
     }
 
     /**

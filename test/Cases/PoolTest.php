@@ -1,24 +1,30 @@
 <?php
+/**
+ * This file is part of Swoft.
+ *
+ * @link https://swoft.org
+ * @document https://doc.swoft.org
+ * @contact group@swoft.org
+ * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
+namespace SwoftTest;
 
-namespace Swoft\Test\Cases;
-
-use PHPUnit\Framework\TestCase;
 use Swoft\App;
-use Swoft\Test\Testing\Pool\ConsulEnvConfig;
-use Swoft\Test\Testing\Pool\ConsulPptConfig;
-use Swoft\Test\Testing\Pool\EnvAndPptFromPptPoolConfig;
-use Swoft\Test\Testing\Pool\EnvAndPptPoolConfig;
-use Swoft\Test\Testing\Pool\EnvPoolConfig;
-use Swoft\Test\Testing\Pool\PartEnvPoolConfig;
-use Swoft\Test\Testing\Pool\PartPoolConfig;
-use Swoft\Test\Testing\Pool\PropertyPoolConfig;
+use SwoftTest\Pool\ConsulEnvConfig;
+use SwoftTest\Pool\ConsulPptConfig;
+use SwoftTest\Pool\EnvAndPptFromPptPoolConfig;
+use SwoftTest\Pool\EnvAndPptPoolConfig;
+use SwoftTest\Pool\EnvPoolConfig;
+use SwoftTest\Pool\PartEnvPoolConfig;
+use SwoftTest\Pool\PartPoolConfig;
+use SwoftTest\Pool\PropertyPoolConfig;
 
 /**
  * Class PoolTest
  *
  * @package Swoft\Test\Cases
  */
-class PoolTest extends TestCase
+class PoolTest extends AbstractTestCase
 {
     public function testPoolConfigByProperties()
     {
@@ -133,6 +139,6 @@ class PoolTest extends TestCase
         $this->assertEquals('http://127.0.0.1:82', $pConfig->getAddress());
         $this->assertEquals(2, $pConfig->getTimeout());
         $this->assertEquals(2, $pConfig->getInterval());
-        $this->assertEquals([1,2], $pConfig->getTags());
+        $this->assertEquals([1, 2], $pConfig->getTags());
     }
 }

@@ -26,14 +26,14 @@ class PoolHelper
     }
 
     /**
-     * @param string $poolId
+     * @param string $group
      *
      * @return string
      */
-    public static function getCidPoolId(string $poolId)
+    public static function getGroupKey(string $group):string
     {
         $cid = Coroutine::id();
 
-        return sprintf('%d-%s', $cid, $poolId);
+        return sprintf('%d-%s', $cid, $group);
     }
 }
