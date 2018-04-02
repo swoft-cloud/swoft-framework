@@ -460,11 +460,7 @@ class App
      */
     public static function isCoContext(): bool
     {
-        if (SwCoroutine::getuid() > 0) {
-            return true;
-        }
-
-        return false;
+        return SwCoroutine::getuid() > 0;
     }
 
     /**
@@ -477,5 +473,13 @@ class App
     public static function counting(string $name, int $hit, $total = null)
     {
         self::getLogger()->counting($name, $hit, $total);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAliases(): array
+    {
+        return self::$aliases;
     }
 }
