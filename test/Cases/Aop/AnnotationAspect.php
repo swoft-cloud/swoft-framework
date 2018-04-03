@@ -17,13 +17,13 @@ use Swoft\Bean\Annotation\Cacheable;
 use Swoft\Bean\Annotation\CachePut;
 
 /**
- * @Aspect()
+ * @Aspect
  * @PointAnnotation(
  *     include={
- *      Cacheable::class,
- *      CachePut::class
- *      }
- *  )
+ *         Cacheable::class,
+ *         CachePut::class
+ *     }
+ * )
  * @uses      AnnotationAspect
  * @version   2017年12月27日
  * @author    stelin <phpcrazy@126.com>
@@ -33,7 +33,7 @@ use Swoft\Bean\Annotation\CachePut;
 class AnnotationAspect
 {
     /**
-     * @Around()
+     * @Around
      */
     public function around(ProceedingJoinPoint $proceedingJoinPoint)
     {

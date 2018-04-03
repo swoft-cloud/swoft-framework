@@ -17,10 +17,10 @@ use Swoft\Bean\Annotation\PointExecution;
 /**
  * the aspect of test
  *
- * @Aspect()
+ * @Aspect
  * @PointExecution(
  *     include={
- *      "SwoftTest\Aop\RegBean::methodParams",
+ *         "SwoftTest\Aop\RegBean::methodParams",
  *     }
  * )
  * @uses      ExeByNewParamsAspect
@@ -32,7 +32,7 @@ use Swoft\Bean\Annotation\PointExecution;
 class ExeByNewParamsAspect
 {
     /**
-     * @Around()
+     * @Around
      *
      * @param ProceedingJoinPoint $proceedingJoinPoint
      *

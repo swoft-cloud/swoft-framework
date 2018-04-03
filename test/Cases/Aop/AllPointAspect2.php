@@ -21,7 +21,7 @@ use Swoft\Bean\Annotation\PointBean;
 
 /**
  *
- * @Aspect()
+ * @Aspect
  * @PointBean(
  *     include={AopBean::class},
  * )
@@ -40,7 +40,7 @@ class AllPointAspect2
     private $test;
 
     /**
-     * @Before()
+     * @Before
      */
     public function before()
     {
@@ -48,7 +48,7 @@ class AllPointAspect2
     }
 
     /**
-     * @After()
+     * @After
      */
     public function after()
     {
@@ -56,7 +56,7 @@ class AllPointAspect2
     }
 
     /**
-     * @AfterReturning()
+     * @AfterReturning
      */
     public function afterReturn(JoinPoint $joinPoint)
     {
@@ -64,7 +64,7 @@ class AllPointAspect2
     }
 
     /**
-     * @Around()
+     * @Around
      * @param ProceedingJoinPoint $proceedingJoinPoint
      * @return mixed
      */
@@ -77,7 +77,7 @@ class AllPointAspect2
     }
 
     /**
-     * @AfterThrowing()
+     * @AfterThrowing
      */
     public function afterThrowing()
     {

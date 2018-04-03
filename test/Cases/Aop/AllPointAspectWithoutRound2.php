@@ -18,7 +18,7 @@ use Swoft\Bean\Annotation\PointBean;
 
 /**
  *
- * @Aspect()
+ * @Aspect
  * @PointBean(
  *     include={AopBean2::class},
  * )
@@ -37,7 +37,7 @@ class AllPointAspectWithoutRound2
     public static $catch;
     
     /**
-     * @Before()
+     * @Before
      */
     public function before()
     {
@@ -45,7 +45,7 @@ class AllPointAspectWithoutRound2
     }
 
     /**
-     * @After()
+     * @After
      */
     public function after()
     {
@@ -53,7 +53,7 @@ class AllPointAspectWithoutRound2
     }
 
     /**
-     * @AfterReturning()
+     * @AfterReturning
      */
     public function afterReturn()
     {
@@ -65,9 +65,9 @@ class AllPointAspectWithoutRound2
      * @AfterThrowing
      * @throws
      */
-    public function afterThrowing(\Exception $e=null)
+    public function afterThrowing(\Exception $e = null)
     {
-        static::$catch=$e;
+        static::$catch = $e;
         throw $e;
     }
 }

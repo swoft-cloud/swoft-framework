@@ -16,7 +16,7 @@ use Swoft\Pool\PoolProperties;
 /**
  * config by properties
  *
- * @Bean()
+ * @Bean
  */
 class PropertyPoolConfig extends PoolProperties
 {

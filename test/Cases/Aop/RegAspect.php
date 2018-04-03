@@ -15,10 +15,10 @@ use Swoft\Bean\Annotation\Aspect;
 use Swoft\Bean\Annotation\PointExecution;
 
 /**
- * @Aspect()
+ * @Aspect
  * @PointExecution(
  *     include={
- *      "SwoftTest\Aop\RegBean::reg.*",
+ *         "SwoftTest\Aop\RegBean::reg.*",
  *     }
  * )
  *
@@ -31,7 +31,7 @@ use Swoft\Bean\Annotation\PointExecution;
 class RegAspect
 {
     /**
-     * @Around()
+     * @Around
      */
     public function around(ProceedingJoinPoint $proceedingJoinPoint)
     {

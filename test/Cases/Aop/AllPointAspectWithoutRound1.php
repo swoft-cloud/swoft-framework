@@ -20,7 +20,7 @@ use Swoft\Bean\Annotation\PointBean;
 /**
  * the test of aspcet
  *
- * @Aspect()
+ * @Aspect
  * @PointBean(
  *     include={AopBean2::class},
  * )
@@ -39,7 +39,7 @@ class AllPointAspectWithoutRound1
     public static $catch;
 
     /**
-     * @Before()
+     * @Before
      */
     public function before()
     {
@@ -47,7 +47,7 @@ class AllPointAspectWithoutRound1
     }
 
     /**
-     * @After()
+     * @After
      */
     public function after()
     {
@@ -55,7 +55,7 @@ class AllPointAspectWithoutRound1
     }
 
     /**
-     * @AfterReturning()
+     * @AfterReturning
      */
     public function afterReturn()
     {
@@ -69,6 +69,6 @@ class AllPointAspectWithoutRound1
      */
     public function afterThrowing(JoinPoint $joinPoint)
     {
-        static::$catch=$joinPoint->getCatch();
+        static::$catch = $joinPoint->getCatch();
     }
 }

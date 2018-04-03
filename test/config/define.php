@@ -15,14 +15,14 @@ use \Swoft\App;
 ! defined('COMMAND_NS') && define('COMMAND_NS', "App\Commands");
 
 $aliases = [
-    '@root'       => BASE_PATH,
-    '@app'        => '@root/app',
-    '@res'        => '@root/resources',
-    '@runtime'    => '@root/runtime',
-    '@configs'    => '@root/config',
-    '@resources'  => '@root/resources',
-    '@beans'      => '@configs/beans',
+    '@root' => BASE_PATH,
+    '@app' => '@root/app',
+    '@res' => '@root/resources',
+    '@runtime' => '@root/runtime',
+    '@configs' => '@root/config',
+    '@resources' => '@root/resources',
+    '@beans' => '@configs/beans',
     '@properties' => '@configs/properties',
-    '@console'    => '@beans/console.php',
+    '@console' => '@beans/console.php',
 ];
 App::setAliases($aliases);

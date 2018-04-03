@@ -16,7 +16,7 @@ use Swoft\Pool\PoolProperties;
 /**
  * properties and env
  *
- * @Bean()
+ * @Bean
  */
 class EnvAndPptFromPptPoolConfig extends PoolProperties
 {

@@ -12,7 +12,7 @@ namespace SwoftTest\Aop;
 use Swoft\Bean\Annotation\Bean;
 
 /**
- * @Bean()
+ * @Bean
  *
  * @uses      RegBean
  * @version   2017年12月27日

@@ -8,11 +8,11 @@
  * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
  */
 return [
-    'noticeHandler'      => [
-        'class'     => \Swoft\Log\FileHandler::class,
-        'logFile'   => '@runtime/logs/notice.log',
+    'noticeHandler' => [
+        'class' => \Swoft\Log\FileHandler::class,
+        'logFile' => '@runtime/logs/notice.log',
         'formatter' => '${lineFormatter}',
-        'levels'    => [
+        'levels' => [
             \Swoft\Log\Logger::NOTICE,
             \Swoft\Log\Logger::INFO,
             \Swoft\Log\Logger::DEBUG,
@@ -20,21 +20,21 @@ return [
         ]
     ],
     'applicationHandler' => [
-        'class'     => \Swoft\Log\FileHandler::class,
-        'logFile'   => '@runtime/logs/error.log',
+        'class' => \Swoft\Log\FileHandler::class,
+        'logFile' => '@runtime/logs/error.log',
         'formatter' => '${lineFormatter}',
-        'levels'    => [
+        'levels' => [
             \Swoft\Log\Logger::ERROR,
             \Swoft\Log\Logger::WARNING
         ]
     ],
-    'logger'             => [
-        'class'         => \Swoft\Log\Logger::class,
-        'name'          => APP_NAME,
-        'enable'        => true,
+    'logger' => [
+        'class' => \Swoft\Log\Logger::class,
+        'name' => APP_NAME,
+        'enable' => true,
         'flushInterval' => 100,
-        'flushRequest'  => true,
-        'handlers'      => [
+        'flushRequest' => true,
+        'handlers' => [
             '${noticeHandler}',
             '${applicationHandler}'
         ]

@@ -13,7 +13,7 @@ use Swoft\Bean\Annotation\Bean;
 
 /**
  *
- * @Bean()
+ * @Bean
  * @uses      AopBean2
  * @version   2018年03月27日
  * @author    maijiankang <maijiankang@foxmail.com>

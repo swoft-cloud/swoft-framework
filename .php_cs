@@ -13,6 +13,7 @@ return PhpCsFixer\Config::create()
     ->setRiskyAllowed(true)
     ->setRules([
         '@PSR2' => true,
+        '@DoctrineAnnotation' => true,
         'header_comment' => [
             'commentType' => 'PHPDoc',
             'header' => $header,
@@ -24,7 +25,9 @@ return PhpCsFixer\Config::create()
         'single_quote' => true,
         'class_attributes_separation' => true,
         'no_unused_imports' => true,
-        'standardize_not_equals' => true,
+        'binary_operator_spaces' => [
+            'default' => 'single_space',
+        ],
     ])
     ->setFinder(
         PhpCsFixer\Finder::create()

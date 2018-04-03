@@ -15,7 +15,7 @@ use Swoft\Bean\Annotation\CachePut;
 
 /**
  *
- * @Bean()
+ * @Bean
  * @uses      AnnotationAop
  * @version   2017年12月27日
  * @author    stelin <phpcrazy@126.com>
@@ -25,7 +25,7 @@ use Swoft\Bean\Annotation\CachePut;
 class AnnotationAop
 {
     /**
-     * @CachePut()
+     * @CachePut
      * @return string
      */
     public function cachePut()
@@ -34,7 +34,7 @@ class AnnotationAop
     }
 
     /**
-     * @Cacheable()
+     * @Cacheable
      * @return string
      */
     public function cacheable()

@@ -47,7 +47,7 @@ class AopTest extends AbstractTestCase
         
         ob_start();
         $aopBean->doAop();
-        $echoContent=ob_get_contents();
+        $echoContent = ob_get_contents();
         ob_end_clean();
         
         $this->assertEquals(' before1withoutaround  before2withoutaround do aop after2withoutaround  afterReturn2withoutaround  after1withoutaround  afterReturn1withoutaround ', $echoContent);
@@ -91,8 +91,8 @@ class AopTest extends AbstractTestCase
     {
         /* @var \SwoftTest\Aop\AopBean2 $aopBean*/
         $aopBean = App::getBean(AopBean2::class);
-        AllPointAspectWithoutRound1::$catch=null;
-        $exception=new \LogicException('Bomb!');
+        AllPointAspectWithoutRound1::$catch = null;
+        $exception = new \LogicException('Bomb!');
         ob_start();
 
         $aopBean->throwSth($exception);
@@ -109,8 +109,8 @@ class AopTest extends AbstractTestCase
     {
         /* @var \SwoftTest\Aop\AopBean2 $aopBean*/
         $aopBean = App::getBean(AopBean2::class);
-        AllPointAspectWithoutRound2::$catch=null;
-        $exception=new \LogicException('Bomb!');
+        AllPointAspectWithoutRound2::$catch = null;
+        $exception = new \LogicException('Bomb!');
         ob_start();
 
         $aopBean->throwSth($exception);

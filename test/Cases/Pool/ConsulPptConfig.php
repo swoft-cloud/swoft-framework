@@ -15,7 +15,7 @@ use Swoft\Bean\Annotation\Value;
 /**
  * the properties of config
  *
- * @Bean()
+ * @Bean
  */
 class ConsulPptConfig
 {
