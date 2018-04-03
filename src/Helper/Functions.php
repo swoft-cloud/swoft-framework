@@ -116,7 +116,7 @@ if (! function_exists('request')) {
     /**
      * Get the current Request object from RequestContext
      *
-     * @return \Psr\Http\Message\RequestInterface
+     * @return \Psr\Http\Message\RequestInterface|Swoft\Http\Message\Server\Request
      */
     function request(): \Psr\Http\Message\RequestInterface
     {
@@ -128,7 +128,7 @@ if (! function_exists('response')) {
     /**
      * Get the current Response object from RequestContext
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|\Swoft\Http\Message\Server\Response
      */
     function response(): \Psr\Http\Message\ResponseInterface
     {

@@ -4,12 +4,8 @@ namespace Swoft\Helper;
 
 /**
  * php帮助类
- *
- * @uses      PhpHelper
- * @version   2017年09月25日
- * @author    inhere <in.798@qq.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Helper
+ * @author inhere <in.798@qq.com>
  */
 class PhpHelper
 {
@@ -30,7 +26,7 @@ class PhpHelper
      */
     public static function isMac(): bool
     {
-        return stripos(PHP_OS, 'Darwin') !== false;
+        return \stripos(PHP_OS, 'Darwin') !== false;
     }
 
     /**

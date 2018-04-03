@@ -10,12 +10,7 @@ use Swoft\App;
 
 /**
  * request handler
- *
- * @uses      RequestHandler
- * @version   2017年11月14日
  * @author    huangzhhui <huangzhwork@gmail.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class RequestHandler implements RequestHandlerInterface
 {
@@ -42,7 +37,7 @@ class RequestHandler implements RequestHandlerInterface
      */
     public function __construct(array $middleware, string $default)
     {
-        $this->middlewares = array_unique($middleware);
+        $this->middlewares = \array_unique($middleware);
         $this->default = $default;
     }
 
@@ -51,18 +46,21 @@ class RequestHandler implements RequestHandlerInterface
      *
      * @param ServerRequestInterface $request
      * @return ResponseInterface
+     * @throws \InvalidArgumentException
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        if (empty($this->middlewares[$this->offset]) && !empty($this->default)) {
+        if (!empty($this->default) && empty($this->middlewares[$this->offset])) {
             $handler = App::getBean($this->default);
         } else {
             $handler = $this->middlewares[$this->offset];
-            is_string($handler) && $handler = App::getBean($handler);
+            \is_string($handler) && $handler = App::getBean($handler);
         }
-        if (! $handler instanceof MiddlewareInterface) {
-            throw new \InvalidArgumentException('Invalid Handler');
+
+        if (!$handler instanceof MiddlewareInterface) {
+            throw new \InvalidArgumentException('Invalid Handler. It must be an instance of MiddlewareInterface');
         }
+
         return $handler->process($request, $this->next());
     }
 
@@ -87,7 +85,7 @@ class RequestHandler implements RequestHandlerInterface
      */
     public function insertMiddlewares(array $middlewares, $offset = null)
     {
-        is_null($offset) && $offset = $this->offset;
+        null === $offset && $offset = $this->offset;
         $chunkArray = array_chunk($this->middlewares, $offset);
         $after = [];
         $before = $chunkArray[0];
