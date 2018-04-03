@@ -2,10 +2,10 @@
 /**
  * This file is part of Swoft.
  *
- * @link https://swoft.org
+ * @link     https://swoft.org
  * @document https://doc.swoft.org
- * @contact group@swoft.org
- * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
  */
 namespace SwoftTest\Bean;
 
@@ -36,6 +36,7 @@ class ProxyTest extends ProxyBase
     public static function staticMethod()
     {
     }
+
     public function publicReturnAd($p, &$data):Config
     {
         return $p;
@@ -45,6 +46,7 @@ class ProxyTest extends ProxyBase
     {
         return $p;
     }
+
     public function publicReturnBool2($p, $strategy = true):Config
     {
         return $p;
@@ -89,6 +91,7 @@ class ProxyTest extends ProxyBase
     {
         return $p1 . count($params);
     }
+
     public function publicFun1($p1, $p2, $ary = [])
     {
         return $p1 . $p2. count($ary);

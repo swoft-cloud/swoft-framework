@@ -2,10 +2,10 @@
 /**
  * This file is part of Swoft.
  *
- * @link https://swoft.org
+ * @link     https://swoft.org
  * @document https://doc.swoft.org
- * @contact group@swoft.org
- * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
  */
 namespace SwoftTest\Bean;
 
@@ -23,6 +23,7 @@ trait ProxyTrait
     public function __construct($c1, $c2)
     {
     }
+
     public function publicFun1Trait($p1, $p2)
     {
         return $p1 . $p2;

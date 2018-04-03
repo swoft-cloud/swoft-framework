@@ -2,10 +2,10 @@
 /**
  * This file is part of Swoft.
  *
- * @link https://swoft.org
+ * @link     https://swoft.org
  * @document https://doc.swoft.org
- * @contact group@swoft.org
- * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
  */
 namespace SwoftTest;
 
@@ -19,7 +19,6 @@ use Swoft\Log\Logger;
  */
 class LoggerTest extends AbstractTestCase
 {
-
     /**
      * @var \Swoft\Log\Logger
      */
@@ -37,7 +36,6 @@ class LoggerTest extends AbstractTestCase
         $this->logger = bean('logger');
         $this->assertInstanceOf(Logger::class, $this->logger);
     }
-
 
     /**
      * Tears down the fixture, for example, close a network connection.
@@ -89,5 +87,4 @@ class LoggerTest extends AbstractTestCase
     {
         return file_get_contents(alias('@runtime/logs/error.log'));
     }
-
 }

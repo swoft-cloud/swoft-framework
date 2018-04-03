@@ -2,10 +2,10 @@
 /**
  * This file is part of Swoft.
  *
- * @link https://swoft.org
+ * @link     https://swoft.org
  * @document https://doc.swoft.org
- * @contact group@swoft.org
- * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
  */
 namespace SwoftTest\Pool;
 
@@ -51,7 +51,6 @@ class PartPoolConfig extends PoolProperties
      * @var int
      */
     protected $maxWait = 100;
-
 
     /**
      * the default balancer is random balancer
