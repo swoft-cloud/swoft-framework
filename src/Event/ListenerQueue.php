@@ -5,11 +5,8 @@ namespace Swoft\Event;
 /**
  * Class ListenerQueue - 一个事件的监听器队列存储管理类
  * @package Swoft\Event
- * @uses 监听器队列存储管理类 @link [windwalker framework](https://github.com/ventoviro/windwalker)
- * @version   2017年08月30日
- * @author    inhere <in.798@qq.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @link [windwalker framework](https://github.com/ventoviro/windwalker)
+ * @author inhere <in.798@qq.com>
  */
 class ListenerQueue implements \IteratorAggregate, \Countable
 {
@@ -43,7 +40,7 @@ class ListenerQueue implements \IteratorAggregate, \Countable
      * @param integer $priority 优先级
      * @return $this
      */
-    public function add($listener, $priority)
+    public function add($listener, $priority): self
     {
         // transfer to object. like string/array
         if (!\is_object($listener)) {
@@ -67,7 +64,7 @@ class ListenerQueue implements \IteratorAggregate, \Countable
      * @param $listener
      * @return $this
      */
-    public function remove($listener)
+    public function remove($listener): self
     {
         if ($this->has($listener)) {
             $this->store->detach($listener);
@@ -138,7 +135,7 @@ class ListenerQueue implements \IteratorAggregate, \Countable
      * @param $listener
      * @return bool
      */
-    public function has($listener)
+    public function has($listener): bool
     {
         return $this->store->contains($listener);
     }
@@ -147,7 +144,7 @@ class ListenerQueue implements \IteratorAggregate, \Countable
      * @param $listener
      * @return bool
      */
-    public function exists($listener)
+    public function exists($listener): bool
     {
         return $this->has($listener);
     }
@@ -172,7 +169,7 @@ class ListenerQueue implements \IteratorAggregate, \Countable
     /**
      * {@inheritDoc}
      */
-    public function count()
+    public function count(): int
     {
         return \count($this->queue);
     }

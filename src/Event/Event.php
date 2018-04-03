@@ -5,10 +5,7 @@ namespace Swoft\Event;
 /**
  * Class Event
  * @package Swoft\Event
- * @version   2017年08月30日
  * @author    inhere <in.798@qq.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class Event implements EventInterface, \ArrayAccess, \Serializable
 {
@@ -50,7 +47,7 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
      * @return string
      * @throws \InvalidArgumentException
      */
-    public static function checkName(string $name)
+    public static function checkName(string $name): string
     {
         $name = trim($name, '. ');
 
@@ -91,9 +88,9 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
      * @param array $params
      * @return $this
      */
-    public function addParams(array $params)
+    public function addParams(array $params): self
     {
-        $this->params = array_merge($this->params, $params);
+        $this->params = \array_merge($this->params, $params);
 
         return $this;
     }
@@ -102,7 +99,7 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
      * get all param
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
@@ -125,7 +122,7 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function addParam($name, $value)
+    public function addParam($name, $value): self
     {
         if (!isset($this->params[$name])) {
             $this->setParam($name, $value);
@@ -141,7 +138,7 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
      * @throws  \InvalidArgumentException  If the argument name is null.
      * @return $this
      */
-    public function setParam($name, $value)
+    public function setParam($name, $value): self
     {
         if (null === $name) {
             throw new \InvalidArgumentException('The argument name cannot be null.');
@@ -166,7 +163,7 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
      * @param $name
      * @return bool
      */
-    public function hasParam($name)
+    public function hasParam($name): bool
     {
         return isset($this->params[$name]);
     }
@@ -222,9 +219,9 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
     /**
      * @return string
      */
-    public function serialize()
+    public function serialize(): string
     {
-        return serialize(array($this->name, $this->params, $this->stopPropagation));
+        return \serialize(array($this->name, $this->params, $this->stopPropagation));
     }
 
     /**
@@ -234,8 +231,11 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
      */
     public function unserialize($serialized)
     {
-        // ['allowed_class' => null]
-        list($this->name, $this->params, $this->stopPropagation) = unserialize($serialized, []);
+        list(
+            $this->name,
+            $this->params,
+            $this->stopPropagation
+            ) = \unserialize($serialized, ['allowed_classes' => false]);
     }
 
     /**
@@ -243,7 +243,7 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
      * @param   string $name The argument name.
      * @return  boolean  True if it exists, false otherwise.
      */
-    public function offsetExists($name)
+    public function offsetExists($name): bool
     {
         return $this->hasParam($name);
     }
