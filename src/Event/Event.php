@@ -61,7 +61,7 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -211,7 +211,7 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
      * Has this event indicated event propagation should stop?
      * @return bool
      */
-    public function isPropagationStopped()
+    public function isPropagationStopped(): bool
     {
         return $this->stopPropagation;
     }
@@ -221,7 +221,7 @@ class Event implements EventInterface, \ArrayAccess, \Serializable
      */
     public function serialize(): string
     {
-        return \serialize(array($this->name, $this->params, $this->stopPropagation));
+        return \serialize([$this->name, $this->params, $this->stopPropagation]);
     }
 
     /**

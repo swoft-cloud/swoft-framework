@@ -91,6 +91,7 @@ class Logger extends \Monolog\Logger
 
     public function __construct()
     {
+        parent::__construct(APP_NAME);
     }
 
     /**
@@ -143,7 +144,7 @@ class Logger extends \Monolog\Logger
      * 格式化一条日志记录
      *
      * @param string    $message   信息
-     * @param string    $context   内容
+     * @param array     $context    上下文信息
      * @param int       $level     级别
      * @param string    $levelName 级别名
      * @param \DateTime $ts        时间
@@ -187,7 +188,7 @@ class Logger extends \Monolog\Logger
             $this->pushlogs[$cid][] = "$key=" . var_export($val, true);
         } elseif (\is_string($val) || is_numeric($val)) {
             $this->pushlogs[$cid][] = "$key=" . urlencode($val);
-        } elseif (\is_null($val)) {
+        } elseif (null === $val) {
             $this->pushlogs[$cid][] = "$key=";
         }
     }
@@ -238,7 +239,7 @@ class Logger extends \Monolog\Logger
         $cid = Coroutine::tid();
         $profiles = $this->profiles[$cid] ?? [];
         foreach ($profiles as $key => $profile) {
-            if (! isset($profile['cost']) || ! isset($profile['total'])) {
+            if (!isset($profile['cost'], $profile['total'])) {
                 continue;
             }
             $cost = sprintf('%.2f', $profile['cost'] * 1000);
@@ -313,7 +314,7 @@ class Logger extends \Monolog\Logger
      * @param $message
      * @return string
      */
-    public function getTrace($message)
+    public function getTrace($message): string
     {
         $traces = debug_backtrace();
         $count = \count($traces);
@@ -335,7 +336,7 @@ class Logger extends \Monolog\Logger
             }
         }
 
-        if (! empty($ex)) {
+        if (!empty($ex)) {
             $message = "trace[$ex] " . $message;
         }
 
@@ -450,7 +451,7 @@ class Logger extends \Monolog\Logger
     /**
      * 添加一条trace日志
      *
-     * @param       $message 日志信息
+     * @param string $message 日志信息
      * @param array $context 附加信息
      * @return bool
      */
@@ -472,11 +473,11 @@ class Logger extends \Monolog\Logger
      *
      * @return string
      */
-    private function getUri()
+    private function getUri(): string
     {
         $contextData = RequestContext::getContextData();
-        $uri = $contextData['uri'] ?? '';
-        return $uri;
+
+        return $contextData['uri'] ?? '';
     }
 
     /**
@@ -484,10 +485,10 @@ class Logger extends \Monolog\Logger
      *
      * @return int
      */
-    private function getRequestTime()
+    private function getRequestTime(): int
     {
         $contextData = RequestContext::getContextData();
-        $requestTime = $contextData['requestTime'] ?? 0;
-        return $requestTime;
+
+        return $contextData['requestTime'] ?? 0;
     }
 }

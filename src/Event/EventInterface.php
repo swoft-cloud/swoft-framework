@@ -6,10 +6,7 @@ namespace Swoft\Event;
  * Interface EventInterface - Representation of an event
  * @package Swoft\Event
  * @link https://github.com/php-fig/fig-standards/blob/master/proposed/event-manager.md
- * @version   2017年08月30日
  * @author    inhere <in.798@qq.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 interface EventInterface
 {
@@ -18,7 +15,7 @@ interface EventInterface
      *
      * @return string
      */
-    public function getName();
+    public function getName(): string;
 
     /**
      * Get target/context from which event was triggered
@@ -32,7 +29,7 @@ interface EventInterface
      *
      * @return array
      */
-    public function getParams();
+    public function getParams(): array ;
 
     /**
      * Get a single parameter by name
@@ -78,5 +75,5 @@ interface EventInterface
      *
      * @return bool
      */
-    public function isPropagationStopped();
+    public function isPropagationStopped(): bool ;
 }

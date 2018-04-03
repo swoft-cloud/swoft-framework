@@ -115,7 +115,7 @@ class ListenerQueue implements \IteratorAggregate, \Countable
      * Get all listeners contained in this queue, sorted according to their priority.
      * @return  mixed[]  An array of listeners.
      */
-    public function getAll()
+    public function getAll(): array
     {
         $listeners = [];
 
