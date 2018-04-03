@@ -266,9 +266,9 @@ class Logger extends \Monolog\Logger
         if (! isset($this->countings[$cid][$name])) {
             $this->countings[$cid][$name] = ['hit' => 0, 'total' => 0];
         }
-        $this->countings[$cid][$name]['hit'] += \intval($hit);
+        $this->countings[$cid][$name]['hit'] += (int)$hit;
         if ($total !== null) {
-            $this->countings[$cid][$name]['total'] += \intval($total);
+            $this->countings[$cid][$name]['total'] += (int)$total;
         }
     }
 
