@@ -35,7 +35,7 @@ class RequestContext
     private static $context;
 
     /**
-     * @return \Psr\Http\Message\RequestInterface|null
+     * @return \Psr\Http\Message\ServerRequestInterface|null
      */
     public static function getRequest()
     {

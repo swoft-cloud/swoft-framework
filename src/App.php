@@ -11,20 +11,16 @@ use Swoft\Core\Timer;
 use Swoft\Exception\InvalidArgumentException;
 use Swoft\Log\Logger;
 use Swoft\Pool\PoolInterface;
+use Swoft\Redis\Pool\RedisPool;
 use Swoole\Coroutine as SwCoroutine;
 
 /**
  * 应用简写类
  *
- * @uses      App
- * @version   2017年04月25日
  * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class App
 {
-
     /**
      * 应用对象
      *
@@ -264,20 +260,19 @@ class App
      */
     public static function setAlias(string $alias, string $path = null)
     {
-        if (strncmp($alias, '@', 1)) {
+        if ($alias[0] !== '@') {
             $alias = '@' . $alias;
         }
 
-        // 删除别名
+        // Delete alias
         if (!$path) {
             unset(self::$aliases[$alias]);
 
             return;
         }
 
-        // $path不是别名，直接设置
-        $isAlias = strpos($path, '@');
-        if ($isAlias === false) {
+        // $path 不是别名，直接设置
+        if ($path[0] !== '@') {
             self::$aliases[$alias] = $path;
 
             return;
@@ -292,7 +287,7 @@ class App
 
         list($root) = explode('/', $path);
         if (!isset(self::$aliases[$root])) {
-            throw new \InvalidArgumentException('设置的根别名不存在，alias=' . $root);
+            throw new \InvalidArgumentException('The set root alias does not exist，alias=' . $root);
         }
 
         $rootPath  = self::$aliases[$root];
@@ -309,28 +304,26 @@ class App
      * @return string
      * @throws \InvalidArgumentException
      */
-    public static function getAlias($alias): string
+    public static function getAlias(string $alias): string
     {
+        // $path不是别名，直接返回
+        if ($alias[0] !== '@') {
+            return $alias;
+        }
+
         if (isset(self::$aliases[$alias])) {
             return self::$aliases[$alias];
         }
 
-        // $path不是别名，直接返回
-        $isAlias = strpos($alias, '@');
-        if ($isAlias === false) {
-            return $alias;
-        }
-
-        list($root) = explode('/', $alias);
+        list($root) = \explode('/', $alias);
         if (!isset(self::$aliases[$root])) {
-            throw new \InvalidArgumentException('设置的根别名不存在，alias=' . $root);
+            throw new \InvalidArgumentException('The set root alias does not exist，alias=' . $root);
         }
 
         $rootPath  = self::$aliases[$root];
-        $aliasPath = str_replace($root, '', $alias);
-        $path      = $rootPath . $aliasPath;
+        $aliasPath = \str_replace($root, '', $alias);
 
-        return $path;
+        return $rootPath . $aliasPath;
     }
 
     /**
@@ -427,9 +420,10 @@ class App
         if (self::$server === null) {
             return false;
         }
+
         $server = self::$server->getServer();
 
-        if ($server !== null && property_exists($server, 'taskworker') && $server->taskworker === false) {
+        if ($server && property_exists($server, 'taskworker') && ($server->taskworker === false)) {
             return true;
         }
 
@@ -444,9 +438,10 @@ class App
         if (self::$server === null) {
             return 0;
         }
+
         $server = self::$server->getServer();
 
-        if ($server !== null && property_exists($server, 'worker_id') && $server->worker_id > 0) {
+        if ($server && \property_exists($server, 'worker_id') && $server->worker_id > 0) {
             return $server->worker_id;
         }
 
@@ -460,11 +455,7 @@ class App
      */
     public static function isCoContext(): bool
     {
-        if (SwCoroutine::getuid() > 0) {
-            return true;
-        }
-
-        return false;
+        return SwCoroutine::getuid() > 0;
     }
 
     /**
@@ -477,5 +468,13 @@ class App
     public static function counting(string $name, int $hit, $total = null)
     {
         self::getLogger()->counting($name, $hit, $total);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAliases(): array
+    {
+        return self::$aliases;
     }
 }

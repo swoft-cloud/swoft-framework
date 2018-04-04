@@ -5,10 +5,7 @@ namespace Swoft\Event;
 /**
  * Class EventManager
  * @package Swoft\Event
- * @version   2017年08月30日
  * @author    inhere <in.798@qq.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 class EventManager implements EventManagerInterface
 {
@@ -84,7 +81,7 @@ class EventManager implements EventManagerInterface
      * @param int $priority the priority at which the $callback executed
      * @return bool true on success false on failure
      */
-    public function attach($event, $callback, $priority = 0)
+    public function attach($event, $callback, $priority = 0): bool
     {
         return $this->addListener($callback, [$event => $priority]);
     }
@@ -95,7 +92,7 @@ class EventManager implements EventManagerInterface
      * @param callable $callback a callable function
      * @return bool true on success false on failure
      */
-    public function detach($event, $callback)
+    public function detach($event, $callback): bool
     {
         return $this->removeListener($callback, $event);
     }
@@ -128,7 +125,7 @@ class EventManager implements EventManagerInterface
      *     $definition = 1
      * @return bool
      */
-    public function addListener($listener, $definition = null)
+    public function addListener($listener, $definition = null): bool
     {
         // ensure $listener is a object.
         if (!\is_object($listener)) {
@@ -215,7 +212,7 @@ class EventManager implements EventManagerInterface
      * @return array
      * @throws \InvalidArgumentException
      */
-    public function triggerBatch(array $events, array $args = [])
+    public function triggerBatch(array $events, array $args = []): array
     {
         $results = [];
 
@@ -235,7 +232,7 @@ class EventManager implements EventManagerInterface
      * @return EventInterface
      * @throws \InvalidArgumentException
      */
-    public function trigger($event, $target = null, array $args = [])
+    public function trigger($event, $target = null, array $args = []): EventInterface
     {
         if (!$event instanceof EventInterface) {
             $event = (string)$event;
@@ -350,7 +347,7 @@ class EventManager implements EventManagerInterface
      * @param  EventInterface|string $event
      * @return boolean
      */
-    public function hasListenerQueue($event)
+    public function hasListenerQueue($event): bool
     {
         if ($event instanceof EventInterface) {
             $event = $event->getName();
@@ -364,7 +361,7 @@ class EventManager implements EventManagerInterface
      * @param  EventInterface|string $event
      * @return boolean
      */
-    public function hasListeners($event)
+    public function hasListeners($event): bool
     {
         return $this->hasListenerQueue($event);
     }
@@ -375,7 +372,7 @@ class EventManager implements EventManagerInterface
      * @param  EventInterface|string $event
      * @return bool
      */
-    public function hasListener($listener, $event = null)
+    public function hasListener($listener, $event = null): bool
     {
         if ($event) {
             if ($event instanceof EventInterface) {
@@ -438,7 +435,7 @@ class EventManager implements EventManagerInterface
      * @param  string|EventInterface $event
      * @return array
      */
-    public function getListeners($event)
+    public function getListeners($event): array
     {
         if ($event instanceof EventInterface) {
             $event = $event->getName();
@@ -456,7 +453,7 @@ class EventManager implements EventManagerInterface
      * @param  string|EventInterface $event
      * @return int
      */
-    public function countListeners($event)
+    public function countListeners($event): int
     {
         if ($event instanceof EventInterface) {
             $event = $event->getName();
@@ -473,7 +470,7 @@ class EventManager implements EventManagerInterface
      * 否则， 则移除对事件 $event 的监听者
      * @return bool
      */
-    public function removeListener($listener, $event = null)
+    public function removeListener($listener, $event = null): bool
     {
         if ($event) {
             if ($event instanceof EventInterface) {
@@ -515,6 +512,14 @@ class EventManager implements EventManagerInterface
         }
     }
 
+    /**
+     * @return array
+     */
+    public function getListenedEvents(): array
+    {
+        return \array_keys($this->listeners);
+    }
+
     /*******************************************************************************
      * Event manager
      ******************************************************************************/
@@ -526,7 +531,7 @@ class EventManager implements EventManagerInterface
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function addEvent($event, array $params = [])
+    public function addEvent($event, array $params = []): self
     {
         $event = $this->wrapperEvent($event, null, $params);
 
@@ -545,7 +550,7 @@ class EventManager implements EventManagerInterface
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function setEvent($event, array $params = [])
+    public function setEvent($event, array $params = []): self
     {
         $event = $this->wrapperEvent($event, null, $params);
 
@@ -570,7 +575,7 @@ class EventManager implements EventManagerInterface
      * @param $event
      * @return $this
      */
-    public function removeEvent($event)
+    public function removeEvent($event): self
     {
         if ($event instanceof EventInterface) {
             $event = $event->getName();
@@ -587,7 +592,7 @@ class EventManager implements EventManagerInterface
      * @param $event
      * @return bool
      */
-    public function hasEvent($event)
+    public function hasEvent($event): bool
     {
         if ($event instanceof EventInterface) {
             $event = $event->getName();
@@ -599,7 +604,7 @@ class EventManager implements EventManagerInterface
     /**
      * @return array
      */
-    public function getEvents()
+    public function getEvents(): array
     {
         return $this->events;
     }
@@ -621,7 +626,7 @@ class EventManager implements EventManagerInterface
      * @param array $params
      * @return EventInterface
      */
-    public function wrapperEvent($event, $target = null, array $params = [])
+    public function wrapperEvent($event, $target = null, array $params = []): EventInterface
     {
         if (!$event instanceof EventInterface) {
             $name = (string)$event;
@@ -643,7 +648,7 @@ class EventManager implements EventManagerInterface
     /**
      * @return int
      */
-    public function countEvents()
+    public function countEvents(): int
     {
         return \count($this->events);
     }
