@@ -254,7 +254,7 @@ abstract class AbstractServer implements ServerInterface
 
         foreach ($settings['setting'] as $key => $value) {
             // path alias
-            if (\is_string($value) && $value[0] === '@') {
+            if ($value && \is_string($value) && $value[0] === '@') {
                 $settings['setting'][$key] = App::getAlias($value);
             }
         }

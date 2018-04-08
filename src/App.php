@@ -2,6 +2,7 @@
 
 namespace Swoft;
 
+use Swoft\Bean\BeanFactory;
 use Swoft\Bean\Collector\PoolCollector;
 use Swoft\Bootstrap\Server\AbstractServer;
 use Swoft\Core\Application;
@@ -101,7 +102,18 @@ class App
     }
 
     /**
-     * 查询一个bean
+     * has bean
+     *
+     * @param string $name 名称
+     * @return bool
+     */
+    public static function hasBean(string $name): bool
+    {
+        return BeanFactory::hasBean($name);
+    }
+
+    /**
+     * get bean
      *
      * @param string $name 名称
      *
