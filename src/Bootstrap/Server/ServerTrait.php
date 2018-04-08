@@ -5,7 +5,6 @@ namespace Swoft\Bootstrap\Server;
 use Swoft\App;
 use Swoft\Bean\BeanFactory;
 use Swoft\Bean\Collector\ServerListenerCollector;
-use Swoft\Bean\Collector\SwooleListenerCollector;
 use Swoft\Bootstrap\SwooleEvent;
 use Swoft\Core\ApplicationContext;
 use Swoft\Core\InitApplicationContext;
@@ -36,8 +35,7 @@ trait ServerTrait
      */
     public function onStart(Server $server)
     {
-        \file_put_contents($this->serverSetting['pfile'], $server->master_pid);
-        \file_put_contents($this->serverSetting['pfile'], ',' . $server->manager_pid, FILE_APPEND);
+        \file_put_contents($this->serverSetting['pfile'], $server->master_pid . ',' . $server->manager_pid);
 
         ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' master process (' . $this->scriptFile . ')');
 
@@ -63,6 +61,7 @@ trait ServerTrait
      * @param Server $server server
      * @param int $workerId workerId
      * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     public function onWorkerStart(Server $server, int $workerId)
     {
@@ -81,8 +80,9 @@ trait ServerTrait
             ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' worker process');
         }
 
-        $this->fireServerEvent(SwooleEvent::ON_WORKER_START, [$server, $workerId, $isWorker]);
         $this->beforeWorkerStart($server, $workerId, $isWorker);
+
+        $this->fireServerEvent(SwooleEvent::ON_WORKER_START, [$server, $workerId, $isWorker]);
     }
 
     /**
@@ -116,6 +116,7 @@ trait ServerTrait
      * @param int $workerId
      * @param bool $isWorker
      * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     private function beforeWorkerStart(Server $server, int $workerId, bool $isWorker)
     {
@@ -126,6 +127,7 @@ trait ServerTrait
     /**
      * @param bool $isWorker
      * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     protected function reloadBean(bool $isWorker)
     {
