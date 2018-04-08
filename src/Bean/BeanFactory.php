@@ -15,14 +15,15 @@ use Swoft\Helper\DirHelper;
  */
 class BeanFactory implements BeanFactoryInterface
 {
-
     /**
      * @var Container Bean container
      */
-    private static $container = null;
+    private static $container;
 
     /**
      * Init beans
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     public static function init()
     {
@@ -41,6 +42,7 @@ class BeanFactory implements BeanFactoryInterface
      * Reload bean definitions
      *
      * @param array $definitions append definitions to config loader
+     * @throws \ReflectionException
      */
     public static function reload(array $definitions = [])
     {
@@ -89,37 +91,38 @@ class BeanFactory implements BeanFactoryInterface
     /**
      * @return array
      */
-    private static function getWorkerDefinition()
+    private static function getWorkerDefinition(): array
     {
         $configDefinitions = [];
         $beansDir          = App::getAlias('@beans');
-        if (is_readable($beansDir)) {
+
+        if (\is_readable($beansDir)) {
             $config = new Config();
             $config->load($beansDir, [], DirHelper::SCAN_BFS, Config::STRUCTURE_MERGE);
             $configDefinitions = $config->toArray();
         }
 
         $coreBeans   = self::getCoreBean(BootBeanCollector::TYPE_WORKER);
-        $definitions = ArrayHelper::merge($coreBeans, $configDefinitions);
 
-        return $definitions;
+        return ArrayHelper::merge($coreBeans, $configDefinitions);
     }
 
     /**
      * @return array
+     * @throws \InvalidArgumentException
      */
-    private static function getServerDefinition()
+    private static function getServerDefinition(): array
     {
         $file             = App::getAlias('@console');
         $configDefinition = [];
-        if (is_readable($file)) {
+
+        if (\is_readable($file)) {
             $configDefinition = require_once $file;
         }
 
         $coreBeans  = self::getCoreBean(BootBeanCollector::TYPE_SERVER);
-        $definition = ArrayHelper::merge($coreBeans, $configDefinition);
 
-        return $definition;
+        return ArrayHelper::merge($coreBeans, $configDefinition);
     }
 
     /**
@@ -130,6 +133,7 @@ class BeanFactory implements BeanFactoryInterface
         $properties = [];
         $config     = new Config();
         $dir        = App::getAlias('@properties');
+
         if (is_readable($dir)) {
             $config->load($dir);
             $properties = $config->toArray();
@@ -151,6 +155,7 @@ class BeanFactory implements BeanFactoryInterface
         }
 
         $coreBeans = [];
+        /** @var array $bootBeans */
         $bootBeans = $collector[$type];
         foreach ($bootBeans as $beanName) {
             /* @var \Swoft\Core\BootBeanInterface $bootBean */
@@ -169,12 +174,22 @@ class BeanFactory implements BeanFactoryInterface
     {
         $definitions = [];
         $collector   = DefinitionCollector::getCollector();
+
         foreach ($collector as $className => $beanName) {
             /* @var \Swoft\Bean\DefinitionInterface $definition */
             $definition = App::getBean($beanName);
 
             $definitions = ArrayHelper::merge($definitions, $definition->getDefinitions());
         }
+
         return $definitions;
+    }
+
+    /**
+     * @return Container
+     */
+    public static function getContainer(): Container
+    {
+        return self::$container;
     }
 }

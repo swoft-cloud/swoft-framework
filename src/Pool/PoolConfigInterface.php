@@ -2,12 +2,14 @@
 
 namespace Swoft\Pool;
 
+use Swoft\Contract\Arrayable;
+
 /**
  * Interface PoolConfigInterface
  *
  * @package Swoft\Pool
  */
-interface PoolConfigInterface
+interface PoolConfigInterface extends Arrayable
 {
     /**
      * @return string

@@ -2,7 +2,6 @@
 
 namespace Swoft\Bean;
 
-use App\Controllers\RpcController;
 use Swoft\Aop\Aop;
 use Swoft\Aop\AopInterface;
 use Swoft\App;
@@ -65,10 +64,6 @@ class Container
      */
     public function get(string $name)
     {
-        if (! \is_string($name)) {
-            throw new \InvalidArgumentException(sprintf('$name must be string, %s given', \gettype($name)));
-        }
-
         // 已经创建
         if (isset($this->singletonEntries[$name])) {
             return $this->singletonEntries[$name];
@@ -130,13 +125,14 @@ class Container
         $resource->addScanNamespace($beanScan);
         $definitions = $resource->getDefinitions();
 
-        $this->definitions = array_merge($definitions, $this->definitions);
+        $this->definitions = \array_merge($definitions, $this->definitions);
     }
 
     /**
      * 初始化已定义的bean
      *
      * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     public function initBeans()
     {
@@ -186,10 +182,10 @@ class Container
         $propertyInjects = $objectDefinition->getPropertyInjections();
         $constructorInject = $objectDefinition->getConstructorInjection();
 
-        if (!empty($objectDefinition->getRef())) {
-            $refBeanName = $objectDefinition->getRef();
+        if ($refBeanName = $objectDefinition->getRef()) {
             return $this->get($refBeanName);
         }
+
         // 构造函数
         $constructorParameters = [];
         if ($constructorInject !== null) {
@@ -247,9 +243,8 @@ class Container
         }
 
         $handler = new AopHandler($object);
-        $proxyObject = Proxy::newProxyInstance(\get_class($object), $handler);
 
-        return $proxyObject;
+        return Proxy::newProxyInstance(\get_class($object), $handler);
     }
 
     /**
@@ -258,6 +253,7 @@ class Container
      * @param MethodInjection $constructorInject
      * @return array
      * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     private function injectConstructor(MethodInjection $constructorInject): array
     {
@@ -297,10 +293,11 @@ class Container
     /**
      * 注入属性
      *
-     * @param  mixed                $object
+     * @param  mixed $object
      * @param \ReflectionProperty[] $properties $properties
-     * @param  mixed                $propertyInjects
+     * @param  mixed $propertyInjects
      * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     private function injectProperties($object, array $properties, $propertyInjects)
     {
@@ -345,6 +342,7 @@ class Container
      * @param array $injectProperty
      * @return array
      * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     private function injectArrayArgs(array $injectProperty): array
     {
@@ -358,12 +356,12 @@ class Container
 
             // 参数注入
             if ($property instanceof ArgsInjection) {
-                $propertyVlaue = $property->getValue();
+                $propertyValue = $property->getValue();
                 if ($property->isRef()) {
-                    $injectAry[$key] = $this->get($propertyVlaue);
+                    $injectAry[$key] = $this->get($propertyValue);
                     continue;
                 }
-                $injectAry[$key] = $propertyVlaue;
+                $injectAry[$key] = $propertyValue;
             }
         }
 
@@ -382,9 +380,27 @@ class Container
     private function getScanNamespaceFromProperties(string $name)
     {
         $properties = $this->properties;
-        if(!isset($properties[$name]) || !is_array($properties[$name])){
+
+        if(!isset($properties[$name]) || !\is_array($properties[$name])){
             return [];
         }
+
         return $properties[$name];
+    }
+
+    /**
+     * @return array
+     */
+    public function getBeanNames(): array
+    {
+        return \array_keys($this->definitions);
+    }
+
+    /**
+     * @return array
+     */
+    public function getProperties(): array
+    {
+        return $this->properties;
     }
 }
