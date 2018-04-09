@@ -7,7 +7,6 @@ namespace Swoft\Bean;
  */
 interface BeanFactoryInterface
 {
-
     /**
      * Get bean
      *

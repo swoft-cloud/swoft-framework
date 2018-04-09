@@ -236,39 +236,40 @@ abstract class AbstractServer implements ServerInterface
      */
     public function initSettings(array $settings)
     {
-        if (! isset($settings['tcp'])) {
-            throw new \InvalidArgumentException('未配置tcp启动参数，settings=' . json_encode($settings));
+        if (!isset($settings['tcp'])) {
+            throw new \InvalidArgumentException('Tcp startup parameter is not configured，settings=' . \json_encode($settings));
         }
 
-        if (! isset($settings['http'])) {
-            throw new \InvalidArgumentException('未配置http启动参数，settings=' . json_encode($settings));
+        if (!isset($settings['http'])) {
+            throw new \InvalidArgumentException('HTTP startup parameters is not configured, settings=' . \json_encode($settings));
         }
 
-        if (! isset($settings['server'])) {
-            throw new \InvalidArgumentException('未配置server启动参数，settings=' . json_encode($settings));
+        if (!isset($settings['server'])) {
+            throw new \InvalidArgumentException('server startup parameters is not configured, settings=' . \json_encode($settings));
         }
 
-        if (! isset($settings['setting'])) {
-            throw new \InvalidArgumentException('未配置setting启动参数，settings=' . json_encode($settings));
+        if (!isset($settings['setting'])) {
+            throw new \InvalidArgumentException('"setting" parameters is not configured, settings=' . \json_encode($settings));
         }
 
-        foreach ($settings['setting'] as $key => &$value) {
-            if (\is_string($value) && StringHelper::contains($value, ['@'])) {
-                $value = App::getAlias($value);
+        foreach ($settings['setting'] as $key => $value) {
+            // path alias
+            if ($value && \is_string($value) && $value[0] === '@') {
+                $settings['setting'][$key] = App::getAlias($value);
             }
         }
 
+        $this->setting = $settings['setting'];
         $this->tcpSetting = $settings['tcp'];
         $this->httpSetting = $settings['http'];
         $this->serverSetting = $settings['server'];
-        $this->setting = $settings['setting'];
 
         // fix bug must to int
         if (isset($this->setting['task_ipc_mode'])) {
-            $this->setting['task_ipc_mode'] = intval($this->setting['task_ipc_mode']);
+            $this->setting['task_ipc_mode'] = (int)$this->setting['task_ipc_mode'];
         }
         if (isset($this->setting['message_queue_key'])) {
-            $this->setting['message_queue_key'] = intval($this->setting['message_queue_key']);
+            $this->setting['message_queue_key'] = (int)$this->setting['message_queue_key'];
         }
     }
 

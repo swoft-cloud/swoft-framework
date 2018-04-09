@@ -3,7 +3,8 @@
 namespace Swoft\Pool;
 
 /**
- * Pool properties
+ * Class PoolProperties Pool properties
+ * @package Swoft\Pool
  */
 class PoolProperties implements PoolConfigInterface
 {
@@ -186,5 +187,13 @@ class PoolProperties implements PoolConfigInterface
     public function getMaxIdleTime(): int
     {
         return $this->maxIdleTime;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return \get_object_vars($this);
     }
 }
