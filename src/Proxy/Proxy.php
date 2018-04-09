@@ -9,7 +9,6 @@ use Swoft\Proxy\Handler\HandlerInterface;
  */
 class Proxy
 {
-
     /**
      * Return a proxy instance
      *
@@ -24,8 +23,8 @@ class Proxy
         $reflectionMethods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED);
 
         // Proxy property
-        $id = uniqid('', false);
-        $proxyClassName = basename(str_replace("\\", '/', $className));
+        $id = \uniqid('', false);
+        $proxyClassName = \basename(str_replace("\\", '/', $className));
         $proxyClassName = $proxyClassName . '_' . $id;
         $handlerPropertyName = '__handler_' . $id;
 
@@ -61,7 +60,7 @@ class Proxy
         foreach ($reflectionMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->getName();
 
-            // not to overrided method
+            // not to override method
             if ($reflectionMethod->isConstructor() || $reflectionMethod->isStatic()) {
                 continue;
             }
@@ -75,11 +74,11 @@ class Proxy
             $reflectionMethodReturn = $reflectionMethod->getReturnType();
             if ($reflectionMethodReturn !== null) {
                 $returnType = $reflectionMethodReturn->__toString();
-                $returnType = ($returnType == 'self') ? $reflectionMethod->getDeclaringClass()->getName() : $returnType;
+                $returnType = $returnType === 'self' ? $reflectionMethod->getDeclaringClass()->getName() : $returnType;
                 $template .= " : $returnType";
             }
 
-            // overrided method
+            // override method
             $template .= "{
                 return \$this->{$handlerPropertyName}->invoke('{$methodName}', func_get_args());
             }
@@ -156,7 +155,7 @@ class Proxy
             $template = ' = []';
         } elseif (\is_float($defaultValue)) {
             $template = ' = []';
-        } elseif (\is_object($defaultValue) || \is_null($defaultValue)) {
+        } elseif (\is_object($defaultValue) || null === $defaultValue) {
             $template = ' = null';
         }
 
