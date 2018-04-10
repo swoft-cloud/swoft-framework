@@ -3,12 +3,12 @@
 namespace Swoft\Event;
 
 /**
- * 所有事件名称
+ * Application event
  */
 class AppEvent
 {
     /**
-     * 应用初始化加载监听器
+     * Application loader event
      */
     const APPLICATION_LOADER = "applicationLoader";
 
@@ -23,9 +23,9 @@ class AppEvent
     const RESOURCE_RELEASE = 'resourceRelease';
 
     /**
-     * Resource transaction event behind application
+     * Before resource release
      */
-    const TRANSACTION_RELEASE = 'transactionRelease';
+    const RESOURCE_RELEASE_BEFORE = 'resourceReleaseBefore';
 
     /**
      * Worker start event
