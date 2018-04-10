@@ -14,7 +14,7 @@ class Coroutine
     /**
      * @var int
      */
-    private static $tid;
+    private static $tid = -1;
 
     /**
      * Coroutine id mapping
@@ -53,7 +53,6 @@ class Coroutine
     public static function tid()
     {
         $id = self::id();
-
         return self::$idMap[$id] ?? $id;
     }
 
@@ -121,15 +120,5 @@ class Coroutine
     public static function shouldWrapCoroutine()
     {
         return App::isWorkerStatus() && swoole_version() >= '2.0.11';
-    }
-
-    /**
-     * Init tid
-     */
-    public static function initTid()
-    {
-        $time = time();
-        $rand = mt_rand(1, 100);
-        self::$tid = (int)($time . $rand);
     }
 }

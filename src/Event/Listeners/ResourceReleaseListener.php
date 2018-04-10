@@ -4,6 +4,7 @@ namespace Swoft\Event\Listeners;
 
 use Swoft\App;
 use Swoft\Bean\Annotation\Listener;
+use Swoft\Core\Coroutine;
 use Swoft\Core\RequestContext;
 use Swoft\Event\AppEvent;
 use Swoft\Event\EventHandlerInterface;
@@ -29,14 +30,13 @@ class ResourceReleaseListener implements EventHandlerInterface
 
         $connectionKey = PoolHelper::getContextCntKey();
         $connections   = RequestContext::getContextDataByKey($connectionKey, []);
-
         if (empty($connections)) {
             return;
         }
 
         /* @var \Swoft\Pool\ConnectionInterface $connection */
         foreach ($connections as $connectionId => $connection) {
-            if (App::isCoContext() && !$connection->isRecv()) {
+            if (!$connection->isRecv()) {
                 Log::error(sprintf('%s connection is not received ，forget to getResult()', get_class($connection)));
                 $connection->receive();
             }
