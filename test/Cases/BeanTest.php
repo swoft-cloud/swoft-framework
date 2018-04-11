@@ -1,26 +1,28 @@
 <?php
+/**
+ * This file is part of Swoft.
+ *
+ * @link     https://swoft.org
+ * @document https://doc.swoft.org
+ * @contact  group@swoft.org
+ * @license  https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
+namespace SwoftTest;
 
-namespace Swoft\Test\Cases;
-
-use PHPUnit\Framework\TestCase;
 use Swoft\Proxy\Proxy;
-use Swoft\Test\Testing\Bean\ProxyTest;
-use Swoft\Test\Testing\Bean\TestHandler;
+use SwoftTest\Bean\ProxyTest;
+use SwoftTest\Bean\TestHandler;
 
 /**
- * the test of bean
+ * Class BeanTest
  *
- * @uses      BeanTest
- * @version   2017年12月23日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Test\Cases
  */
-class BeanTest extends TestCase
+class BeanTest extends AbstractTestCase
 {
     public function testProxy()
     {
-        $object  = new ProxyTest(1, 2);
+        $object = new ProxyTest(1, 2);
         $handler = new TestHandler($object);
 
         /* @var ProxyTest $proxy */

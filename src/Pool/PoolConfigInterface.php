@@ -2,26 +2,19 @@
 
 namespace Swoft\Pool;
 
+use Swoft\Contract\Arrayable;
+
 /**
- * the interface of pool config
+ * Interface PoolConfigInterface
  *
- * @uses      PoolConfigInterface
- * @version   2017年12月16日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Pool
  */
-interface PoolConfigInterface
+interface PoolConfigInterface extends Arrayable
 {
     /**
      * @return string
      */
     public function getName(): string;
-
-    /**
-     * @return int
-     */
-    public function getMaxIdel(): int;
 
     /**
      * @return int
@@ -57,4 +50,19 @@ interface PoolConfigInterface
      * @return string
      */
     public function getProvider(): string;
+
+    /**
+     * @return int
+     */
+    public function getMinActive(): int;
+
+    /**
+     * @return int
+     */
+    public function getMaxWaitTime(): int;
+
+    /**
+     * @return int
+     */
+    public function getMaxIdleTime(): int;
 }

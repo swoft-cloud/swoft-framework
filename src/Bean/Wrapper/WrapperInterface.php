@@ -2,6 +2,8 @@
 
 namespace Swoft\Bean\Wrapper;
 
+use Swoft\Bean\Wrapper\Extend\WrapperExtendInterface;
+
 /**
  * Annotation Wrapper Interface
  */
@@ -39,4 +41,9 @@ interface WrapperInterface
      * @return bool
      */
     public function isParseMethodAnnotations(array $annotations): bool;
+
+    /**
+     * @param WrapperExtendInterface $extend
+     */
+    public function addExtends(WrapperExtendInterface $extend);
 }

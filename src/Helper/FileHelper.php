@@ -14,7 +14,6 @@ namespace Swoft\Helper;
  */
 class FileHelper
 {
-
     /**
      * 获得文件扩展名、后缀名
      * @param $filename
@@ -34,13 +33,13 @@ class FileHelper
      */
     public static function isAbsPath($path): bool
     {
-        if (!$path || !is_string($path)) {
+        if (!$path || !\is_string($path)) {
             return false;
         }
 
         if (
             $path{0} === '/' ||  // linux/mac
-            1 === preg_match('#^[a-z]:[\/|\\\]{1}.+#i', $path) // windows
+            1 === \preg_match('#^[a-z]:[\/|\\\]{1}.+#i', $path) // windows
         ) {
             return true;
         }
@@ -58,16 +57,16 @@ class FileHelper
     public static function md5File($dir)
     {
         if (!is_dir($dir)) {
-            return "";
+            return '';
         }
 
         $md5File = array();
         $d       = dir($dir);
         while (false !== ($entry = $d->read())) {
-            if ($entry != '.' && $entry != '..') {
+            if ($entry !== '.' && $entry !== '..') {
                 if (is_dir($dir . '/' . $entry)) {
                     $md5File[] = self::md5File($dir . '/' . $entry);
-                } else {
+                } elseif (substr($entry, -4) === '.php') {
                     $md5File[] = md5_file($dir . '/' . $entry);
                 }
                 $md5File[] = $entry;

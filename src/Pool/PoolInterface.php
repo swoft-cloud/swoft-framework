@@ -3,27 +3,41 @@
 namespace Swoft\Pool;
 
 /**
- * 连接池接口
- *
- * @uses      Pool
- * @version   2017年05月11日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Interface PoolInterface
  */
 interface PoolInterface
 {
     /**
-     * 获取连接
-     *
-     * @return mixed
+     * @return ConnectionInterface
      */
-    public function getConnect();
+    public function createConnection(): ConnectionInterface;
 
     /**
-     * 释放连接
+     * Get a connection
      *
-     * @param object $connect
+     * @return ConnectionInterface
      */
-    public function release($connect);
+    public function getConnection(): ConnectionInterface;
+
+    /**
+     * Relesea the connection
+     *
+     * @param ConnectionInterface $connection
+     */
+    public function release(ConnectionInterface $connection);
+
+    /**
+     * @return string
+     */
+    public function getConnectionAddress(): string;
+
+    /**
+     * @return PoolConfigInterface
+     */
+    public function getPoolConfig(): PoolConfigInterface;
+
+    /**
+     * @return int
+     */
+    public function getTimeout(): int;
 }

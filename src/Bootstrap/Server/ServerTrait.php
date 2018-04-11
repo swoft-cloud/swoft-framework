@@ -1,6 +1,7 @@
 <?php
 
 namespace Swoft\Bootstrap\Server;
+
 use Swoft\App;
 use Swoft\Bean\BeanFactory;
 use Swoft\Bean\Collector\ServerListenerCollector;
@@ -19,54 +20,79 @@ use Swoole\Server;
 trait ServerTrait
 {
     /**
-     * master进程启动前初始化
+     * Before swoole server start
+     */
+    protected function beforeServerStart()
+    {
+        $this->fireServerEvent(SwooleEvent::ON_BEFORE_START, [$this]);
+    }
+
+    /**
+     * onStart event callback
      *
      * @param Server $server
+     * @throws \InvalidArgumentException
      */
     public function onStart(Server $server)
     {
-        file_put_contents($this->serverSetting['pfile'], $server->master_pid);
-        file_put_contents($this->serverSetting['pfile'], ',' . $server->manager_pid, FILE_APPEND);
-        ProcessHelper::setProcessTitle($this->serverSetting['pname'] . " master process (" . $this->scriptFile . ")");
+        \file_put_contents($this->serverSetting['pfile'], $server->master_pid . ',' . $server->manager_pid);
+
+        ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' master process (' . $this->scriptFile . ')');
+
+        $this->fireServerEvent(SwooleEvent::ON_START, [$server]);
     }
 
     /**
-     * mananger进程启动前初始化
+     * onManagerStart event callback
      *
      * @param Server $server
+     * @throws \InvalidArgumentException
      */
     public function onManagerStart(Server $server)
     {
-        ProcessHelper::setProcessTitle($this->serverSetting['pname'] . " manager process");
+        $this->fireServerEvent(SwooleEvent::ON_MANAGER_START, [$server]);
+
+        ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' manager process');
     }
 
     /**
-     * worker进程启动前初始化
+     * OnWorkerStart event callback
      *
-     * @param Server $server   server
-     * @param int    $workerId workerId
+     * @param Server $server server
+     * @param int $workerId workerId
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
     public function onWorkerStart(Server $server, int $workerId)
     {
-        // worker和task进程初始化
+        // Init Worker and TaskWorker
         $setting = $server->setting;
+        $isWorker = false;
+
         if ($workerId >= $setting['worker_num']) {
+            // TaskWorker
             ApplicationContext::setContext(ApplicationContext::TASK);
-            ProcessHelper::setProcessTitle($this->serverSetting['pname'] . " task process");
+            ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' task process');
         } else {
+            // Worker
+            $isWorker = true;
             ApplicationContext::setContext(ApplicationContext::WORKER);
-            ProcessHelper::setProcessTitle($this->serverSetting['pname'] . " worker process");
+            ProcessHelper::setProcessTitle($this->serverSetting['pname'] . ' worker process');
         }
 
-        // reload重新加载文件
-        $this->beforeOnWorkerStart($server, $workerId);
+        $this->beforeWorkerStart($server, $workerId, $isWorker);
+
+        $this->fireServerEvent(SwooleEvent::ON_WORKER_START, [$server, $workerId, $isWorker]);
     }
 
     /**
+     * onPipeMessage event callback
+     *
      * @param \Swoole\Server $server
      * @param int            $srcWorkerId
      * @param string         $message
      * @return void
+     * @throws \InvalidArgumentException
      */
     public function onPipeMessage(Server $server, int $srcWorkerId, string $message)
     {
@@ -77,7 +103,6 @@ trait ServerTrait
         App::trigger(AppEvent::PIPE_MESSAGE, null, $type, $data, $srcWorkerId);
     }
 
-
     /**
      * @param string $scriptFile
      */
@@ -87,55 +112,53 @@ trait ServerTrait
     }
 
     /**
-     * swoole server start之前运行
+     * @param \Swoole\Server $server
+     * @param int $workerId
+     * @param bool $isWorker
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
-    protected function beforeStart()
+    private function beforeWorkerStart(Server $server, int $workerId, bool $isWorker)
     {
-        $collector = ServerListenerCollector::getCollector();
-        $event = SwooleEvent::ON_BEFORE_START;
-        if(!isset($collector[$event]) || empty($collector[$event])){
-            return ;
-        }
-
-        $beforeStartListeners = $collector[$event];
-        $this->doServerListener($beforeStartListeners, $event, [$this]);
+        // Load bean
+        $this->reloadBean($isWorker);
     }
 
     /**
-     * do listener
-     *
-     * @param array  $listeners
-     * @param string $event
-     * @param array  $params
+     * @param bool $isWorker
+     * @throws \InvalidArgumentException
+     * @throws \ReflectionException
      */
-    private function doServerListener(array $listeners, string $event, array $params)
-    {
-        foreach ($listeners as $listenerBeanName){
-            $listener = App::getBean($listenerBeanName);
-            $method = SwooleEvent::getHandlerFunction($event);
-            $listener->$method(...$params);
-        }
-    }
-
-    /**
-     * worker start之前运行
-     *
-     * @param Server $server   server
-     * @param int    $workerId workerId
-     */
-    private function beforeOnWorkerStart(Server $server, int $workerId)
-    {
-        // 加载bean
-        $this->reloadBean();
-    }
-
-    /**
-     * reload bean
-     */
-    protected function reloadBean()
+    protected function reloadBean(bool $isWorker)
     {
         BeanFactory::reload();
         $initApplicationContext = new InitApplicationContext();
         $initApplicationContext->init();
+
+        if($isWorker && $this->workerLock->trylock() && env('AUTO_REGISTER', false)){
+            App::trigger(AppEvent::WORKER_START);
+        }
+    }
+
+    /**
+     * fire server event listeners
+     *
+     * @param string $event
+     * @param array  $params
+     */
+    protected function fireServerEvent(string $event, array $params)
+    {
+        /** @var array[] $collector */
+        $collector = ServerListenerCollector::getCollector();
+
+        if (!isset($collector[$event]) || empty($collector[$event])) {
+            return;
+        }
+
+        foreach ($collector[$event] as $beanClass) {
+            $listener = App::getBean($beanClass);
+            $method = SwooleEvent::getHandlerFunction($event);
+            $listener->$method(...$params);
+        }
     }
 }

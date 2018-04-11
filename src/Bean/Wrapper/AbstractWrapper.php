@@ -2,22 +2,15 @@
 
 namespace Swoft\Bean\Wrapper;
 
-use App\Controllers\RpcController;
-use App\Tasks\SyncTask;
 use Swoft\Bean\ObjectDefinition;
 use Swoft\Bean\ObjectDefinition\PropertyInjection;
 use Swoft\Bean\Parser\AbstractParser;
 use Swoft\Bean\Parser\MethodWithoutAnnotationParser;
 use Swoft\Bean\Resource\AnnotationResource;
+use Swoft\Bean\Wrapper\Extend\WrapperExtendInterface;
 
 /**
  * 抽象封装器
- *
- * @uses      AbstractWrapper
- * @version   2017年09月04日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
  */
 abstract class AbstractWrapper implements WrapperInterface
 {
@@ -41,6 +34,12 @@ abstract class AbstractWrapper implements WrapperInterface
      * @var array
      */
     protected $methodAnnotations = [];
+
+    /**
+     * @var WrapperExtendInterface[]
+     */
+    private $extends = [];
+
 
     /**
      * 注解资源
@@ -140,7 +139,7 @@ abstract class AbstractWrapper implements WrapperInterface
                 continue;
             }
             $propertyName = $property->getName();
-            if (!isset($propertyAnnotations[$propertyName]) || !$this->isParsePropertyAnnotations($propertyAnnotations[$propertyName])) {
+            if (!isset($propertyAnnotations[$propertyName]) || !$this->isParseProperty($propertyAnnotations[$propertyName])) {
                 continue;
             }
 
@@ -200,7 +199,7 @@ abstract class AbstractWrapper implements WrapperInterface
         // 方法没有注解解析
         $methodName = $method->getName();
         $isWithoutMethodAnnotation = empty($methodAnnotations) || !isset($methodAnnotations[$methodName]);
-        if ($isWithoutMethodAnnotation || !$this->isParseMethodAnnotations($methodAnnotations[$methodName])) {
+        if ($isWithoutMethodAnnotation || !$this->isParseMethod($methodAnnotations[$methodName])) {
             $this->parseMethodWithoutAnnotation($className, $methodName);
             return;
         }
@@ -209,7 +208,7 @@ abstract class AbstractWrapper implements WrapperInterface
         foreach ($methodAnnotations[$methodName] as $methodAnnotationAry) {
             foreach ($methodAnnotationAry as $methodAnnotation) {
                 $annotationClass = get_class($methodAnnotation);
-                if (!in_array($annotationClass, $this->methodAnnotations)) {
+                if (!in_array($annotationClass, $this->getMethodAnnotations())) {
                     continue;
                 }
 
@@ -253,7 +252,7 @@ abstract class AbstractWrapper implements WrapperInterface
 
         // 没有任何注解
         if (empty($propertyAnnotations) || !isset($propertyAnnotations[$propertyName])
-            || !$this->isParsePropertyAnnotations($propertyAnnotations[$propertyName])
+            || !$this->isParseProperty($propertyAnnotations[$propertyName])
         ) {
             return [null, false];
         }
@@ -261,7 +260,7 @@ abstract class AbstractWrapper implements WrapperInterface
         // 属性注解解析
         foreach ($propertyAnnotations[$propertyName] as $propertyAnnotation) {
             $annotationClass = get_class($propertyAnnotation);
-            if (!in_array($annotationClass, $this->propertyAnnotations)) {
+            if (!in_array($annotationClass, $this->getPropertyAnnotations())) {
                 continue;
             }
 
@@ -288,14 +287,14 @@ abstract class AbstractWrapper implements WrapperInterface
      */
     public function parseClassAnnotations(string $className, array $annotations)
     {
-        if (!$this->isParseClassAnnotations($annotations)) {
+        if (!$this->isParseClass($annotations)) {
             return null;
         }
 
         $beanData = null;
         foreach ($annotations as $annotation) {
             $annotationClass = get_class($annotation);
-            if (!in_array($annotationClass, $this->classAnnotations)) {
+            if (!in_array($annotationClass, $this->getClassAnnotations())) {
                 continue;
             }
 
@@ -311,6 +310,115 @@ abstract class AbstractWrapper implements WrapperInterface
         }
 
         return $beanData;
+    }
+
+    /**
+     * @param WrapperExtendInterface $extend
+     */
+    public function addExtends(WrapperExtendInterface $extend)
+    {
+        $extendClass = get_class($extend);
+        $this->extends[$extendClass] = $extend;
+    }
+
+    /**
+     * @return array
+     */
+    private function getClassAnnotations(): array
+    {
+        return array_merge($this->classAnnotations, $this->getExtendAnnotations(1));
+    }
+
+    /**
+     * @return array
+     */
+    private function getPropertyAnnotations(): array
+    {
+        return array_merge($this->propertyAnnotations, $this->getExtendAnnotations(2));
+    }
+
+    /**
+     * @return array
+     */
+    private function getMethodAnnotations(): array
+    {
+        return array_merge($this->methodAnnotations, $this->getExtendAnnotations(3));
+    }
+
+    /**
+     * @param int $type
+     *
+     * @return array
+     */
+    private function getExtendAnnotations(int $type = 1): array
+    {
+        $annotations = [];
+        foreach ($this->extends as $extend) {
+            if ($type == 1) {
+                $extendAnnoation = $extend->getClassAnnotations();
+            } elseif ($type == 2) {
+                $extendAnnoation = $extend->getPropertyAnnotations();
+            } else {
+                $extendAnnoation = $extend->getMethodAnnotations();
+            }
+            $annotations = array_merge($annotations, $extendAnnoation);
+        }
+
+        return $annotations;
+    }
+
+    /**
+     * @param array $annotations
+     *
+     * @return bool
+     */
+    private function isParseClass(array $annotations): bool
+    {
+        return $this->isParseClassAnnotations($annotations) || $this->isParseExtendAnnotations($annotations, 1);
+    }
+
+    /**
+     * @param array $annotations
+     *
+     * @return bool
+     */
+    private function isParseProperty(array $annotations): bool
+    {
+        return $this->isParsePropertyAnnotations($annotations) || $this->isParseExtendAnnotations($annotations, 2);
+    }
+
+    /**
+     * @param array $annotations
+     *
+     * @return bool
+     */
+    private function isParseMethod(array $annotations): bool
+    {
+        return $this->isParseMethodAnnotations($annotations) || $this->isParseExtendAnnotations($annotations, 3);
+    }
+
+    /**
+     * @param array $annotations
+     * @param int   $type
+     *
+     * @return bool
+     */
+    private function isParseExtendAnnotations(array $annotations, int $type = 1): bool
+    {
+        foreach ($this->extends as $extend) {
+            if ($type == 1) {
+                $isParse = $extend->isParseClassAnnotations($annotations);
+            } elseif ($type == 2) {
+                $isParse = $extend->isParsePropertyAnnotations($annotations);
+            } else {
+                $isParse = $extend->isParseMethodAnnotations($annotations);
+            }
+            if ($isParse) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

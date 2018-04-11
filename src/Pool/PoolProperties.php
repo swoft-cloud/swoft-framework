@@ -1,58 +1,64 @@
 <?php
 
 namespace Swoft\Pool;
-use Swoft\Sg\BalancerSelector;
-use Swoft\Sg\ProviderSelector;
 
 /**
- * the properties of pool
- *
- * @uses      PoolProperties
- * @version   2017年12月16日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Class PoolProperties Pool properties
+ * @package Swoft\Pool
  */
 class PoolProperties implements PoolConfigInterface
 {
     /**
-     * the name of pool
+     * Pool name
      *
      * @var string
      */
-    protected $name = "";
+    protected $name = '';
 
     /**
-     * the maximum number of idle connections
+     * Minimum active number of connections
      *
      * @var int
      */
-    protected $maxIdel = 6;
+    protected $minActive = 5;
 
     /**
-     * the maximum number of active connections
+     * Maximum active number of connections
      *
      * @var int
      */
-    protected $maxActive = 50;
+    protected $maxActive = 10;
 
     /**
-     * the maximum number of wait connections
+     * Maximum waiting for the number of connections, if there is no limit to 0
      *
      * @var int
      */
-    protected $maxWait = 100;
+    protected $maxWait = 20;
 
     /**
-     * the time of connect timeout
+     * Maximum waiting time
      *
      * @var int
      */
-    protected $timeout = 200;
+    protected $maxWaitTime = 3;
 
     /**
-     * the addresses of connection
+     * Maximum idle time
      *
+     * @var int
+     */
+    protected $maxIdleTime = 60;
+
+    /**
+     * Connection timeout
+     *
+     * @var int
+     */
+    protected $timeout = 3;
+
+    /**
+     * Connection addresses
      * <pre>
      * [
      *  '127.0.0.1:88',
@@ -65,25 +71,35 @@ class PoolProperties implements PoolConfigInterface
     protected $uri = [];
 
     /**
-     * whether to user provider(consul/etcd/zookeeper)
+     * Whether to user provider(consul/etcd/zookeeper)
      *
      * @var bool
      */
     protected $useProvider = false;
 
     /**
-     * the default balancer is random balancer
+     * Default balancer
      *
      * @var string
      */
-    protected $balancer = BalancerSelector::TYPE_RANDOM;
+    protected $balancer = 'random';
 
     /**
-     * the default provider is consul provider
+     * Default provider
      *
      * @var string
      */
-    protected $provider = ProviderSelector::TYPE_CONSUL;
+    protected $provider = 'consul';
+
+    /**
+     * Initialize
+     */
+    public function init()
+    {
+        if (empty($this->name)) {
+            $this->name = uniqid();
+        }
+    }
 
     /**
      * @return string
@@ -91,14 +107,6 @@ class PoolProperties implements PoolConfigInterface
     public function getName(): string
     {
         return $this->name;
-    }
-
-    /**
-     * @return int
-     */
-    public function getMaxIdel(): int
-    {
-        return $this->maxIdel;
     }
 
     /**
@@ -158,12 +166,34 @@ class PoolProperties implements PoolConfigInterface
     }
 
     /**
-     * init
+     * @return int
      */
-    public function init()
+    public function getMinActive(): int
     {
-        if (empty($this->name)) {
-            $this->name = uniqid();
-        }
+        return $this->minActive;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxWaitTime(): int
+    {
+        return $this->maxWaitTime;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMaxIdleTime(): int
+    {
+        return $this->maxIdleTime;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return \get_object_vars($this);
     }
 }

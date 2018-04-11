@@ -43,11 +43,11 @@ class SwooleListener
     public function __construct(array $values)
     {
         if (isset($values['value'])) {
-            $this->event = $values['value'];
+            $this->event = (array)$values['value'];
         }
 
         if (isset($values['event'])) {
-            $this->event = $values['event'];
+            $this->event = (array)$values['event'];
         }
 
         if (isset($values['type'])) {

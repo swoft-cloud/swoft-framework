@@ -6,70 +6,56 @@ use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Swoft\App;
 use Swoft\Helper\ArrayHelper;
-use Swoft\Http\Message\Server\Request;
-use Swoft\Http\Message\Server\Response;
-use Swoft\Testing\SwooleResponse as TestingSwooleResponse;
-use Swoft\Testing\SwooleRequest as TestingSwooleRequest;
 
 /**
- * 请求上下文
+ * Class RequestContext
  *
- * @uses      RequestContext
- * @version   2017年04月29日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Core
  */
 class RequestContext
 {
     /**
-     * 请求数据共享区
+     * Key of request context share data
      */
-    const COROUTINE_DATA = "data";
+    const DATA_KEY = 'data';
 
     /**
-     * 当前请求request
+     * Key of current Request
      */
-    const COROUTINE_REQUEST = "request";
+    const REQUEST_KEY = 'request';
 
     /**
-     * 当前请求response
+     * Key of current Response
      */
-    const COROUTINE_RESPONSE = "response";
+    const RESPONSE_KEY = 'response';
 
     /**
-     * @var array 协程数据保存
+     * @var array Coroutine context
      */
-    private static $coroutineLocal;
+    private static $context;
 
     /**
-     * 请求request
-     *
-     * @return \Psr\Http\Message\RequestInterface
+     * @return \Psr\Http\Message\ServerRequestInterface|null
      */
     public static function getRequest()
     {
-        return self::getCoroutineContext(self::COROUTINE_REQUEST);
+        return self::getCoroutineContext(self::REQUEST_KEY);
     }
 
     /**
-     * 请求response
-     *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|null
      */
     public static function getResponse()
     {
-        return self::getCoroutineContext(self::COROUTINE_RESPONSE);
+        return self::getCoroutineContext(self::RESPONSE_KEY);
     }
 
     /**
-     * 请求共享数据
-     *
-     * @return array
+     * @return array|null
      */
     public static function getContextData()
     {
-        return self::getCoroutineContext(self::COROUTINE_DATA);
+        return self::getCoroutineContext(self::DATA_KEY);
     }
 
     /**
@@ -80,7 +66,7 @@ class RequestContext
     public static function setRequest(RequestInterface $request)
     {
         $coroutineId = self::getCoroutineId();
-        self::$coroutineLocal[$coroutineId][self::COROUTINE_REQUEST] = $request;
+        self::$context[$coroutineId][self::REQUEST_KEY] = $request;
     }
 
     /**
@@ -91,26 +77,26 @@ class RequestContext
     public static function setResponse(ResponseInterface $response)
     {
         $coroutineId = self::getCoroutineId();
-        self::$coroutineLocal[$coroutineId][self::COROUTINE_RESPONSE] = $response;
+        self::$context[$coroutineId][self::RESPONSE_KEY] = $response;
     }
 
     /**
-     * 初始化数据共享
+     * Set the context data
      *
      * @param array $contextData
      */
     public static function setContextData(array $contextData = [])
     {
         $existContext = [];
-        $coroutineId  = self::getCoroutineId();
-        if (isset(self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA])) {
-            $existContext = self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA];
+        $coroutineId = self::getCoroutineId();
+        if (isset(self::$context[$coroutineId][self::DATA_KEY])) {
+            $existContext = self::$context[$coroutineId][self::DATA_KEY];
         }
-        self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA] = ArrayHelper::merge($contextData, $existContext);
+        self::$context[$coroutineId][self::DATA_KEY] = ArrayHelper::merge($contextData, $existContext);
     }
 
     /**
-     * 设置或修改，当前请求数据共享值
+     * Update context data by key
      *
      * @param string $key
      * @param mixed  $val
@@ -118,11 +104,11 @@ class RequestContext
     public static function setContextDataByKey(string $key, $val)
     {
         $coroutineId = self::getCoroutineId();
-        self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA][$key] = $val;
+        self::$context[$coroutineId][self::DATA_KEY][$key] = $val;
     }
 
     /**
-     * 获取当前请求数据一个KEY的值
+     * Get context data by key
      *
      * @param string $key
      * @param mixed  $default
@@ -131,73 +117,115 @@ class RequestContext
     public static function getContextDataByKey(string $key, $default = null)
     {
         $coroutineId = self::getCoroutineId();
-        if (isset(self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA][$key])) {
-            return self::$coroutineLocal[$coroutineId][self::COROUTINE_DATA][$key];
+        if (isset(self::$context[$coroutineId][self::DATA_KEY][$key])) {
+            return self::$context[$coroutineId][self::DATA_KEY][$key];
         }
 
-        App::warning("RequestContext data数据不存在key,key=" . $key);
         return $default;
     }
 
     /**
-     * 请求logid
+     * Update context data by child key
+     *
+     * @param string $key
+     * @param string $child
+     * @param mixed  $val
+     */
+    public static function setContextDataByChildKey(string $key, string $child, $val)
+    {
+        $coroutineId = self::getCoroutineId();
+        self::$context[$coroutineId][self::DATA_KEY][$key][$child] = $val;
+    }
+
+    /**
+     * Get context data by child key
+     *
+     * @param string $key
+     * @param string $child
+     * @param mixed  $default
+     * @return mixed
+     */
+    public static function getContextDataByChildKey(string $key, string $child, $default = null)
+    {
+        $coroutineId = self::getCoroutineId();
+        if (isset(self::$context[$coroutineId][self::DATA_KEY][$key][$child])) {
+            return self::$context[$coroutineId][self::DATA_KEY][$key][$child];
+        }
+
+        return $default;
+    }
+
+    /**
+     * Get context data by child key
+     *
+     * @param string $key
+     * @param string $child
+     */
+    public static function removeContextDataByChildKey(string $key, string $child)
+    {
+        $coroutineId = self::getCoroutineId();
+        unset(self::$context[$coroutineId][self::DATA_KEY][$key][$child]);
+    }
+
+    /**
+     * Get Current Request Log ID
      *
      * @return string
      */
-    public static function getLogid()
+    public static function getLogid(): string
     {
-        $contextData = self::getCoroutineContext(self::COROUTINE_DATA);
-        $logid = $contextData['logid'] ?? "";
+        $contextData = self::getCoroutineContext(self::DATA_KEY);
+        $logid = $contextData['logid'] ?? '';
         return $logid;
     }
 
     /**
-     * 请求跨度值
+     * Get Current Request Span ID
      *
      * @return int
      */
-    public static function getSpanid()
+    public static function getSpanid(): int
     {
-        $contextData = self::getCoroutineContext(self::COROUTINE_DATA);
+        $contextData = (int)self::getCoroutineContext(self::DATA_KEY);
         $spanid = $contextData['spanid'] ?? 0;
         return $spanid;
     }
 
     /**
-     * 销毁当前协程数据
+     * Destroy all current coroutine context data
      */
     public static function destroy()
     {
         $coroutineId = self::getCoroutineId();
-        if (isset(self::$coroutineLocal[$coroutineId])) {
-            unset(self::$coroutineLocal[$coroutineId]);
+        if (isset(self::$context[$coroutineId])) {
+            unset(self::$context[$coroutineId]);
         }
     }
 
     /**
-     * 获取协程上下文
+     * Get data from coroutine context by key
      *
-     * @param string   $name 协程KEY
+     * @param string $key key of context
      * @return mixed|null
      */
-    private static function getCoroutineContext(string $name)
+    private static function getCoroutineContext(string $key)
     {
         $coroutineId = self::getCoroutineId();
-        if (! isset(self::$coroutineLocal[$coroutineId])) {
+        if (! isset(self::$context[$coroutineId])) {
             return null;
         }
 
-        $coroutineContext = self::$coroutineLocal[$coroutineId];
-        if (isset($coroutineContext[$name])) {
-            return $coroutineContext[$name];
+        $coroutineContext = self::$context[$coroutineId];
+        if (isset($coroutineContext[$key])) {
+            return $coroutineContext[$key];
         }
         return null;
     }
 
     /**
-     * 协程ID
+     * Get current coroutine ID
      *
-     * @return int
+     * @return int|null Return null when in non-coroutine context
      */
     private static function getCoroutineId()
     {

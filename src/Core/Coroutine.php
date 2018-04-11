@@ -14,7 +14,7 @@ class Coroutine
     /**
      * @var int
      */
-    private static $tid;
+    private static $tid = -1;
 
     /**
      * Coroutine id mapping
@@ -29,11 +29,12 @@ class Coroutine
     private static $idMap = [];
 
     /**
-     * Get the current coroutine ID
+     * Get the current coroutine ID,
+     * Return null when running in non-coroutine context
      *
-     * @return int
+     * @return int|null
      */
-    public static function id(): int
+    public static function id()
     {
         $cid = SwCoroutine::getuid();
         if ($cid !== -1) {
@@ -44,14 +45,14 @@ class Coroutine
     }
 
     /**
-     * Get the top coroutine ID
+     * Get the top coroutine ID,
+     * Return null when running in non-coroutine context
      *
-     * @return int
+     * @return int|null
      */
     public static function tid()
     {
         $id = self::id();
-
         return self::$idMap[$id] ?? $id;
     }
 
@@ -119,15 +120,5 @@ class Coroutine
     public static function shouldWrapCoroutine()
     {
         return App::isWorkerStatus() && swoole_version() >= '2.0.11';
-    }
-
-    /**
-     * Init tid
-     */
-    public static function initTid()
-    {
-        $time = time();
-        $rand = mt_rand(1, 100);
-        self::$tid = (int)($time . $rand);
     }
 }

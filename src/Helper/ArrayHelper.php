@@ -134,7 +134,6 @@ class ArrayHelper
      *                                       getting value from an object.
      *
      * @return mixed the value of the element if found, default value otherwise
-     * @throws InvalidParamException if $array is neither an array nor an object.
      */
     public static function getValue($array, $key, $default = null)
     {
@@ -156,18 +155,20 @@ class ArrayHelper
 
         if (($pos = strrpos($key, '.')) !== false) {
             $array = static::getValue($array, substr($key, 0, $pos), $default);
-            $key   = substr($key, $pos + 1);
+            $key   = (string)substr($key, $pos + 1);
         }
 
         if (\is_object($array)) {
             // this is expected to fail if the property does not exist, or __get() is not implemented
             // it is not reliably possible to check whether a property is accessable beforehand
             return $array->$key;
-        } elseif (\is_array($array)) {
-            return (isset($array[$key]) || array_key_exists($key, $array)) ? $array[$key] : $default;
-        } else {
-            return $default;
         }
+
+        if (\is_array($array)) {
+            return (isset($array[$key]) || array_key_exists($key, $array)) ? $array[$key] : $default;
+        }
+
+        return $default;
     }
 
     /**

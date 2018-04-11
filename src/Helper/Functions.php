@@ -98,11 +98,25 @@ if (! function_exists('bean')) {
     }
 }
 
+if (! function_exists('alias')) {
+    /**
+     * Get alias
+     *
+     * @param string $alias
+     * @return string
+     * @throws \InvalidArgumentException
+     */
+    function alias($alias): string
+    {
+        return \Swoft\App::getAlias($alias);
+    }
+}
+
 if (! function_exists('request')) {
     /**
      * Get the current Request object from RequestContext
      *
-     * @return \Psr\Http\Message\RequestInterface
+     * @return \Psr\Http\Message\RequestInterface|Swoft\Http\Message\Server\Request
      */
     function request(): \Psr\Http\Message\RequestInterface
     {
@@ -114,7 +128,7 @@ if (! function_exists('response')) {
     /**
      * Get the current Response object from RequestContext
      *
-     * @return \Psr\Http\Message\ResponseInterface
+     * @return \Psr\Http\Message\ResponseInterface|\Swoft\Http\Message\Server\Response
      */
     function response(): \Psr\Http\Message\ResponseInterface
     {

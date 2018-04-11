@@ -3,17 +3,12 @@
 namespace Swoft\Bean\Collector;
 
 use Swoft\Bean\Annotation\BeforeStart;
+use Swoft\Bean\Annotation\ServerListener;
 use Swoft\Bean\CollectorInterface;
 use Swoft\Bootstrap\SwooleEvent;
 
 /**
- * the collector of server listener
- *
- * @uses      ServerListenerCollector
- * @version   2018年01月13日
- * @author    stelin <phpcrazy@126.com>
- * @copyright Copyright 2010-2016 swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * Server listener
  */
 class ServerListenerCollector implements CollectorInterface
 {
@@ -28,11 +23,18 @@ class ServerListenerCollector implements CollectorInterface
      * @param string $propertyName
      * @param string $methodName
      * @param null   $propertyValue
+     * @return void
      */
     public static function collect(string $className, $objectAnnotation = null, string $propertyName = "", string $methodName = "", $propertyValue = null)
     {
         if($objectAnnotation instanceof BeforeStart){
             self::$listeners[SwooleEvent::ON_BEFORE_START][] = $className;
+        } elseif($objectAnnotation instanceof ServerListener){
+            $events = $objectAnnotation->getEvent();
+
+            foreach ($events as $event) {
+                self::$listeners[$event][] = $className;
+            }
         }
     }
 

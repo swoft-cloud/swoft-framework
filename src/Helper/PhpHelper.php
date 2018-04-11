@@ -4,12 +4,8 @@ namespace Swoft\Helper;
 
 /**
  * php帮助类
- *
- * @uses      PhpHelper
- * @version   2017年09月25日
- * @author    inhere <in.798@qq.com>
- * @copyright Copyright 2010-2016 Swoft software
- * @license   PHP Version 7.x {@link http://www.php.net/license/3_0.txt}
+ * @package Swoft\Helper
+ * @author inhere <in.798@qq.com>
  */
 class PhpHelper
 {
@@ -28,9 +24,9 @@ class PhpHelper
      *
      * @return bool
      */
-    public static function isMac()
+    public static function isMac(): bool
     {
-        return stripos(PHP_OS, 'Darwin') !== false;
+        return \stripos(PHP_OS, 'Darwin') !== false;
     }
 
     /**
@@ -43,11 +39,11 @@ class PhpHelper
      */
     public static function call($cb, array $args = [])
     {
-        if (is_object($cb) || (is_string($cb) && function_exists($cb))) {
+        if (\is_object($cb) || (\is_string($cb) && \function_exists($cb))) {
             $ret = $cb(...$args);
-        } elseif (is_array($cb)) {
+        } elseif (\is_array($cb)) {
             list($obj, $mhd) = $cb;
-            $ret = is_object($obj) ? $obj->$mhd(...$args) : $obj::$mhd(...$args);
+            $ret = \is_object($obj) ? $obj->$mhd(...$args) : $obj::$mhd(...$args);
         } else {
             $ret = \Swoole\Coroutine::call_user_func_array($cb, $args);
         }
