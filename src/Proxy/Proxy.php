@@ -98,8 +98,8 @@ class Proxy
                 $template .= "{
                 return \$this->{$handlerPropertyName}->invoke('{$methodName}', func_get_args());
                 return \$this->__proxy('{$methodName}', func_get_args());
-            }";
             }
+            ";
         }
 
         return $template;
