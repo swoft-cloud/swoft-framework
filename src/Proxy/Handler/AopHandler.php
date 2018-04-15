@@ -33,11 +33,13 @@ class AopHandler implements HandlerInterface
      * @param $parameters
      * @return mixed
      * @throws \ReflectionException
+     * @throws \Throwable
      */
     public function invoke($method, $parameters)
     {
         /* @var Aop $aop */
-        $aop = bean(Aop::class);
+        $aop = \bean(Aop::class);
+
         return $aop->execute($this->target, $method, $parameters);
     }
 }

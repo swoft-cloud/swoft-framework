@@ -10,7 +10,6 @@ use SwoftTest\Aop\NestBean;
  */
 class Proxy
 {
-
     /**
      * Return a proxy instance
      *
@@ -25,8 +24,8 @@ class Proxy
         $reflectionMethods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED);
 
         // Proxy property
-        $proxyId = uniqid('', false);
-        $proxyClassName = basename(str_replace("\\", '/', $className));
+        $proxyId = \uniqid('', false);
+        $proxyClassName = \basename(str_replace("\\", '/', $className));
         $proxyClassName = $proxyClassName . '_' . $proxyId;
         $handlerPropertyName = '__handler_' . $proxyId;
 
@@ -71,7 +70,7 @@ class Proxy
         foreach ($reflectionMethods as $reflectionMethod) {
             $methodName = $reflectionMethod->getName();
 
-            // not to overrided method
+            // not to override method
             if ($reflectionMethod->isConstructor() || $reflectionMethod->isStatic()) {
                 continue;
             }
@@ -85,7 +84,7 @@ class Proxy
             $reflectionMethodReturn = $reflectionMethod->getReturnType();
             if ($reflectionMethodReturn !== null) {
                 $returnType = $reflectionMethodReturn->__toString();
-                $returnType = ($returnType == 'self') ? $reflectionMethod->getDeclaringClass()->getName() : $returnType;
+                $returnType = $returnType === 'self' ? $reflectionMethod->getDeclaringClass()->getName() : $returnType;
                 $template .= " : $returnType";
             }
 
@@ -93,15 +92,13 @@ class Proxy
                 $template .= "{
                 // return \$this->{$handlerPropertyName}->invoke('{$methodName}', func_get_args());
                 return \$this->__proxy('{$methodName}', func_get_args());
-            }
-            ";
+            }";
             } else {
                 // overrided method
                 $template .= "{
                 return \$this->{$handlerPropertyName}->invoke('{$methodName}', func_get_args());
                 return \$this->__proxy('{$methodName}', func_get_args());
-            }
-            ";
+            }";
             }
         }
 
@@ -175,7 +172,7 @@ class Proxy
             $template = ' = []';
         } elseif (\is_float($defaultValue)) {
             $template = ' = []';
-        } elseif (\is_object($defaultValue) || \is_null($defaultValue)) {
+        } elseif (\is_object($defaultValue) || null === $defaultValue) {
             $template = ' = null';
         }
 

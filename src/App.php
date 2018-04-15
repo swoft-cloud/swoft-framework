@@ -318,8 +318,8 @@ class App
      */
     public static function getAlias(string $alias): string
     {
-        // $path不是别名，直接返回
-        if ($alias[0] !== '@') {
+        // empty OR not an alias
+        if (!$alias || $alias[0] !== '@') {
             return $alias;
         }
 
@@ -327,7 +327,7 @@ class App
             return self::$aliases[$alias];
         }
 
-        list($root) = \explode('/', $alias);
+        list($root) = \explode('/', $alias, 2);
         if (!isset(self::$aliases[$root])) {
             throw new \InvalidArgumentException('The set root alias does not exist，alias=' . $root);
         }
@@ -435,7 +435,7 @@ class App
 
         $server = self::$server->getServer();
 
-        if ($server && property_exists($server, 'taskworker') && ($server->taskworker === false)) {
+        if ($server && \property_exists($server, 'taskworker') && ($server->taskworker === false)) {
             return true;
         }
 

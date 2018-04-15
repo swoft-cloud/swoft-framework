@@ -85,7 +85,7 @@ abstract class ConnectionPool implements PoolInterface
     {
         $connectionId = $connection->getConnectionId();
         $connection->updateLastTime();
-        $connection->setRecv(false);
+        $connection->setRecv(true);
         $connection->setAutoRelease(true);
 
         if (App::isCoContext()) {
@@ -234,14 +234,17 @@ abstract class ConnectionPool implements PoolInterface
         }
 
         $maxWait = $this->poolConfig->getMaxWait();
-
         if ($maxWait != 0 && $stats['consumer_num'] >= $maxWait) {
-            throw new ConnectionException('Connection pool waiting queue is full');
+            throw new ConnectionException(sprintf('Connection pool waiting queue is full, maxActive=%d,maxWait=%d,currentCount=%d', $maxActive, $maxWait, $this->currentCount));
+        }
+
+        $maxWaitTime = $this->poolConfig->getMaxWaitTime();
+        if ($maxWaitTime == 0) {
+            return $this->channel->pop();
         }
 
         $writes = [];
         $reads       = [$this->channel];
-        $maxWaitTime = $this->poolConfig->getMaxWaitTime();
         $result      = $this->channel->select($reads, $writes, $maxWaitTime);
 
         if ($result === false || empty($reads)) {

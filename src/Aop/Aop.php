@@ -43,16 +43,18 @@ class Aop implements AopInterface
      *
      * @param object $target Origin object
      * @param string $method The execution method
-     * @param array  $params The parameters of execution method
+     * @param array $params The parameters of execution method
      * @return mixed
      * @throws \ReflectionException
+     * @throws Throwable
      */
     public function execute($target, string $method, array $params)
     {
         var_dump(get_class($target) . '::' .$method);
         $class = \get_class($target);
+
         // If doesn't have any advices, then execute the origin method
-        if (! isset($this->map[$class][$method]) || empty($this->map[$class][$method])) {
+        if (!isset($this->map[$class][$method]) || empty($this->map[$class][$method])) {
             return $target->$method(...$params);
         }
 
@@ -72,7 +74,7 @@ class Aop implements AopInterface
     public function doAdvice($target, string $method, array $params, array $advices)
     {
         $result = null;
-        $advice = array_shift($advices);
+        $advice = \array_shift($advices);
 
         try {
 
@@ -99,9 +101,9 @@ class Aop implements AopInterface
         } catch (Throwable $t) {
             if (isset($advice['afterThrowing']) && ! empty($advice['afterThrowing'])) {
                 return $this->doPoint($advice['afterThrowing'], $target, $method, $params, $advice, $advices, null, $t);
-            } else {
-                throw $t;
             }
+
+            throw $t;
         }
 
         // afterReturning
@@ -163,9 +165,9 @@ class Aop implements AopInterface
                 $aspectArgs[] = new ProceedingJoinPoint($target, $method, $args, $advice, $advices);
                 continue;
             }
-            
-            //Throwable object
-            if (isset($catch) && $catch instanceof $type) {
+
+            // Throwable object
+            if ($catch && $catch instanceof $type) {
                 $aspectArgs[] = $catch;
                 continue;
             }
@@ -188,7 +190,7 @@ class Aop implements AopInterface
     public function match(string $beanName, string $class, string $method, array $annotations)
     {
         foreach ($this->aspects as $aspectClass => $aspect) {
-            if (! isset($aspect['point']) || ! isset($aspect['advice'])) {
+            if (!isset($aspect['point'], $aspect['advice'])) {
                 continue;
             }
 
@@ -219,7 +221,8 @@ class Aop implements AopInterface
      */
     public function register(array $aspects)
     {
-        array_multisort(array_column($aspects, 'order'), SORT_ASC, $aspects);
+        $temp = \array_column($aspects, 'order');
+        \array_multisort($temp, SORT_ASC, $aspects);
         $this->aspects = $aspects;
     }
 
@@ -232,7 +235,7 @@ class Aop implements AopInterface
      */
     private function matchBeanAndAnnotation(array $pointAry, array $classAry): bool
     {
-        $intersectAry = array_intersect($pointAry, $classAry);
+        $intersectAry = \array_intersect($pointAry, $classAry);
         if (empty($intersectAry)) {
             return false;
         }
@@ -251,7 +254,7 @@ class Aop implements AopInterface
     private function matchExecution(string $class, string $method, array $executions): bool
     {
         foreach ($executions as $execution) {
-            $executionAry = explode('::', $execution);
+            $executionAry = \explode('::', $execution);
             if (\count($executionAry) < 2) {
                 continue;
             }
@@ -264,12 +267,20 @@ class Aop implements AopInterface
 
             // Method
             $reg = '/^(?:' . $executionMethod . ')$/';
-            if (preg_match($reg, $method)) {
+            if (\preg_match($reg, $method)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAspects(): array
+    {
+        return $this->aspects;
     }
 
     /**
