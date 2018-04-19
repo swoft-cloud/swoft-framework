@@ -1,0 +1,9 @@
+    /**
+     * {{function}}
+     *
+     * @return {{coReturnType}}
+     */
+    public function {{function}}(){{returnType}}
+    {
+        return $this->{{attribute}};
+    }

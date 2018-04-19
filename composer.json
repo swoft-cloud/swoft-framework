@@ -1,52 +1,115 @@
 {
-    "name": "swoft/framework",
-    "type": "library",
-    "keywords": [
-        "php",
-        "swoole",
-        "swoft"
-    ],
-    "description": "microservice framework base on swoole",
-    "license": "Apache-2.0",
-    "require": {
-        "php": ">=7.0",
-        "phpseclib/phpseclib": "2.0.0",
-        "doctrine/annotations": "^1.4",
-        "php-di/phpdoc-reader": "^2.0",
-        "monolog/monolog": "^1.23",
-        "vlucas/phpdotenv": "^2.4",
-        "psr/http-message": "^1.0",
-        "psr/http-server-middleware": "^1.0",
-        "zendframework/zend-mime": "^2.7"
+  "name": "swoft/framework",
+  "type": "library",
+  "keywords": ["php", "swoole", "swoft"],
+  "description": "microservice framework base on swoole",
+  "license": "Apache-2.0",
+  "require": {
+    "php": ">=7.0",
+    "phpseclib/phpseclib": "2.0.0",
+    "doctrine/annotations": "^1.4",
+    "php-di/phpdoc-reader": "^2.0",
+    "monolog/monolog": "^1.23",
+    "vlucas/phpdotenv": "^2.4",
+    "psr/http-message": "^1.0",
+    "psr/http-server-middleware": "^1.0",
+    "zendframework/zend-mime": "^2.7"
+  },
+  "require-dev": {
+    "eaglewu/swoole-ide-helper": "dev-master",
+    "phpunit/phpunit": "^5.7",
+    "friendsofphp/php-cs-fixer": "^2.10"
+  },
+  "replace": {
+    "swoft/rpc": "self.version",
+    "swoft/rpc-server": "self.version",
+    "swoft/rpc-client": "self.version",
+    "swoft/http-server": "self.version",
+    "swoft/http-client": "self.version",
+    "swoft/task": "self.version",
+    "swoft/http-message": "self.version",
+    "swoft/view": "self.version",
+    "swoft/db": "self.version",
+    "swoft/cache": "self.version",
+    "swoft/redis": "self.version",
+    "swoft/console": "self.version",
+    "swoft/devtool": "self.version",
+    "swoft/session": "self.version",
+    "swoft/i18n": "self.version",
+    "swoft/process": "self.version",
+    "swoft/memory": "self.version",
+    "swoft/service-governance": "self.version"
+  },
+  "autoload": {
+    "psr-4": {
+      "Swoft\\":"src/",
+      "Swoft\\Rpc\\": "rpc/src",
+      "Swoft\\Rpc\\Server\\": "rpc-server/src/",
+      "Swoft\\Rpc\\Client\\": "rpc-client/src/",
+      "Swoft\\Http\\Server\\": "http-server/src/",
+      "Swoft\\HttpClient\\": "http-client/src/",
+      "Swoft\\Http\\Message\\": "http-message/src/",
+      "Swoft\\Task\\": "task/src/",
+      "Swoft\\View\\": "view/src/",
+      "Swoft\\Db\\": "db/src/",
+      "Swoft\\Cache\\": "cache/src/",
+      "Swoft\\Redis\\": "redis/src/",
+      "Swoft\\Console\\": "console/src/",
+      "Swoft\\Devtool\\": "devtool/src/",
+      "Swoft\\Session\\": "session/src/",
+      "Swoft\\I18n\\": "i18n/src/",
+      "Swoft\\Process\\": "process/src/",
+      "Swoft\\Memory\\": "memory/src/",
+      "Swoft\\Sg\\": "service-governance/src/"
     },
-    "autoload": {
-        "classmap": [
-        ],
-        "psr-4": {
-            "Swoft\\": "src/"
-        },
-        "files": [
-            "src/Helper/Functions.php"
-        ]
-    },
-    "require-dev": {
-        "eaglewu/swoole-ide-helper": "dev-master",
-        "phpunit/phpunit": "^5.7",
-        "friendsofphp/php-cs-fixer": "^2.10"
-    },
-    "autoload-dev": {
-        "psr-4": {
-            "SwoftTest\\": "test/Cases"
-        }
-    },
-    "repositories": {
-        "packagist": {
-            "type": "composer",
-            "url": "https://packagist.phpcomposer.com"
-        }
-    },
-    "scripts": {
-        "test": "./vendor/bin/phpunit -c phpunit.xml",
-        "cs-fix": "./vendor/bin/php-cs-fixer fix $1"
+    "files": [
+      "src/Helper/Functions.php",
+      "rpc/src/Helper/Functions.php",
+      "http-message/src/Helper/Functions.php",
+      "task/src/Helper/Functions.php",
+      "view/src/Helper/Functions.php",
+      "db/src/Helper/Functions.php",
+      "cache/src/Helper/Functions.php",
+      "redis/src/Helper/Functions.php",
+      "console/src/Helper/Functions.php",
+      "devtool/src/Helper/Functions.php",
+      "session/src/Helper/Functions.php",
+      "i18n/src/Helper/Functions.php",
+      "process/src/Helper/Functions.php",
+      "memory/src/Helper/Functions.php",
+      "service-governance/src/Helper/Functions.php"
+    ]
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "SwoftTest\\": "test/Cases",
+      "SwoftTest\\Rpc\\": "rpc/test/Cases",
+      "SwoftTest\\RpcServer\\": "rpc-server/test/Cases",
+      "SwoftTest\\RpcClient\\": "rpc-client/test/Cases",
+      "SwoftTest\\HttpServer\\": "http-server/test/Cases",
+      "SwoftTest\\HttpClient\\": "http-client/test/Cases",
+      "SwoftTest\\Task\\": "task/test/Cases",
+      "SwoftTest\\View\\": "view/test/Cases",
+      "SwoftTest\\Db\\": "db/test/Cases",
+      "SwoftTest\\Cache\\": "cache/test/Cases",
+      "SwoftTest\\Redis\\": "redis/test/Cases",
+      "SwoftTest\\Console\\": "console/test/Cases",
+      "SwoftTest\\Devtool\\": "devtool/test/Cases",
+      "SwoftTest\\Session\\": "session/test/Cases",
+      "SwoftTest\\I18n\\": "i18n/test/Cases",
+      "SwoftTest\\Process\\": "process/test/Cases",
+      "SwoftTest\\Memory\\": "memory/test/Cases",
+      "SwoftTest\\Sg\\": "service-governance/test/Cases"
     }
+  },
+  "repositories": {
+    "packagist": {
+      "type": "composer",
+      "url": "https://packagist.phpcomposer.com"
+    }
+  },
+  "scripts": {
+    "test": "./vendor/bin/phpunit -c phpunit.xml",
+    "cs-fix": "./vendor/bin/php-cs-fixer fix $1"
+  }
 }

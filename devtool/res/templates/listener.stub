@@ -1,0 +1,33 @@
+<?php
+/**
+ * This file is part of Swoft.
+ *
+ * @link https://swoft.org
+ * @document https://doc.swoft.org
+ * @contact group@swoft.org
+ * @license https://github.com/swoft-cloud/swoft/blob/master/LICENSE
+ */
+
+namespace {= namespace};
+
+use Swoft\Bean\Annotation\Listener;
+use Swoft\Event\EventHandlerInterface;
+use Swoft\Event\EventInterface;
+use Swoft\Task\Event\TaskEvent;
+
+/**
+ * Class {= className} - event handler
+ *
+ * @Listener(TaskEvent::FINISH_TASK)
+ * @package {= namespace}
+ */
+class {= className} implements EventHandlerInterface
+{
+    /**
+     * @param EventInterface $event
+     */
+    public function handle(EventInterface $event)
+    {
+        var_dump('task finish! ', $event->getParams());
+    }
+}
