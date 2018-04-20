@@ -19,6 +19,9 @@ class LoadEnv implements Bootable
     public function bootstrap()
     {
         $file = '.env';
+        if (env('APP_ENV')) {
+            $file .= '.' . env('APP_ENV');
+        }
         $filePath = App::getAlias('@root') . DS . $file;
         if (file_exists($filePath) && is_readable($filePath)) {
             (new Dotenv(App::getAlias('@root'), $file))->load();
