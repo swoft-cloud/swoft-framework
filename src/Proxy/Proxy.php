@@ -57,7 +57,7 @@ class Proxy
                 $newInstance->$name = $object->$name;
             }
         }
-        // return $data
+        // return $newInstance
         return $newInstance;
     }
 
