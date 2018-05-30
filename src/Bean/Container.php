@@ -262,7 +262,7 @@ class Container
 
         $handler = new AopHandler($object);
 
-        return Proxy::newProxyInstance(\get_class($object), $handler);
+        return Proxy::newProxyInstance(\get_class($object), $handler, $object);
     }
 
     /**

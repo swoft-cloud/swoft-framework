@@ -14,13 +14,16 @@ class Proxy
      *
      * @param string           $className
      * @param HandlerInterface $handler
+     * @param Object | null $object Which one in $handler
      * @return object
      * @throws \ReflectionException
      */
-    public static function newProxyInstance(string $className, HandlerInterface $handler)
+    public static function newProxyInstance(string $className, HandlerInterface $handler, $object = null)
     {
         $reflectionClass = new \ReflectionClass($className);
         $reflectionMethods = $reflectionClass->getMethods(\ReflectionMethod::IS_PUBLIC | \ReflectionMethod::IS_PROTECTED);
+        // get public Property
+        $publicProperties = $reflectionClass->getProperties(\ReflectionProperty::IS_PUBLIC);
 
         // Proxy property
         $id = \uniqid('', false);
@@ -42,9 +45,20 @@ class Proxy
         $template .= '}';
 
         eval($template);
+        // new $proxyClassName with ReflectionClass
         $newRc = new \ReflectionClass($proxyClassName);
-
-        return $newRc->newInstance($handler);
+        $newInstance = $newRc->newInstance($handler);
+        // if publicProperties not empty & $object must a object
+        if (!empty($publicProperties) && is_object($object)) {
+            // foreach public property
+            foreach ($publicProperties as $property) {
+                // get name & cover public property
+                $name = $property->getName();
+                $newInstance->$name = $object->$name;
+            }
+        }
+        // return $newInstance
+        return $newInstance;
     }
 
     /**
