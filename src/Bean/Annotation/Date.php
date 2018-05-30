@@ -56,6 +56,9 @@ class Date
         if (isset($values['from'])) {
             $this->from = $values['from'];
         }
+        if (isset($values['name'])) {
+            $this->name = $values['name'];
+        }
         if (isset($values['default'])) {
             $this->default = $values['default'];
         }

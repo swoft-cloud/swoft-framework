@@ -28,6 +28,20 @@ class Alphanumeric
     private $name;
 
     /**
+     * Min value
+     *
+     * @var int
+     */
+    private $min = PHP_INT_MIN;
+
+    /**
+     * Max value
+     *
+     * @var int
+     */
+    private $max = PHP_INT_MAX;
+
+    /**
      * @var string
      */
     private $template = '';
@@ -49,8 +63,17 @@ class Alphanumeric
         if (isset($values['from'])) {
             $this->from = $values['from'];
         }
+        if (isset($values['name'])) {
+            $this->name = $values['name'];
+        }
         if (isset($values['default'])) {
             $this->default = $values['default'];
+        }
+        if (isset($values['min'])) {
+            $this->min = $values['min'];
+        }
+        if (isset($values['max'])) {
+            $this->max = $values['max'];
         }
         if (isset($values['template'])) {
             $this->template = $values['template'];
@@ -79,6 +102,46 @@ class Alphanumeric
     public function getFrom(): string
     {
         return $this->from;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMin(): int
+    {
+        return $this->min;
+    }
+
+    /**
+     * @param int $min
+     *
+     * @return Alphanumeric
+     */
+    public function setMin(int $min): Alphanumeric
+    {
+        $this->min = $min;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMax(): int
+    {
+        return $this->max;
+    }
+
+    /**
+     * @param int $max
+     *
+     * @return Alphanumeric
+     */
+    public function setMax(int $max): Alphanumeric
+    {
+        $this->max = $max;
+
+        return $this;
     }
 
     /**

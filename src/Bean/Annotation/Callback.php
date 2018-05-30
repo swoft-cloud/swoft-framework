@@ -56,6 +56,9 @@ class Callback
         if (isset($values['from'])) {
             $this->from = $values['from'];
         }
+        if (isset($values['name'])) {
+            $this->name = $values['name'];
+        }
         if (isset($values['default'])) {
             $this->default = $values['default'];
         }
@@ -94,7 +97,7 @@ class Callback
     /**
      * @return string
      */
-    public function getPattern(): string
+    public function getCallback(): string
     {
         return $this->callback;
     }
@@ -102,7 +105,7 @@ class Callback
     /**
      * @param string $template
      */
-    public function setPattern(string $callback)
+    public function setCallback(string $callback)
     {
         $this->callback = $callback;
     }

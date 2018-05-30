@@ -477,16 +477,20 @@ class ValidatorHelper
      *
      * @param string $name Parameter name
      * @param $value Parameter value
+     * @param int|null $min Parameter length minimun value
+     * @param int|null $max Parameter length maximum value
      * @param bool $throws Determine if throw an ValidatorException when invalid
      * @param string $template
      * @return bool|string
      * @throws ValidatorException
      */
-    public static function validateAlphanumeric(string $name, $value, bool $throws = true, string $template)
+    public static function validateAlphanumeric(string $name, $value, int $min = null, int $max = null, bool $throws = true, string $template)
     {
         $params = [
             'name' => $name,
             'value' => $value,
+            'min' => $min,
+            'max' => $max,
         ];
 
         $template = self::getTemplate($template, $params);
@@ -502,6 +506,19 @@ class ValidatorHelper
             return self::validateError($template, $throws);
         }
 
+        $length = mb_strlen($value);
+        if ($min !== null && $length < $min) {
+            $template = empty($template) ? sprintf('Parameter %s length is too short (minimum is %d)', $name, $min) : $template;
+
+            return self::validateError($template, $throws);
+        }
+
+        if ($max !== null && $length > $max) {
+            $template = empty($template) ? sprintf('Parameter %s length is too long (maximum is %d)', $name, $max) : $template;
+
+            return self::validateError($template, $throws);
+        }
+
         return (string)$value;
     }
 
@@ -510,17 +527,21 @@ class ValidatorHelper
      *
      * @param string $name Parameter name
      * @param mixed $value Parameter value
+     * @param int|null $min Parameter length minimun value
+     * @param int|null $max Parameter length maximum value
      * @param bool $throws Determine if throw an ValidatorException when invalid
      * @param string $template
      *
      * @return bool|string
      * @throws ValidatorException
      */
-    public static function validateAlphabetic(string $name, $value, bool $throws = true, string $template)
+    public static function validateAlphabetic(string $name, $value, int $min = null, int $max = null, bool $throws = true, string $template)
     {
         $params = [
             'name' => $name,
             'value' => $value,
+            'min' => $min,
+            'max' => $max,
         ];
 
         $template = self::getTemplate($template, $params);
@@ -532,6 +553,19 @@ class ValidatorHelper
 
         if (preg_match("/[^[:alpha:]]/imu", $value)) {
             $template = empty($template) ? sprintf('Parameter %s is not alphabetic type', $name) : $template;
+
+            return self::validateError($template, $throws);
+        }
+
+        $length = mb_strlen($value);
+        if ($min !== null && $length < $min) {
+            $template = empty($template) ? sprintf('Parameter %s length is too short (minimum is %d)', $name, $min) : $template;
+
+            return self::validateError($template, $throws);
+        }
+
+        if ($max !== null && $length > $max) {
+            $template = empty($template) ? sprintf('Parameter %s length is too long (maximum is %d)', $name, $max) : $template;
 
             return self::validateError($template, $throws);
         }
