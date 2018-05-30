@@ -100,6 +100,7 @@ class Proxy
                 return \$this->__proxy('{$methodName}', func_get_args());
             }
             ";
+            }
         }
 
         return $template;
