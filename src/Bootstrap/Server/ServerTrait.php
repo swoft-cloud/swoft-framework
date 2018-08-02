@@ -61,7 +61,8 @@ trait ServerTrait
      * @param Server $server
      * @throws \InvalidArgumentException
      */
-    public function onManagerStop(Server $server){
+    public function onManagerStop(Server $server)
+    {
         $this->fireServerEvent(SwooleEvent::ON_MANAGER_STOP, [$server]);
     }
 
@@ -71,7 +72,8 @@ trait ServerTrait
      * @param Server $server
      * @throws \InvalidArgumentException
      */
-    public function onWorkerStop(Server $server,int $worker_id){
+    public function onWorkerStop(Server $server,int $worker_id)
+    {
         $this->fireServerEvent(SwooleEvent::ON_WORKER_STOP, [$server,$worker_id]);
     }
 
@@ -81,7 +83,8 @@ trait ServerTrait
      * @param Server $server
      * @throws \InvalidArgumentException
      */
-    public function onShutdown(Server $server){
+    public function onShutdown(Server $server)
+    {
         $this->fireServerEvent(SwooleEvent::ON_SHUTDOWN, [$server]);
     }
 

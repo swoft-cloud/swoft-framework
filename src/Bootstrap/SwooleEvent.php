@@ -47,6 +47,7 @@ class SwooleEvent
      * the event name of managerStop
      */
     const ON_MANAGER_STOP = 'managerStop';
+
     /**
      * the event name of shutDown
      */
