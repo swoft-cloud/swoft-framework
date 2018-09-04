@@ -53,8 +53,9 @@ class SwooleResponse extends \Swoole\Http\Response
     /**
      * 设置HttpCode，如404, 501, 200
      * @param $code
+     * @param $reason
      */
-    public function status($code)
+    public function status($code, $reason = NULL)
     {
     }
 
