@@ -18,6 +18,7 @@
             "Swoft\\": "src/"
         },
         "files": [
+            "src/Helper/Functions.php"
         ]
     },
     "require-dev": {
