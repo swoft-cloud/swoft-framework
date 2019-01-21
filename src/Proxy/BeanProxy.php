@@ -19,7 +19,7 @@ class BeanProxy implements ClassProxyInterface
      *
      * @return string
      */
-    public function proxy(string $class): string
+    public function proxy(string $className): string
     {
         return $class;
     }
