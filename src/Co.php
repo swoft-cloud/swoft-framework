@@ -195,7 +195,7 @@ class Co
         foreach ($requests as $key => $callback) {
             sgo(function () use ($key, $channel, $callback) {
                 try {
-                    $data = PhpHelper::call($callback);
+                    $data = PhpHelper::call(...$callback);
                     $channel->push([$key, $data]);
                 } catch (Throwable $e) {
                     Debug::log('Co multi error(key=%s) is %s', $key, $e->getMessage());
