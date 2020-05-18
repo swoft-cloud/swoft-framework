@@ -7,19 +7,19 @@
 
 Swoft Framework Component
 
-## [中文说明](README.zh-CN.md)
+## [ENGLISH](README.md)
 
-中文说明请查看 [README.zh-CN.md](README.zh-CN.md)
+English readme please sess [README.md](README.md)
 
-## Install
+## 安装
 
-- composer command
+- composer 命令
 
 ```bash
 composer require swoft/framework
 ```
 
-## Resources
+## 相关资源
 
 * [Documentation](https://swoft.org/docs)
 * [Contributing](https://github.com/swoft-cloud/swoft/blob/master/CONTRIBUTING.md)
