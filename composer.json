@@ -1,5 +1,5 @@
 {
-  "name": "truffle/framework",
+  "name": "swoft/framework",
   "type": "library",
   "version": "v2.0.11",
   "keywords": [
