@@ -52,7 +52,7 @@ class SwoftHelper
             throw new RuntimeException('Run the server requires PHP version > ' . $minPhp . '! current is ' . PHP_VERSION);
         }
 
-        if (!extension_loaded('swoole')) {
+        if (!extension_loaded('openswoole') && !extension_loaded('swoole')) {
             throw new RuntimeException("Run the server, extension 'swoole' is required!");
         }
 
